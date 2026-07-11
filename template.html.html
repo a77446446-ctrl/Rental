@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>EcoGorny.ru — аренда 4 домиков у озера</title>
+  <meta name="description" content="EcoGorny.ru — аренда четырех премиальных домиков около озера в лесной чаще: баня, чан, квадроциклы, камин, приватная территория и быстрые бронирования." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #120f0d;
+      --bg-2: #18130f;
+      --bg-3: #211a15;
+      --panel: rgba(29, 23, 18, .78);
+      --panel-soft: rgba(48, 39, 31, .56);
+      --cream: #ede4d6;
+      --cream-2: #d5c7b4;
+      --muted: rgba(237, 228, 214, .66);
+      --muted-2: rgba(237, 228, 214, .42);
+      --line: rgba(237, 228, 214, .12);
+      --line-2: rgba(237, 228, 214, .22);
+      --moss: #5f6749;
+      --moss-2: #7b835e;
+      --gold: #bba46f;
+      --wood: #8b5e3c;
+      --shadow: 0 44px 120px rgba(0, 0, 0, .48);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Manrope", system-ui, sans-serif;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at 18% 7%, rgba(116, 94, 68, .22), transparent 28rem),
+        radial-gradient(circle at 78% 24%, rgba(84, 101, 67, .18), transparent 30rem),
+        linear-gradient(180deg, #16110e 0%, #0f0d0b 54%, #15100d 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -5;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(18,15,13,.18), rgba(18,15,13,.94)),
+        url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2600&q=88");
+      background-size: cover;
+      background-position: center;
+      opacity: .32;
+      filter: saturate(.74) sepia(.12) brightness(.72);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -4;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.55), transparent 22%, transparent 74%, rgba(0,0,0,.55)),
+        radial-gradient(circle at 50% 15%, transparent 0 18rem, rgba(0,0,0,.3) 45rem);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      opacity: .07;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      width: min(100%, 1360px);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .top-meta {
+      position: fixed;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+      width: min(100%, 1360px);
+      padding: 0 34px;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(237, 228, 214, .58);
+      font-size: 12px;
+      letter-spacing: .02em;
+      pointer-events: none;
+    }
+
+    .header {
+      position: fixed;
+      top: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      width: min(calc(100% - 48px), 1180px);
+      min-height: 66px;
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 12px 14px 12px 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(18, 15, 13, .54);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 20px 70px rgba(0,0,0,.22);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(237, 228, 214, .18);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 35% 28%, rgba(237,228,214,.22), transparent 32%),
+        linear-gradient(135deg, rgba(95,103,73,.72), rgba(39,31,24,.88));
+      color: var(--gold);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .brand strong {
+      display: block;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 23px;
+      line-height: .86;
+      letter-spacing: .02em;
+      font-weight: 600;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted-2);
+      font-size: 11px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: clamp(18px, 3vw, 42px);
+      color: rgba(237, 228, 214, .66);
+      font-size: 13px;
+    }
+
+    .nav a {
+      transition: color .25s ease;
+    }
+
+    .nav a:hover {
+      color: var(--cream);
+    }
+
+    .header-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 1px solid rgba(237, 228, 214, .14);
+      border-radius: 12px;
+      background: rgba(95, 103, 73, .24);
+      color: var(--cream);
+      font-size: 13px;
+      font-weight: 500;
+      transition: background .25s ease, transform .25s ease;
+    }
+
+    .header-action:hover {
+      transform: translateY(-2px);
+      background: rgba(95, 103, 73, .42);
+    }
+
+    .section {
+      position: relative;
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 940px;
+      display: grid;
+      align-items: end;
+      padding: 142px 8px 72px;
+    }
+
+    .hero-stage {
+      position: relative;
+      min-height: 660px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(18,15,13,.04), rgba(18,15,13,.76)),
+        url("https://images.unsplash.com/photo-1601918774946-25832a4be0d6?auto=format&fit=crop&w=2400&q=88");
+      background-size: cover;
+      background-position: center;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(237,228,214,.12), transparent 15rem),
+        linear-gradient(90deg, rgba(0,0,0,.68), transparent 46%, rgba(0,0,0,.24));
+    }
+
+    .hero-top-line {
+      position: absolute;
+      top: 26px;
+      left: 34px;
+      right: 34px;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(237, 228, 214, .62);
+      font-size: 12px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 610px;
+      padding: 122px 42px 54px;
+    }
+
+    .kicker {
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    h1 {
+      margin-top: 22px;
+      font-size: clamp(64px, 8vw, 116px);
+      line-height: .86;
+      letter-spacing: -.045em;
+      font-weight: 500;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+
+    .hero-content p {
+      max-width: 430px;
+      margin-top: 28px;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 16px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 22px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: transform .25s ease, background .25s ease, border-color .25s ease;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: .02em;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #95663f, #6f482e);
+      color: #fff;
+      box-shadow: 0 16px 44px rgba(111, 72, 46, .26);
+    }
+
+    .btn-ghost {
+      border-color: var(--line);
+      background: rgba(29, 23, 18, .42);
+      color: var(--cream);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-booking {
+      position: absolute;
+      right: 34px;
+      bottom: 34px;
+      z-index: 3;
+      width: min(410px, calc(100% - 68px));
+      padding: 18px;
+      border: 1px solid rgba(237, 228, 214, .13);
+      border-radius: 10px;
+      background: rgba(22, 18, 14, .62);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.32);
+    }
+
+    .hero-booking h3 {
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: -.04em;
+    }
+
+    .hero-booking p {
+      margin-top: 7px;
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .quick-field {
+      min-height: 74px;
+      padding: 13px;
+      border: 1px solid rgba(237, 228, 214, .1);
+      border-radius: 8px;
+      background: rgba(237, 228, 214, .055);
+    }
+
+    .quick-field label {
+      display: block;
+      color: var(--muted-2);
+      font-size: 11px;
+      margin-bottom: 7px;
+    }
+
+    .quick-field strong,
+    .quick-field select {
+      color: var(--cream);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      font-weight: 600;
+      width: 100%;
+    }
+
+    .quick-total {
+      margin-top: 9px;
+      padding: 14px;
+      border: 1px solid rgba(237, 228, 214, .1);
+      border-radius: 8px;
+      background: rgba(95, 103, 73, .2);
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: end;
+    }
+
+    .quick-total span {
+      display: block;
+      color: var(--muted-2);
+      font-size: 11px;
+    }
+
+    .quick-total b {
+      display: block;
+      margin-top: 3px;
+      font-size: 24px;
+      font-weight: 500;
+      letter-spacing: -.04em;
+    }
+
+    .quick-total small {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .trust-strip {
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(12, 10, 8, .42);
+    }
+
+    .marquee {
+      width: max-content;
+      display: flex;
+      gap: 42px;
+      padding: 18px 0;
+      color: rgba(237, 228, 214, .52);
+      font-size: 13px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      animation: marquee 30s linear infinite;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: .9fr 1fr;
+      gap: 72px;
+      padding: 92px 8px 50px;
+      align-items: end;
+    }
+
+    .section-label {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    h2 {
+      margin-top: 18px;
+      font-size: clamp(46px, 6vw, 84px);
+      line-height: .9;
+      letter-spacing: -.045em;
+      font-weight: 500;
+      text-wrap: balance;
+    }
+
+    .intro-copy {
+      max-width: 520px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .mission {
+      display: grid;
+      grid-template-columns: 1.14fr .86fr;
+      gap: 28px;
+      padding: 12px 8px 92px;
+    }
+
+    .video-panel {
+      min-height: 390px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(18,15,13,.04), rgba(18,15,13,.68)),
+        url("https://images.unsplash.com/photo-1533873984035-25970ab07461?auto=format&fit=crop&w=1800&q=88");
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 30px 90px rgba(0,0,0,.32);
+    }
+
+    .play {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 84px;
+      height: 84px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(237, 228, 214, .32);
+      border-radius: 50%;
+      background: rgba(18, 15, 13, .42);
+      backdrop-filter: blur(16px);
+      color: var(--cream);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .stat-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat {
+      min-height: 122px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 20px;
+      padding: 23px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 80% 0%, rgba(95, 103, 73, .12), transparent 12rem),
+        rgba(29, 23, 18, .58);
+      backdrop-filter: blur(18px);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(95, 103, 73, .18);
+      color: var(--gold);
+      font-size: 23px;
+    }
+
+    .stat b {
+      display: block;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 48px;
+      line-height: .9;
+      letter-spacing: -.04em;
+      font-weight: 500;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+
+    .houses {
+      padding: 18px 8px 96px;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 36px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    .section-heading small {
+      color: var(--muted-2);
+      line-height: 1.5;
+    }
+
+    .section-heading h2 {
+      margin-top: 0;
+      font-size: clamp(54px, 7vw, 98px);
+      text-transform: uppercase;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .filter {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(237, 228, 214, .045);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .filter.active {
+      background: rgba(95, 103, 73, .2);
+      color: var(--cream);
+    }
+
+    .house-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .house-card {
+      min-height: 520px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      box-shadow: 0 26px 85px rgba(0,0,0,.22);
+    }
+
+    .house-card:nth-child(2),
+    .house-card:nth-child(4) {
+      transform: translateY(28px);
+    }
+
+    .house-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: var(--img);
+      background-size: cover;
+      background-position: center;
+      transition: transform .8s ease;
+    }
+
+    .house-card:hover .house-image {
+      transform: scale(1.06);
+    }
+
+    .house-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg, rgba(18,15,13,.05) 0%, rgba(18,15,13,.42) 48%, rgba(18,15,13,.95) 100%),
+        radial-gradient(circle at 50% 20%, rgba(237,228,214,.11), transparent 10rem);
+    }
+
+    .house-content {
+      position: relative;
+      z-index: 2;
+      padding: 18px;
+    }
+
+    .house-num {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 56px;
+      line-height: .8;
+      font-weight: 500;
+      letter-spacing: -.055em;
+    }
+
+    .house-content h3 {
+      font-size: 32px;
+      line-height: .9;
+      font-weight: 500;
+      letter-spacing: -.04em;
+    }
+
+    .house-content p {
+      min-height: 76px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .house-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      padding: 7px 9px;
+      border: 1px solid rgba(237, 228, 214, .12);
+      border-radius: 7px;
+      background: rgba(237, 228, 214, .06);
+      color: rgba(237, 228, 214, .72);
+      font-size: 11px;
+    }
+
+    .house-content .btn {
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    .feature {
+      display: grid;
+      grid-template-columns: .95fr 1.05fr;
+      gap: 30px;
+      padding: 80px 8px 96px;
+    }
+
+    .feature-panel {
+      min-height: 530px;
+      padding: 42px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 80% 10%, rgba(95,103,73,.2), transparent 18rem),
+        rgba(29,23,18,.72);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-panel h2 {
+      font-size: clamp(46px, 5vw, 74px);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .feature-item {
+      min-height: 155px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(237,228,214,.045);
+    }
+
+    .feature-item div {
+      color: var(--gold);
+      font-size: 30px;
+      margin-bottom: 16px;
+    }
+
+    .feature-item h3 {
+      font-family: "Manrope", sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .feature-item p {
+      margin-top: 9px;
+      color: var(--muted-2);
+      font-size: 13px;
+      line-height: 1.48;
+    }
+
+    .feature-image {
+      min-height: 530px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(18,15,13,.04), rgba(18,15,13,.58)),
+        url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1700&q=88");
+      background-size: cover;
+      background-position: center;
+      box-shadow: var(--shadow);
+    }
+
+    .calendar-section {
+      padding: 4px 8px 100px;
+    }
+
+    .calendar-layout {
+      display: grid;
+      grid-template-columns: 1.06fr .94fr;
+      gap: 26px;
+      margin-top: 34px;
+    }
+
+    .calendar-card,
+    .checkout-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(237,228,214,.055), rgba(237,228,214,.018)),
+        rgba(29,23,18,.7);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 26px 90px rgba(0,0,0,.28);
+      padding: 24px;
+    }
+
+    .calendar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      margin-bottom: 20px;
+    }
+
+    .calendar-top h3 {
+      font-size: 42px;
+      font-weight: 500;
+      letter-spacing: -.04em;
+    }
+
+    .calendar-top p {
+      margin-top: 4px;
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+
+    .arrows {
+      display: flex;
+      gap: 8px;
+    }
+
+    .arrows button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(237,228,214,.045);
+      color: var(--cream);
+      cursor: pointer;
+    }
+
+    .weekdays,
+    .dates {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .weekdays {
+      margin-bottom: 8px;
+      color: var(--muted-2);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      min-height: 70px;
+      padding: 10px;
+      border: 1px solid rgba(237, 228, 214, .09);
+      border-radius: 8px;
+      background: rgba(237,228,214,.045);
+      color: var(--cream);
+      text-align: left;
+      font-weight: 600;
+      position: relative;
+      cursor: pointer;
+      transition: transform .25s ease, background .25s ease, border-color .25s ease;
+    }
+
+    .calendar-day:hover {
+      transform: translateY(-3px);
+      border-color: var(--line-2);
+    }
+
+    .calendar-day.busy {
+      opacity: .35;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+
+    .calendar-day.selected {
+      background: rgba(95, 103, 73, .46);
+      border-color: rgba(187, 164, 111, .42);
+    }
+
+    .calendar-day.promo::after {
+      content: "★";
+      position: absolute;
+      top: 7px;
+      right: 8px;
+      color: var(--gold);
+      font-size: 12px;
+    }
+
+    .calendar-day span {
+      display: block;
+    }
+
+    .calendar-day small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted-2);
+      font-size: 10px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 18px;
+      color: var(--muted-2);
+      font-size: 12px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend i {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: block;
+    }
+
+    .checkout-card h3 {
+      font-size: 42px;
+      font-weight: 500;
+      line-height: .98;
+      letter-spacing: -.04em;
+    }
+
+    .checkout-card > p {
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .booking-form {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .input {
+      width: 100%;
+      min-height: 54px;
+      padding: 0 16px;
+      border: 1px solid rgba(237, 228, 214, .1);
+      border-radius: 8px;
+      background: rgba(237,228,214,.055);
+      color: var(--cream);
+      outline: 0;
+      transition: border-color .25s ease, background .25s ease;
+    }
+
+    .input::placeholder {
+      color: rgba(237, 228, 214, .48);
+    }
+
+    .input:focus {
+      border-color: rgba(187, 164, 111, .42);
+      background: rgba(237,228,214,.075);
+    }
+
+    select.input option {
+      color: #15100d;
+    }
+
+    textarea.input {
+      min-height: 94px;
+      padding-top: 15px;
+      resize: vertical;
+    }
+
+    .summary {
+      margin-top: 10px;
+      padding: 17px;
+      border: 1px solid rgba(237, 228, 214, .1);
+      border-radius: 8px;
+      background: rgba(95,103,73,.16);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .summary-row + .summary-row {
+      margin-top: 8px;
+    }
+
+    .summary-row.total {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(237, 228, 214, .1);
+      color: var(--cream);
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .territory {
+      padding: 0 8px 100px;
+    }
+
+    .territory-stage {
+      min-height: 620px;
+      display: flex;
+      align-items: end;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(18,15,13,.02), rgba(18,15,13,.8)),
+        url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2400&q=88");
+      background-size: cover;
+      background-position: center;
+      box-shadow: var(--shadow);
+      padding: 32px;
+      position: relative;
+    }
+
+    .territory-tags {
+      position: absolute;
+      top: 28px;
+      left: 28px;
+      right: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .territory-tags span {
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(18,15,13,.46);
+      backdrop-filter: blur(16px);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .territory-content {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 28px;
+      align-items: end;
+      position: relative;
+      z-index: 2;
+    }
+
+    .territory-content h2 {
+      max-width: 740px;
+    }
+
+    .territory-content p {
+      max-width: 620px;
+      margin-top: 20px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .side-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(18,15,13,.54);
+      backdrop-filter: blur(20px);
+    }
+
+    .side-card h3 {
+      font-size: 32px;
+      font-weight: 500;
+      letter-spacing: -.04em;
+      margin-bottom: 16px;
+    }
+
+    .side-item {
+      padding: 14px 0;
+      border-top: 1px solid rgba(237, 228, 214, .09);
+    }
+
+    .side-item b {
+      display: block;
+      font-weight: 600;
+    }
+
+    .side-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted-2);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .reviews {
+      padding: 0 8px 96px;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .review {
+      min-height: 260px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(29,23,18,.62);
+      backdrop-filter: blur(18px);
+    }
+
+    .stars {
+      color: var(--gold);
+      letter-spacing: .14em;
+    }
+
+    .review p {
+      margin-top: 26px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .person {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 26px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      color: var(--gold);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 24px;
+    }
+
+    .person b {
+      display: block;
+      font-weight: 600;
+    }
+
+    .person span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted-2);
+      font-size: 12px;
+    }
+
+    .admin-preview {
+      padding: 0 8px 100px;
+    }
+
+    .admin-board {
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 20px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(29,23,18,.66);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .admin-side {
+      padding: 20px;
+      border-radius: 8px;
+      background: rgba(12,10,8,.44);
+      border: 1px solid rgba(237,228,214,.08);
+    }
+
+    .admin-side h3 {
+      font-size: 30px;
+      font-weight: 500;
+      margin-bottom: 22px;
+    }
+
+    .admin-link {
+      padding: 12px;
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .admin-link.active {
+      background: rgba(95,103,73,.18);
+      color: var(--cream);
+    }
+
+    .admin-main {
+      display: grid;
+      gap: 16px;
+    }
+
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .admin-stat {
+      padding: 18px;
+      border: 1px solid rgba(237,228,214,.08);
+      border-radius: 8px;
+      background: rgba(237,228,214,.04);
+    }
+
+    .admin-stat span {
+      color: var(--muted-2);
+      font-size: 12px;
+    }
+
+    .admin-stat b {
+      display: block;
+      margin-top: 8px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 36px;
+      font-weight: 500;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid rgba(237,228,214,.08);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 14px;
+      border-top: 1px solid rgba(237,228,214,.08);
+      text-align: left;
+    }
+
+    th {
+      color: var(--gold);
+      font-weight: 600;
+      background: rgba(237,228,214,.04);
+    }
+
+    td {
+      color: var(--muted);
+    }
+
+    .status {
+      display: inline-flex;
+      padding: 6px 9px;
+      border-radius: 7px;
+      background: rgba(95,103,73,.18);
+      color: var(--cream);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .cta {
+      padding: 0 8px 46px;
+    }
+
+    .cta-card {
+      min-height: 430px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 28px;
+      align-items: end;
+      padding: 36px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(18,15,13,.18), rgba(18,15,13,.86)),
+        url("https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=2000&q=88");
+      background-size: cover;
+      background-position: center;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .cta-card h2 {
+      max-width: 760px;
+    }
+
+    .cta-card p {
+      max-width: 610px;
+      margin-top: 20px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .contact-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .contact-list a {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(18,15,13,.42);
+      backdrop-filter: blur(16px);
+      color: var(--cream);
+      font-weight: 600;
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 30px 8px 44px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      gap: 24px;
+      align-items: center;
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 28px;
+    }
+
+    .footer-contact {
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1100px) {
+      .header {
+        grid-template-columns: 1fr auto;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-stage {
+        min-height: 760px;
+      }
+
+      .hero-booking {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        width: auto;
+        margin: 0 28px 28px;
+      }
+
+      .intro,
+      .mission,
+      .feature,
+      .calendar-layout,
+      .territory-content,
+      .admin-board,
+      .cta-card {
+        grid-template-columns: 1fr;
+      }
+
+      .house-grid,
+      .reviews-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .house-card:nth-child(2),
+      .house-card:nth-child(4) {
+        transform: none;
+      }
+
+      .footer {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-links {
+        justify-content: flex-start;
+      }
+
+      .footer-contact {
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding: 0 14px;
+      }
+
+      .top-meta {
+        display: none;
+      }
+
+      .header {
+        top: 16px;
+        width: calc(100% - 28px);
+      }
+
+      .brand strong {
+        font-size: 19px;
+      }
+
+      .header-action {
+        padding: 0 12px;
+      }
+
+      .hero {
+        padding-top: 96px;
+        padding-bottom: 54px;
+      }
+
+      .hero-stage {
+        min-height: 740px;
+      }
+
+      .hero-content {
+        padding: 96px 22px 34px;
+      }
+
+      h1 {
+        font-size: 57px;
+      }
+
+      h2,
+      .section-heading h2 {
+        font-size: 48px;
+      }
+
+      .hero-top-line {
+        left: 22px;
+        right: 22px;
+      }
+
+      .quick-grid,
+      .house-grid,
+      .feature-grid,
+      .reviews-grid,
+      .admin-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-booking {
+        margin: 0 16px 18px;
+      }
+
+      .section-heading {
+        grid-template-columns: 1fr;
+      }
+
+      .mission,
+      .houses,
+      .feature,
+      .calendar-section,
+      .territory,
+      .reviews,
+      .admin-preview,
+      .cta,
+      .footer,
+      .intro {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .calendar-card,
+      .checkout-card,
+      .feature-panel,
+      .cta-card,
+      .territory-stage {
+        padding: 20px;
+      }
+
+      .calendar-day {
+        min-height: 54px;
+        padding: 7px;
+      }
+
+      .calendar-day small {
+        display: none;
+      }
+
+      th,
+      td {
+        padding: 10px;
+      }
+
+      table {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <div class="top-meta">
+    <span>presentation design</span>
+    <span>@EcoGorny.ru</span>
+    <span>renting houses</span>
+  </div>
+
+  <header class="header">
+    <a href="#" class="brand">
+      <div class="brand-mark">EG</div>
+      <div>
+        <strong>EcoGorny.ru</strong>
+        <span>lake forest booking</span>
+      </div>
+    </a>
+
+    <nav class="nav">
+      <a href="#houses">Домики</a>
+      <a href="#features">Удобства</a>
+      <a href="#calendar">Календарь</a>
+      <a href="#territory">Территория</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+
+    <a href="#booking" class="header-action">Забронировать</a>
+  </header>
+
+  <main class="page">
+    <section class="hero section">
+      <div class="hero-stage">
+        <div class="hero-top-line">
+          <span>Eco retreat concept</span>
+          <span>four cabins near the lake</span>
+        </div>
+
+        <div class="hero-content">
+          <div class="kicker">4 домика около озера · лесная чаща · баня · чан</div>
+          <h1>Премиальный отдых в лесу</h1>
+          <p>
+            EcoGorny.ru — камерная база из четырех домиков у озера. Панорамные окна, приватные террасы,
+            горячий чан, баня, квадроциклы и тишина, которую не купишь в городе.
+          </p>
+          <div class="hero-actions">
+            <a href="#houses" class="btn btn-primary">Выбрать домик</a>
+            <a href="#territory" class="btn btn-ghost">Смотреть территорию</a>
+          </div>
+        </div>
+
+        <div id="booking" class="hero-booking">
+          <h3>Быстрый подбор</h3>
+          <p>Даты, домик, гости и предварительная стоимость</p>
+
+          <div class="quick-grid">
+            <div class="quick-field">
+              <label>Заезд</label>
+              <strong>12 июля</strong>
+            </div>
+            <div class="quick-field">
+              <label>Выезд</label>
+              <strong>14 июля</strong>
+            </div>
+            <div class="quick-field">
+              <label>Домик</label>
+              <select id="quickHouse">
+                <option value="12900">Lake House</option>
+                <option value="14500">Forest A-Frame</option>
+                <option value="9900">Hideout</option>
+                <option value="16900">Panorama Lodge</option>
+              </select>
+            </div>
+            <div class="quick-field">
+              <label>Гости</label>
+              <strong>2–4 человека</strong>
+            </div>
+          </div>
+
+          <div class="quick-total">
+            <div>
+              <span>Предварительно за 2 ночи</span>
+              <b id="quickTotal">25 800 ₽</b>
+            </div>
+            <small>★ есть акции</small>
+          </div>
+
+          <a href="#calendar" class="btn btn-primary" style="width:100%; margin-top:10px;">Найти свободные даты</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <div class="marquee">
+        <span>EcoGorny.ru · 4 домика у озера · баня · чан · квадроциклы · камин · приватные террасы · быстрые бронирования · </span>
+        <span>EcoGorny.ru · 4 домика у озера · баня · чан · квадроциклы · камин · приватные террасы · быстрые бронирования · </span>
+        <span>EcoGorny.ru · 4 домика у озера · баня · чан · квадроциклы · камин · приватные террасы · быстрые бронирования · </span>
+      </div>
+    </section>
+
+    <section class="intro section">
+      <div>
+        <div class="section-label">О месте</div>
+        <h2>Создаём место, где природа помогает замедлиться</h2>
+      </div>
+      <p class="intro-copy">
+        EcoGorny.ru — уединённая база в окружении леса и воды. Здесь всё собрано для спокойного отдыха:
+        приватные домики, красивые виды, тёплый свет, баня, чан и возможность полностью отключиться от города.
+      </p>
+    </section>
+
+    <section class="mission section">
+      <div class="video-panel">
+        <button class="play" type="button" aria-label="Смотреть видео">▶</button>
+      </div>
+
+      <div class="stat-list">
+        <div class="stat">
+          <div class="stat-icon">⌂</div>
+          <div><b>4</b><span>домика всего</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">★</div>
+          <div><b>9.8</b><span>оценка гостей</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">↗</div>
+          <div><b>24/7</b><span>чат поддержки</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="houses" class="houses section">
+      <div class="section-heading">
+        <div>
+          <small>Выберите дом — мы позаботимся о мелочах</small>
+          <div class="filters">
+            <span class="filter active">Все</span>
+            <span class="filter">У воды</span>
+            <span class="filter">С баней</span>
+            <span class="filter">Для пары</span>
+            <span class="filter">С чаном</span>
+          </div>
+        </div>
+        <h2>Домики</h2>
+      </div>
+
+      <div class="house-grid">
+        <article class="house-card">
+          <div class="house-image" style="--img: url('https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1200&q=88');"></div>
+          <div class="house-content">
+            <span class="house-num">01</span>
+            <h3>Lake House</h3>
+            <p>Домик ближе всего к воде: панорамные окна, терраса и костровая зона.</p>
+            <div class="house-meta">
+              <span class="chip">4 гостя</span><span class="chip">58 м²</span><span class="chip">от 12 900 ₽</span>
+            </div>
+            <a href="#calendar" class="btn btn-primary">Выбрать</a>
+          </div>
+        </article>
+
+        <article class="house-card">
+          <div class="house-image" style="--img: url('https://images.unsplash.com/photo-1601918774946-25832a4be0d6?auto=format&fit=crop&w=1200&q=88');"></div>
+          <div class="house-content">
+            <span class="house-num">02</span>
+            <h3>Forest A-Frame</h3>
+            <p>Высокие потолки, хвойный лес вокруг, мягкий свет и баня рядом.</p>
+            <div class="house-meta">
+              <span class="chip">6 гостей</span><span class="chip">74 м²</span><span class="chip">от 14 500 ₽</span>
+            </div>
+            <a href="#calendar" class="btn btn-primary">Выбрать</a>
+          </div>
+        </article>
+
+        <article class="house-card">
+          <div class="house-image" style="--img: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=88');"></div>
+          <div class="house-content">
+            <span class="house-num">03</span>
+            <h3>Hideout</h3>
+            <p>Компактный домик для двоих: кофе на террасе, пледы и полная тишина.</p>
+            <div class="house-meta">
+              <span class="chip">2 гостя</span><span class="chip">42 м²</span><span class="chip">от 9 900 ₽</span>
+            </div>
+            <a href="#calendar" class="btn btn-primary">Выбрать</a>
+          </div>
+        </article>
+
+        <article class="house-card">
+          <div class="house-image" style="--img: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=88');"></div>
+          <div class="house-content">
+            <span class="house-num">04</span>
+            <h3>Panorama Lodge</h3>
+            <p>Самый видовой домик: большая терраса, горячий чан и утренний туман.</p>
+            <div class="house-meta">
+              <span class="chip">4 гостя</span><span class="chip">68 м²</span><span class="chip">от 16 900 ₽</span>
+            </div>
+            <a href="#calendar" class="btn btn-primary">Выбрать</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="features" class="feature section">
+      <div class="feature-panel">
+        <div class="section-label">Почему здесь хорошо</div>
+        <h2>Всё для красивых выходных без лишней суеты</h2>
+
+        <div class="feature-grid">
+          <div class="feature-item">
+            <div>♨</div>
+            <h3>Баня и чан</h3>
+            <p>Пар, горячая вода, хвойный воздух и вечерний лес.</p>
+          </div>
+          <div class="feature-item">
+            <div>⌁</div>
+            <h3>Озеро рядом</h3>
+            <p>Утренняя прогулка, рыбалка, SUP и закат у воды.</p>
+          </div>
+          <div class="feature-item">
+            <div>↯</div>
+            <h3>Квадроциклы</h3>
+            <p>Маршруты по лесу для тех, кто хочет добавить драйв.</p>
+          </div>
+          <div class="feature-item">
+            <div>✦</div>
+            <h3>Чат поддержки</h3>
+            <p>Гость пишет на сайте, админ отвечает из панели.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-image"></div>
+    </section>
+
+    <section id="calendar" class="calendar-section section">
+      <div class="section-label">Календарь и стоимость</div>
+      <h2>Свободные даты, акции и понятный расчёт</h2>
+
+      <div class="calendar-layout">
+        <div class="calendar-card">
+          <div class="calendar-top">
+            <div>
+              <h3>Июль 2026</h3>
+              <p>Lake House · цена за ночь</p>
+            </div>
+            <div class="arrows">
+              <button type="button">←</button>
+              <button type="button">→</button>
+            </div>
+          </div>
+
+          <div class="weekdays">
+            <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+          </div>
+          <div id="calendarGrid" class="dates"></div>
+
+          <div class="legend">
+            <span><i style="background:rgba(95,103,73,.62)"></i> Выбрано</span>
+            <span><i style="background:var(--gold)"></i> Акция</span>
+            <span><i style="background:rgba(237,228,214,.18)"></i> Занято</span>
+          </div>
+        </div>
+
+        <div class="checkout-card">
+          <h3>Оформление заявки</h3>
+          <p>Выберите услуги — сумма обновится автоматически.</p>
+
+          <form class="booking-form" onsubmit="event.preventDefault(); alert('Демо-форма: заявка не отправляется.');">
+            <input class="input" type="text" placeholder="Имя" required>
+            <input class="input" type="tel" placeholder="Телефон" required>
+            <select class="input">
+              <option>2 гостя</option>
+              <option>3 гостя</option>
+              <option>4 гостя</option>
+              <option>5 гостей</option>
+              <option>6 гостей</option>
+            </select>
+
+            <label class="chip"><input class="extra" type="checkbox" value="5000"> Баня · 5 000 ₽</label>
+            <label class="chip"><input class="extra" type="checkbox" value="6500"> Горячий чан · 6 500 ₽</label>
+            <label class="chip"><input class="extra" type="checkbox" value="8000"> Квадроциклы · 8 000 ₽</label>
+
+            <textarea class="input" placeholder="Комментарий"></textarea>
+
+            <div class="summary">
+              <div class="summary-row"><span>Аренда за 2 ночи</span><b id="rent">25 800 ₽</b></div>
+              <div class="summary-row"><span>Доп. услуги</span><b id="extras">0 ₽</b></div>
+              <div class="summary-row total"><span>Итого</span><b id="total">25 800 ₽</b></div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Подтвердить бронирование</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="territory" class="territory section">
+      <div class="territory-stage">
+        <div class="territory-tags">
+          <span>Lake House</span>
+          <span>Forest A-Frame</span>
+          <span>Hideout</span>
+          <span>Panorama Lodge</span>
+        </div>
+
+        <div class="territory-content">
+          <div>
+            <div class="section-label">Территория</div>
+            <h2>Лесная чаща, озеро и приватные зоны</h2>
+            <p>
+              Домики стоят отдельно друг от друга. У каждого — своя терраса, мангальная зона
+              и ощущение, что весь лес только ваш.
+            </p>
+          </div>
+
+          <div class="side-card">
+            <h3>Что рядом</h3>
+            <div class="side-item">
+              <b>2 минуты до озера</b>
+              <span>Пирс, пляжная зона и вечерний вид на воду.</span>
+            </div>
+            <div class="side-item">
+              <b>Баня и чан</b>
+              <span>Отдельная зона для вечернего отдыха.</span>
+            </div>
+            <div class="side-item">
+              <b>Лесные маршруты</b>
+              <span>Пешком, на велосипедах или квадроциклах.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews section">
+      <div class="section-label">Отзывы гостей</div>
+      <h2>Это как хороший бутик-отель, только в настоящем лесу</h2>
+
+      <div class="reviews-grid">
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <p>Очень красивая территория, домик чистый, всё новое. Вечером сидели у воды, утром пили кофе на террасе.</p>
+          <div class="person">
+            <div class="avatar">А</div>
+            <div><b>Алина</b><span>Lake House</span></div>
+          </div>
+        </article>
+
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <p>Баня и чан — просто топ. Сайт выглядит дорого, бронирование понятное, администратор быстро ответил.</p>
+          <div class="person">
+            <div class="avatar">М</div>
+            <div><b>Михаил</b><span>Panorama Lodge</span></div>
+          </div>
+        </article>
+
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <p>Брали домик на выходные. Приватно, тихо, красиво. Не было ощущения базы отдыха, скорее private retreat.</p>
+          <div class="person">
+            <div class="avatar">К</div>
+            <div><b>Ксения</b><span>Forest A-Frame</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="admin-preview section">
+      <div class="section-label">Будущая админ-панель</div>
+      <h2>Брони, цены, акции, CRM и аналитика в одном месте</h2>
+
+      <div class="admin-board">
+        <aside class="admin-side">
+          <h3>EcoGorny Admin</h3>
+          <div class="admin-link active">Главная</div>
+          <div class="admin-link">Бронирования</div>
+          <div class="admin-link">Домики</div>
+          <div class="admin-link">Цены и акции</div>
+          <div class="admin-link">CRM / Гости</div>
+          <div class="admin-link">Аналитика</div>
+        </aside>
+
+        <main class="admin-main">
+          <div class="admin-stats">
+            <div class="admin-stat"><span>Брони</span><b>42</b></div>
+            <div class="admin-stat"><span>Доход</span><b>1.2M</b></div>
+            <div class="admin-stat"><span>Гости</span><b>118</b></div>
+            <div class="admin-stat"><span>Чаты</span><b>9</b></div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Домик</th>
+                <th>Гость</th>
+                <th>Даты</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Lake House</td>
+                <td>Иван</td>
+                <td>10–12 июля</td>
+                <td>31 300 ₽</td>
+                <td><span class="status">booked</span></td>
+              </tr>
+              <tr>
+                <td>Panorama Lodge</td>
+                <td>Анна</td>
+                <td>18–20 июля</td>
+                <td>41 800 ₽</td>
+                <td><span class="status">paid</span></td>
+              </tr>
+              <tr>
+                <td>Hideout</td>
+                <td>Сергей</td>
+                <td>22–23 июля</td>
+                <td>9 900 ₽</td>
+                <td><span class="status">unpaid</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </main>
+      </div>
+    </section>
+
+    <section id="contacts" class="cta section">
+      <div class="cta-card">
+        <div>
+          <div class="section-label">EcoGorny.ru</div>
+          <h2>Забронируйте домик, пока свободны лучшие даты</h2>
+          <p>
+            Этот файл можно использовать как template.html для AI-агента: он возьмёт стиль,
+            блоки, карточки, календарь, форму брони и админ-превью как визуальную основу.
+          </p>
+        </div>
+
+        <div class="contact-list">
+          <a href="tel:+79990000000">+7 999 000-00-00</a>
+          <a href="mailto:hello@ecogorny.ru">hello@ecogorny.ru</a>
+          <a href="#booking">Перейти к бронированию</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <a href="#" class="brand">
+        <div class="brand-mark">EG</div>
+        <div>
+          <strong>EcoGorny.ru</strong>
+          <span>lake forest booking</span>
+        </div>
+      </a>
+
+      <div class="footer-links">
+        <a href="#houses">Домики</a>
+        <a href="#features">Удобства</a>
+        <a href="#calendar">Календарь</a>
+        <a href="#territory">Территория</a>
+        <a href="#contacts">Контакты</a>
+      </div>
+
+      <div class="footer-contact">
+        Аренда четырех домиков<br>
+        около озера в лесной чаще
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const formatRub = (value) => new Intl.NumberFormat("ru-RU").format(value) + " ₽";
+
+    const quickHouse = document.getElementById("quickHouse");
+    const quickTotal = document.getElementById("quickTotal");
+
+    function updateQuickTotal() {
+      quickTotal.textContent = formatRub(Number(quickHouse.value) * 2);
+      updateCheckoutTotal();
+    }
+
+    quickHouse.addEventListener("change", updateQuickTotal);
+
+    const calendarGrid = document.getElementById("calendarGrid");
+    const busyDays = new Set([5, 6, 13, 14, 19, 20, 27]);
+    const promoDays = new Set([3, 9, 15, 23, 29]);
+    const selectedDays = new Set([10, 11]);
+
+    for (let index = 0; index < 35; index++) {
+      const day = index - 2;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "calendar-day";
+
+      if (day < 1 || day > 31) {
+        btn.style.opacity = "0";
+        btn.style.pointerEvents = "none";
+        btn.innerHTML = "&nbsp;";
+      } else {
+        const price = promoDays.has(day) ? 9900 : (day % 6 === 0 ? 16900 : 12900);
+
+        if (busyDays.has(day)) btn.className += " busy";
+        if (promoDays.has(day)) btn.className += " promo";
+        if (selectedDays.has(day)) btn.className += " selected";
+
+        btn.innerHTML = `
+          <span>${day}</span>
+          <small>${formatRub(price)}</small>
+        `;
+
+        btn.addEventListener("click", () => {
+          if (btn.classList.contains("busy")) return;
+          btn.classList.toggle("selected");
+        });
+      }
+
+      calendarGrid.appendChild(btn);
+    }
+
+    const extraInputs = Array.from(document.querySelectorAll(".extra"));
+    const rentEl = document.getElementById("rent");
+    const extrasEl = document.getElementById("extras");
+    const totalEl = document.getElementById("total");
+
+    function updateCheckoutTotal() {
+      const rent = Number(quickHouse.value || 12900) * 2;
+      const extras = extraInputs.reduce((sum, input) => {
+        return sum + (input.checked ? Number(input.value) : 0);
+      }, 0);
+
+      rentEl.textContent = formatRub(rent);
+      extrasEl.textContent = formatRub(extras);
+      totalEl.textContent = formatRub(rent + extras);
+    }
+
+    extraInputs.forEach(input => input.addEventListener("change", updateCheckoutTotal));
+    updateQuickTotal();
+
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener("click", event => {
+        const target = document.querySelector(link.getAttribute("href"));
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  </script>
+</body>
+</html>

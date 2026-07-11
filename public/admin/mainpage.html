@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Главная страница | EcoGorniy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css?v=13">
+  <style>
+    body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    .admin-header {
+      position: sticky; top: 0; z-index: 100;
+      padding: 16px 32px; border-bottom: 1px solid var(--line);
+      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 16px; }
+    .admin-brand h1 { font-size: 24px; text-transform: none; margin: 0; letter-spacing: 0; }
+    
+    .admin-layout {
+      flex: 1; display: grid; grid-template-columns: 240px 1fr;
+      max-width: 1440px; margin: 0 auto; width: 100%;
+    }
+    
+    .admin-sidebar {
+      border-right: 1px solid var(--line); padding: 32px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    
+    .admin-menu-item {
+      padding: 12px 16px; border-radius: 8px;
+      color: var(--muted); font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+      text-decoration: none; display: block;
+    }
+    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    
+    .admin-content { padding: 32px; }
+    .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
+    .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
+    
+    /* Таблицы из SET 1 стилизация */
+    .admin-table {
+      width: 100%; border-collapse: collapse; text-align: left;
+      background: rgba(237, 228, 214, 0.02); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .admin-table th, .admin-table td {
+      padding: 16px; border-bottom: 1px solid var(--line);
+      font-size: 14px; color: var(--cream);
+    }
+    .admin-table th {
+      background: rgba(237, 228, 214, 0.05); color: var(--muted); font-weight: 600;
+      text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
+    
+    /* Скелетон загрузки */
+    .loading-area { opacity: 0.6; pointer-events: none; }
+  </style>
+  <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="brand-mark">E</div>
+      <h1>Панель управления</h1>
+    </div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminMenu">
+      <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
+      <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
+      <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
+      <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
+      <a href="/admin/mainpage.html" class="admin-menu-item active">Главный экран</a>
+      <a href="/admin/settings.html" class="admin-menu-item">Услуги / наполнение</a>
+    </aside>
+    
+    <main class="admin-content" id="adminContent">
+      <div class="admin-content-header">
+        <div>
+          <h2>Главный экран</h2>
+          <span style="color: var(--muted);">Управление контентом главной страницы сайта</span>
+        </div>
+        <button class="btn btn-primary" id="saveMainpageBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">Сохранить изменения</button>
+      </div>
+
+        <!-- Общие настройки -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Логотип</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Текст логотипа (если нет картинки)</label>
+              <input type="text" id="logoText" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Загрузить логотип (PNG/SVG)</label>
+              <input type="file" id="logoFile" accept="image/*" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
+              <input type="hidden" id="logoUrl">
+              <div id="logoPreview" style="margin-top: 8px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Глобальный фон -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-top: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Общий фон сайта (Глобальный)</h3>
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Загрузить фото для заднего фона</label>
+            <input type="file" id="globalBgFile" accept="image/*" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
+            <input type="hidden" id="globalBgUrl">
+            <div id="globalBgPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px; position: relative;">
+              <div style="position: absolute; inset: 0; background: rgba(18, 15, 13, 0.85); border-radius: 8px;"></div>
+              <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--gold);">Превью (фон будет затемнен)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Главный блок -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-top: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Главный блок (Hero)</h3>
+          <div style="display: grid; gap: 16px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Главный заголовок</label>
+              <input type="text" id="heroTitle" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Фоновое видео/фото</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="file" id="heroFile" accept="image/*,video/*" style="flex:1; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
+                <button type="button" onclick="document.getElementById('heroBgUrl').value=''; document.getElementById('heroPreview').style.backgroundImage='none'; document.getElementById('heroPreview').innerHTML='Фон очищен (прозрачный)';" style="background: var(--line); border: none; color: var(--cream); border-radius: 8px; padding: 0 16px; cursor: pointer;">Очистить</button>
+              </div>
+              <input type="hidden" id="heroBgUrl">
+              <div id="heroPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Главный текст описания</label>
+              <textarea id="heroDesc" rows="4" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;"></textarea>
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Бегущая строка</label>
+              <input type="text" id="marqueeText" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- О месте -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Видео "О месте"</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Заголовок блока</label>
+              <input type="text" id="aboutTitle" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; grid-column: span 2;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Текст описания "О месте"</label>
+              <textarea id="aboutDesc" rows="4" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;"></textarea>
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Ссылка на YouTube/VK/Vimeo</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="aboutVideoUrl" placeholder="Вставьте ссылку или код (iframe)..." style="flex:1; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+                <button type="button" id="clearVideoUrlBtn" class="btn btn-outline" style="padding: 12px;" title="Удалить ссылку">✖</button>
+              </div>
+            </div>
+            
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--gold); font-weight: 600;">ИЛИ Загрузить видео-файл (.mp4)</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="file" id="aboutVideoFile" accept="video/mp4,video/webm" style="flex:1; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
+                <button type="button" id="clearVideoFileBtn" class="btn btn-outline" style="padding: 9px 12px;" title="Удалить файл">✖</button>
+              </div>
+              <input type="hidden" id="aboutVideoFileUrl">
+              <div id="aboutVideoPreview" style="margin-top: 4px; font-size: 12px; color: var(--moss-2);"></div>
+            </div>
+
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                <input type="checkbox" id="aboutVideoAutoplay" style="width: 18px; height: 18px;">
+                Автовоспроизведение без звука (как GIF)
+              </label>
+            </div>
+
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; grid-column: span 2;">
+              <div style="display: flex; gap: 16px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                  <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Начало (сек)</label>
+                  <input type="number" id="aboutVideoStart" placeholder="0" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                  <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Конец (сек)</label>
+                  <input type="number" id="aboutVideoEnd" placeholder="Без ограничений" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+                </div>
+              </div>
+              <small style="color: var(--moss-2); font-size: 12px; opacity: 0.8; margin-top: 4px;">* Функция обрезки видео (начало/конец) корректно работает <b>только для загруженных видеофайлов (.mp4)</b> и YouTube. Для ссылок из VK Видео и RuTube конец видео обрезать невозможно из-за ограничений плееров.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Почему здесь хорошо -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Почему здесь хорошо (4 пункта)</h3>
+          <div style="display: grid; grid-template-columns: minmax(0, .55fr) minmax(0, 1fr); gap: 16px; margin-bottom: 16px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Маленькая подпись блока</label>
+              <input type="text" id="featuresLabel" placeholder="Например: Почему здесь хорошо" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Большой заголовок блока</label>
+              <input type="text" id="featuresTitle" placeholder="Например: Всё для красивых выходных без лишней суеты" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+          </div>
+          <div id="featuresContainer" style="display: grid; gap: 16px;">
+            <!-- Будут генерироваться через JS -->
+          </div>
+        </div>
+
+        <!-- Теги для домиков -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Теги фильтрации домиков</h3>
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Список тегов (через запятую)</label>
+            <input type="text" id="tagsInput" placeholder="У воды, С баней, Для пары, Семейный" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            <span style="font-size: 12px; color: var(--muted);">Эти теги можно будет присваивать домикам в разделе "Домики".</span>
+          </div>
+        </div>
+
+        <!-- Территория -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Карта территории</h3>
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Фоновое фото карты</label>
+            <input type="file" id="territoryFile" accept="image/*" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
+            <input type="hidden" id="territoryBgUrl">
+            <div id="territoryPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 18px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Заголовок блока территории</label>
+              <input type="text" id="territoryTitle" placeholder="Например: Лесная чаща, озеро и приватные зоны" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Заголовок правого блока</label>
+              <input type="text" id="territorySideTitle" placeholder="Например: Что рядом" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+          </div>
+
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Описание территории</label>
+            <textarea id="territoryDesc" rows="3" placeholder="Здесь администратор описывает территорию, приватность, расстояние между домиками и зоны отдыха." style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px; resize: vertical;"></textarea>
+          </div>
+
+          <div style="margin-top: 18px; display: grid; gap: 12px;">
+            <div style="color: var(--muted); font-size: 12px;">Эти три пункта выводятся в блоке «Что рядом» на главной странице.</div>
+            <div style="display: grid; grid-template-columns: minmax(140px, .45fr) minmax(220px, 1fr); gap: 12px;">
+              <input type="text" id="territoryItemTitle_0" placeholder="Пункт 1: 2 минуты до озера" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+              <input type="text" id="territoryItemDesc_0" placeholder="Описание пункта 1" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(140px, .45fr) minmax(220px, 1fr); gap: 12px;">
+              <input type="text" id="territoryItemTitle_1" placeholder="Пункт 2: Баня и чан" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+              <input type="text" id="territoryItemDesc_1" placeholder="Описание пункта 2" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(140px, .45fr) minmax(220px, 1fr); gap: 12px;">
+              <input type="text" id="territoryItemTitle_2" placeholder="Пункт 3: Лесные маршруты" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+              <input type="text" id="territoryItemDesc_2" placeholder="Описание пункта 3" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Отзывы гостей -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-top: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px;">
+            <div>
+              <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 6px;">Отзывы гостей</h3>
+              <span style="font-size: 12px; color: var(--muted);">До 3 отзывов. Нажмите «Добавить отзыв» и вставьте текст, имя и источник.</span>
+            </div>
+            <button type="button" class="btn btn-ghost" id="addReviewBtn" style="min-height: 36px; padding: 0 14px; border-color: var(--line);">+ Добавить отзыв</button>
+          </div>
+          <div style="display: grid; grid-template-columns: minmax(0, .55fr) minmax(0, 1fr); gap: 16px; margin-bottom: 16px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Маленькая подпись блока</label>
+              <input type="text" id="reviewsLabel" placeholder="Например: Отзывы гостей" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Большой заголовок блока</label>
+              <input type="text" id="reviewsTitle" placeholder="Например: Это как хороший бутик-отель, только в настоящем лесу" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+          </div>
+          <div id="reviewsContainer" style="display: grid; gap: 14px;"></div>
+        </div>
+
+        <!-- Контакты и Карта -->
+        <div style="background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; padding: 24px;">
+          <h3 style="margin-top: 0; color: var(--gold); font-size: 18px; margin-bottom: 16px;">Контакты и Карта (Футер)</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Маленькая подпись контактного блока</label>
+              <input type="text" id="contactLabel" placeholder="Например: ECO-GORNIY" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Заголовок контактного блока</label>
+              <input type="text" id="contactTitle" placeholder="Например: Забронируйте домик, пока свободны лучшие даты" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+          </div>
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Описание под заголовком контактного блока</label>
+            <textarea id="contactDesc" rows="3" placeholder="Например: Выберите домик и услуги, чтобы подать заявку." style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px; resize: vertical;"></textarea>
+          </div>
+          
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Загрузить фото для заднего фона</label>
+            <input type="file" id="contactBgFile" accept="image/*" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
+            <input type="hidden" id="contactBgUrl">
+            <div id="contactBgPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Телефон</label>
+              <input type="text" id="contactPhone" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Email</label>
+              <input type="email" id="contactEmail" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+          </div>
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Призыв к действию</label>
+            <input type="text" id="contactCta" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+          </div>
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Отметка на Яндекс Карте</label>
+              <button type="button" id="clearMapBtn" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;">Убрать точку</button>
+            </div>
+            <p style="font-size: 12px; color: var(--moss-2); margin-top: -4px; margin-bottom: 4px;">Кликните на карту, чтобы установить метку. Карта появится на сайте только если установлена метка.</p>
+            <div id="adminYandexMap" style="width: 100%; height: 350px; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); border-radius: 8px; overflow: hidden;"></div>
+            <input type="hidden" id="contactMapCoords">
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/admin-mainpage-meta.js?v=2"></script>
+  <script src="/js/admin-mainpage.js?v=10"></script>
+  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=3"></script>
+</body>
+</html>

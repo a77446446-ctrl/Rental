@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Настройки | EcoGorniy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css?v=13">
+  <style>
+    body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    .admin-header {
+      position: sticky; top: 0; z-index: 100;
+      padding: 16px 32px; border-bottom: 1px solid var(--line);
+      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 16px; }
+    .admin-brand h1 { font-size: 24px; text-transform: none; margin: 0; letter-spacing: 0; }
+    
+    .admin-layout {
+      flex: 1; display: grid; grid-template-columns: 240px 1fr;
+      max-width: 1440px; margin: 0 auto; width: 100%;
+    }
+    
+    .admin-sidebar {
+      border-right: 1px solid var(--line); padding: 32px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    
+    .admin-menu-item {
+      padding: 12px 16px; border-radius: 8px;
+      color: var(--muted); font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+      text-decoration: none; display: block;
+    }
+    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    
+    .admin-content { padding: 32px; position: relative; }
+    .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
+    .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
+    
+    .admin-table {
+      width: 100%; border-collapse: collapse; text-align: left;
+      background: rgba(237, 228, 214, 0.02); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .admin-table th, .admin-table td {
+      padding: 16px; border-bottom: 1px solid var(--line);
+      font-size: 14px; color: var(--cream);
+    }
+    .admin-table th {
+      background: rgba(237, 228, 214, 0.05); color: var(--muted); font-weight: 600;
+      text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
+    
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+      display: none; place-items: center; padding: 20px;
+    }
+    .modal-overlay.open { display: grid; }
+    
+    .modal {
+      background: var(--bg-2); border: 1px solid var(--line);
+      border-radius: 16px; width: 100%; max-width: 600px;
+      overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      padding: 24px; border-bottom: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h3 { font-size: 24px; margin: 0; text-transform: none; }
+    .modal-close {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 24px; cursor: pointer;
+    }
+    .modal-body { padding: 24px; display: grid; gap: 16px; max-height: 70vh; overflow-y: auto; }
+    
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 13px; color: var(--muted); font-weight: 600; }
+    .form-group input, .form-group textarea, .form-group select {
+      background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+      color: var(--cream); padding: 12px; border-radius: 8px; font-family: inherit;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none; border-color: var(--gold);
+    }
+    .form-group select {
+      color-scheme: dark;
+    }
+    .form-group select option {
+      background: var(--bg-2);
+      color: var(--cream);
+    }
+    .modal-footer {
+      padding: 24px; border-top: 1px solid var(--line);
+      display: flex; justify-content: space-between; gap: 12px;
+    }
+    
+    .settings-section {
+      margin-bottom: 48px;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="brand-mark">E</div>
+      <h1>Панель управления</h1>
+    </div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminMenu">
+      <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
+      <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
+      <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
+      <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
+      <a href="/admin/mainpage.html" class="admin-menu-item">Главный экран</a>
+      <a href="/admin/settings.html" class="admin-menu-item active">Услуги / наполнение</a>
+    </aside>
+    
+    <main class="admin-content">
+      <div class="settings-section">
+        <div class="admin-content-header">
+          <div>
+            <h2>Услуги / наполнение домов</h2>
+            <span style="color: var(--muted);">Платные услуги для заявки и справочник того, что есть внутри домиков</span>
+          </div>
+          <button class="btn btn-primary" id="addServiceBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">+ Добавить услугу</button>
+        </div>
+        
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Цена</th>
+              <th>Тип цены</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="servicesTableBody">
+            <tr><td colspan="5" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="settings-section" id="houseItemsSection">
+        <div class="admin-content-header">
+          <div>
+            <h2>Наполнение домов</h2>
+            <span style="color: var(--muted);">Фен, душевая, кухня, посуда, сауна и другие пункты для блока «Что есть в домике»</span>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(220px, 1fr) auto; gap: 12px; margin-bottom: 16px; max-width: 620px;">
+          <input type="text" id="houseItemName" placeholder="Например: Фен" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+          <button class="btn btn-primary" type="button" id="addHouseItemBtn" style="padding: 0 16px; min-height: 42px; font-size: 14px;">+ Добавить пункт</button>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr><th>Пункт наполнения</th><th>Статус</th><th>Действия</th></tr>
+          </thead>
+          <tbody id="houseItemsTableBody">
+            <tr><td colspan="3" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Модальное окно редактирования услуги -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Редактирование услуги</h3>
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="serviceId">
+        
+        <div class="form-group">
+          <label>Название услуги (например: Чан, Уголь, Розжиг)</label>
+          <input type="text" id="serviceName">
+        </div>
+        
+        <div class="form-group">
+          <label>Описание (необязательно)</label>
+          <textarea id="serviceDescription" rows="3"></textarea>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>Цена (₽)</label>
+            <input type="number" id="servicePrice" min="0" step="100">
+          </div>
+          <div class="form-group">
+            <label>Тип цены</label>
+            <select id="servicePriceType">
+              <option value="per_stay">За весь период</option>
+              <option value="per_day">За сутки</option>
+              <option value="per_guest">За гостя</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="serviceStatus">
+            <option value="active">Активна</option>
+            <option value="inactive">Скрыта</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button class="btn btn-ghost" id="deleteServiceBtn" style="border-color: #8b3c3c; color: #ff8c8c; display: none;">Удалить</button>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-ghost" id="cancelModalBtn">Отмена</button>
+          <button class="btn btn-primary" id="saveServiceBtn">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=3"></script>
+  <script src="/js/admin-settings.js?v=5"></script>
+  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=3"></script>
+</body>
+</html>

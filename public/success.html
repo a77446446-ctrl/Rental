@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <title>Заявка успешно отправлена | ECO-Gorniy</title>
+  <link rel="stylesheet" href="/css/main.css?v=11">
+    <style>
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px;
+      text-align: center;
+    }
+    .success-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 36px 24px;
+      max-width: 600px;
+      width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .success-icon {
+      font-size: 56px;
+      color: var(--gold);
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+    p {
+      color: var(--muted);
+      margin-top: 0;
+      margin-bottom: 24px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .details-box {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: left;
+      margin-bottom: 26px;
+    }
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      gap: 12px;
+    }
+    .detail-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    .detail-label {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+    .detail-value {
+      font-weight: 600;
+      color: #fff;
+      font-size: 14px;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .btn-home {
+      display: inline-block;
+      background: var(--gold);
+      color: #000;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .btn-home:hover {
+      background: #e5b869;
+      transform: translateY(-2px);
+    }
+    @media(min-width: 480px) {
+      .success-container { padding: 40px; border-radius: 24px; }
+      .success-icon { font-size: 64px; }
+      h1 { font-size: 32px; }
+      p { font-size: 16px; margin-bottom: 30px; }
+      .details-box { padding: 20px; margin-bottom: 30px; }
+      .detail-label { font-size: 14px; }
+      .detail-value { font-size: 15px; }
+      .btn-home { width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="success-container">
+    <div class="success-icon">✓</div>
+    <h1>Заявка принята!</h1>
+    <p>Ваша заявка на бронирование успешно создана.<br>Наш администратор свяжется с вами в ближайшее время для подтверждения.</p>
+    
+    <div class="details-box" id="bookingDetails" style="display: none;">
+      <div class="detail-item">
+        <span class="detail-label">Имя гостя</span>
+        <span class="detail-value" id="valName">—</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Телефон</span>
+        <span class="detail-value" id="valPhone">—</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Количество гостей</span>
+        <span class="detail-value" id="valGuests">—</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Заезд</span>
+        <span class="detail-value" id="valCheckIn">—</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Выезд</span>
+        <span class="detail-value" id="valCheckOut">—</span>
+      </div>
+      <div class="detail-item" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+        <span class="detail-label" style="color: var(--gold); font-size: 14px;">Итоговая стоимость</span>
+        <span class="detail-value" id="valPrice" style="color: var(--gold); font-size: 18px;">—</span>
+      </div>
+    </div>
+
+    <a href="/?openChat=true" class="btn-home">Вернуться на главную</a>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const payloadStr = sessionStorage.getItem('lastBookingPayload');
+        if (payloadStr) {
+          const payload = JSON.parse(payloadStr);
+          document.getElementById('bookingDetails').style.display = 'block';
+          
+          document.getElementById('valName').textContent = payload.guest_name;
+          document.getElementById('valPhone').textContent = payload.guest_phone;
+          document.getElementById('valGuests').textContent = payload.guests_count || 'Не указано';
+          document.getElementById('valCheckIn').textContent = window.EcoApi ? EcoApi.formatDateShort(payload.check_in) : payload.check_in;
+          document.getElementById('valCheckOut').textContent = window.EcoApi ? EcoApi.formatDateShort(payload.check_out) : payload.check_out;
+          document.getElementById('valPrice').textContent = window.EcoApi ? EcoApi.formatPrice(payload.total_price) : (payload.total_price + ' ₽');
+          
+          // Очищаем, чтобы при перезагрузке страницы не показывать старые данные вечно
+          // sessionStorage.removeItem('lastBookingPayload');
+          // sessionStorage.removeItem('lastBooking');
+        }
+      } catch(e) {
+        console.error('Ошибка загрузки деталей заявки:', e);
+      }
+    });
+  </script>
+  <script src="/js/pwa.js?v=3"></script>
+</body>
+</html>

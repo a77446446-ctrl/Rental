@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Сайт базы отдыха">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <title>Сайт базы отдыха — данные загружаются</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/main.css?v=23">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="app-loading-active">
+  <div id="global-bg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -6; background-size: cover; background-position: center; opacity: 0; transition: opacity 1s ease;"></div>
+  <div class="noise"></div>
+  <div class="top-fade"></div>
+
+  <div class="app-loading" id="app-loading" role="status" aria-live="polite">
+    <div class="tree-loader" aria-hidden="true">
+      <canvas id="scene" width="280" height="280" aria-label="Анимация дерева"></canvas>
+    </div>
+    <strong id="app-loading-title">Загружаем данные</strong>
+    <span id="app-loading-text">(Проверяем цены и календарь, подождите)</span>
+    <button type="button" class="btn btn-ghost app-loading-retry" id="app-loading-retry">Повторить загрузку</button>
+  </div>
+  <script src="/js/tree-loader.js"></script>
+
+  <div class="top-meta">
+    <span id="top-meta-hostname"></span>
+  </div>
+
+  <header class="header">
+    <a href="#" class="brand" id="main-logo-link">
+      <div class="brand-mark" id="main-logo-img">ЛГ</div>
+      <div>
+        <strong id="main-logo-text"></strong>
+        <span></span>
+      </div>
+    </a>
+
+    <nav class="nav">
+      <a href="#houses">Домики</a>
+      <a href="#features">Удобства</a>
+      <a href="#calendar">Календарь</a>
+      <a href="#territory">Территория</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+
+    <a href="#booking" class="header-action">Забронировать</a>
+    <button class="mobile-menu-toggle" type="button" aria-label="Открыть меню" aria-controls="mobileDrawer" aria-expanded="false" data-menu-toggle>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M7 8h10M9 12h6M7 16h10"></path>
+      </svg>
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" data-menu-close></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Навигация приложения">
+    <div class="mobile-drawer-head">
+      <div>
+        <span></span>
+        <strong>Меню</strong>
+      </div>
+      <button type="button" aria-label="Закрыть меню" data-menu-close>&times;</button>
+    </div>
+    <nav class="mobile-drawer-nav">
+      <a href="#houses">Домики</a>
+      <a href="#features">Удобства</a>
+      <a href="#calendar">Календарь</a>
+      <a href="#territory">Территория</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+  </aside>
+
+    <nav class="mobile-bottom-nav" aria-label="Быстрая навигация">
+      <a href="#houses" data-section-link="houses">
+        <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg></span>
+        Домики
+      </a>
+      <a href="#booking" data-section-link="booking">
+        <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span>
+        Бронь
+      </a>
+      <a href="#calendar" data-section-link="calendar">
+      <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3v4"/><path d="M17 3v4"/><path d="M4.5 8h15"/><rect x="4.5" y="5" width="15" height="15" rx="3"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M8 16h.01"/><path d="M12 16h.01"/></svg></span>
+      Календарь
+    </a>
+    <a href="#contacts" data-section-link="contacts">
+      <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 5.5 9 4l2.5 5-1.7 1.1a10 10 0 0 0 4.1 4.1l1.1-1.7 5 2.5-1.5 2.5c-.5.8-1.5 1.2-2.4 1A15.5 15.5 0 0 1 5.5 7.9c-.2-.9.2-1.9 1-2.4Z"/></svg></span>
+      Контакты
+    </a>
+  </nav>
+
+  <main class="page">
+    <section class="hero section" id="hero-section">
+      <div class="hero-stage">
+<div class="hero-content">
+          <div class="kicker" id="hero-kicker"></div>
+          <h1 id="hero-title"></h1>
+          <p id="hero-desc"></p>
+          <div class="hero-actions">
+            <a href="#houses" class="btn btn-primary">Выбрать домик</a>
+            <a href="#territory" class="btn btn-ghost">Смотреть территорию</a>
+          </div>
+        </div>
+
+        <div id="booking" class="hero-booking">
+          <h3>Быстрый подбор</h3>
+          <p>Даты, домик, гости и предварительная стоимость</p>
+
+          <div class="quick-grid">
+            <div class="quick-field">
+              <label>Заезд</label>
+              <input type="date" id="quickCheckIn">
+            </div>
+            <div class="quick-field">
+              <label>Выезд</label>
+              <input type="date" id="quickCheckOut">
+            </div>
+            <div class="quick-field">
+              <label>Домик</label>
+              <select id="quickHouse">
+              </select>
+            </div>
+            <div class="quick-field">
+              <label>Гости</label>
+              <select id="quickGuests">
+                <option value="2">2 гостя</option>
+                <option value="3">3 гостя</option>
+                <option value="4">4 гостя</option>
+                <option value="5">5 гостей</option>
+                <option value="6">6 гостей</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="quick-total">
+            <div>
+              <span>Предварительно</span>
+              <b id="quickTotal">0 ₽</b>
+            </div>
+            <button id="btnQuickSearch" type="button" class="btn btn-primary">Найти свободные даты</button>
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <div class="marquee" id="marquee-container">
+      </div>
+    </section>
+
+    <section class="intro section">
+      <div>
+        <div class="section-label">О месте</div>
+        <h2 id="about-title"></h2>
+      </div>
+      <p class="intro-copy" id="about-desc"></p>
+    </section>
+
+    <section class="mission section" id="about-video-section">
+      <div class="video-panel">
+        <button class="play" type="button" aria-label="Смотреть видео" id="playVideoBtn">▶</button>
+      </div>
+
+      <div class="stat-list">
+        <div class="stat">
+          <div class="stat-icon stat-icon-cabins" aria-hidden="true"></div>
+          <div><b id="stat-cabins-count">0</b><span>домики</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon stat-icon-rating" aria-hidden="true"></div>
+          <div><b>5</b><span>оценка гостей</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon stat-icon-support" aria-hidden="true"></div>
+          <div><b>24/7</b><span>вопросы по брони</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="houses" class="houses section">
+      <div class="section-heading">
+        <h2>Домики</h2>
+        <div class="section-heading-content">
+          <small>Выберите дом — мы позаботимся о мелочах</small>
+          <div class="filters" id="cabins-filters">
+            <span class="filter active" data-tag="all">Все</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="houses-search-result" style="display: none; padding: 20px; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 20px;">
+        <h3 style="margin-bottom: 8px; font-size: 20px;">Результаты поиска</h3>
+        <p id="houses-search-text" style="color: var(--muted);"></p>
+        <button type="button" class="btn btn-ghost" id="btnResetSearch" style="margin-top: 12px; border: 1px solid var(--line);">Сбросить поиск</button>
+      </div>
+
+      <div class="house-grid" id="houses-grid">
+        <!-- Сюда подставляются домики из API -->
+      </div>
+    </section>
+
+    <section id="features" class="feature section">
+      <div class="feature-panel">
+        <div class="section-label" id="features-label">Почему здесь хорошо</div>
+        <h2 id="features-title"></h2>
+
+        <div class="feature-grid" id="features-grid">
+        </div>
+      </div>
+
+      <div class="feature-image" id="features-main-image" style="position: relative; overflow: hidden; border-radius: 12px;"></div>
+    </section>
+
+    <section id="calendar" class="calendar-section section">
+      <div class="section-label">Календарь и стоимость</div>
+      <h2>Свободные даты, акции и понятный расчёт</h2>
+
+      <div class="calendar-layout">
+        <div class="calendar-card">
+          <div class="calendar-top">
+            <div>
+              <h3 id="cal-title">Загрузка...</h3>
+              <p id="cal-subtitle">Выберите домик</p>
+            </div>
+            <div class="arrows">
+              <button type="button" id="cal-prev">←</button>
+              <button type="button" id="cal-next">→</button>
+            </div>
+          </div>
+
+          <div class="weekdays">
+            <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+          </div>
+          <div id="calendarGrid" class="dates"></div>
+
+          <div class="legend">
+            <span><i style="background:rgba(95,103,73,.62)"></i> Выбрано</span>
+            <span><i class="legend-promo" aria-hidden="true"></i> Акция</span>
+            <span><i style="background:rgba(237,228,214,.18)"></i> Занято</span>
+          </div>
+          <div id="promo-info-container" style="display: none; margin-top: 15px; padding: 12px; background: rgba(187, 164, 111, 0.08); border: 1px dashed rgba(187, 164, 111, 0.3); border-radius: 8px; font-size: 13px; color: var(--gold); text-align: left;">
+            <strong style="display: block; margin-bottom: 4px;">Акция:</strong>
+            <span id="promo-info-text"></span>
+          </div>
+        </div>
+
+        <div class="checkout-card">
+          <h3>Оформление заявки</h3>
+          <p id="checkout-time-info">Заезд с 16:00, выезд до 14:00 (МСК). Выберите услуги — сумма обновится автоматически.</p>
+
+          <form id="checkoutForm" class="booking-form">
+            <input type="hidden" id="checkoutCabinId">
+            <div id="checkoutSelectedInfo" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="margin-bottom: 10px; font-size: 0.9em; color: var(--text);">
+                <span style="color: var(--muted); display: inline-block; width: 60px;">Даты:</span> 
+                <b id="checkoutDatesInfo">Не выбраны</b>
+              </div>
+              <div style="display: flex; align-items: center; font-size: 0.9em; color: var(--text);">
+                <span style="color: var(--muted); display: inline-block; width: 60px;">Гости:</span> 
+                <input type="hidden" id="checkoutGuests" value="2">
+                <div class="guest-stepper" id="checkoutGuestsControl" aria-label="Количество гостей">
+                  <button type="button" class="guest-stepper-btn" data-action="decrease" aria-label="Уменьшить количество гостей">−</button>
+                  <span id="checkoutGuestsLabel">2 гостя</span>
+                  <button type="button" class="guest-stepper-btn" data-action="increase" aria-label="Увеличить количество гостей">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <input class="input" type="text" id="guestName" placeholder="Имя" required>
+            <input class="input" type="tel" id="guestPhone" placeholder="Телефон" required>
+            <input class="input" type="text" id="guestTelegram" placeholder="Telegram (опционально)">
+
+            <div class="extras-grid" id="extras-container">
+              <!-- Доп услуги подставляются из API -->
+            </div>
+
+            <textarea class="input" id="guestComment" placeholder="Комментарий"></textarea>
+
+            <div class="summary">
+              <div class="summary-row"><span>Аренда</span><b id="rent-total">0 ₽</b></div>
+              <div class="summary-row"><span>Доп. услуги</span><b id="extras-total">0 ₽</b></div>
+              <div class="summary-row total"><span>Итого</span><b id="grand-total">0 ₽</b></div>
+            </div>
+
+            <button class="btn btn-primary" type="submit" id="submitBookingBtn">Подтвердить бронирование</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="territory" class="territory section">
+      <div class="territory-stage" id="territory-stage">
+        <div class="section-label">Территория</div>
+        <div class="territory-tags" id="territory-tags-container">
+          <!-- Генерируется динамически из названий домиков -->
+        </div>
+
+        <div class="territory-content">
+          <div>
+            <h2 id="territory-title"></h2>
+            <p id="territory-desc"></p>
+          </div>
+
+          <div class="side-card">
+              <span id="territory-item-desc-0">Эти три пункта выводятся в блоке «Что рядом» на главной странице.</span>
+            </div>
+            <div class="side-item">
+              <b id="territory-item-title-1">Пункт правого блока 2</b>
+              <span id="territory-item-desc-1">Здесь администратор заполняет название и описание второго пункта.</span>
+            </div>
+            <div class="side-item">
+              <b id="territory-item-title-2">Пункт правого блока 3</b>
+              <span id="territory-item-desc-2">Здесь администратор заполняет название и описание третьего пункта.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews section">
+      <div class="section-label" id="reviews-label">Отзывы гостей</div>
+      <h2 id="reviews-title">Заголовок блока отзывов</h2>
+
+      <div class="reviews-grid" id="reviews-grid">
+        <article class="review review-placeholder">
+          <div class="stars-outline" aria-label="Можно поставить оценку">☆☆☆☆☆</div>
+          <p>Здесь администратор добавит текст отзыва гостя. Вставьте реальный отзыв из Яндекс Отзывов или другого источника в панели управления.</p>
+          <div class="person">
+            <div class="avatar">И</div>
+            <div><b>Имя</b><span>Источник отзыва</span></div>
+          </div>
+        </article>
+
+        <article class="review review-placeholder">
+          <div class="stars-outline" aria-label="Можно поставить оценку">☆☆☆☆☆</div>
+          <p>Добавьте второй отзыв в разделе «Главный экран». На сайте можно показать до трёх аккуратных карточек.</p>
+          <div class="person">
+            <div class="avatar">И</div>
+            <div><b>Имя</b><span>Источник отзыва</span></div>
+          </div>
+        </article>
+
+        <article class="review review-placeholder">
+          <div class="stars-outline" aria-label="Можно поставить оценку">☆☆☆☆☆</div>
+          <p>Добавьте третий отзыв, если нужно. Если отзывов меньше трёх, оставшиеся места будут подсказками для администратора.</p>
+          <div class="person">
+            <div class="avatar">И</div>
+            <div><b>Имя</b><span>Источник отзыва</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="contacts" class="cta section">
+      <div class="cta-card" id="contact-bg-card">
+        <div>
+          <div class="section-label" id="contact-section-label">Маленькая подпись контактного блока</div>
+          <h2 id="contact-title">Заголовок контактного блока</h2>
+          <p id="contact-desc">
+            Здесь администратор заполняет короткое описание контактного блока.
+          </p>
+        </div>
+
+        <div class="contact-list" id="contact-list">
+          <a id="contact-phone-link">Телефон из блока контактов</a>
+          <a id="contact-email-link">Email из блока контактов</a>
+          <a href="#booking" id="contact-cta-link">Текст кнопки заявки из админки</a>
+        </div>
+      </div>
+      
+      <div id="contact-map-container" style="margin-top: 32px; border-radius: 12px; overflow: hidden; width: 100%; height: 350px;">
+        <!-- Карта -->
+      </div>
+    </section>
+
+    <footer class="footer">
+      <a href="#" class="brand">
+        <div class="brand-mark" id="footer-brand-mark">ЛГ</div>
+        <div>
+          <strong id="footer-brand-name">Название из админки</strong>
+          <span>Подпись логотипа</span>
+        </div>
+      </a>
+
+      <div class="footer-links">
+        <a href="#houses">Домики</a>
+        <a href="#features">Удобства</a>
+        <a href="#calendar">Календарь</a>
+        <a href="#territory">Территория</a>
+        <a href="#contacts">Контакты</a>
+      </div>
+
+      <div class="footer-contact" id="footer-contact-info">
+        Телефон и email заполняются администратором
+      </div>
+    </footer>
+  </main>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Чат виджет -->
+  <div id="chat-widget" class="chat-widget">
+    <div class="chat-header" id="chat-header">
+      <span>Связаться с нами</span>
+      <button type="button" id="chat-toggle" aria-label="Открыть чат">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg>
+      </button>
+    </div>
+    <div class="chat-body" id="chat-body" style="display: none;">
+      <div class="chat-messages" id="chat-messages">
+        <!-- Сообщения -->
+      </div>
+      <form class="chat-form" id="chat-form">
+        <input type="file" id="chat-file-input" accept="image/*,video/*,audio/*" hidden>
+        <button type="button" class="chat-attach-btn" id="chat-attach-btn" title="Прикрепить файл">＋</button>
+        <input type="text" id="chat-input" placeholder="Введите сообщение..." autocomplete="off">
+        <button type="submit">➤</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Галерея модалка -->
+  <div class="gallery-modal-overlay" id="galleryModal">
+    <div class="gallery-modal">
+      <div class="gallery-modal-header">
+        <div>
+          <h3 id="galleryModalTitle">Фотографии домика</h3>
+          <div class="gallery-tabs" id="galleryTabs">
+            <button class="gallery-tab active" data-tab="all">Все</button>
+            <button class="gallery-tab" data-tab="main">Главная</button>
+            <button class="gallery-tab" data-tab="interior">Внутри</button>
+            <button class="gallery-tab" data-tab="exterior">Снаружи</button>
+          </div>
+        </div>
+        <button class="btn btn-ghost" id="closeGalleryBtn" style="min-height: 40px; width: 40px; padding: 0;">&times;</button>
+      </div>
+      <div class="gallery-modal-body" id="galleryModalBody">
+        <!-- Фотографии подгружаются сюда -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Видео модалка -->
+  <div class="gallery-modal-overlay" id="videoModal">
+    <div class="gallery-modal" style="max-width: 800px; background: transparent; box-shadow: none; border: none; padding: 0;">
+      <div class="gallery-modal-header" style="justify-content: flex-end; padding: 0; margin-bottom: 8px; border: none;">
+        <button class="btn btn-ghost" id="closeVideoBtn" style="min-height: 40px; width: 40px; padding: 0; color: #fff; background: rgba(0,0,0,0.5); border-radius: 50%; font-size: 24px;">&times;</button>
+      </div>
+      <div class="gallery-modal-body" style="padding: 0; overflow: hidden; border-radius: 12px; height: 450px;" id="videoModalBody">
+        <iframe id="videoIframe" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/api.js?v=7"></script>
+  <script src="/js/pwa.js?v=5"></script>
+  <script src="/js/chat.js?v=9"></script>
+  <script src="/js/calendar.js?v=10"></script>
+  <script src="/js/mobile-shell.js?v=6"></script>
+  <script src="/js/main.js?v=18"></script>
+</body>
+</html>

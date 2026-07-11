@@ -1,0 +1,104 @@
+{
+  "global_bg_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/6c859879-9d44-4075-a868-db11dc0062d0.png",
+  "logo": {
+    "url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/e56cad93-7cdc-4b49-a3bc-4c6f694ecca0.png",
+    "text": "ECO-Gorniy"
+  },
+  "hero": {
+    "title": "Классный  отдых в лесу",
+    "background_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/0d3e5bb6-661b-414a-b656-824337f4acb6.jpg",
+    "desc": "камерная база из четырех домиков у озера. Панорамные окна, приватные террасы, горячий чан, баня, квадроциклы и тишина, которую не купишь в городе."
+  },
+  "marquee": {
+    "text": "Атмосфера спокойствия      •     Уединение     •     Комфорт     •     Природа     •     Сауна в доме."
+  },
+  "about": {
+    "title": "О месте",
+    "video_url": "",
+    "video_file_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/576cc0cb-f160-436c-b804-3670880c6fa7.mp4",
+    "video_autoplay": true,
+    "video_start": 2,
+    "video_end": 6,
+    "desc": "уединённая база в окружении леса и воды. Здесь всё собрано для спокойного отдыха: приватные домики, красивые виды, тёплый свет, баня, чан и возможность полностью отключиться от города."
+  },
+  "features_meta": {
+    "label": "Почему здесь хорошо",
+    "title": "Все для классных выходных без лишней суеты"
+  },
+  "features": [
+    {
+      "title": "Сауна в доме",
+      "subtitle": "Для полного расслабления",
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/699de9df-230d-42b7-8490-621ece706bd2.jpg"
+    },
+    {
+      "title": "Озеро рядом",
+      "subtitle": "В 5 минутах ходьбы",
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/c8f2422c-7870-4aba-83cb-138d47e381cc.jpg"
+    },
+    {
+      "title": "Уют и комфорт",
+      "subtitle": "В каждом домике",
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/ffd09d94-027f-41dd-8002-8bf60c2a332e.jpg"
+    },
+    {
+      "title": "Природа",
+      "subtitle": "Чистый воздух и лес",
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/e6f35451-a886-41b2-9abf-0417ffd2c955.jpg"
+    }
+  ],
+  "territory": {
+    "background_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/627e40a2-0074-44fa-ad66-9e8299fbb366.jpg",
+    "title": "Лесная чаща, озеро и приватные зоны ",
+    "desc": "Домик стоит отдельно. У каждого — свой шатер, мангальная зона и ощущение, что весь лес только ваш.",
+    "side_title": "Что рядом ",
+    "items": [
+      {
+        "title": "5 минуты до озера",
+        "desc": "Пляжная зона и вечерний вид на воду."
+      },
+      {
+        "title": "Сауна",
+        "desc": "Отдельная зона для вечернего отдыха."
+      },
+      {
+        "title": "Лесные маршруты",
+        "desc": "Пешком, на велосипедах или квадроциклах."
+      }
+    ]
+  },
+  "contacts": {
+    "phone": "+7 (999) 98745555",
+    "email": "eco-gorniy.ru222222",
+    "cta_text": "Забронируйте домик пока свободно...22222",
+    "map_code": "55.909451900969174,38.26756915540729",
+    "background_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/a20ea5f1-c380-48ee-8b91-2a1395d74a15.jpg"
+  },
+  "reviews_meta": {
+    "label": "Отзывы гостей",
+    "title": "Домик в Пашуково у озера в березовом лесу!"
+  },
+  "reviews": [
+    {
+      "rating": 5,
+      "author": "Ольга Т",
+      "source": "Яндекс Отзывы",
+      "text": "Просто чудное место, нам всё понравилось, от локации до внутреннего комфорта! Спасибо большое за гостеприимство! Рекомендую к посещению.",
+      "placeholder": false
+    },
+    {
+      "rating": 5,
+      "author": "Яна С",
+      "source": "Яндекс Отзывы",
+      "text": "Если вы хотите отдохнуть от проблем и городской суеты, восстановить силы и установить душевное равновесие, то это самое подходящее место. Чистый воздух, спокойствие, тишина, превосходный дизайн дома и участка. Спасибо за райский уголок спокойствия и внимательное отношение!",
+      "placeholder": false
+    },
+    {
+      "rating": 5,
+      "author": "denis_tk",
+      "source": "Яндекс Отзывы",
+      "text": "Рекомендую всем кто хочет разгрузить голову от будничной суеты и отдохнуть.\nВ наличии есть всё что необходимо для отдыха, перечислять не имеет смысла.\nА за наличие сауны в домиках вообще отдельная благодарность.\nПрирода шикарная, озеро в шаговой доступности, кругом лес, воздух лёгкий.",
+      "placeholder": false
+    }
+  ]
+}

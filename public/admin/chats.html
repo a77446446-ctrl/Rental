@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Чаты | EcoGorniy Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css?v=13">
+  <style>
+    body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    .admin-header {
+      position: sticky; top: 0; z-index: 100;
+      padding: 16px 32px; border-bottom: 1px solid var(--line);
+      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 16px; }
+    .admin-brand h1 { font-size: 24px; text-transform: none; margin: 0; letter-spacing: 0; }
+    .admin-layout { flex: 1; display: grid; grid-template-columns: 240px 1fr; max-width: 1440px; margin: 0 auto; width: 100%; }
+    .admin-sidebar { border-right: 1px solid var(--line); padding: 32px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .admin-menu-item {
+      padding: 12px 16px; border-radius: 8px; color: var(--muted); font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: background 0.2s, color 0.2s; text-decoration: none; display: block;
+    }
+    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    .admin-content { padding: 32px; position: relative; }
+    .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
+    .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
+    .chat-admin-shell { display: grid; grid-template-columns: 360px 1fr; gap: 20px; min-height: 620px; }
+    .chat-list, .chat-thread {
+      background: rgba(237, 228, 214, 0.02); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+    }
+    .chat-list-head, .chat-thread-head { padding: 16px; border-bottom: 1px solid var(--line); }
+    .chat-list-head h3, .chat-thread-head h3 { margin: 0; color: var(--cream); font-size: 18px; text-transform: none; letter-spacing: 0; }
+    .chat-list-head span, .chat-thread-head span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .chat-list-body { max-height: 560px; overflow: auto; }
+    .conversation-item {
+      width: 100%; border: 0; border-bottom: 1px solid var(--line); padding: 14px 16px; text-align: left;
+      background: transparent; color: var(--cream); cursor: pointer; font-family: inherit; display: block;
+    }
+    .conversation-item:hover, .conversation-item.active { background: rgba(237, 228, 214, 0.055); }
+    .conversation-title { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-weight: 700; }
+    .conversation-last { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .unread-pill { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--gold); color: #18130f; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
+    .chat-thread { display: grid; grid-template-rows: auto 1fr auto; }
+    .messages-box { padding: 20px; overflow: auto; min-height: 420px; max-height: 520px; display: flex; flex-direction: column; gap: 12px; }
+    .message-row { display: flex; }
+    .message-row.admin { justify-content: flex-end; }
+    .message-bubble { max-width: 72%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: rgba(237, 228, 214, 0.05); color: var(--cream); font-size: 14px; line-height: 1.45; }
+    .message-row.admin .message-bubble { background: rgba(95, 103, 73, 0.28); border-color: rgba(187, 164, 111, 0.25); }
+    .message-meta { margin-top: 6px; color: var(--muted); font-size: 11px; }
+    .reply-form { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; padding: 16px; border-top: 1px solid var(--line); }
+    .reply-form textarea {
+      min-height: 46px; max-height: 140px; resize: vertical; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+      color: var(--cream); padding: 12px 14px; border-radius: 8px; font-family: inherit; font-size: 14px; color-scheme: dark;
+    }
+    .reply-form textarea:focus { outline: none; border-color: var(--gold); background: rgba(237, 228, 214, 0.08); }
+    .admin-chat-attach {
+      width: 46px; height: 46px; padding: 0; border: 1px solid var(--line); border-radius: 8px;
+      background: rgba(237, 228, 214, 0.05); color: var(--gold); cursor: pointer; font-size: 22px;
+    }
+    .admin-chat-attach:hover { background: rgba(95, 103, 73, 0.24); color: var(--cream); }
+    .message-attachment { display: grid; gap: 8px; }
+    .message-attachment img, .message-attachment video {
+      display: block; width: 260px; max-width: 100%; border-radius: 8px; border: 1px solid var(--line);
+    }
+    .message-attachment audio { width: 260px; max-width: 100%; }
+    .message-attachment a { color: var(--cream); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+    .empty-state { padding: 32px; text-align: center; color: var(--muted); }
+    @media (max-width: 980px) { .chat-admin-shell { grid-template-columns: 1fr; } }
+    @media (max-width: 760px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar { border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
+      .admin-content { padding: 20px; }
+      .admin-content-header h2 { font-size: 34px; }
+      .reply-form { grid-template-columns: 1fr; }
+    }
+  </style>
+  <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="brand-mark">E</div>
+      <h1>Панель управления</h1>
+    </div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminMenu">
+      <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
+      <a href="/admin/chats.html" class="admin-menu-item active">Чаты</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
+      <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
+      <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
+      <a href="/admin/mainpage.html" class="admin-menu-item">Главный экран</a>
+      <a href="/admin/settings.html" class="admin-menu-item">Услуги / наполнение</a>
+    </aside>
+
+    <main class="admin-content">
+      <div class="admin-content-header">
+        <div>
+          <h2>Чаты</h2>
+          <span style="color: var(--muted);">Сообщения гостей из виджета поддержки</span>
+        </div>
+      </div>
+
+      <div class="chat-admin-shell">
+        <section class="chat-list">
+          <div class="chat-list-head">
+            <h3>Диалоги</h3>
+            <span id="chatListMeta">Загрузка...</span>
+          </div>
+          <div id="chatList" class="chat-list-body">
+            <div class="empty-state">Загрузка чатов...</div>
+          </div>
+        </section>
+
+        <section class="chat-thread">
+          <div class="chat-thread-head">
+            <h3 id="threadTitle">Выберите диалог</h3>
+            <span id="threadMeta">История сообщений появится здесь</span>
+          </div>
+          <div id="messagesBox" class="messages-box">
+            <div class="empty-state">Пока не выбран ни один чат</div>
+          </div>
+          <form id="replyForm" class="reply-form">
+            <input type="file" id="adminChatFileInput" accept="image/*,video/*,audio/*" hidden>
+            <button id="adminChatAttachBtn" type="button" class="admin-chat-attach" title="Прикрепить файл" disabled>＋</button>
+            <textarea id="replyInput" placeholder="Ответить гостю..." disabled></textarea>
+            <button id="replyBtn" type="submit" class="btn btn-primary" style="min-height: 46px; padding: 0 20px;" disabled>Отправить</button>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/admin-chats.js?v=3"></script>
+  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=3"></script>
+</body>
+</html>

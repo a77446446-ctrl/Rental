@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <title>Подробно о домике | EcoGorniy.ru</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/main.css?v=13">
+  <style>
+    /* Специфичные стили для cabin.html */
+    .cabin-hero {
+      position: relative;
+      height: 70vh;
+      min-height: 500px;
+      display: flex;
+      align-items: flex-end;
+      padding: 40px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 60px;
+      border: 1px solid var(--line);
+    }
+    .cabin-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+    }
+    .cabin-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(18, 15, 13, 1) 0%, rgba(18, 15, 13, 0.4) 50%, rgba(18, 15, 13, 0.1) 100%);
+      z-index: 2;
+    }
+    .cabin-hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 800px;
+    }
+    .cabin-hero-content h1 {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: var(--gold);
+    }
+    .cabin-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .cabin-meta .chip {
+      background: rgba(237, 228, 214, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(237, 228, 214, 0.2);
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+    
+    .cabin-details-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 60px;
+      margin-bottom: 80px;
+    }
+    @media (max-width: 900px) {
+      .cabin-details-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+    .cabin-description p {
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--cream);
+      margin-bottom: 24px;
+      white-space: pre-wrap;
+    }
+    
+    .amenities-section {
+      background: var(--bg-1);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .amenities-section h3 {
+      font-size: 24px;
+      color: var(--gold);
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+    .amenities-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .amenity-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      color: var(--cream);
+    }
+    .amenity-item svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--gold);
+      fill: none;
+    }
+
+    .photo-section {
+      margin-bottom: 60px;
+    }
+    .photo-section h2 {
+      font-size: 32px;
+      color: var(--gold);
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
+    }
+    
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    
+    .floating-booking {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: rgba(18, 15, 13, 0.85);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--gold);
+      padding: 16px 32px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    .floating-booking .price {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .floating-booking .price span {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    
+    @media (max-width: 600px) {
+      .cabin-hero {
+        padding: 20px;
+        height: 50vh;
+        min-height: 400px;
+      }
+      .cabin-hero-content h1 {
+        font-size: 36px;
+      }
+      .floating-booking {
+        width: 90%;
+        bottom: 20px;
+        padding: 12px 20px;
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+      .floating-booking .btn {
+        width: 100%;
+      }
+      .photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+    }
+    
+    /* Для элементов галереи при клике */
+    .gallery-thumb {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .gallery-thumb:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border-color: var(--gold);
+    }
+
+    .cabin-main-col {
+      min-width: 0;
+    }
+    .cabin-description,
+    .amenities-section {
+      background: rgba(29, 23, 18, .52);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 26px;
+    }
+    .amenities-section {
+      position: sticky;
+      top: 138px;
+    }
+    .photo-grid {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .photo-grid .gallery-modal-item {
+      aspect-ratio: 4 / 5;
+      background: rgba(237, 228, 214, .045);
+    }
+    .photo-grid .gallery-modal-item img {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      object-fit: cover;
+    }
+    .cabin-footer-copy {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .cabin-footer-copy strong {
+      color: var(--cream);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 24px;
+      line-height: .95;
+    }
+    .cabin-contact-links {
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .cabin-contact-links a {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(237, 228, 214, .045);
+      color: var(--cream);
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    @media (max-width: 760px) {
+      .cabin-hero {
+        min-height: 320px;
+        height: 46vh;
+        margin-bottom: 28px;
+        border-radius: 12px;
+      }
+      .cabin-hero-content h1 {
+        font-size: 34px;
+        line-height: .95;
+      }
+      .cabin-details-grid {
+        gap: 18px;
+        margin-bottom: 42px;
+      }
+      .cabin-description,
+      .amenities-section {
+        padding: 18px !important;
+      }
+      .amenities-section {
+        position: static;
+      }
+      .amenities-list {
+        gap: 12px;
+      }
+      .photo-section {
+        margin-bottom: 42px;
+      }
+      .photo-section h2 {
+        font-size: 28px;
+        margin-bottom: 14px;
+      }
+      .photo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .photo-grid .gallery-modal-item {
+        height: auto;
+        aspect-ratio: 3 / 4;
+      }
+      .floating-booking {
+        width: min(360px, calc(100% - 28px));
+        bottom: max(12px, env(safe-area-inset-bottom));
+        padding: 10px 12px;
+        border-radius: 18px;
+        gap: 10px;
+      }
+      .floating-booking .price {
+        font-size: 22px;
+        line-height: 1;
+      }
+      .floating-booking .btn {
+        min-height: 44px;
+      }
+      .cabin-footer {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+      .cabin-contact-links {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .cabin-contact-links a {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="top-fade"></div>
+
+  <header class="header">
+    <a href="/" class="brand">
+      <div class="brand-mark" id="cabin-logo-img">EG</div>
+      <div>
+        <strong id="cabin-logo-text">EcoGorniy</strong>
+        <span>Уединенный отдых</span>
+      </div>
+    </a>
+
+    <nav class="nav">
+      <a href="/#houses">Домики</a>
+      <a href="/#features">Удобства</a>
+      <a href="/#calendar">Календарь</a>
+      <a href="/#territory">Территория</a>
+      <a href="/#contacts">Контакты</a>
+    </nav>
+  </header>
+
+  <main class="page" id="cabinContent">
+    <div style="text-align: center; padding: 100px 0; color: var(--muted);">Загрузка информации о домике...</div>
+  </main>
+
+  <footer class="footer cabin-footer section" id="contacts">
+    <a href="/" class="brand">
+      <div class="brand-mark" id="cabin-footer-brand-mark">EG</div>
+      <div>
+        <strong id="cabin-footer-brand-name">EcoGorniy</strong>
+        <span>Уединенный отдых</span>
+      </div>
+    </a>
+    <div class="cabin-footer-copy">
+      <strong id="cabin-footer-title">EcoGorniy</strong>
+      <span>Уединенный отдых в окружении первозданной природы.</span>
+    </div>
+    <div class="footer-links cabin-contact-links" id="cabin-contact-links"></div>
+  </footer>
+
+  <!-- Галерея (Модальное окно просмотра полноразмерных фото) -->
+  <div class="gallery-modal-overlay" id="galleryModal">
+    <div class="gallery-modal" style="width: 100%; height: 100vh; max-width: none; max-height: none; border-radius: 0; background: #000; border: none;">
+      <div class="gallery-modal-header" style="position: absolute; top: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); border: none;">
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <h3 id="galleryModalTitle" style="color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); margin:0;">Фотографии</h3>
+          <span id="galleryModalCount" style="color: var(--muted); font-size: 14px;"></span>
+        </div>
+        <button class="modal-close" id="closeGalleryBtn" style="color: #fff; font-size: 32px; background: none; border: none; cursor: pointer;">&times;</button>
+      </div>
+      <div class="gallery-modal-body" id="galleryModalBody" style="padding: 0; display: flex; align-items: center; justify-content: center; height: 100%; position: relative;">
+        <!-- Сюда вставляется активное фото -->
+      </div>
+      
+      <!-- Элементы навигации -->
+      <button id="galleryPrevBtn" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--line); width: 50px; height: 50px; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 100; transition: 0.2s;">&#10094;</button>
+      <button id="galleryNextBtn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--line); width: 50px; height: 50px; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 100; transition: 0.2s;">&#10095;</button>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=4"></script>
+  <script src="/js/cabin.js?v=4"></script>
+  <script src="/js/pwa.js?v=3"></script>
+</body>
+</html>
+

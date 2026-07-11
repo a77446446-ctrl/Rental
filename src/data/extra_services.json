@@ -1,0 +1,79 @@
+[
+  {
+    "id": "a5f77615-9f2c-42d1-b0fc-e1074ccb1984",
+    "slug": "banya",
+    "name": "Русская баня",
+    "description": "Классическая русская баня на дровах с берёзовыми вениками. Парная, помывочная, комната отдыха.",
+    "price": 3500,
+    "price_type": "",
+    "is_active": false,
+    "sort_order": 0,
+    "created_at": "2026-07-04T09:21:38.637588+00:00"
+  },
+  {
+    "id": "7938c41f-4150-40ce-a5ef-e1e5e06190bf",
+    "slug": "chan",
+    "name": "Горячий чан",
+    "description": "Купание в открытом горячем чане с видом на озеро. Дрова, растопка, полотенца включены.",
+    "price": 4000,
+    "price_type": "per_booking",
+    "is_active": true,
+    "sort_order": 2,
+    "created_at": "2026-07-04T09:21:38.637588+00:00"
+  },
+  {
+    "id": "ff63de6c-1e1f-46ac-9240-c2f51fe32e24",
+    "slug": "kvadrocikl",
+    "name": "Квадроцикл",
+    "description": "Прокат квадроцикла для прогулки по горным тропам. Инструктаж и шлем включены. 1 час.",
+    "price": 3000,
+    "price_type": "per_person",
+    "is_active": true,
+    "sort_order": 3,
+    "created_at": "2026-07-04T09:21:38.637588+00:00"
+  },
+  {
+    "id": "aa4fb954-6a31-45e0-a9a4-78eab2951b1b",
+    "slug": "sup-board",
+    "name": "SUP-борд",
+    "description": "Аренда SUP-борда для прогулки по озеру. Жилет и весло включены. На весь день.",
+    "price": 1500,
+    "price_type": "per_person",
+    "is_active": true,
+    "sort_order": 4,
+    "created_at": "2026-07-04T09:21:38.637588+00:00"
+  },
+  {
+    "id": "3e8dfc39-a7a2-4140-9694-7f7f156849f9",
+    "slug": "mangal",
+    "name": "Мангальный набор",
+    "description": "Мангал, решётка, шампуры, уголь, розжиг — полный комплект для шашлыка.",
+    "price": 800,
+    "price_type": "per_booking",
+    "is_active": true,
+    "sort_order": 5,
+    "created_at": "2026-07-04T09:21:38.637588+00:00"
+  },
+  {
+    "id": "3309c402-7060-4a1b-bae0-b895dacc7dc9",
+    "slug": "zavtrak",
+    "name": "Завтрак",
+    "description": "Домашний завтрак с доставкой в домик: каша, яйца, свежий хлеб, джем, чай или кофе.",
+    "price": 600,
+    "price_type": "",
+    "is_active": false,
+    "sort_order": 0,
+    "created_at": "2026-07-04T09:21:38.637588+00:00"
+  },
+  {
+    "id": "3104583d-d42f-449f-90db-8276c9637a1c",
+    "slug": "rybalka",
+    "name": "Набор для рыбалки",
+    "description": "Удочка, снасти, наживка, стульчик. Прокат на весь день.",
+    "price": 1200,
+    "price_type": "per_booking",
+    "is_active": true,
+    "sort_order": 7,
+    "created_at": "2026-07-04T09:21:38.637588+00:00"
+  }
+]

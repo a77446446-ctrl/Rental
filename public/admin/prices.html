@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Цены и Промо | EcoGorniy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css?v=13">
+  <style>
+    body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    .admin-header {
+      position: sticky; top: 0; z-index: 100;
+      padding: 16px 32px; border-bottom: 1px solid var(--line);
+      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 16px; }
+    .admin-brand h1 { font-size: 24px; text-transform: none; margin: 0; letter-spacing: 0; }
+    
+    .admin-layout {
+      flex: 1; display: grid; grid-template-columns: 240px 1fr;
+      max-width: 1440px; margin: 0 auto; width: 100%;
+    }
+    
+    .admin-sidebar {
+      border-right: 1px solid var(--line); padding: 32px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    
+    .admin-menu-item {
+      padding: 12px 16px; border-radius: 8px;
+      color: var(--muted); font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+      text-decoration: none; display: block;
+    }
+    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    
+    .admin-content { padding: 32px; position: relative; }
+    .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
+    .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
+    
+    .prices-layout {
+      display: grid; grid-template-columns: 1fr 380px; gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(237, 228, 214, 0.02); border-radius: 12px;
+      border: 1px solid var(--line); padding: 24px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; color: var(--muted); font-weight: 600; }
+    .form-group select, .form-group input {
+      background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+      color: var(--cream); padding: 12px; border-radius: 8px; font-family: inherit;
+    }
+    .form-group select { color-scheme: dark; }
+    .form-group select option { background: var(--bg-2); color: var(--cream); }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); }
+    
+    /* Calendar styles */
+    .calendar-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px;
+    }
+    .calendar-nav-btn {
+      background: transparent; border: 1px solid var(--line);
+      color: var(--cream); width: 36px; height: 36px; border-radius: 8px;
+      cursor: pointer; display: grid; place-items: center; transition: background 0.2s;
+    }
+    .calendar-nav-btn:hover { background: rgba(237, 228, 214, 0.1); }
+    
+    .calendar-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
+    }
+    .weekday {
+      text-align: center; color: var(--muted); font-size: 11px; font-weight: 600;
+      text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+      margin-bottom: 8px;
+    }
+    .day-cell {
+      aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--line);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; transition: all 0.2s;
+      background: rgba(237, 228, 214, 0.02);
+    }
+    .day-cell:hover { background: rgba(237, 228, 214, 0.08); }
+    
+    .day-cell.weekend { color: #a83232; }
+    .day-cell.sunday, .day-cell.saturday { color: #a83232; }
+    .day-cell.friday { color: #d49a6a; }
+    .day-cell.holiday { background: rgba(255, 100, 100, 0.1); border-color: rgba(255, 100, 100, 0.3); color: #a83232; }
+    .day-cell.holiday::after {
+      content: "Праздник"; position: absolute; bottom: 4px; font-size: 9px;
+      color: #a83232;
+    }
+    
+    .day-cell.past { opacity: 0.3; pointer-events: none; }
+    .day-cell.selected { border-color: var(--gold); background: rgba(187, 164, 111, 0.15); }
+    .day-cell.external { border-color: rgba(212, 107, 107, 0.45); background: rgba(120, 46, 46, 0.16); color: #f0c6b8; cursor: not-allowed; }
+    .day-cell.external .external-source { color: #ffb4a2; font-size: 10px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    .day-price {
+      font-size: 10px; color: var(--gold); margin-top: 4px;
+    }
+    .day-promo {
+      position: absolute; top: 2px; right: 4px; font-size: 10px; color: var(--gold);
+    }
+    
+    .checkbox-wrap {
+      display: flex; align-items: center; gap: 12px; cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-wrap input { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+    
+    .legend {
+      display: flex; gap: 16px; margin-top: 24px; font-size: 12px; color: var(--muted);
+      flex-wrap: wrap;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 4px; }
+    
+  </style>
+  <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="brand-mark">E</div>
+      <h1>Панель управления</h1>
+    </div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminMenu">
+      <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
+      <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/prices.html" class="admin-menu-item active">Цены</a>
+      <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
+      <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
+      <a href="/admin/mainpage.html" class="admin-menu-item">Главный экран</a>
+      <a href="/admin/settings.html" class="admin-menu-item">Услуги / наполнение</a>
+    </aside>
+    
+    <main class="admin-content">
+      <div class="admin-content-header">
+        <div>
+          <h2>Управление ценами</h2>
+          <span style="color: var(--muted);">Календарь цен и акций</span>
+        </div>
+        <div class="form-group" style="margin: 0; min-width: 260px;">
+          <select id="cabinSelector">
+            <option value="">Загрузка домиков...</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="prices-layout" id="pricesLayout" style="display: none;">
+        <!-- Левая часть: Календарь -->
+        <div class="panel">
+          <div class="calendar-header" style="margin-bottom: 16px;">
+            <button class="calendar-nav-btn" id="prevMonth">❮</button>
+            <h3 id="currentMonthYear" style="font-size: 20px; font-weight: 500; margin: 0;"></h3>
+            <button class="calendar-nav-btn" id="nextMonth">❯</button>
+          </div>
+
+          <!-- Кнопки быстрого выбора дат -->
+          <div style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
+            <button class="btn btn-ghost" id="selAllMonth" style="min-height: 32px; padding: 0 12px; font-size: 11px;">Весь месяц</button>
+            <button class="btn btn-ghost" id="selWeekdays" style="min-height: 32px; padding: 0 12px; font-size: 11px;">Будни</button>
+            <button class="btn btn-ghost" id="selWeekends" style="min-height: 32px; padding: 0 12px; font-size: 11px;">Выходные</button>
+            <button class="btn btn-ghost" id="selHolidays" style="min-height: 32px; padding: 0 12px; font-size: 11px;">Праздники</button>
+            <button class="btn btn-ghost" id="selClear" style="min-height: 32px; padding: 0 12px; font-size: 11px; border-color: rgba(255, 255, 255, 0.1);">Снять выбор</button>
+          </div>
+          
+          <div class="calendar-grid">
+            <div class="weekday">Пн</div>
+            <div class="weekday">Вт</div>
+            <div class="weekday">Ср</div>
+            <div class="weekday">Чт</div>
+            <div class="weekday" style="color: #d49a6a;">Пт</div>
+            <div class="weekday weekend">Сб</div>
+            <div class="weekday weekend">Вс</div>
+          </div>
+          
+          <div class="calendar-grid" id="calendarDays">
+            <!-- Дни будут сгенерированы JS -->
+          </div>
+          
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background: rgba(255, 100, 100, 0.1); border: 1px solid rgba(255, 100, 100, 0.3);"></div> Выходные / Праздники</div>
+            <div class="legend-item"><div class="legend-dot" style="background: rgba(187, 164, 111, 0.15); border: 1px solid var(--gold);"></div> Выбрано</div>
+            <div class="legend-item"><div style="color: var(--gold); font-size: 14px;">★</div> Акция</div>
+          </div>
+        </div>
+        
+        <!-- Правая часть: Форма -->
+        <div class="panel" style="position: sticky; top: 100px;">
+          <h3 style="margin: 0 0 8px 0; font-size: 20px;">Настройки дат</h3>
+          <p style="color: var(--muted); font-size: 13px; margin: 0 0 24px 0;">Выбрано дней: <b id="selectedCount" style="color: var(--cream);">0</b></p>
+          
+          <div id="controlsContainer" style="opacity: 0.4; pointer-events: none;">
+            <div class="form-group">
+              <label>Особая цена (₽)</label>
+              <input type="number" id="customPriceInput" placeholder="Оставьте пустым для базовой">
+              <span style="font-size: 11px; color: var(--muted);">Переопределяет стандартную цену домика.</span>
+            </div>
+            
+            <div class="form-group">
+              <label class="checkbox-wrap">
+                <input type="checkbox" id="promoCheckbox">
+                Отметить как Акция
+              </label>
+              <div id="promoDescContainer" style="display: none; margin-top: 10px;">
+                <input type="text" id="promoDescInput" placeholder="Опишите акцию (например, 'Завтрак включен')" maxlength="150" style="font-size: 13px;">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="checkbox-wrap">
+                <input type="checkbox" id="closeDatesCheckbox">
+                Закрыть для бронирования
+              </label>
+            </div>
+            
+            <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 12px;">
+              <button class="btn btn-primary" id="savePricesBtn" style="width: 100%;">Сохранить настройки</button>
+              <button class="btn btn-ghost" id="clearPricesBtn" style="width: 100%; border-color: #8b3c3c; color: #ff8c8c;">Сбросить до базовых</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <script src="/js/api.js?v=3"></script>
+  <script src="/js/admin-prices.js?v=6"></script>
+  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=3"></script>
+</body>
+</html>

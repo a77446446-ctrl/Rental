@@ -1,0 +1,345 @@
+?<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Домики | EcoGorniy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css?v=13">
+  <style>
+    body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    .admin-header {
+      position: sticky; top: 0; z-index: 100;
+      padding: 16px 32px; border-bottom: 1px solid var(--line);
+      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 16px; }
+    .admin-brand h1 { font-size: 24px; text-transform: none; margin: 0; letter-spacing: 0; }
+    
+    .admin-layout {
+      flex: 1; display: grid; grid-template-columns: 240px 1fr;
+      max-width: 1440px; margin: 0 auto; width: 100%;
+    }
+    
+    .admin-sidebar {
+      border-right: 1px solid var(--line); padding: 32px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    
+    .admin-menu-item {
+      padding: 12px 16px; border-radius: 8px;
+      color: var(--muted); font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+      text-decoration: none; display: block;
+    }
+    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    
+    .admin-content { padding: 32px; position: relative; }
+    .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
+    .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
+    
+    .admin-table {
+      width: 100%; border-collapse: collapse; text-align: left;
+      background: rgba(237, 228, 214, 0.02); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .admin-table th, .admin-table td {
+      padding: 16px; border-bottom: 1px solid var(--line);
+      font-size: 14px; color: var(--cream);
+    }
+    .admin-table th {
+      background: rgba(237, 228, 214, 0.05); color: var(--muted); font-weight: 600;
+      text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
+    
+    .cabin-img {
+      width: 60px; height: 40px; border-radius: 4px; object-fit: cover;
+      background: var(--line);
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+      display: none; place-items: center; padding: 20px;
+    }
+    .modal-overlay.open { display: grid; }
+    
+    .modal {
+      background: var(--bg-2); border: 1px solid var(--line);
+      border-radius: 16px; width: 100%; max-width: 600px;
+      overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      padding: 24px; border-bottom: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h3 { font-size: 24px; margin: 0; text-transform: none; }
+    .modal-close {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 24px; cursor: pointer;
+    }
+    .modal-body { padding: 24px; display: grid; gap: 16px; max-height: 70vh; overflow-y: auto; }
+    
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 13px; color: var(--muted); font-weight: 600; }
+    .form-group input, .form-group textarea, .form-group select {
+      background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+      color: var(--cream); padding: 12px; border-radius: 8px; font-family: inherit;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none; border-color: var(--gold);
+    }
+    .form-group select {
+      color-scheme: dark; /* Применяет тёмную тему к нативному списку */
+    }
+    .form-group select option {
+      background: var(--bg-2);
+      color: var(--cream);
+    }
+    .modal-footer {
+      padding: 24px; border-top: 1px solid var(--line);
+      display: flex; justify-content: space-between; gap: 12px;
+    }
+    
+    /* Photo Gallery */
+    .gallery-section {
+      background: rgba(237, 228, 214, 0.03); border: 1px solid var(--line);
+      border-radius: 8px; padding: 16px; margin-bottom: 20px;
+    }
+    .gallery-title { font-size: 14px; font-weight: 600; color: var(--gold); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;
+    }
+    .gallery-item {
+      position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 6px; overflow: hidden;
+      border: 1px solid var(--line); background: var(--bg-1);
+    }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-item .remove-btn {
+      position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #fff;
+      border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .gallery-item:hover .remove-btn { opacity: 1; }
+    
+    .gallery-upload-btn {
+      width: 100%; aspect-ratio: 4/3; border-radius: 6px;
+      border: 1px dashed var(--line); background: transparent;
+      color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 12px; transition: all 0.2s;
+    }
+    .gallery-upload-btn:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); border-color: var(--gold); }
+    .gallery-upload-btn svg { width: 24px; height: 24px; margin-bottom: 4px; stroke: currentColor; fill: none; }
+    #fileInputMain, #fileInputInterior, #fileInputExterior { display: none; }
+    .external-calendar-list { display: grid; gap: 10px; }
+    .external-calendar-row {
+      display: grid; grid-template-columns: 150px 1fr auto auto; gap: 8px; align-items: center;
+      padding: 10px; border: 1px solid var(--line); border-radius: 8px;
+      background: rgba(237, 228, 214, 0.03);
+    }
+    .external-calendar-row input {
+      background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+      color: var(--cream); padding: 10px; border-radius: 8px; font-family: inherit; min-width: 0;
+    }
+    .external-calendar-row label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+    .external-calendar-status { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    @media (max-width: 720px) { .external-calendar-row { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="brand-mark">E</div>
+      <h1>Панель управления</h1>
+    </div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminMenu">
+      <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
+      <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
+      <a href="/admin/cabins.html" class="admin-menu-item active">Домики</a>
+      <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
+      <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
+      <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
+      <a href="/admin/mainpage.html" class="admin-menu-item">Главный экран</a>
+      <a href="/admin/settings.html" class="admin-menu-item">Услуги / наполнение</a>
+    </aside>
+    
+    <main class="admin-content">
+      <div class="admin-content-header">
+        <div>
+          <h2>Домики</h2>
+          <span style="color: var(--muted);">Управление фондом</span>
+        </div>
+        <button class="btn btn-primary" id="addCabinBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">+ Добавить домик</button>
+      </div>
+      
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Фото</th>
+            <th>Название</th>
+            <th>Вместимость</th>
+            <th>Цена (базовая)</th>
+            <th>Статус</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody id="cabinsTableBody">
+          <tr><td colspan="6" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+
+  <!-- Модальное окно редактирования домика -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Редактирование домика</h3>
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="cabinId">
+        
+        <!-- Галерея фотографий -->
+        <div class="gallery-section">
+          <div class="gallery-title">
+            <span>Главная фотография</span>
+            <span style="font-size: 12px; font-weight: 400; color: var(--muted);">1 фото</span>
+          </div>
+          <div class="gallery-grid" id="mainGalleryGrid">
+            <label class="gallery-upload-btn" id="btnMainUpload">
+              <input type="file" id="fileInputMain" accept="image/*" style="display:none">
+              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              Добавить
+            </label>
+          </div>
+        </div>
+
+        <div class="gallery-section">
+          <div class="gallery-title">
+            <span>Интерьер</span>
+            <span style="font-size: 12px; font-weight: 400; color: var(--muted);" id="interiorCount">0 / 10</span>
+          </div>
+          <div class="gallery-grid" id="interiorGalleryGrid">
+            <label class="gallery-upload-btn" id="btnInteriorUpload">
+              <input type="file" id="fileInputInterior" accept="image/*" multiple style="display:none">
+              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              Добавить
+            </label>
+          </div>
+        </div>
+
+        <div class="gallery-section">
+          <div class="gallery-title">
+            <span>Улица / Экстерьер</span>
+            <span style="font-size: 12px; font-weight: 400; color: var(--muted);" id="exteriorCount">0 / 10</span>
+          </div>
+          <div class="gallery-grid" id="exteriorGalleryGrid">
+            <label class="gallery-upload-btn" id="btnExteriorUpload">
+              <input type="file" id="fileInputExterior" accept="image/*" multiple style="display:none">
+              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              Добавить
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Название</label>
+          <input type="text" id="cabinName">
+        </div>
+        
+        <div class="form-group">
+          <label>Описание</label>
+          <textarea id="cabinDescription" rows="4"></textarea>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>Вместимость (гостей)</label>
+            <input type="number" id="cabinCapacity" min="1" max="10">
+          </div>
+          <div class="form-group">
+            <label>Базовая цена (₽)</label>
+            <input type="number" id="cabinBasePrice" min="0" step="500">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Что есть в домике</label>
+          <div class="amenities-grid" id="cabinAmenitiesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+            <!-- Будут загружены динамически -->
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Теги фильтрации</label>
+          <div class="tags-grid" id="cabinTagsGrid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px;">
+            <!-- Будут загружены динамически -->
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <label>Внешние календари занятости (iCal)</label>
+          <div class="external-calendar-list" id="externalCalendarList"></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-ghost" id="addExternalCalendarBtn" style="min-height:34px; padding:0 12px; font-size:12px;">+ Добавить источник</button>
+            <button type="button" class="btn btn-ghost" id="syncExternalCalendarsBtn" style="min-height:34px; padding:0 12px; font-size:12px;">Синхронизировать</button>
+          </div>
+          <div class="external-calendar-status" id="externalCalendarStatus">Avito, Суточно, Островок, Яндекс.Путешествия или другой iCal URL.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="cabinStatus">
+            <option value="active">Активен (Сдается)</option>
+            <option value="maintenance">Ремонт / Обслуживание</option>
+            <option value="inactive">Скрыт</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button class="btn btn-ghost" id="deleteCabinBtn" style="border-color: #8b3c3c; color: #ff8c8c; display: none;">Удалить</button>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-ghost" id="cancelModalBtn">Отмена</button>
+          <button class="btn btn-primary" id="saveCabinBtn">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=3"></script>
+  <script src="/js/admin-cabins.js?v=6"></script>
+  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=3"></script>
+</body>
+</html>
+

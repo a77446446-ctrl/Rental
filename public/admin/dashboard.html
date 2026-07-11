@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <script>window.location.replace('/admin/bookings.html');</script>
+  <meta http-equiv="refresh" content="0; url=/admin/bookings.html">
+  <meta charset="UTF-8">
+  <title>Панель администратора | EcoGorniy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#120f0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css?v=13">
+  <style>
+    body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    .admin-header {
+      position: sticky; top: 0; z-index: 100;
+      padding: 16px 32px; border-bottom: 1px solid var(--line);
+      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 16px; }
+    .admin-brand h1 { font-size: 24px; text-transform: none; margin: 0; letter-spacing: 0; }
+    
+    .admin-layout {
+      flex: 1; display: grid; grid-template-columns: 240px 1fr;
+      max-width: 1440px; margin: 0 auto; width: 100%;
+    }
+    
+    .admin-sidebar {
+      border-right: 1px solid var(--line); padding: 32px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    
+    .admin-menu-item {
+      padding: 12px 16px; border-radius: 8px;
+      color: var(--muted); font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+      text-decoration: none; display: block;
+    }
+    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    
+    .admin-content { padding: 32px; }
+    .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
+    .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
+    
+    /* Таблицы из SET 1 стилизация */
+    .admin-table {
+      width: 100%; border-collapse: collapse; text-align: left;
+      background: rgba(237, 228, 214, 0.02); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .admin-table th, .admin-table td {
+      padding: 16px; border-bottom: 1px solid var(--line);
+      font-size: 14px; color: var(--cream);
+    }
+    .admin-table th {
+      background: rgba(237, 228, 214, 0.05); color: var(--muted); font-weight: 600;
+      text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
+    
+    /* Скелетон загрузки */
+    .loading-area { opacity: 0.6; pointer-events: none; }
+  </style>
+  <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="brand-mark">E</div>
+      <h1>Панель управления</h1>
+    </div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminMenu">
+      <a href="/admin/bookings.html" class="admin-menu-item active">Бронирования</a>
+      <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
+      <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
+      <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
+      <a href="/admin/mainpage.html" class="admin-menu-item">Главный экран</a>
+      <a href="/admin/settings.html" class="admin-menu-item">Услуги / наполнение</a>
+    </aside>
+    
+    <main class="admin-content" id="adminContent">
+      <!-- Контент будет подгружаться через JS -->
+      <div class="admin-content-header">
+        <h2 id="viewTitle">Бронирования</h2>
+        <button class="btn btn-primary" id="primaryActionBtn">Добавить</button>
+      </div>
+      <div id="viewContainer">
+        <!-- Таблица бронирований (заглушка) -->
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Гость</th>
+              <th>Даты</th>
+              <th>Домик</th>
+              <th>Сумма</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="6" style="text-align: center; color: var(--muted);">Загрузка данных...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/admin.js"></script>
+  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+# SYSTEM RULES: eco-gorniy.ru Cabin Rental PWA
+
+## ROLE
+You are an expert full-stack AI developer building a production-ready PWA for eco-gorniy.ru.
+eco-gorniy.ru is a boutique cabin rental service with exactly 4 cabins near a lake in a forest.
+The final application must be secure, responsive, deployable to Railway, connected to Supabase, and manageable through an admin panel.
+
+## FIXED STACK
+- Backend: Node.js + Express.
+- Frontend: Vanilla HTML, CSS, JS (No React, Next.js, Vue, etc.).
+- Database: Supabase PostgreSQL.
+- Storage: Supabase Storage.
+- Realtime: Supabase Realtime only where needed (chat).
+- Deployment: Railway.app.
+- Charts: Chart.js through CDN if needed.
+
+## MOST IMPORTANT DESIGN RULE
+The file `template.html` is a VISUAL DESIGN REFERENCE ONLY. Do NOT hardcode business logic from it (demo texts, prices, dates, admin preview). 
+Data must come from Supabase and the Express backend.
+
+## SECURITY RULES
+Never expose SUPABASE_SERVICE_ROLE_KEY, TELEGRAM_BOT_TOKEN, ADMIN_PASSWORD, or COOKIE_SECRET in frontend.
+Frontend uses only public-safe values. Privileged operations go through Express backend.
+Admin pages protected by server-side auth (httpOnly secure cookies).
+Add rate limiting. Validate request bodies on server. Sanitize text.
+Total price is ALWAYS calculated on backend.
+
+## BOOKING & TIMEZONE RULES
+Checkout date is exclusive. Prevent double booking with DB constraints. Cancelled bookings do not block dates.
+IMPORTANT: Work with dates strictly in YYYY-MM-DD format on the backend. Ignore frontend timezones to prevent midnight date-shifts.
+
+## CODE QUALITY RULES (STRICT!)
+NO PLACEHOLDERS. No `// TODO`, no `// implement later`, no `// rest of code`.
+Write COMPLETE files from start to finish. If you skip code, the session will be terminated.
+Wait for confirmation after each SET.
