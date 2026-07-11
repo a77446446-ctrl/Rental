@@ -962,24 +962,21 @@
         if (data.logo.url) {
           const imgHtml = `<img src="${data.logo.url}" style="width: 100%; height: 100%; object-fit: contain;">`;
           logoEl.innerHTML = imgHtml;
+          logoEl.style.display = 'flex';
           logoEl.style.background = 'none';
           logoEl.style.border = 'none';
           logoEl.style.borderRadius = '0';
           if (footerLogoEl) {
             footerLogoEl.innerHTML = imgHtml;
+            footerLogoEl.style.display = 'flex';
             footerLogoEl.style.background = 'none';
             footerLogoEl.style.border = 'none';
             footerLogoEl.style.borderRadius = '0';
           }
-        } else if (data.logo.text) {
-          const initials = data.logo.text.slice(0, 2);
-          logoEl.textContent = initials;
-          logoEl.style.background = '';
-          logoEl.style.border = '';
+        } else {
+          logoEl.style.display = 'none';
           if (footerLogoEl) {
-            footerLogoEl.textContent = initials;
-            footerLogoEl.style.background = '';
-            footerLogoEl.style.border = '';
+            footerLogoEl.style.display = 'none';
           }
         }
       }
