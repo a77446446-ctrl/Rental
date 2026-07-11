@@ -1858,6 +1858,15 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   border-radius: 12px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
 }
+
+/* Fix desktop calendar currency wrapping */
+.calendar-day small {
+  white-space: nowrap !important;
+}
+.calendar-day small .price-currency {
+  font-size: 8px !important;
+  margin-left: -1px !important;
+}
 .mobile-menu-toggle span:nth-child(3){width:15px!important;}
 @media(max-width:760px){.calendar-day.promo::after{top:3px!important;right:4px!important;font-size:8.5px!important}.mobile-menu-toggle{width:34px!important;height:34px!important}.hero-top-line{display:none!important}}
 
