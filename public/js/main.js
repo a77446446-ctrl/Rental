@@ -960,6 +960,23 @@
       const footerLogoEl = document.getElementById('footer-brand-mark');
       if (logoEl) {
         if (data.logo.url) {
+          // Dynamic favicon and apple-touch-icon
+          let favicon = document.querySelector('link[rel="icon"]');
+          if (!favicon) {
+            favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            document.head.appendChild(favicon);
+          }
+          favicon.href = data.logo.url;
+
+          let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+          if (!appleIcon) {
+            appleIcon = document.createElement('link');
+            appleIcon.rel = 'apple-touch-icon';
+            document.head.appendChild(appleIcon);
+          }
+          appleIcon.href = data.logo.url;
+
           const imgHtml = `<img src="${data.logo.url}" style="width: 100%; height: 100%; object-fit: contain;">`;
           logoEl.innerHTML = imgHtml;
           logoEl.style.display = 'flex';

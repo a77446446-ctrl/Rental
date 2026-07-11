@@ -51,6 +51,43 @@ function mapCabinForPublic(cabin) {
 router.use(apiLimiter);
 
 /* ─────────────────────────────────────────────
+   GET /api/manifest.json
+   Возвращает динамический манифест для PWA
+   ───────────────────────────────────────────── */
+router.get('/manifest.json', (req, res) => {
+  let logoUrl = '/icons/icon-192.png';
+  try {
+    if (fs.existsSync(mainpagePath)) {
+      const data = JSON.parse(fs.readFileSync(mainpagePath, 'utf8'));
+      if (data.logo && data.logo.url) {
+        logoUrl = data.logo.url;
+      }
+    }
+  } catch (err) {}
+
+  res.json({
+    "name": "ECO-Gorniy",
+    "short_name": "ECO-Gorniy",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#120f0d",
+    "theme_color": "#120f0d",
+    "icons": [
+      {
+        "src": logoUrl,
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": logoUrl,
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ]
+  });
+});
+
+/* ─────────────────────────────────────────────
    GET /api/cabins
    Возвращает все активные домики, отсортированные по sort_order.
    ───────────────────────────────────────────── */
