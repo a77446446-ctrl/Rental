@@ -101,6 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
         title.appendChild(unread);
       }
 
+      const subtitle = document.createElement('div');
+      subtitle.className = 'conversation-token';
+      subtitle.textContent = item.token_id;
+      subtitle.style.fontSize = '12px';
+      subtitle.style.color = '#8e8e8e';
+      subtitle.style.marginBottom = '4px';
+
       const last = document.createElement('div');
       last.className = 'conversation-last';
       last.textContent = (item.last_sender === 'admin' ? 'Вы: ' : 'Гость: ') + messagePreview(item.last_message || '');
@@ -110,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       date.textContent = formatDate(item.last_at);
 
       button.appendChild(title);
+      button.appendChild(subtitle);
       button.appendChild(last);
       button.appendChild(date);
       button.addEventListener('click', () => selectConversation(item.token));
@@ -204,10 +212,14 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedToken = token;
     const current = conversations.find((item) => item.token === token);
 
-    threadTitle.textContent = current ? current.title : 'Диалог';
-    threadMeta.textContent = current
-      ? 'Последнее сообщение: ' + formatDate(current.last_at)
-      : 'История сообщений';
+    if (current) {
+      threadTitle.innerHTML = current.title + ' <span style="font-size:14px;color:#8e8e8e;font-weight:normal;margin-left:8px;">' + current.token_id + '</span>';
+      threadMeta.textContent = 'Последнее сообщение: ' + formatDate(current.last_at);
+    } else {
+      threadTitle.textContent = 'Диалог';
+      threadMeta.textContent = 'История сообщений';
+    }
+    
     replyInput.disabled = false;
     replyBtn.disabled = false;
     if (attachBtn) attachBtn.disabled = false;

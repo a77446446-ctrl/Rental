@@ -1790,13 +1790,13 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   }
 
   .calendar-day span {
-    font-size: 14px !important;
+    font-size: 12px !important;
   }
 
   .calendar-day small {
     display: block !important;
-    font-size: 9px !important;
-    letter-spacing: -0.3px;
+    font-size: 7.5px !important;
+    letter-spacing: -0.4px;
   }
 
   .calendar-day small .price-currency {
@@ -1827,15 +1827,14 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .mobile-menu-toggle span:nth-child(2){width:12px!important;}
 
 /* Fix for territory tags overlapping label */
+.territory-tags {
+  display: none !important;
+}
+
 @media (max-width: 1040px) {
   .territory-stage > .section-label {
     top: 20px !important;
     left: 20px !important;
-  }
-  .territory-tags {
-    top: 52px !important;
-    left: 20px !important;
-    right: 20px !important;
   }
 }
 @media (max-width: 760px) {
@@ -1844,9 +1843,16 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
     left: 18px !important;
   }
   .territory-tags {
-    top: 50px !important;
-    left: 18px !important;
+    top: 15px !important;
+    left: auto !important;
     right: 18px !important;
+    justify-content: flex-end !important;
+    max-width: 60% !important;
+    gap: 4px !important;
+  }
+  .house-badge {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
   }
 }
 

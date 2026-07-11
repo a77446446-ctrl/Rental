@@ -13,15 +13,35 @@ exports.getAll = async (req, res) => {
 
     if (error) throw error;
 
+    const { data: bookings } = await supabaseAdmin
+      .from('bookings')
+      .select(`
+        comment,
+        guests ( full_name )
+      `)
+      .like('comment', `%<!--CHAT_TOKEN:%`);
+
+    const tokenToName = {};
+    if (bookings) {
+      bookings.forEach(b => {
+        const match = b.comment && b.comment.match(/<!--CHAT_TOKEN:([a-fA-F0-9-]+)-->/);
+        if (match && match[1] && b.guests && b.guests.full_name) {
+          tokenToName[match[1]] = b.guests.full_name;
+        }
+      });
+    }
+
     const conversationsMap = {};
     (data || []).forEach((msg) => {
       const token = msg.chat_token;
       if (!token) return;
 
       if (!conversationsMap[token]) {
+        const guestName = tokenToName[token];
         conversationsMap[token] = {
           token,
-          title: 'Гость #' + token.slice(0, 8).toUpperCase(),
+          title: guestName ? 'Гость: ' + guestName : 'Гость',
+          token_id: '#' + token.slice(0, 8).toUpperCase(),
           last_message: msg.message || '',
           last_sender: msg.sender_type,
           last_at: msg.created_at,

@@ -72,6 +72,27 @@ async function saveMessage(token, text, sender = 'guest') {
   return data;
 }
 
+async function getGuestNameByToken(token) {
+  if (!token) return null;
+  try {
+    const { data } = await supabaseAdmin
+      .from('bookings')
+      .select(`
+        guest_id,
+        guests ( full_name )
+      `)
+      .like('comment', `%<!--CHAT_TOKEN:${token}-->%`)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+      
+    if (data && data.guests && data.guests.full_name) {
+      return data.guests.full_name;
+    }
+  } catch (err) {}
+  return null;
+}
+
 /**
  * Отправляет сообщение от гостя в Telegram администратору.
  * @param {string} token - UUID чата
@@ -84,9 +105,11 @@ async function notifyAdmin(token, text) {
   }
 
   const sanitizedText = escapeTelegramHtml(text).trim();
+  const guestName = await getGuestNameByToken(token);
+  const alias = guestName ? `от: ${guestName}` : `(Гость ${token.split('-')[0]})`;
 
   const tgMessage = `
-💬 <b>Новое сообщение из чата</b>
+💬 <b>Новое сообщение из чата</b> ${alias}
 
 ${sanitizedText}
 
@@ -112,8 +135,11 @@ async function notifyAdminAttachment(token, attachment) {
     return false;
   }
 
+  const guestName = await getGuestNameByToken(token);
+  const alias = guestName ? `от: ${guestName}` : `(Гость ${token.split('-')[0]})`;
+
   const caption = `
-💬 <b>Новое вложение из чата</b>
+💬 <b>Новое вложение из чата</b> ${alias}
 
 ${escapeTelegramHtml(attachmentLabel(attachment))}: ${escapeTelegramHtml(attachment.name || 'файл')}
 

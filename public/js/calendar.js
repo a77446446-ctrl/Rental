@@ -319,7 +319,7 @@
         btn.className += ' range-between';
       }
 
-      var priceStr = (price && !isPast) ? EcoApi.formatPrice(price) : '';
+      var priceStr = (price && !isPast) ? String(price) + ' ₽' : '';
       var priceHtml = priceStr ? priceStr.replace(' ₽', '<span class="price-currency"> ₽</span>') : '';
 
       btn.innerHTML =
