@@ -15,7 +15,7 @@
   "about": {
     "title": "О месте",
     "video_url": "",
-    "video_file_url": "",
+    "video_file_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/df95e0d3-0ba2-4b8a-a053-bd45764bf218.mp4",
     "video_autoplay": true,
     "video_start": 2,
     "video_end": 6,
@@ -72,7 +72,10 @@
     "email": "eco-gorniy.ru222222",
     "cta_text": "Забронируйте домик пока свободно...22222",
     "map_code": "55.909451900969174,38.26756915540729",
-    "background_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/a20ea5f1-c380-48ee-8b91-2a1395d74a15.jpg"
+    "background_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/a20ea5f1-c380-48ee-8b91-2a1395d74a15.jpg",
+    "label": "",
+    "title": "",
+    "desc": ""
   },
   "reviews_meta": {
     "label": "Отзывы гостей",

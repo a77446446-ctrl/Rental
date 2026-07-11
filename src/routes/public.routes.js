@@ -88,6 +88,28 @@ router.get('/manifest.json', (req, res) => {
 });
 
 /* ─────────────────────────────────────────────
+   GET /api/icon.png
+   Динамический фавикон (редирект на актуальный логотип)
+   ───────────────────────────────────────────── */
+router.get('/icon.png', (req, res) => {
+  let logoUrl = '/icons/icon-192.png';
+  try {
+    if (fs.existsSync(mainpagePath)) {
+      const data = JSON.parse(fs.readFileSync(mainpagePath, 'utf8'));
+      if (data.logo && data.logo.url) {
+        logoUrl = data.logo.url;
+      }
+    }
+  } catch (err) {}
+  
+  if (logoUrl.startsWith('http') || logoUrl.startsWith('/')) {
+    res.redirect(302, logoUrl);
+  } else {
+    res.redirect(302, '/' + logoUrl);
+  }
+});
+
+/* ─────────────────────────────────────────────
    GET /api/cabins
    Возвращает все активные домики, отсортированные по sort_order.
    ───────────────────────────────────────────── */
