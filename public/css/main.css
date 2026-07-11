@@ -1871,7 +1871,8 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 }
 .calendar-day small .price-currency {
   font-size: 8px !important;
-  margin-left: -1px !important;
+  margin-left: 2px !important;
+  display: inline-block !important;
 }
 .mobile-menu-toggle span:nth-child(3){width:15px!important;}
 @media(max-width:760px){.calendar-day.promo::after{top:3px!important;right:4px!important;font-size:8.5px!important}.mobile-menu-toggle{width:34px!important;height:34px!important}.hero-top-line{display:none!important}}
