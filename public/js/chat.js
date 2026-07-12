@@ -106,6 +106,8 @@
     els.body.style.display = isOpening ? 'flex' : 'none';
     syncToggleIcon(isOpening);
     
+    document.body.classList.toggle('chat-open', isOpening);
+    
     if (!isOpening) {
       localStorage.removeItem('chat_force_open');
     } else {

@@ -1952,3 +1952,13 @@ section[id] {
 
 .app-loading span { white-space: nowrap; font-size: clamp(10px, 3.5vw, 15px) !important; }
 
+
+/* Chat mobile backdrop 2026-07-12 */
+@media(max-width:760px) {
+  body.chat-open { overflow: hidden !important; }
+  body.chat-open::after {
+    content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(18, 15, 13, 0.75); backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); z-index: 9997;
+  }
+}
