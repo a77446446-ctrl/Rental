@@ -303,17 +303,58 @@ document.addEventListener('DOMContentLoaded', async () => {
           <input type="text" id="featSub_${index}" value="${feat.subtitle}" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
         </div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Фото ${index + 1}</label>
+          <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Иконка (Приоритетнее фото)</label>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn btn-ghost" type="button" id="featIconBtn_${index}" style="padding: 0; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line);" title="Выбрать иконку" data-icon="${feat.icon || ''}">
+              ${feat.icon ? `<i data-lucide="${feat.icon}"></i>` : '<i data-lucide="plus"></i>'}
+            </button>
+            <span id="featIconName_${index}" style="color: var(--muted); font-size: 12px;">${feat.icon || 'Не выбрана'}</span>
+            <button class="btn btn-ghost" type="button" id="featIconClearBtn_${index}" style="padding: 4px 8px; min-height: 24px; font-size: 11px; ${feat.icon ? '' : 'display: none;'}">Очистить</button>
+          </div>
+
+          <label style="font-size: 13px; color: var(--muted); font-weight: 600; margin-top: 8px;">Или загрузите фото</label>
           <input type="file" id="featFile_${index}" accept="image/*" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
-          <input type="hidden" id="featUrl_${index}" value="${feat.image_url}">
-          <div id="featPreview_${index}" style="margin-top: 8px; width: 100%; height: 80px; background-size: cover; background-position: center; border-radius: 8px; background-image: url('${feat.image_url}'); border: 1px solid var(--line);"></div>
+          <input type="hidden" id="featUrl_${index}" value="${feat.image_url || ''}">
+          <div id="featPreview_${index}" style="margin-top: 8px; width: 100%; height: 80px; background-size: cover; background-position: center; border-radius: 8px; background-image: url('${feat.image_url || ''}'); border: 1px solid var(--line); ${feat.icon ? 'opacity: 0.3;' : ''}"></div>
         </div>
       `;
       featuresContainer.appendChild(div);
 
+      // Icon Picker Logic
+      const iconBtn = document.getElementById(`featIconBtn_${index}`);
+      const iconNameLabel = document.getElementById(`featIconName_${index}`);
+      const iconClearBtn = document.getElementById(`featIconClearBtn_${index}`);
+      const previewDiv = document.getElementById(`featPreview_${index}`);
+      
+      iconBtn.addEventListener('click', () => {
+        if (window.openIconPicker) {
+          window.openIconPicker((iconName) => {
+            iconBtn.dataset.icon = iconName;
+            iconBtn.innerHTML = `<i data-lucide="${iconName}"></i>`;
+            if (window.lucide) window.lucide.createIcons({ root: iconBtn });
+            iconNameLabel.textContent = iconName;
+            iconClearBtn.style.display = 'block';
+            previewDiv.style.opacity = '0.3';
+          });
+        }
+      });
+
+      iconClearBtn.addEventListener('click', () => {
+        iconBtn.dataset.icon = '';
+        iconBtn.innerHTML = '<i data-lucide="plus"></i>';
+        if (window.lucide) window.lucide.createIcons({ root: iconBtn });
+        iconNameLabel.textContent = 'Не выбрана';
+        iconClearBtn.style.display = 'none';
+        previewDiv.style.opacity = '1';
+      });
+
       // Обработчик загрузки фото
       document.getElementById(`featFile_${index}`).addEventListener('change', (e) => uploadImage(e.target, `featUrl_${index}`, `featPreview_${index}`));
     });
+
+    if (window.lucide) {
+      setTimeout(() => window.lucide.createIcons({ root: featuresContainer }), 0);
+    }
   }
 
   function fillTerritoryFields() {
@@ -511,7 +552,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       mainpageData.features.push({
         title: document.getElementById(`featTitle_${i}`).value,
         subtitle: document.getElementById(`featSub_${i}`).value,
-        image_url: document.getElementById(`featUrl_${i}`).value
+        image_url: document.getElementById(`featUrl_${i}`).value,
+        icon: document.getElementById(`featIconBtn_${i}`).dataset.icon || ''
       });
     }
 

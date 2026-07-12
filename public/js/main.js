@@ -880,16 +880,28 @@
 
     if (fgrid) {
       fgrid.innerHTML = list.map(function(f, index) {
+        const hasIcon = !!f.icon;
         const hasImage = !!f.image_url;
-        const icon = hasImage
-          ? '<div style="background-image:url(\'' + mainpageEscapeHtml(f.image_url) + '\');background-size:cover;background-position:center;border-radius:50%;width:48px;height:48px;margin-bottom:16px;"></div>'
-          : '<div>' + (index + 1) + '</div>';
+        let iconHtml = '';
+        
+        if (hasIcon) {
+          iconHtml = '<div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--gold); box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i data-lucide="' + mainpageEscapeHtml(f.icon) + '"></i></div>';
+        } else if (hasImage) {
+          iconHtml = '<div style="background-image:url(\'' + mainpageEscapeHtml(f.image_url) + '\');background-size:cover;background-position:center;border-radius:50%;width:48px;height:48px;margin-bottom:16px;"></div>';
+        } else {
+          iconHtml = '<div>' + (index + 1) + '</div>';
+        }
+
         return '<div class="feature-item' + (f.placeholder ? ' review-placeholder' : '') + '">' +
-          icon +
+          iconHtml +
           '<h3>' + mainpageEscapeHtml(f.title || ('Преимущество ' + (index + 1))) + '</h3>' +
           '<p>' + mainpageEscapeHtml(f.subtitle || 'Здесь администратор заполняет описание преимущества.') + '</p>' +
         '</div>';
       }).join('');
+      
+      if (window.lucide) {
+        setTimeout(function() { window.lucide.createIcons({ root: fgrid }); }, 0);
+      }
     }
 
     const featureImages = realFeatures.map(function(f) { return f.image_url; }).filter(Boolean);

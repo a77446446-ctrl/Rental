@@ -226,6 +226,25 @@ router.get('/extra-services', async (req, res) => {
 });
 
 /* ─────────────────────────────────────────────
+   GET /api/house-items
+   Возвращает публичный список наполнения домиков.
+   ───────────────────────────────────────────── */
+router.get('/house-items', async (req, res) => {
+  const houseItemsPath = path.join(__dirname, '../data/house_items.json');
+  try {
+    let items = [];
+    if (fs.existsSync(houseItemsPath)) {
+      items = JSON.parse(fs.readFileSync(houseItemsPath, 'utf8'));
+    }
+    const active = items.filter(s => s.is_active !== false).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    res.json({ success: true, data: active });
+  } catch (err) {
+    console.error('[public.routes] Ошибка загрузки house-items:', err);
+    res.status(500).json({ success: false, error: 'Ошибка загрузки наполнения' });
+  }
+});
+
+/* ─────────────────────────────────────────────
    GET /api/settings
    Возвращает глобальные настройки.
    ───────────────────────────────────────────── */

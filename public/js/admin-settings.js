@@ -91,7 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     houseItemsTableBody.innerHTML = currentHouseItems.map(item => `
       <tr>
-        <td style="font-weight: 600;">${item.name}</td>
+        <td style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
+          ${item.icon ? `<i data-lucide="${item.icon}" style="width:16px;height:16px;color:var(--gold);"></i>` : ''}
+          ${item.name}
+        </td>
         <td>
           <span style="color: ${item.is_active !== false ? 'var(--moss-2)' : 'var(--muted)'};">
             ${item.is_active !== false ? 'Активен' : 'Скрыт'}
@@ -112,7 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
         await EcoApi.patch('/api/admin/house-items/' + encodeURIComponent(id), {
           name: item.name,
           is_active: item.is_active === false,
-          sort_order: item.sort_order || 0
+          sort_order: item.sort_order || 0,
+          icon: item.icon
         });
         await loadHouseItems();
       });
@@ -129,8 +133,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (addHouseItemBtn) {
+    const houseItemIconBtn = document.getElementById('houseItemIconBtn');
+    if (houseItemIconBtn) {
+      houseItemIconBtn.addEventListener('click', () => {
+        if (window.openIconPicker) {
+          window.openIconPicker((iconName) => {
+            houseItemIconBtn.dataset.icon = iconName;
+            houseItemIconBtn.innerHTML = `<i data-lucide="${iconName}"></i>`;
+            if (window.lucide) window.lucide.createIcons({ root: houseItemIconBtn });
+          });
+        }
+      });
+    }
+
     addHouseItemBtn.addEventListener('click', async () => {
       const name = houseItemNameField.value.trim();
+      const iconBtn = document.getElementById('houseItemIconBtn');
+      const icon = iconBtn ? iconBtn.dataset.icon : 'check';
+
       if (!name) {
         window.showToast('Введите название пункта', 'error');
         return;
@@ -139,9 +159,15 @@ document.addEventListener('DOMContentLoaded', () => {
       await EcoApi.post('/api/admin/house-items', {
         name,
         is_active: true,
-        sort_order: currentHouseItems.length + 1
+        sort_order: currentHouseItems.length + 1,
+        icon
       });
       houseItemNameField.value = '';
+      if (iconBtn) {
+        iconBtn.dataset.icon = 'check';
+        iconBtn.innerHTML = '<i data-lucide="check"></i>';
+        if (window.lucide) window.lucide.createIcons({ root: iconBtn });
+      }
       window.showToast('Пункт добавлен', 'success');
       await loadHouseItems();
     });

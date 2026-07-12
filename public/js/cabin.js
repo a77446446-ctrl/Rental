@@ -32,8 +32,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     const cabinAmenities = amenitiesMap[cabinId] || [];
     
+    let houseItems = [];
+    try {
+      const hiRes = await fetch('/api/house-items');
+      const hiJson = await hiRes.json();
+      if (hiJson && hiJson.data) houseItems = hiJson.data;
+    } catch (e) {
+      console.warn('Не удалось загрузить house items', e);
+    }
+    
     document.title = cabin.name + ' | ' + getBrandName(mainpage);
-    renderCabinDetails(cabin, cabinAmenities);
+    renderCabinDetails(cabin, cabinAmenities, houseItems);
 
   } catch (err) {
     console.error(err);
@@ -107,7 +116,7 @@ function applyCabinBrand(mainpage) {
   if (linksEl) linksEl.innerHTML = links.map(link => '<a href="' + escapeHtml(link.href) + '">' + escapeHtml(link.label) + '</a>').join('');
 }
 
-function renderCabinDetails(cabin, cabinAmenities) {
+function renderCabinDetails(cabin, cabinAmenities, houseItems) {
   const mainImg = (cabin.images && cabin.images.length > 0) 
     ? cabin.images.find(img => img.category === 'main') || cabin.images[0] 
     : null;
@@ -147,12 +156,18 @@ function renderCabinDetails(cabin, cabinAmenities) {
             <h3>Что есть в домике</h3>
             <div class="amenities-list">
               ${cabinAmenities && cabinAmenities.length > 0 
-                ? cabinAmenities.map(am => `
-                  <div class="amenity-item">
-                    <svg><path d="M5 13l4 4L19 7"></path></svg>
-                    ${am}
-                  </div>
-                `).join('')
+                ? cabinAmenities.map(am => {
+                    const hi = (houseItems || []).find(h => h.name === am);
+                    const iconSvg = (hi && hi.icon) 
+                      ? `<i data-lucide="${hi.icon}" style="width: 18px; height: 18px; color: var(--gold);"></i>`
+                      : `<svg><path d="M5 13l4 4L19 7"></path></svg>`;
+                    return `
+                      <div class="amenity-item">
+                        ${iconSvg}
+                        ${am}
+                      </div>
+                    `;
+                  }).join('')
                 : '<div style="color: var(--muted); font-size: 15px;">Информация скоро появится...</div>'
               }
             </div>
@@ -196,6 +211,10 @@ function renderCabinDetails(cabin, cabinAmenities) {
   `;
 
   document.getElementById('cabinContent').innerHTML = html;
+  
+  if (window.lucide) {
+    setTimeout(() => window.lucide.createIcons({ root: document.getElementById('cabinContent') }), 0);
+  }
 }
 
 // Полноэкранная галерея

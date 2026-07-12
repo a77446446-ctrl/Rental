@@ -49,8 +49,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('cabinAmenitiesGrid');
         grid.innerHTML = globalExtraServices
           .filter(item => item.is_active !== false)
-          .map(item => `<label><input type="checkbox" value="${item.name}"> ${item.name}</label>`)
+          .map(item => `
+            <label style="display: flex; align-items: center; gap: 6px;">
+              <input type="checkbox" value="${item.name}">
+              ${item.icon ? `<i data-lucide="${item.icon}" style="width: 16px; height: 16px; color: var(--gold);"></i>` : ''}
+              ${item.name}
+            </label>
+          `)
           .join('');
+          
+        if (window.lucide) {
+          setTimeout(() => window.lucide.createIcons({ root: grid }), 0);
+        }
       }
 
       const tagsList = await EcoApi.get('/api/admin/tags');

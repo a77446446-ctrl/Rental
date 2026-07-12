@@ -3,48 +3,56 @@
     "id": "hair-dryer",
     "name": "Фен",
     "is_active": true,
-    "sort_order": 1
+    "sort_order": 1,
+    "icon": "wind"
   },
   {
     "id": "shower",
     "name": "Душевая",
     "is_active": true,
-    "sort_order": 2
+    "sort_order": 2,
+    "icon": "shower-head"
   },
   {
     "id": "kitchen",
     "name": "Кухня",
     "is_active": true,
-    "sort_order": 3
+    "sort_order": 3,
+    "icon": "utensils-crossed"
   },
   {
     "id": "dishes",
     "name": "Посуда",
     "is_active": true,
-    "sort_order": 4
+    "sort_order": 4,
+    "icon": "coffee"
   },
   {
     "id": "double-bed",
     "name": "Двуспальная кровать",
     "is_active": true,
-    "sort_order": 5
+    "sort_order": 5,
+    "icon": "bed-double"
   },
   {
     "id": "sauna",
     "name": "Сауна",
     "is_active": true,
-    "sort_order": 7
+    "sort_order": 7,
+    "icon": "flame"
   },
   {
     "id": "terrace",
     "name": "Терраса",
     "is_active": true,
-    "sort_order": 8
+    "sort_order": 8,
+    "icon": "home"
   },
   {
     "id": "1783852951087",
     "name": "Двухспальный диван",
     "is_active": true,
-    "sort_order": 9
+    "sort_order": 9,
+    "icon": "sofa"
   }
 ]
