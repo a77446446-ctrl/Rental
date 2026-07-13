@@ -1,13 +1,25 @@
+const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
-const { supabaseAdmin } = require('../config/supabase');
 
-const TABLE_MISSING_CODES = new Set(['42P01', 'PGRST205', 'PGRST116']);
+const calendarsFile = path.join(__dirname, '../data/external_calendars.json');
+const bookingsFile = path.join(__dirname, '../data/external_bookings.json');
+
+function readData(file) {
+  if (!fs.existsSync(file)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (e) {
+    return [];
+  }
+}
+
+function writeData(file, data) {
+  fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
+}
 
 function isExternalCalendarSchemaMissing(error) {
-  if (!error) return false;
-  return TABLE_MISSING_CODES.has(error.code) ||
-    String(error.message || '').includes('external_calendar_sources') ||
-    String(error.message || '').includes('external_bookings');
+  return false;
 }
 
 function normalizeSourceName(value) {
@@ -134,98 +146,57 @@ function parseIcsEvents(icsText) {
 }
 
 async function getSources(cabinId) {
-  const { data, error } = await supabaseAdmin
-    .from('external_calendar_sources')
-    .select('id, cabin_id, source_name, ical_url, is_active, last_synced_at, last_sync_status, last_sync_error')
-    .eq('cabin_id', cabinId)
-    .order('created_at', { ascending: true });
-
-  if (error) {
-    if (isExternalCalendarSchemaMissing(error)) return [];
-    throw error;
-  }
-
-  return data || [];
+  const all = readData(calendarsFile);
+  return all.filter(s => String(s.cabin_id) === String(cabinId));
 }
 
 async function getSourcesForCabins(cabinIds) {
   if (!cabinIds || cabinIds.length === 0) return {};
-
-  const { data, error } = await supabaseAdmin
-    .from('external_calendar_sources')
-    .select('id, cabin_id, source_name, ical_url, is_active, last_synced_at, last_sync_status, last_sync_error')
-    .in('cabin_id', cabinIds)
-    .order('created_at', { ascending: true });
-
-  if (error) {
-    if (isExternalCalendarSchemaMissing(error)) return {};
-    throw error;
-  }
-
-  return (data || []).reduce((acc, source) => {
-    if (!acc[source.cabin_id]) acc[source.cabin_id] = [];
-    acc[source.cabin_id].push(source);
-    return acc;
-  }, {});
+  const all = readData(calendarsFile);
+  const result = {};
+  all.forEach(s => {
+    if (cabinIds.includes(String(s.cabin_id))) {
+      if (!result[s.cabin_id]) result[s.cabin_id] = [];
+      result[s.cabin_id].push(s);
+    }
+  });
+  return result;
 }
 
 async function saveSources(cabinId, sources) {
+  let all = readData(calendarsFile);
+  
   const normalized = (Array.isArray(sources) ? sources : [])
-    .map((source) => ({
-      id: source.id || null,
-      cabin_id: cabinId,
-      source_name: normalizeSourceName(source.source_name || source.name),
-      ical_url: normalizeCalendarUrl(source.ical_url || source.url),
-      is_active: source.is_active !== false,
-    }))
+    .map((source) => {
+      const existing = all.find(s => s.id === source.id) || {};
+      return {
+        id: source.id || crypto.randomUUID(),
+        cabin_id: String(cabinId),
+        source_name: normalizeSourceName(source.source_name || source.name),
+        ical_url: normalizeCalendarUrl(source.ical_url || source.url),
+        is_active: source.is_active !== false,
+        last_synced_at: existing.last_synced_at || null,
+        last_sync_status: existing.last_sync_status || null,
+        last_sync_error: existing.last_sync_error || null
+      };
+    })
     .filter((source) => source.ical_url);
 
-  const existing = await getSources(cabinId);
-  const keepIds = normalized.map((source) => source.id).filter(Boolean);
-  const removeIds = existing
-    .filter((source) => !keepIds.includes(source.id))
-    .map((source) => source.id);
-
-  if (removeIds.length > 0) {
-    const { error } = await supabaseAdmin
-      .from('external_calendar_sources')
-      .delete()
-      .in('id', removeIds);
-    if (error) throw error;
-  }
-
-  for (const source of normalized) {
-    if (source.id) {
-      const { error } = await supabaseAdmin
-        .from('external_calendar_sources')
-        .update({
-          source_name: source.source_name,
-          ical_url: source.ical_url,
-          is_active: source.is_active,
-        })
-        .eq('id', source.id)
-        .eq('cabin_id', cabinId);
-      if (error) throw error;
-    } else {
-      const { error } = await supabaseAdmin
-        .from('external_calendar_sources')
-        .insert([source]);
-      if (error) throw error;
-    }
-  }
-
+  all = all.filter(s => String(s.cabin_id) !== String(cabinId));
+  all.push(...normalized);
+  writeData(calendarsFile, all);
   return getSources(cabinId);
 }
 
 async function markSyncError(sourceId, message) {
-  await supabaseAdmin
-    .from('external_calendar_sources')
-    .update({
-      last_synced_at: new Date().toISOString(),
-      last_sync_status: 'error',
-      last_sync_error: String(message || 'Ошибка синхронизации').slice(0, 500),
-    })
-    .eq('id', sourceId);
+  const all = readData(calendarsFile);
+  const source = all.find(s => s.id === sourceId);
+  if (source) {
+    source.last_synced_at = new Date().toISOString();
+    source.last_sync_status = 'error';
+    source.last_sync_error = String(message || 'Ошибка синхронизации').slice(0, 500);
+    writeData(calendarsFile, all);
+  }
 }
 
 async function syncSource(source) {
@@ -245,10 +216,14 @@ async function syncSource(source) {
     const icsText = await response.text();
     const events = parseIcsEvents(icsText);
     const seenUids = [];
+    
+    let allBookings = readData(bookingsFile);
 
     for (const event of events) {
       seenUids.push(event.uid);
+      const idx = allBookings.findIndex(b => b.source_id === source.id && b.external_uid === event.uid);
       const row = {
+        id: idx >= 0 ? allBookings[idx].id : crypto.randomUUID(),
         source_id: source.id,
         cabin_id: source.cabin_id,
         external_uid: event.uid,
@@ -259,41 +234,28 @@ async function syncSource(source) {
         raw_event: event.raw_event || {},
         last_seen_at: new Date().toISOString(),
       };
-
-      const { error } = await supabaseAdmin
-        .from('external_bookings')
-        .upsert(row, { onConflict: 'source_id,external_uid' });
-      if (error) throw error;
+      
+      if (idx >= 0) {
+        allBookings[idx] = row;
+      } else {
+        allBookings.push(row);
+      }
     }
 
-    const { data: existingRows, error: existingError } = await supabaseAdmin
-      .from('external_bookings')
-      .select('id, external_uid')
-      .eq('source_id', source.id);
-    if (existingError) throw existingError;
-
+    // Remove old events no longer present
     const seenSet = new Set(seenUids);
-    const removeIds = (existingRows || [])
-      .filter((row) => !seenSet.has(row.external_uid))
-      .map((row) => row.id);
+    allBookings = allBookings.filter(b => b.source_id !== source.id || seenSet.has(b.external_uid));
+    writeData(bookingsFile, allBookings);
 
-    if (removeIds.length > 0) {
-      const { error: deleteError } = await supabaseAdmin
-        .from('external_bookings')
-        .delete()
-        .in('id', removeIds);
-      if (deleteError) throw deleteError;
+    // Update source status
+    const allSources = readData(calendarsFile);
+    const sIdx = allSources.findIndex(s => s.id === source.id);
+    if (sIdx >= 0) {
+      allSources[sIdx].last_synced_at = new Date().toISOString();
+      allSources[sIdx].last_sync_status = 'success';
+      allSources[sIdx].last_sync_error = null;
+      writeData(calendarsFile, allSources);
     }
-
-    const { error: statusError } = await supabaseAdmin
-      .from('external_calendar_sources')
-      .update({
-        last_synced_at: new Date().toISOString(),
-        last_sync_status: 'success',
-        last_sync_error: null,
-      })
-      .eq('id', source.id);
-    if (statusError) throw statusError;
 
     return { source_id: source.id, imported: events.length, skipped: false };
   } catch (err) {
@@ -303,31 +265,20 @@ async function syncSource(source) {
 }
 
 async function syncSourceById(sourceId) {
-  const { data, error } = await supabaseAdmin
-    .from('external_calendar_sources')
-    .select('*')
-    .eq('id', sourceId)
-    .single();
-
-  if (error) throw error;
-  return syncSource(data);
+  const all = readData(calendarsFile);
+  const source = all.find(s => s.id === sourceId);
+  if (!source) throw new Error('Source not found');
+  return syncSource(source);
 }
 
 async function syncAllActiveSources() {
-  const { data, error } = await supabaseAdmin
-    .from('external_calendar_sources')
-    .select('*')
-    .eq('is_active', true);
-
-  if (error) {
-    if (isExternalCalendarSchemaMissing(error)) return { synced: 0, failed: 0, results: [] };
-    throw error;
-  }
-
+  const all = readData(calendarsFile);
+  const active = all.filter(s => s.is_active);
+  
   const results = [];
   let failed = 0;
 
-  for (const source of data || []) {
+  for (const source of active) {
     try {
       results.push(await syncSource(source));
     } catch (err) {
@@ -340,19 +291,12 @@ async function syncAllActiveSources() {
 }
 
 async function getExternalBookingsForRange(cabinId, from, to) {
-  const { data, error } = await supabaseAdmin
-    .from('external_bookings')
-    .select('id, source_id, source_name, summary, check_in, check_out')
-    .eq('cabin_id', cabinId)
-    .lt('check_in', to)
-    .gt('check_out', from);
-
-  if (error) {
-    if (isExternalCalendarSchemaMissing(error)) return [];
-    throw error;
-  }
-
-  return data || [];
+  const all = readData(bookingsFile);
+  return all.filter(b => 
+    String(b.cabin_id) === String(cabinId) &&
+    b.check_in < to &&
+    b.check_out > from
+  );
 }
 
 async function assertNoExternalOverlap(cabinId, checkIn, checkOut) {

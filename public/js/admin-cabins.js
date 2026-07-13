@@ -237,8 +237,15 @@ document.addEventListener('DOMContentLoaded', () => {
       el.className = 'gallery-item';
       el.innerHTML = `
         <img src="${img.url}">
-        <button type="button" class="remove-btn" onclick="removeImage(${index})">&times;</button>
+        <button type="button" class="remove-btn">&times;</button>
       `;
+      el.querySelector('.remove-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        currentCabinImages.splice(index, 1);
+        renderGallery();
+        checkChanges();
+      });
       if (img.category === 'main') {
         mainGrid.insertBefore(el, mainBtn);
         mainBtn.style.display = 'none'; // Только 1 главное фото
