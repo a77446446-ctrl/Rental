@@ -104,7 +104,7 @@
     <aside class="admin-sidebar" id="adminMenu">
       <a href="/admin/bookings.html" class="admin-menu-item active">Бронирования</a>
       <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
-      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Управление фондом</a>
       <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
       <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
       <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
@@ -116,21 +116,21 @@
       <div class="admin-content-header">
         <div>
           <h2>Бронирования</h2>
-          <span style="color: var(--muted);">Все заявки на аренду домиков</span>
+          <span style="color: var(--muted);">Все заявки на аренду объектов</span>
         </div>
       </div>
       
-      <div class="table-container">
+      <div class="table-container" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
         <table>
           <thead>
             <tr>
-              <th>ID / Дата</th>
-              <th>Гость</th>
-              <th>Домик</th>
-              <th>Заезд - Выезд</th>
-              <th>Сумма</th>
-              <th>Статус</th>
-              <th>Действие</th>
+              <th>ID / ДАТА</th>
+              <th>ГОСТЬ</th>
+              <th>ОБЪЕКТ</th>
+              <th>ЗАЕЗД - ВЫЕЗД</th>
+              <th>СУММА</th>
+              <th>СТАТУС</th>
+              <th>ДЕЙСТВИЯ</th>
             </tr>
           </thead>
           <tbody id="bookingsTableBody">
@@ -141,6 +141,56 @@
         </table>
       </div>
     </main>
+  </div>
+
+  <!-- Edit Booking Modal -->
+  <div class="modal-overlay" id="editBookingModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 style="margin:0;">Редактировать бронирование</h3>
+        <button class="btn-close" id="closeBookingModal" style="background:none; border:none; color:var(--muted); font-size:24px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px; display: grid; gap: 16px;">
+        <input type="hidden" id="editBookingId">
+        
+        <div class="form-group">
+          <label>Имя гостя</label>
+          <input type="text" id="editGuestName" style="width:100%; background:rgba(237, 228, 214, 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px;">
+        </div>
+        
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label>Телефон</label>
+            <input type="text" id="editGuestPhone" style="width:100%; background:rgba(237, 228, 214, 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px;">
+          </div>
+          <div>
+            <label>Telegram</label>
+            <input type="text" id="editGuestTelegram" style="width:100%; background:rgba(237, 228, 214, 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px;">
+          </div>
+        </div>
+
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label>Заезд</label>
+            <input type="date" id="editCheckIn" style="width:100%; background:rgba(237, 228, 214, 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px; color-scheme:dark;">
+          </div>
+          <div>
+            <label>Выезд</label>
+            <input type="date" id="editCheckOut" style="width:100%; background:rgba(237, 228, 214, 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px; color-scheme:dark;">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Сумма (₽)</label>
+          <input type="number" id="editTotalPrice" style="width:100%; background:rgba(237, 228, 214, 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px;">
+        </div>
+
+      </div>
+      <div class="modal-footer" style="padding: 16px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn btn-ghost" id="cancelBookingEdit" style="min-height:36px; padding:0 16px;">Отмена</button>
+        <button class="btn btn-primary" id="saveBookingEdit" style="min-height:36px; padding:0 16px;">Сохранить</button>
+      </div>
+    </div>
   </div>
 
   <script src="/js/api.js"></script>

@@ -25,21 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         return `
           <tr>
-            <td>
+            <td data-label="Гость">
               <div style="font-weight:600; font-size:16px;">${g.name}</div>
             </td>
-            <td>
+            <td data-label="Контакты">
               <div style="color:var(--cream);">${g.phone}</div>
               ${g.telegram ? `<div style="color:var(--muted); font-size:12px;">@${g.telegram.replace('@', '')}</div>` : ''}
             </td>
-            <td>
+            <td data-label="Бронирования">
               <div style="font-weight:600;">${g.total_bookings} шт.</div>
               <small style="color:var(--muted); font-size:11px;">посл: ${lastBookingDate}</small>
             </td>
-            <td style="font-weight:700; color:var(--gold); font-size:16px;">
+            <td data-label="LTV (Сумма)" style="font-weight:700; color:var(--gold); font-size:16px;">
               ${EcoApi.formatPrice(g.ltv)}
             </td>
-            <td>
+            <td data-label="Заметки">
               <textarea class="notes-input" data-phone="${g.phone}" placeholder="Добавить заметку о клиенте...">${g.notes || ''}</textarea>
               <button class="save-notes-btn" data-phone="${g.phone}" style="display:none;">Сохранить</button>
             </td>

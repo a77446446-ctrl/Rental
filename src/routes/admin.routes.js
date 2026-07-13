@@ -95,6 +95,7 @@ router.post('/prices/bulk-upsert', requireAdmin, pricesController.bulkUpsert);
 // -----------------------------------------------------------------------------
 router.get('/bookings', requireAdmin, bookingsController.getAll);
 router.patch('/bookings/:id/status', requireAdmin, bookingsController.updateStatus);
+router.patch('/bookings/:id', requireAdmin, bookingsController.updateInfo);
 
 // -----------------------------------------------------------------------------
 // Chats

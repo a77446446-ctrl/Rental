@@ -91,9 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     houseItemsTableBody.innerHTML = currentHouseItems.map(item => `
       <tr>
-        <td style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
-          ${item.icon ? `<i data-lucide="${item.icon}" style="width:16px;height:16px;color:var(--gold);"></i>` : ''}
-          ${item.name}
+        <td>
+          <div style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            ${item.icon ? `<i data-lucide="${item.icon}" style="width:16px;height:16px;color:var(--gold);flex-shrink:0;"></i>` : '<div style="width:16px;height:16px;flex-shrink:0;"></div>'}
+            ${item.name}
+          </div>
         </td>
         <td>
           <span style="color: ${item.is_active !== false ? 'var(--moss-2)' : 'var(--muted)'};">
@@ -130,6 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadHouseItems();
       });
     });
+
+    if (window.lucide) { window.lucide.createIcons({ root: houseItemsTableBody, nameAttr: 'data-lucide' }); }
   }
 
   if (addHouseItemBtn) {
@@ -140,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
           window.openIconPicker((iconName) => {
             houseItemIconBtn.dataset.icon = iconName;
             houseItemIconBtn.innerHTML = `<i data-lucide="${iconName}"></i>`;
-            if (window.lucide) window.lucide.createIcons({ root: houseItemIconBtn });
+            if (window.lucide) { window.lucide.createIcons({ root: houseItemIconBtn, nameAttr: 'data-lucide' }); }
           });
         }
       });
@@ -166,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (iconBtn) {
         iconBtn.dataset.icon = 'check';
         iconBtn.innerHTML = '<i data-lucide="check"></i>';
-        if (window.lucide) window.lucide.createIcons({ root: iconBtn });
+        if (window.lucide) { window.lucide.createIcons({ root: iconBtn, nameAttr: 'data-lucide' }); }
       }
       window.showToast('Пункт добавлен', 'success');
       await loadHouseItems();

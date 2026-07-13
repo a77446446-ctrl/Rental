@@ -14,13 +14,6 @@
     "icon": "shower-head"
   },
   {
-    "id": "kitchen",
-    "name": "Кухня",
-    "is_active": true,
-    "sort_order": 3,
-    "icon": "utensils-crossed"
-  },
-  {
     "id": "dishes",
     "name": "Посуда",
     "is_active": true,
@@ -54,5 +47,12 @@
     "is_active": true,
     "sort_order": 9,
     "icon": "sofa"
+  },
+  {
+    "id": "1783865574563",
+    "name": "WiFi",
+    "is_active": true,
+    "sort_order": 9,
+    "icon": "wifi"
   }
 ]

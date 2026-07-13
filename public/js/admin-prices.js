@@ -35,12 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentDate = getMoscowDate(); // Текущий отображаемый месяц в МСК
   let selectedDates = new Set(); // Выбранные даты (YYYY-MM-DD)
-  let customPricesData = []; // Данные о ценах для текущего домика
+  let customPricesData = []; // Данные о ценах для текущего объекта
   let externalDatesData = []; // Даты, занятые внешними iCal-календарями
 
   let cabinsList = [];
 
-  // Загрузка списка домиков
+  // Загрузка списка объектов
   async function loadCabins() {
     try {
       const res = await fetch('/api/admin/cabins');
@@ -50,19 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
       cabinsList = data.data;
 
       if (data.data.length === 0) {
-        cabinSelector.innerHTML = '<option value="">Нет домиков</option>';
+        cabinSelector.innerHTML = '<option value="">Нет объектов</option>';
         return;
       }
       
-      cabinSelector.innerHTML = '<option value="">-- Выберите домик --</option>' + 
+      cabinSelector.innerHTML = '<option value="">-- Выберите объект --</option>' + 
         data.data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
     } catch (e) {
       console.error(e);
-      window.showToast('Ошибка загрузки домиков', 'error');
+      window.showToast('Ошибка загрузки объектов', 'error');
     }
   }
 
-  // Загрузка кастомных цен для выбранного домика
+  // Загрузка кастомных цен для выбранного объекта
   async function loadPrices(cabinId) {
     if (!cabinId) return;
     try {
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Смена домика
+  // Смена объекта
   cabinSelector.addEventListener('change', (e) => {
     const cabinId = e.target.value;
     if (cabinId) {

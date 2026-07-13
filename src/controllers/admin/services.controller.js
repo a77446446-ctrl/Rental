@@ -85,7 +85,7 @@ exports.getHouseItems = async (req, res) => {
 
 exports.createHouseItem = async (req, res) => {
   try {
-    const { name, is_active, sort_order } = req.body;
+    const { name, is_active, sort_order, icon } = req.body;
     if (!name || !String(name).trim()) {
       return res.status(400).json({ success: false, error: 'Название обязательно' });
     }
@@ -99,7 +99,8 @@ exports.createHouseItem = async (req, res) => {
       id: Date.now().toString(),
       name: String(name).trim(),
       is_active: is_active !== false,
-      sort_order: Number(sort_order) || items.length + 1
+      sort_order: Number(sort_order) || items.length + 1,
+      icon: icon || 'check'
     };
 
     items.push(newItem);
@@ -113,7 +114,7 @@ exports.createHouseItem = async (req, res) => {
 exports.updateHouseItem = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, is_active, sort_order } = req.body;
+    const { name, is_active, sort_order, icon } = req.body;
     let items = [];
     if (fs.existsSync(houseItemsPath)) {
       items = JSON.parse(fs.readFileSync(houseItemsPath, 'utf8'));
@@ -128,7 +129,8 @@ exports.updateHouseItem = async (req, res) => {
       ...items[idx],
       name: String(name || items[idx].name).trim(),
       is_active: is_active !== false,
-      sort_order: Number(sort_order) || items[idx].sort_order || 0
+      sort_order: Number(sort_order) || items[idx].sort_order || 0,
+      icon: icon || items[idx].icon || 'check'
     };
 
     fs.writeFileSync(houseItemsPath, JSON.stringify(items, null, 2));

@@ -86,14 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderCabins(items) {
     if (!items || items.length === 0) {
-      cabinsTableWrap.innerHTML = emptyTable('Пока нет данных по домикам');
+      cabinsTableWrap.innerHTML = emptyTable('Пока нет данных по объектам');
       return;
     }
 
     const maxRevenue = Math.max(...items.map((item) => item.revenue || 0), 1);
     cabinsTableWrap.innerHTML =
       '<table>' +
-        '<thead><tr><th>Домик</th><th>Брони</th><th>Ночи</th><th>Гости</th><th>Выручка</th><th>Средний чек</th><th></th></tr></thead>' +
+        '<thead><tr><th>Объект</th><th>Брони</th><th>Ночи</th><th>Гости</th><th>Выручка</th><th>Средний чек</th><th></th></tr></thead>' +
         '<tbody>' +
           items.map((item) => {
             const width = Math.max(4, Math.round(((item.revenue || 0) / maxRevenue) * 100));

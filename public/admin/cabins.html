@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Домики | EcoGorniy</title>
+  <title>Управление фондом | EcoGorniy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#120f0d">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -160,9 +160,13 @@
     .external-calendar-row label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
     .external-calendar-status { color: var(--muted); font-size: 12px; margin-top: 8px; }
     @media (max-width: 720px) { .external-calendar-row { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) {
+      .admin-table th, .admin-table td { padding: 10px 8px; font-size: 13px; }
+      .admin-table td div { font-size: 14px; }
+    }
   </style>
   <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
-  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script src="/js/lucide.min.js?v=012708"></script>
 </head>
 <body>
   <div class="noise"></div>
@@ -183,7 +187,7 @@
     <aside class="admin-sidebar" id="adminMenu">
       <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
       <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
-      <a href="/admin/cabins.html" class="admin-menu-item active">Домики</a>
+      <a href="/admin/cabins.html" class="admin-menu-item active">Управление фондом</a>
       <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
       <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
       <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
@@ -194,35 +198,41 @@
     <main class="admin-content">
       <div class="admin-content-header">
         <div>
-          <h2>Домики</h2>
-          <span style="color: var(--muted);">Управление фондом</span>
+          <h2>Управление фондом</h2>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+            <span style="color: var(--muted); font-size: 13px;">Как называть объекты:</span>
+            <input type="text" id="fundNameInput" placeholder="Объекты" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 4px 8px; border-radius: 4px; font-size: 13px; max-width: 150px;">
+            <button id="saveFundNameBtn" class="btn btn-primary" style="padding: 4px 12px; font-size: 12px; min-height: unset; height: 28px;">Сохранить</button>
+          </div>
         </div>
-        <button class="btn btn-primary" id="addCabinBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">+ Добавить домик</button>
+        <button class="btn btn-primary" id="addCabinBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">+ Добавить объект</button>
       </div>
       
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Фото</th>
-            <th>Название</th>
-            <th>Вместимость</th>
-            <th>Цена (базовая)</th>
-            <th>Статус</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody id="cabinsTableBody">
-          <tr><td colspan="6" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
-        </tbody>
-      </table>
+      <div class="table-container" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
+        <table class="admin-table" style="min-width: 600px;">
+          <thead>
+            <tr>
+              <th>Фото</th>
+              <th>Название</th>
+              <th>Вместимость</th>
+              <th>Цена (базовая)</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="cabinsTableBody">
+            <tr><td colspan="6" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </main>
   </div>
 
-  <!-- Модальное окно редактирования домика -->
+  <!-- Модальное окно редактирования объекта -->
   <div class="modal-overlay" id="editModal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modalTitle">Редактирование домика</h3>
+        <h3 id="modalTitle">Редактирование объекта</h3>
         <button class="modal-close" id="closeModalBtn">&times;</button>
       </div>
       <div class="modal-body">
@@ -293,7 +303,7 @@
         </div>
         
         <div class="form-group">
-          <label>Что есть в домике</label>
+          <label>Что есть в объекте</label>
           <div class="amenities-grid" id="cabinAmenitiesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
             <!-- Будут загружены динамически -->
           </div>
@@ -338,9 +348,9 @@
     </div>
   </div>
 
-  <script src="/js/api.js?v=3"></script>
-  <script src="/js/admin-cabins.js?v=6"></script>
-  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/api.js?v=4"></script>
+  <script src="/js/admin-cabins.js?v=8"></script>
+  <script src="/js/pwa.js?v=4"></script>
   <script src="/js/admin-mobile.js?v=3"></script>
 </body>
 </html>

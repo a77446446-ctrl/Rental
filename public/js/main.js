@@ -874,7 +874,7 @@
     const fgrid = document.getElementById('features-grid');
     const container = document.getElementById('features-main-image');
     const realFeatures = Array.isArray(features)
-      ? features.filter(function(f) { return f && (f.title || f.subtitle || f.image_url); }).slice(0, 4)
+      ? features.filter(function(f) { return f && (f.title || f.subtitle || f.image_url); })
       : [];
     const list = realFeatures.length ? realFeatures : getDefaultMainpageFeatures();
 

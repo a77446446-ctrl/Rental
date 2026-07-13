@@ -80,6 +80,9 @@
       .metric-grid { grid-template-columns: 1fr; }
       .admin-content { padding: 20px; }
       .admin-content-header h2 { font-size: 34px; }
+      th, td { padding: 10px 8px; font-size: 13px; }
+      th { font-size: 11px; }
+      td div { font-size: 14px; }
     }
   </style>
   <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
@@ -104,7 +107,7 @@
     <aside class="admin-sidebar" id="adminMenu">
       <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
       <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
-      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Управление фондом</a>
       <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
       <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
       <a href="/admin/analytics.html" class="admin-menu-item active">Аналитика</a>
@@ -116,7 +119,7 @@
       <div class="admin-content-header">
         <div>
           <h2>Аналитика</h2>
-          <span style="color: var(--muted);">Выручка, бронирования, статусы, домики и гости</span>
+          <span style="color: var(--muted);">Выручка, бронирования, статусы, объекты и гости</span>
         </div>
       </div>
 
@@ -127,25 +130,25 @@
       <div class="analytics-grid">
         <div>
           <section class="panel">
-            <div class="panel-head"><h3>Домики</h3><span>Выручка без отмененных броней</span></div>
-            <div id="cabinsTableWrap"></div>
+            <div class="panel-head"><h3>Объекты</h3><span>Выручка без отмененных броней</span></div>
+            <div id="cabinsTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
           </section>
 
           <section class="panel">
             <div class="panel-head"><h3>Месяцы заезда</h3><span>Динамика по датам проживания</span></div>
-            <div id="monthsTableWrap"></div>
+            <div id="monthsTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
           </section>
         </div>
 
         <div>
           <section class="panel">
             <div class="panel-head"><h3>Статусы</h3><span>Заявки и суммы</span></div>
-            <div id="statusesTableWrap"></div>
+            <div id="statusesTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
           </section>
 
           <section class="panel">
             <div class="panel-head"><h3>Топ гостей</h3><span>LTV без отмененных броней</span></div>
-            <div id="guestsTableWrap"></div>
+            <div id="guestsTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
           </section>
         </div>
       </div>

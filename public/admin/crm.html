@@ -59,8 +59,13 @@
 
     table { width: 100%; border-collapse: collapse; text-align: left; }
     th, td { padding: 16px; border-bottom: 1px solid var(--line); font-size: 14px; }
-    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
-    tr:last-child td { border-bottom: none; }
+    .admin-table th { color: var(--gold); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .muted { color: rgba(237, 228, 214, 0.4); }
+    .money { color: var(--gold); font-weight: 500; }
+    @media (max-width: 900px) {
+      th, td { padding: 10px 8px; font-size: 13px; }
+      td div { font-size: 14px; }
+    }
     tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
 
     .notes-input {
@@ -101,7 +106,7 @@
     <aside class="admin-sidebar" id="adminMenu">
       <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
       <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
-      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Управление фондом</a>
       <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
       <a href="/admin/crm.html" class="admin-menu-item active">CRM (Клиенты)</a>
       <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
@@ -117,8 +122,8 @@
         </div>
       </div>
       
-      <div class="table-container">
-        <table>
+      <div class="table-container" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
+        <table style="min-width: 600px;">
           <thead>
             <tr>
               <th>Гость</th>

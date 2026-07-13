@@ -116,7 +116,7 @@
     }
   </style>
   <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
-  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script src="/js/lucide.min.js?v=012708"></script>
 </head>
 <body>
   <div class="noise"></div>
@@ -137,7 +137,7 @@
     <aside class="admin-sidebar" id="adminMenu">
       <a href="/admin/bookings.html" class="admin-menu-item">Бронирования</a>
       <a href="/admin/chats.html" class="admin-menu-item">Чаты</a>
-      <a href="/admin/cabins.html" class="admin-menu-item">Домики</a>
+      <a href="/admin/cabins.html" class="admin-menu-item">Управление фондом</a>
       <a href="/admin/prices.html" class="admin-menu-item">Цены</a>
       <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
       <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
@@ -149,32 +149,34 @@
       <div class="settings-section">
         <div class="admin-content-header">
           <div>
-            <h2>Услуги / наполнение домов</h2>
-            <span style="color: var(--muted);">Платные услуги для заявки и справочник того, что есть внутри домиков</span>
+            <h2>Услуги / наполнение объектов</h2>
+            <span style="color: var(--muted);">Платные услуги для заявки и справочник того, что есть внутри объектов</span>
           </div>
           <button class="btn btn-primary" id="addServiceBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">+ Добавить услугу</button>
         </div>
         
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Название</th>
-              <th>Цена</th>
-              <th>Тип цены</th>
-              <th>Статус</th>
-              <th>Действия</th>
-            </tr>
-          </thead>
-          <tbody id="servicesTableBody">
-            <tr><td colspan="5" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
-          </tbody>
-        </table>
+        <div class="table-container" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Тип цены</th>
+                <th>Статус</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="servicesTableBody">
+              <tr><td colspan="5" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="settings-section" id="houseItemsSection">
         <div class="admin-content-header">
           <div>
-            <h2>Наполнение домов</h2>
-            <span style="color: var(--muted);">Фен, душевая, кухня, посуда, сауна и другие пункты для блока «Что есть в домике»</span>
+            <h2>Наполнение объектов</h2>
+            <span style="color: var(--muted);">Фен, душевая, кухня, посуда, сауна и другие пункты для блока «Что есть в объекте»</span>
           </div>
         </div>
         <div style="display: grid; grid-template-columns: auto minmax(220px, 1fr) auto; gap: 12px; margin-bottom: 16px; max-width: 620px;">
@@ -182,14 +184,16 @@
           <input type="text" id="houseItemName" placeholder="Например: Фен" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
           <button class="btn btn-primary" type="button" id="addHouseItemBtn" style="padding: 0 16px; min-height: 42px; font-size: 14px;">+ Добавить пункт</button>
         </div>
-        <table class="admin-table">
-          <thead>
-            <tr><th>Пункт наполнения</th><th>Статус</th><th>Действия</th></tr>
-          </thead>
-          <tbody id="houseItemsTableBody">
-            <tr><td colspan="3" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
-          </tbody>
-        </table>
+        <div class="table-container" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Пункт наполнения</th><th>Статус</th><th>Действия</th></tr>
+            </thead>
+            <tbody id="houseItemsTableBody">
+              <tr><td colspan="3" style="text-align: center; color: var(--muted);">Загрузка...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
   </div>
@@ -249,9 +253,11 @@
     </div>
   </div>
 
-  <script src="/js/api.js?v=3"></script>
-  <script src="/js/admin-settings.js?v=5"></script>
-  <script src="/js/pwa.js?v=3"></script>
+  <script src="/js/api.js?v=4"></script>
+  <script src="/js/icons.js?v=3"></script>
+  <script src="/js/icon-picker.js?v=4"></script>
+  <script src="/js/admin-settings.js?v=7"></script>
+  <script src="/js/pwa.js?v=4"></script>
   <script src="/js/admin-mobile.js?v=3"></script>
 </body>
 </html>

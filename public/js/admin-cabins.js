@@ -40,6 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (amenitiesData) {
         globalAmenities = amenitiesData;
       }
+      
+      const settingsData = await EcoApi.get('/api/admin/settings');
+      if (settingsData && settingsData.fundName) {
+        const input = document.getElementById('fundNameInput');
+        if (input) input.value = settingsData.fundName;
+      }
 
       const houseItemsData = await EcoApi.get('/api/admin/house-items');
       if (houseItemsData) {
@@ -81,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderCabins(currentCabins);
     } catch (e) {
       console.error(e);
-      if (window.showToast) window.showToast('Ошибка загрузки домиков', 'error');
+      if (window.showToast) window.showToast('Ошибка загрузки объектов', 'error');
       tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #ff8c8c;">Ошибка загрузки (попробуйте обновить страницу)</td></tr>';
     }
   }
@@ -89,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Отрисовка таблицы
   function renderCabins(cabins) {
     if (cabins.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted);">Домики не найдены</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted);">Объекты не найдены</td></tr>';
       return;
     }
 
@@ -100,18 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return `
       <tr>
-        <td>
+        <td data-label="Фото">
           <div class="cabin-avatar" style="--img: url('${mainImg.url}'); width: 40px; height: 40px; border-radius: 4px; background-size: cover;"></div>
         </td>
-        <td style="font-weight: 600;">${c.name}${(c.external_calendars && c.external_calendars.length) ? `<div style="color:var(--muted); font-size:12px; font-weight:500; margin-top:4px;">iCal: ${c.external_calendars.map(src => escapeAttr(src.source_name)).join(', ')}</div>` : ''}</td>
-        <td>до ${c.capacity || 0} гостей</td>
-        <td>${(c.base_price || 0).toLocaleString('ru-RU')} ₽</td>
-        <td>
+        <td data-label="Название" style="font-weight: 600;">${c.name}${(c.external_calendars && c.external_calendars.length) ? `<div style="color:var(--muted); font-size:12px; font-weight:500; margin-top:4px;">iCal: ${c.external_calendars.map(src => escapeAttr(src.source_name)).join(', ')}</div>` : ''}</td>
+        <td data-label="Вместимость">до ${c.capacity || 0} гостей</td>
+        <td data-label="Цена">${(c.base_price || 0).toLocaleString('ru-RU')} ₽</td>
+        <td data-label="Статус">
           <span style="color: ${c.status === 'active' ? 'var(--moss-2)' : c.status === 'maintenance' ? 'var(--gold)' : 'var(--muted)'};">
             ${c.status === 'active' ? 'Активен' : c.status === 'maintenance' ? 'Обслуживание' : 'Скрыт'}
           </span>
         </td>
-        <td>
+        <td data-label="Действие">
           <button class="btn btn-ghost edit-btn" data-id="${c.id}" style="padding: 4px 12px; min-height: 28px;">Редактировать</button>
         </td>
       </tr>
@@ -128,6 +134,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addCabinBtn = document.getElementById('addCabinBtn');
   const deleteCabinBtn = document.getElementById('deleteCabinBtn');
+  
+  const saveFundNameBtn = document.getElementById('saveFundNameBtn');
+  if (saveFundNameBtn) {
+    saveFundNameBtn.addEventListener('click', async () => {
+      const fundName = document.getElementById('fundNameInput').value;
+      const btn = saveFundNameBtn;
+      btn.textContent = '...';
+      btn.disabled = true;
+      try {
+        const currentSettings = await EcoApi.get('/api/admin/settings') || {};
+        currentSettings.fundName = fundName;
+        await EcoApi.post('/api/admin/settings', currentSettings);
+        if (window.showToast) window.showToast('Название фонда сохранено', 'success');
+      } catch (e) {
+        if (window.showToast) window.showToast('Ошибка при сохранении', 'error');
+      } finally {
+        btn.textContent = 'Сохранить';
+        btn.disabled = false;
+      }
+    });
+  }
 
   // Открытие модалки (для нового или существующего)
   function openEditModal(id = null) {
@@ -135,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const c = currentCabins.find(cabin => cabin.id === id);
       if (!c) return;
   
-      document.getElementById('modalTitle').textContent = 'Редактирование домика';
+      document.getElementById('modalTitle').textContent = 'Редактирование объекта';
       cabinIdField.value = c.id;
       nameField.value = c.name;
       descField.value = c.description || '';
@@ -159,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else {
       // Новый домик
-      document.getElementById('modalTitle').textContent = 'Новый домик';
+      document.getElementById('modalTitle').textContent = 'Новый объект';
       cabinIdField.value = 'new';
       nameField.value = '';
       descField.value = '';
@@ -313,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Удаление домика
   deleteCabinBtn.addEventListener('click', async () => {
     const id = cabinIdField.value;
-    if (id === 'new' || !confirm('Вы уверены, что хотите безвозвратно удалить этот домик?')) return;
+    if (id === 'new' || !confirm('Вы уверены, что хотите безвозвратно удалить этот объект?')) return;
     
     const originalText = deleteCabinBtn.textContent;
     deleteCabinBtn.textContent = 'Удаление...';

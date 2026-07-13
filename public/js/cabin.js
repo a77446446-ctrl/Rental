@@ -155,21 +155,27 @@ function renderCabinDetails(cabin, cabinAmenities, houseItems) {
           <div class="amenities-section">
             <h3>Что есть в домике</h3>
             <div class="amenities-list">
-              ${cabinAmenities && cabinAmenities.length > 0 
-                ? cabinAmenities.map(am => {
-                    const hi = (houseItems || []).find(h => h.name === am);
-                    const iconSvg = (hi && hi.icon) 
-                      ? `<i data-lucide="${hi.icon}" style="width: 18px; height: 18px; color: var(--gold);"></i>`
-                      : `<svg><path d="M5 13l4 4L19 7"></path></svg>`;
-                    return `
-                      <div class="amenity-item">
-                        ${iconSvg}
-                        ${am}
-                      </div>
-                    `;
-                  }).join('')
-                : '<div style="color: var(--muted); font-size: 15px;">Информация скоро появится...</div>'
-              }
+              ${(() => {
+                const validAmenities = (cabinAmenities || []).filter(am => {
+                  const hi = (houseItems || []).find(h => h.name === am);
+                  return hi && hi.is_active !== false;
+                });
+                if (validAmenities.length === 0) {
+                  return '<div style="color: var(--muted); font-size: 15px;">Информация скоро появится...</div>';
+                }
+                return validAmenities.map(am => {
+                  const hi = (houseItems || []).find(h => h.name === am);
+                  const iconSvg = (hi && hi.icon) 
+                    ? `<i data-lucide="${hi.icon}" style="width: 18px; height: 18px; color: var(--gold);"></i>`
+                    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--gold);"><path d="M20 6L9 17l-5-5"></path></svg>`;
+                  return `
+                    <div class="amenity-item">
+                      ${iconSvg}
+                      ${am}
+                    </div>
+                  `;
+                }).join('');
+              })()}
             </div>
           </div>
         </div>
@@ -213,7 +219,7 @@ function renderCabinDetails(cabin, cabinAmenities, houseItems) {
   document.getElementById('cabinContent').innerHTML = html;
   
   if (window.lucide) {
-    setTimeout(() => window.lucide.createIcons({ root: document.getElementById('cabinContent') }), 0);
+    setTimeout(() => { if (window.lucide) window.lucide.createIcons({ root: document.getElementById('cabinContent'), nameAttr: 'data-lucide' }); }, 100);
   }
 }
 

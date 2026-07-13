@@ -282,6 +282,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Инициализация полей для "Почему здесь хорошо"
+  function collectFeatures() {
+    const arr = [];
+    const featureCount = mainpageData.features ? mainpageData.features.length : 0;
+    for (let i = 0; i < featureCount; i++) {
+      const titleEl = document.getElementById(`featTitle_${i}`);
+      if (!titleEl) continue; // if somehow deleted/missing
+      arr.push({
+        title: titleEl.value,
+        subtitle: document.getElementById(`featSub_${i}`).value,
+        image_url: document.getElementById(`featUrl_${i}`).value,
+        icon: document.getElementById(`featIconBtn_${i}`).dataset.icon || ''
+      });
+    }
+    mainpageData.features = arr;
+  }
+
   function renderFeatures() {
     featuresContainer.innerHTML = '';
     mainpageData.features.forEach((feat, index) => {
@@ -295,8 +311,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       div.style.borderRadius = '8px';
 
       div.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Пункт ${index + 1} - Заголовок</label>
+        <div style="display: flex; flex-direction: column; gap: 8px; position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Пункт ${index + 1} - Заголовок</label>
+            <button class="btn btn-ghost" type="button" id="featDeleteBtn_${index}" style="padding: 0; min-height: 24px; color: #ff8c8c; border-color: transparent; font-size: 11px;">Удалить</button>
+          </div>
           <input type="text" id="featTitle_${index}" value="${feat.title}" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
           
           <label style="font-size: 13px; color: var(--muted); font-weight: 600; margin-top: 8px;">Подзаголовок</label>
@@ -331,10 +350,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           window.openIconPicker((iconName) => {
             iconBtn.dataset.icon = iconName;
             iconBtn.innerHTML = `<i data-lucide="${iconName}"></i>`;
-            if (window.lucide) window.lucide.createIcons({ root: iconBtn });
+            if (window.lucide) { window.lucide.createIcons({ root: iconBtn, nameAttr: 'data-lucide' }); }
             iconNameLabel.textContent = iconName;
             iconClearBtn.style.display = 'block';
             previewDiv.style.opacity = '0.3';
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
           });
         }
       });
@@ -342,19 +362,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       iconClearBtn.addEventListener('click', () => {
         iconBtn.dataset.icon = '';
         iconBtn.innerHTML = '<i data-lucide="plus"></i>';
-        if (window.lucide) window.lucide.createIcons({ root: iconBtn });
+        if (window.lucide) { window.lucide.createIcons({ root: iconBtn, nameAttr: 'data-lucide' }); }
         iconNameLabel.textContent = 'Не выбрана';
         iconClearBtn.style.display = 'none';
         previewDiv.style.opacity = '1';
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
       });
 
       // Обработчик загрузки фото
       document.getElementById(`featFile_${index}`).addEventListener('change', (e) => uploadImage(e.target, `featUrl_${index}`, `featPreview_${index}`));
+      
+      const deleteBtn = document.getElementById(`featDeleteBtn_${index}`);
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+          if (confirm('Удалить этот пункт?')) {
+            collectFeatures();
+            mainpageData.features.splice(index, 1);
+            renderFeatures();
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
+          }
+        });
+      }
     });
 
-    if (window.lucide) {
-      setTimeout(() => window.lucide.createIcons({ root: featuresContainer }), 0);
-    }
+    if (window.lucide) { window.lucide.createIcons({ root: featuresContainer, nameAttr: 'data-lucide' }); }
+  }
+
+  const addFeatureBtn = document.getElementById('addFeatureBtn');
+  if (addFeatureBtn) {
+    addFeatureBtn.addEventListener('click', () => {
+      collectFeatures();
+      mainpageData.features.push({ title: '', subtitle: '', image_url: '', icon: '' });
+      renderFeatures();
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
+    });
   }
 
   function fillTerritoryFields() {
@@ -547,15 +588,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     mainpageData.about.video_start = parseInt(document.getElementById('aboutVideoStart').value) || 0;
     mainpageData.about.video_end = parseInt(document.getElementById('aboutVideoEnd').value) || 0;
 
-    mainpageData.features = [];
-    for (let i = 0; i < 4; i++) {
-      mainpageData.features.push({
-        title: document.getElementById(`featTitle_${i}`).value,
-        subtitle: document.getElementById(`featSub_${i}`).value,
-        image_url: document.getElementById(`featUrl_${i}`).value,
-        icon: document.getElementById(`featIconBtn_${i}`).dataset.icon || ''
-      });
-    }
+    collectFeatures();
+    // mainpageData.features уже обновлен через collectFeatures()
 
     mainpageData.territory = collectTerritoryFields();
 

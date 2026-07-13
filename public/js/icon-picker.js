@@ -1,9 +1,9 @@
-// Global Icon Picker Modal
+// Глобальное модальное окно выбора иконки
 window.openIconPicker = function(onSelectCallback) {
   let modal = document.getElementById('iconPickerModal');
   
   if (!modal) {
-    // Create modal
+    // Создаём модальное окно
     modal = document.createElement('div');
     modal.id = 'iconPickerModal';
     modal.className = 'modal-overlay';
@@ -25,11 +25,13 @@ window.openIconPicker = function(onSelectCallback) {
       modal.classList.remove('open');
     });
 
+    // Поиск по русским и английским названиям
     document.getElementById('iconSearchInput').addEventListener('input', (e) => {
       const q = e.target.value.toLowerCase();
       document.querySelectorAll('.icon-grid-item').forEach(el => {
-        const name = el.dataset.icon;
-        if (name.includes(q)) {
+        const iconId = el.dataset.icon;
+        const label = (el.dataset.label || '').toLowerCase();
+        if (iconId.includes(q) || label.includes(q)) {
           el.style.display = 'flex';
         } else {
           el.style.display = 'none';
@@ -37,31 +39,31 @@ window.openIconPicker = function(onSelectCallback) {
       });
     });
 
-    // Populate grid
+    // Заполняем сетку иконок
     const grid = document.getElementById('iconPickerGrid');
-    if (window.GLAMPING_ICONS) {
-      window.GLAMPING_ICONS.forEach(icon => {
-        const item = document.createElement('div');
-        item.className = 'icon-grid-item';
-        item.dataset.icon = icon;
-        item.innerHTML = `
-          <i data-lucide="${icon}"></i>
-          <span>${icon}</span>
-        `;
-        item.addEventListener('click', () => {
-          if (modal.onSelect) modal.onSelect(icon);
-          modal.classList.remove('open');
-        });
-        grid.appendChild(item);
-      });
-    }
-  }
+    const icons = window.GLAMPING_ICONS || [];
+    const labels = window.GLAMPING_ICONS_LABELS || {};
 
-  // Render icons if Lucide is loaded
-  if (window.lucide) {
-    window.lucide.createIcons({
-      root: modal
+    icons.forEach(icon => {
+      const label = labels[icon] || icon;
+      const item = document.createElement('div');
+      item.className = 'icon-grid-item';
+      item.dataset.icon = icon;
+      item.dataset.label = label;
+      item.innerHTML = `
+        <i data-lucide="${icon}"></i>
+        <span>${label}</span>
+      `;
+      item.addEventListener('click', () => {
+        if (modal.onSelect) modal.onSelect(icon);
+        modal.classList.remove('open');
+      });
+      grid.appendChild(item);
     });
+    // Рендерим иконки Lucide только при создании модалки
+    setTimeout(() => {
+      if (window.lucide) { window.lucide.createIcons({ root: grid, nameAttr: 'data-lucide' }); }
+    }, 50);
   }
 
   document.getElementById('iconSearchInput').value = '';

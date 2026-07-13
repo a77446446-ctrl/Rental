@@ -1,0 +1,17 @@
+<html>
+<head>
+  <script src="https://unpkg.com/lucide@0.292.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <i data-lucide="wifi"></i>
+  <script>
+    window.onload = function() {
+      if (window.lucide) {
+        window.lucide.createIcons({nameAttr: "data-lucide"});
+      } else {
+        document.body.innerHTML += "<p>LUCIDE NOT LOADED</p>";
+      }
+    };
+  </script>
+</body>
+</html>

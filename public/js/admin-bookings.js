@@ -4,6 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const tableBody = document.getElementById('bookingsTableBody');
+  let globalBookingsMap = {};
 
   async function loadBookings() {
     try {
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tableBody.innerHTML = data.data.map(b => {
         const createdDate = new Date(b.created_at).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         const shortId = b.id.split('-')[0].toUpperCase();
+        globalBookingsMap[b.id] = b;
         
         let statusBadge = '';
         if (b.status === 'pending') statusBadge = '<span class="status-badge status-pending">Ожидает</span>';
@@ -28,29 +30,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return `
           <tr>
-            <td>
+            <td data-label="ID / Дата">
               <div style="font-weight:600;">#${shortId}</div>
               <small style="color:var(--muted); font-size:11px;">${createdDate}</small>
             </td>
-            <td>
+            <td data-label="Гость">
               <div class="guest-info">
                 <strong>${b.guest_name}</strong>
                 <small>${b.guest_phone}</small>
                 ${b.guest_telegram ? `<small>@${b.guest_telegram.replace('@', '')}</small>` : ''}
               </div>
             </td>
-            <td>${b.cabins ? b.cabins.name : 'Удаленный домик'}</td>
-            <td style="white-space:nowrap;">
+            <td data-label="Объект">${b.cabins ? b.cabins.name : 'Удаленный объект'}</td>
+            <td data-label="Заезд - Выезд" style="white-space:nowrap;">
               ${b.check_in} &rarr; ${b.check_out}
             </td>
-            <td style="font-weight:600; color:var(--gold);">${EcoApi.formatPrice(b.total_price)}</td>
-            <td>${statusBadge}</td>
-            <td>
-              <select class="action-select status-select" data-id="${b.id}">
+            <td data-label="Сумма" style="font-weight:600; color:var(--gold);">${EcoApi.formatPrice(b.total_price)}</td>
+            <td data-label="Статус">${statusBadge}</td>
+            <td data-label="Действие" style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+              <select class="action-select status-select" data-id="${b.id}" style="max-width: 130px;">
                 <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>Ожидает</option>
                 <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтвердить</option>
                 <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Отменить</option>
               </select>
+              <button class="btn btn-outline edit-booking-btn" data-id="${b.id}" style="padding: 6px 10px; font-size: 13px;">Изменить</button>
             </td>
           </tr>
         `;
@@ -86,6 +89,25 @@ document.addEventListener('DOMContentLoaded', () => {
             window.showToast('Ошибка при обновлении', 'error');
             loadBookings();
           }
+        });
+      });
+
+      // Привязываем слушатели для редактирования
+      document.querySelectorAll('.edit-booking-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.dataset.id;
+          const b = globalBookingsMap[id];
+          if (!b) return;
+          
+          document.getElementById('editBookingId').value = b.id;
+          document.getElementById('editGuestName').value = b.guest_name || '';
+          document.getElementById('editGuestPhone').value = b.guest_phone || '';
+          document.getElementById('editGuestTelegram').value = b.guest_telegram || '';
+          document.getElementById('editCheckIn').value = b.check_in || '';
+          document.getElementById('editCheckOut').value = b.check_out || '';
+          document.getElementById('editTotalPrice').value = b.total_price || 0;
+          
+          document.getElementById('editBookingModal').classList.add('active');
         });
       });
 
@@ -157,4 +179,50 @@ document.addEventListener('DOMContentLoaded', () => {
       document.title = 'Бронирования | EcoGorniy Admin';
     }
   });
+
+  // Логика модального окна редактирования
+  const editModal = document.getElementById('editBookingModal');
+  const closeEditBtn = document.getElementById('closeBookingModal');
+  const cancelEditBtn = document.getElementById('cancelBookingEdit');
+  const saveEditBtn = document.getElementById('saveBookingEdit');
+
+  const closeModal = () => editModal.classList.remove('active');
+  closeEditBtn.addEventListener('click', closeModal);
+  cancelEditBtn.addEventListener('click', closeModal);
+
+  saveEditBtn.addEventListener('click', async () => {
+    const id = document.getElementById('editBookingId').value;
+    const updateData = {
+      guest_name: document.getElementById('editGuestName').value,
+      guest_phone: document.getElementById('editGuestPhone').value,
+      guest_telegram: document.getElementById('editGuestTelegram').value,
+      check_in: document.getElementById('editCheckIn').value,
+      check_out: document.getElementById('editCheckOut').value,
+      total_price: parseInt(document.getElementById('editTotalPrice').value, 10)
+    };
+
+    saveEditBtn.disabled = true;
+    saveEditBtn.textContent = 'Сохранение...';
+
+    try {
+      const res = await fetch(`/api/admin/bookings/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+      
+      window.showToast('Бронирование обновлено', 'success');
+      closeModal();
+      loadBookings();
+    } catch (err) {
+      console.error(err);
+      window.showToast('Ошибка сохранения', 'error');
+    } finally {
+      saveEditBtn.disabled = false;
+      saveEditBtn.textContent = 'Сохранить';
+    }
+  });
+
 });

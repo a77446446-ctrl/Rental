@@ -23,28 +23,38 @@
   },
   "features_meta": {
     "label": "Почему здесь хорошо",
-    "title": "Все для классных выходных без лишней суеты"
+    "title": "Все для классных выходных без лишней суеты."
   },
   "features": [
     {
       "title": "Сауна в доме",
       "subtitle": "Для полного расслабления",
-      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/699de9df-230d-42b7-8490-621ece706bd2.jpg"
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/699de9df-230d-42b7-8490-621ece706bd2.jpg",
+      "icon": "flame"
     },
     {
       "title": "Озеро рядом",
       "subtitle": "В 5 минутах ходьбы",
-      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/c8f2422c-7870-4aba-83cb-138d47e381cc.jpg"
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/c8f2422c-7870-4aba-83cb-138d47e381cc.jpg",
+      "icon": "waves"
     },
     {
       "title": "Уют и комфорт",
       "subtitle": "В каждом домике",
-      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/ffd09d94-027f-41dd-8002-8bf60c2a332e.jpg"
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/ffd09d94-027f-41dd-8002-8bf60c2a332e.jpg",
+      "icon": "home"
     },
     {
       "title": "Природа",
-      "subtitle": "Чистый воздух и лес",
-      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/e6f35451-a886-41b2-9abf-0417ffd2c955.jpg"
+      "subtitle": "Чистый воздух и лес.",
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/e6f35451-a886-41b2-9abf-0417ffd2c955.jpg",
+      "icon": "trees"
+    },
+    {
+      "title": "Детская кроватка",
+      "subtitle": "",
+      "image_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/7bd51bbb-135d-4b93-9c1d-cd8525699940.png",
+      "icon": ""
     }
   ],
   "territory": {
@@ -68,14 +78,14 @@
     ]
   },
   "contacts": {
-    "phone": "+7 (999) 98745555",
-    "email": "eco-gorniy.ru222222",
-    "cta_text": "Забронируйте домик пока свободно...22222",
+    "phone": "+7 (999) 98741111",
+    "email": "eco-gorniy.ru",
+    "cta_text": "Забронируйте домик пока свободно...",
     "map_code": "55.909451900969174,38.26756915540729",
     "background_url": "https://hhibeervbhkdvqawaowp.supabase.co/storage/v1/object/public/cabin-photos/a20ea5f1-c380-48ee-8b91-2a1395d74a15.jpg",
-    "label": "",
-    "title": "",
-    "desc": ""
+    "label": "Эко-Горный",
+    "title": "Забронируйте домик пока есть выгодные АКЦИИ!",
+    "desc": "Выберите домик проверте свободные даты. Если есть вопросы можете задать их прямо в чате."
   },
   "reviews_meta": {
     "label": "Отзывы гостей",
