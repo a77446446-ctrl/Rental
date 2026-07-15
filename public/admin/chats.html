@@ -51,7 +51,7 @@
     .conversation-item:hover, .conversation-item.active { background: rgba(237, 228, 214, 0.055); }
     .conversation-title { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-weight: 700; }
     .conversation-last { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .unread-pill { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--gold); color: #18130f; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
+    .unread-pill { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: #e65b5b; color: #fff; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(230, 91, 91, 0.4); }
     .chat-thread { display: grid; grid-template-rows: auto 1fr auto; }
     .messages-box { padding: 20px; overflow: auto; min-height: 420px; max-height: 520px; display: flex; flex-direction: column; gap: 12px; }
     .message-row { display: flex; }
@@ -59,6 +59,8 @@
     .message-bubble { max-width: 72%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: rgba(237, 228, 214, 0.05); color: var(--cream); font-size: 14px; line-height: 1.45; }
     .message-row.admin .message-bubble { background: rgba(95, 103, 73, 0.28); border-color: rgba(187, 164, 111, 0.25); }
     .message-meta { margin-top: 6px; color: var(--muted); font-size: 11px; }
+    .chat-date-divider { text-align: center; margin: 16px 0 8px 0; }
+    .chat-date-divider span { background: rgba(237, 228, 214, 0.05); padding: 4px 12px; color: var(--muted); font-size: 11px; font-weight: 600; border-radius: 12px; }
     .reply-form { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; padding: 16px; border-top: 1px solid var(--line); }
     .reply-form textarea {
       min-height: 46px; max-height: 140px; resize: vertical; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
@@ -83,10 +85,13 @@
       .admin-sidebar { border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
       .admin-content { padding: 20px; }
       .admin-content-header h2 { font-size: 34px; }
-      .reply-form { grid-template-columns: 1fr; }
+      .reply-form { grid-template-columns: auto 1fr auto; padding: 12px; gap: 8px; }
+      .reply-form textarea { min-height: 40px; padding: 10px; font-size: 14px; }
+      .admin-chat-attach { width: 40px; height: 40px; font-size: 20px; }
+      #replyBtn { min-height: 40px !important; padding: 0 12px !important; font-size: 13px; }
     }
   </style>
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=1">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=3">
   <script defer src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -154,9 +159,9 @@
     </main>
   </div>
 
-  <script src="/js/api.js?v=9"></script>
-  <script src="/js/admin-chats.js?v=4"></script>
-  <script src="/js/pwa.js?v=3"></script>
-  <script src="/js/admin-mobile.js?v=3"></script>
+  <script src="/js/api.js?v=10"></script>
+  <script src="/js/admin-chats.js?v=6"></script>
+  <script src="/js/pwa.js?v=4"></script>
+  <script src="/js/admin-mobile.js?v=4"></script>
 </body>
 </html>

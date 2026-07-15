@@ -42,3 +42,9 @@
 .color-gold { color: var(--gold) !important; }
 .color-red { color: #d26e6e !important; }
 .color-moss { color: var(--moss-2) !important; }
+
+.responsive-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}

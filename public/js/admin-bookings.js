@@ -27,8 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const safeTelegram = EcoApi.escapeHtml(String(b.guest_telegram || '').replace('@', ''));
         const safeCabinName = EcoApi.escapeHtml(b.cabins ? b.cabins.name : 'Удаленный объект');
         
+        // Проверяем, прошла ли дата выезда
+        const _now = new Date();
+        _now.setHours(0,0,0,0);
+        const _checkOut = new Date(b.check_out + 'T00:00:00');
+        const isPast = _checkOut <= _now;
+        const isCompleted = isPast && b.status !== 'cancelled';
+
         let statusBadge = '';
-        if (b.status === 'pending') statusBadge = '<span class="status-badge status-pending">Ожидает</span>';
+        if (isCompleted) statusBadge = '<span class="status-badge" style="background:rgba(139,196,139,0.15); color:#8bc48b; border:1px solid rgba(139,196,139,0.3);">Завершена</span>';
+        else if (b.status === 'pending') statusBadge = '<span class="status-badge status-pending">Ожидает</span>';
         else if (b.status === 'confirmed') statusBadge = '<span class="status-badge status-confirmed">Подтверждена</span>';
         else if (b.status === 'cancelled') statusBadge = '<span class="status-badge status-cancelled">Отменена</span>';
 
@@ -52,12 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <td data-label="Сумма" style="font-weight:600; color:var(--gold);">${EcoApi.formatPrice(b.total_price)}</td>
             <td data-label="Статус">${statusBadge}</td>
             <td data-label="Действие" style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+              ${(isCompleted || b.status === 'cancelled') ? `<span style="color:var(--muted); font-size:12px;">${isCompleted ? 'Завершена' : 'Отменена'}</span>` : `
               <select class="action-select status-select" data-id="${b.id}" style="max-width: 130px;">
                 <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>Ожидает</option>
                 <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтвердить</option>
                 <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Отменить</option>
               </select>
               <button class="btn btn-outline apply-status-btn" data-id="${b.id}" style="padding: 6px 10px; font-size: 13px;" disabled>Применить</button>
+              `}
             </td>
           </tr>
         `;

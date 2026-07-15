@@ -310,4 +310,64 @@
   };
 
   window.EcoApi = EcoApi;
+
+  // Глобальная система отслеживания несохраненных изменений
+  window.hasUnsavedChanges = false;
+  window.pendingNavigationUrl = null;
+
+  window.addEventListener('beforeunload', function(e) {
+    if (window.hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!window.hasUnsavedChanges) return;
+
+    var link = e.target.closest('a');
+    if (!link && e.target.classList.contains('admin-menu-item')) link = e.target;
+    
+    if (link && link.href && !link.hasAttribute('data-bypass-warning')) {
+      var urlObj = new URL(link.href, window.location.href);
+      if (urlObj.pathname !== window.location.pathname) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.pendingNavigationUrl = link.href;
+        window.showUnsavedWarningModal();
+      }
+    }
+  }, true);
+
+  window.showUnsavedWarningModal = function() {
+    var existing = document.getElementById('unsavedWarningModal');
+    if (existing) existing.remove();
+
+    var modalHtml = `
+      <div id="unsavedWarningModal" class="modal-overlay open" style="z-index: 99999; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 32px;">
+          <h3 style="margin-top: 0; font-size: 20px;">Несохраненные изменения</h3>
+          <p style="color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.5;">Вы не сохранили внесенные данные. Если вы уйдете со страницы, они будут потеряны.</p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <button class="btn btn-secondary" id="stayOnPageBtn" style="flex: 1;">Отмена</button>
+            <button class="btn" id="leavePageBtn" style="flex: 1; background: rgba(212,107,107,0.15); border-color: rgba(212,107,107,0.4); color: #f0c6b8;">ОК (Выйти)</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    document.getElementById('stayOnPageBtn').onclick = function() {
+      document.getElementById('unsavedWarningModal').remove();
+      window.pendingNavigationUrl = null;
+    };
+
+    document.getElementById('leavePageBtn').onclick = function() {
+      window.hasUnsavedChanges = false;
+      if (window.pendingNavigationUrl) {
+        window.location.href = window.pendingNavigationUrl;
+      }
+    };
+  };
+
 })();

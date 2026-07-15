@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     tableBody.innerHTML = services.map(s => {
-      const priceTypeStr = s.price_type === 'per_day' ? 'За сутки' : (s.price_type === 'per_guest' ? 'За гостя' : 'За весь период');
+      const priceTypeStr = s.price_type === 'per_day' ? 'За сутки' : (s.price_type === 'per_guest' ? 'За гостя' : (s.price_type === 'per_piece' ? 'За штуку' : 'За весь период'));
       return `
       <tr>
         <td data-label="Название" style="font-weight: 600;">${s.name}</td>
@@ -231,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function closeModal() {
+    if (window.clearDirty) window.clearDirty();
     editModal.classList.remove('open');
   }
 

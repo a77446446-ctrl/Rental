@@ -729,4 +729,155 @@ router.post('/bookings', async (req, res) => {
   }
 });
 
+/* ────────────────────────────────────────
+   Экспорт iCal-ленты для синхронизации с Авито и другими площадками.
+   GET /api/ical/export/:cabin_slug.ics
+   ──────────────────────────────────────── */
+router.get('/ical/export/:slug', async (req, res) => {
+  try {
+    let slug = req.params.slug;
+    // Убираем расширение .ics если есть
+    if (slug.endsWith('.ics')) {
+      slug = slug.slice(0, -4);
+    }
+
+    if (!supabaseAdmin) {
+      return res.status(503).send('Сервис временно недоступен');
+    }
+
+    // Находим домик по slug
+    const { data: cabin, error: cabinError } = await supabaseAdmin
+      .from('cabins')
+      .select('id, name, slug')
+      .eq('slug', slug)
+      .single();
+
+    if (cabinError || !cabin) {
+      return res.status(404).send('Объект не найден');
+    }
+
+    // Загружаем активные бронирования (pending + confirmed)
+    const { data: bookings, error: bookingsError } = await supabaseAdmin
+      .from('bookings')
+      .select(`
+        id,
+        check_in,
+        check_out,
+        status,
+        guests ( full_name )
+      `)
+      .eq('cabin_id', cabin.id)
+      .in('status', ['pending', 'confirmed']);
+
+    if (bookingsError) {
+      console.error('[ical-export] Ошибка загрузки бронирований:', bookingsError.message);
+      return res.status(500).send('Ошибка сервера');
+    }
+
+    // Загружаем закрытые даты (promo_description === 'CLOSED')
+    const { data: closedDates } = await supabaseAdmin
+      .from('prices')
+      .select('date')
+      .eq('cabin_id', cabin.id)
+      .eq('promo_description', 'CLOSED');
+
+    // Формируем iCal
+    const now = new Date();
+    const formatDate = (dateStr) => dateStr.replace(/-/g, '');
+    const formatTimestamp = (d) => {
+      return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    };
+
+    let ical = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//EcoGorniy//Cabin Rental//RU',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      `X-WR-CALNAME:${cabin.name} — eco-gorniy.ru`,
+      `X-WR-TIMEZONE:Europe/Moscow`,
+    ];
+
+    // Добавляем бронирования как события
+    if (bookings && bookings.length > 0) {
+      bookings.forEach((booking) => {
+        const guestName = booking.guests && booking.guests.full_name
+          ? booking.guests.full_name
+          : 'Гость';
+        const uid = booking.id + '@eco-gorniy.ru';
+
+        ical.push('BEGIN:VEVENT');
+        ical.push(`UID:${uid}`);
+        ical.push(`DTSTART;VALUE=DATE:${formatDate(booking.check_in)}`);
+        ical.push(`DTEND;VALUE=DATE:${formatDate(booking.check_out)}`);
+        ical.push(`SUMMARY:Занято — ${guestName}`);
+        ical.push(`DESCRIPTION:Бронирование через eco-gorniy.ru`);
+        ical.push(`STATUS:CONFIRMED`);
+        ical.push(`DTSTAMP:${formatTimestamp(now)}`);
+        ical.push('END:VEVENT');
+      });
+    }
+
+    // Добавляем закрытые даты
+    if (closedDates && closedDates.length > 0) {
+      // Группируем последовательные закрытые даты в диапазоны
+      const sorted = closedDates.map(d => d.date).sort();
+      let rangeStart = sorted[0];
+      let rangeEnd = sorted[0];
+
+      for (let i = 1; i <= sorted.length; i++) {
+        const current = sorted[i];
+        if (current) {
+          const prevDate = new Date(rangeEnd + 'T00:00:00');
+          prevDate.setDate(prevDate.getDate() + 1);
+          const prevStr = prevDate.getFullYear() + '-' +
+            String(prevDate.getMonth() + 1).padStart(2, '0') + '-' +
+            String(prevDate.getDate()).padStart(2, '0');
+
+          if (current === prevStr) {
+            rangeEnd = current;
+            continue;
+          }
+        }
+
+        // Закрываем диапазон
+        const endDate = new Date(rangeEnd + 'T00:00:00');
+        endDate.setDate(endDate.getDate() + 1);
+        const endStr = endDate.getFullYear() +
+          String(endDate.getMonth() + 1).padStart(2, '0') +
+          String(endDate.getDate()).padStart(2, '0');
+
+        const uid = `closed-${rangeStart}@eco-gorniy.ru`;
+        ical.push('BEGIN:VEVENT');
+        ical.push(`UID:${uid}`);
+        ical.push(`DTSTART;VALUE=DATE:${formatDate(rangeStart)}`);
+        ical.push(`DTEND;VALUE=DATE:${endStr}`);
+        ical.push(`SUMMARY:Закрыто`);
+        ical.push(`DESCRIPTION:Даты закрыты администратором`);
+        ical.push(`STATUS:CONFIRMED`);
+        ical.push(`DTSTAMP:${formatTimestamp(now)}`);
+        ical.push('END:VEVENT');
+
+        if (current) {
+          rangeStart = current;
+          rangeEnd = current;
+        }
+      }
+    }
+
+    ical.push('END:VCALENDAR');
+
+    const icalContent = ical.join('\r\n');
+
+    res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${cabin.slug}.ics"`);
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.send(icalContent);
+
+  } catch (err) {
+    console.error('[ical-export] Ошибка:', err.message);
+    res.status(500).send('Ошибка генерации календаря');
+  }
+});
+
 module.exports = router;

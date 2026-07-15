@@ -636,6 +636,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (resMain.ok && resTags.ok) {
         showToast('Настройки главной страницы сохранены', 'success');
         reviewDraft = null;
+        if (window.clearDirty) window.clearDirty();
         renderReviews();
         // Делаем кнопку неактивной после успешного сохранения
         saveBtn.disabled = true;

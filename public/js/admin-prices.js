@@ -154,19 +154,48 @@ document.addEventListener('DOMContentLoaded', () => {
       const priceData = customPricesData.find(p => p.date === dateStr);
       const externalData = externalDatesData.find(p => p.date === dateStr);
       if (externalData) {
-        cell.classList.add('external');
+        if (externalData.is_internal) {
+          cell.classList.add('internal-booking');
+        } else {
+          cell.classList.add('external');
+        }
         cell.title = 'Занято: ' + (externalData.source_name || 'Внешний календарь');
-        cell.innerHTML += `<div class="external-source">${escapeHtml(externalData.source_name || 'Внешний')}</div>`;
       }
+      
+      let priceHtml = '';
+      const cabinIdStr = cabinSelector.value;
+      const cabinObj = cabinsList.find(c => String(c.id) === cabinIdStr);
+      const basePrice = cabinObj ? cabinObj.base_price : null;
+      
+      let displayPrice = basePrice;
+      let isClosed = false;
+      let isPromo = false;
+
       if (priceData) {
         if (priceData.promo_description === 'CLOSED') {
-          cell.innerHTML += `<div class="day-price" style="color:#d46b6b; font-size:10px; margin-top:2px;">Закрыто</div>`;
+          isClosed = true;
         } else if (priceData.custom_price) {
-          cell.innerHTML += `<div class="day-price">${priceData.custom_price}</div>`;
+          displayPrice = priceData.custom_price;
         }
-        if (priceData.is_promo) {
-          cell.innerHTML += `<div class="day-promo">★</div>`;
-        }
+        isPromo = priceData.is_promo;
+      }
+
+      if (isClosed) {
+        priceHtml = `<div class="day-price" style="color:#d46b6b; font-size:10px;">Закрыто</div>`;
+      } else if (displayPrice) {
+        const priceStyle = externalData ? 'text-decoration: line-through; opacity: 0.6;' : '';
+        priceHtml = `<div class="day-price" style="${priceStyle}">${displayPrice}</div>`;
+      }
+
+      if (isPromo) {
+        priceHtml += `<div class="day-promo">★</div>`;
+      }
+
+      // Если есть бронь, выводим имя / источник НАД ценой
+      if (externalData) {
+         cell.innerHTML += `<div class="external-source">${escapeHtml(externalData.source_name || 'Внешний')}</div>` + priceHtml;
+      } else {
+         cell.innerHTML += priceHtml;
       }
 
       // Обработчик клика (только для будущих дат)
@@ -289,8 +318,53 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Toggle promo desc input
+  function markUnsaved() {
+    if (selectedDates.size > 0) window.hasUnsavedChanges = true;
+  }
+  
+  // Вспомогательная функция для обновления цен "на лету"
+  function liveUpdatePrices(callback) {
+    if (selectedDates.size === 0) return;
+    markUnsaved();
+    selectedDates.forEach(dateStr => {
+      let data = customPricesData.find(p => p.date === dateStr);
+      if (!data) {
+        data = { date: dateStr, custom_price: null, is_promo: false, promo_description: null };
+        customPricesData.push(data);
+      }
+      callback(data);
+    });
+    renderCalendar();
+  }
+
+  customPriceInput.addEventListener('input', (e) => {
+    const val = e.target.value;
+    liveUpdatePrices(data => {
+      data.custom_price = val ? parseInt(val) : null;
+    });
+  });
+  
+  closeDatesCheckbox.addEventListener('change', (e) => {
+    const isClosed = e.target.checked;
+    liveUpdatePrices(data => {
+      if (isClosed) data.promo_description = 'CLOSED';
+      else if (data.promo_description === 'CLOSED') data.promo_description = null;
+    });
+  });
+  
   promoCheckbox.addEventListener('change', (e) => {
     document.getElementById('promoDescContainer').style.display = e.target.checked ? 'block' : 'none';
+    const isPromo = e.target.checked;
+    liveUpdatePrices(data => {
+      data.is_promo = isPromo;
+    });
+  });
+
+  document.getElementById('promoDescInput').addEventListener('input', (e) => {
+    const val = e.target.value;
+    liveUpdatePrices(data => {
+      data.promo_description = val;
+    });
   });
 
   // Сохранение настроек
@@ -329,9 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (!data.success) throw new Error(data.error);
-
-      window.showToast('Цены обновлены', 'success');
+      if (data && data.success) {
+        window.hasUnsavedChanges = false;
+        window.showToast('Цены успешно сохранены', 'success');
+      } else {
+        throw new Error(data.error || 'Ошибка при сохранении');
+      }
       
       // Снимаем выделение и перезагружаем цены
       selectedDates.clear();
@@ -376,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       if (!data.success) throw new Error(data.error);
 
+      window.hasUnsavedChanges = false;
       window.showToast('Настройки сброшены', 'success');
       
       selectedDates.clear();

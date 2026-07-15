@@ -1,21 +1,31 @@
 [
   {
-    "id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
-    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
-    "source_name": "Avito",
-    "ical_url": "https://www.avito.ru/calendars-export/21/58/2174716458.ics",
-    "is_active": true,
-    "last_synced_at": "2026-07-14T06:56:31.468Z",
-    "last_sync_status": "success",
-    "last_sync_error": null
-  },
-  {
     "id": "9e39f73a-9fd1-4f7d-92b7-f6aff85c6b6c",
     "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
     "source_name": "Avito",
     "ical_url": "https://www.avito.ru/calendars-export/37/45/3774063545.ics",
     "is_active": true,
     "last_synced_at": "2026-07-15T14:09:42.230797+00:00",
+    "last_sync_status": "success",
+    "last_sync_error": null
+  },
+  {
+    "id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "source_name": "Avito",
+    "ical_url": "https://www.avito.ru/calendars-export/21/58/2174716458.ics",
+    "is_active": true,
+    "last_synced_at": "2026-07-15T15:05:00.049658+00:00",
+    "last_sync_status": "success",
+    "last_sync_error": null
+  },
+  {
+    "id": "a9f62808-757c-4f07-9e56-a973a669a3b9",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "source_name": "Avito",
+    "ical_url": "https://www.avito.ru/calendars-export/26/32/2622042232.ics",
+    "is_active": true,
+    "last_synced_at": "2026-07-15T15:49:41.74644+00:00",
     "last_sync_status": "success",
     "last_sync_error": null
   }

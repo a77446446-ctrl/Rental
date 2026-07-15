@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const replyBtn = document.getElementById('replyBtn');
   const attachBtn = document.getElementById('adminChatAttachBtn');
   const fileInput = document.getElementById('adminChatFileInput');
+  const mobileChatBackBtn = document.getElementById('mobileChatBackBtn');
+
+  if (mobileChatBackBtn) {
+    mobileChatBackBtn.addEventListener('click', () => {
+      document.body.classList.remove('chat-open');
+    });
+  }
 
   let conversations = [];
   let selectedToken = null;
@@ -244,6 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function selectConversation(token) {
     selectedToken = token;
+    document.body.classList.add('chat-open');
+    
     const current = conversations.find((item) => item.token === token);
 
     if (current) {

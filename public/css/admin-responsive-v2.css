@@ -155,16 +155,36 @@
     aspect-ratio: 1; min-width: 0; min-height: 0 !important; height: auto !important;
     padding: 3px 1px !important; border-radius: 7px !important; overflow: hidden;
   }
-  body.admin-mobile-ready .day-price { font-size: 8px !important; overflow-wrap: anywhere; }
-  body.admin-mobile-ready .external-source { font-size: 9px !important; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; text-align: center; }
+  body.admin-mobile-ready .day-price,
+  body.admin-mobile-ready .external-source { font-size: 7px !important; overflow-wrap: anywhere; }
 
   body.admin-mobile-ready .chat-layout,
-  body.admin-mobile-ready .chats-layout { grid-template-columns: 1fr !important; min-width: 0; }
-  body.admin-mobile-ready .chat-list-body { max-height: 230px; overflow-y: auto; }
-  body.admin-mobile-ready .messages-box { min-height: 260px; height: 46dvh !important; padding: 10px; }
+  body.admin-mobile-ready .chats-layout,
+  body.admin-mobile-ready .chat-admin-shell { 
+    grid-template-columns: 1fr !important; min-width: 0; position: relative; overflow: hidden; 
+    min-height: 0 !important; height: calc(100dvh - 180px) !important;
+  }
+  
+  body.admin-mobile-ready .chat-list { display: block; height: 100%; }
+  body.admin-mobile-ready .chat-thread {
+    display: none; position: absolute; inset: 0; background: var(--bg); z-index: 10;
+    flex-direction: column; height: 100%;
+  }
+  body.admin-mobile-ready.chat-open .chat-list { display: none; }
+  body.admin-mobile-ready.chat-open .chat-thread { display: flex !important; }
+  
+  body.admin-mobile-ready .mobile-chat-back {
+    display: flex !important; align-items: center; justify-content: center;
+    width: 40px; min-width: 40px; height: 40px; border-radius: 8px;
+    background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+    color: var(--cream); cursor: pointer; padding: 0; margin-right: 12px;
+  }
+  
+  body.admin-mobile-ready .chat-list-body { max-height: 100%; overflow-y: auto; height: calc(100% - 60px); }
+  body.admin-mobile-ready .messages-box { flex: 1; height: auto !important; min-height: 0; padding: 12px; overflow-y: auto; }
   body.admin-mobile-ready .message-bubble,
   body.admin-mobile-ready .chat-message { max-width: 88%; overflow-wrap: anywhere; }
-  body.admin-mobile-ready .reply-form { grid-template-columns: auto minmax(0, 1fr) auto !important; gap: 7px; }
+  body.admin-mobile-ready .reply-form { grid-template-columns: auto minmax(0, 1fr) auto !important; gap: 7px; margin-top: auto; }
   body.admin-mobile-ready .metric-grid,
   body.admin-mobile-ready .metrics-grid,
   body.admin-mobile-ready .analytics-grid,

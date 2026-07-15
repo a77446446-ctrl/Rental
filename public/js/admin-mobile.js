@@ -72,5 +72,48 @@
     window.addEventListener('resize', function () {
       if (window.innerWidth > 900) setMenu(false);
     });
+
+    // Глобальная проверка несохраненных изменений
+    window.formIsDirty = false;
+    window.markDirty = function() {
+      window.formIsDirty = true;
+    };
+    window.clearDirty = function() {
+      window.formIsDirty = false;
+    };
+
+    document.addEventListener('input', function(e) {
+      if (e.target.tagName !== 'INPUT' || e.target.type !== 'search') { // Игнорируем поиск если есть
+        window.markDirty();
+      }
+    });
+
+    document.addEventListener('change', function(e) {
+      window.markDirty();
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+      if (window.formIsDirty) {
+        e.preventDefault();
+        e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите уйти?';
+        return e.returnValue;
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a');
+      if (!link) return;
+      var href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+      if (link.target === '_blank') return;
+      
+      if (window.formIsDirty) {
+        e.preventDefault();
+        if (confirm('Внимание! У вас есть несохраненные настройки.\n\nДля сохранения нажмите "Отмена", а затем "Сохранить" на странице.\n\nИли нажмите "ОК", чтобы уйти без сохранения.')) {
+          window.formIsDirty = false;
+          window.location.href = href;
+        }
+      }
+    });
   });
 })();

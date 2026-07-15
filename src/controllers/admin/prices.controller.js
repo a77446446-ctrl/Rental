@@ -22,16 +22,56 @@ exports.getByCabin = async (req, res) => {
 
     if (error) throw error;
 
-    const externalBookings = await externalCalendarService.getExternalBookingsForRange(cabin_id, from, addOneDay(to));
+    const { data: bookingsData } = await supabaseAdmin
+      .from('bookings')
+      .select(`
+        check_in,
+        check_out,
+        guests ( full_name )
+      `)
+      .eq('cabin_id', cabin_id)
+      .in('status', ['pending', 'confirmed']);
+
     const external_dates = [];
+    
+    // Внутренние бронирования
+    if (bookingsData) {
+      bookingsData.forEach((booking) => {
+        const current = new Date(booking.check_in + 'T00:00:00');
+        const end = new Date(booking.check_out + 'T00:00:00');
+        const guestName = booking.guests && booking.guests.full_name ? booking.guests.full_name : 'Гость';
+        // Первые 5 букв имени
+        const shortName = guestName.substring(0, 5) + (guestName.length > 5 ? '.' : '');
+        
+        while (current < end) {
+          const dateStr =
+            current.getFullYear() + '-' +
+            String(current.getMonth() + 1).padStart(2, '0') + '-' +
+            String(current.getDate()).padStart(2, '0');
+          external_dates.push({
+            date: dateStr,
+            source_name: shortName,
+            is_internal: true
+          });
+          current.setDate(current.getDate() + 1);
+        }
+      });
+    }
+
+    const externalBookings = await externalCalendarService.getExternalBookingsForRange(cabin_id, from, addOneDay(to));
     (externalBookings || []).forEach((booking) => {
       const current = new Date(booking.check_in + 'T00:00:00');
       const end = new Date(booking.check_out + 'T00:00:00');
       while (current < end) {
+        const dateStr =
+          current.getFullYear() + '-' +
+          String(current.getMonth() + 1).padStart(2, '0') + '-' +
+          String(current.getDate()).padStart(2, '0');
         external_dates.push({
-          date: current.toISOString().slice(0, 10),
+          date: dateStr,
           source_name: booking.source_name || 'Внешний календарь',
           summary: booking.summary || null,
+          is_internal: false
         });
         current.setDate(current.getDate() + 1);
       }

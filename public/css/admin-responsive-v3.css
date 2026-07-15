@@ -69,39 +69,12 @@
   body.admin-mobile-ready textarea,
   body.admin-mobile-ready select { max-width: 100%; font-size: 16px !important; }
 
-  body.admin-mobile-ready .table-container { width: 100% !important; min-width: 0; overflow: visible !important; }
-  body.admin-mobile-ready .admin-table {
-    display: block; width: 100% !important; min-width: 0 !important; border: 0; background: transparent;
+  /* Removed card layout for tables to restore horizontal scrolling */
+  body.admin-mobile-ready .table-container { 
+    width: 100% !important; min-width: 0; overflow-x: auto !important; -webkit-overflow-scrolling: touch;
   }
-  body.admin-mobile-ready .admin-table thead { display: none; }
-  body.admin-mobile-ready .admin-table tbody { display: grid; gap: 12px; }
-  body.admin-mobile-ready .admin-table tr {
-    display: grid; width: 100%; min-width: 0; padding: 12px;
-    border: 1px solid var(--line); border-radius: 12px; background: rgba(237, 228, 214, .025);
-  }
-  body.admin-mobile-ready .admin-table td {
-    display: flex !important; width: 100%; min-width: 0; min-height: 38px;
-    align-items: center; justify-content: space-between !important; gap: 12px;
-    padding: 8px 0 !important; border-bottom: 1px solid var(--line) !important;
-    overflow-wrap: anywhere; text-align: right;
-  }
-  body.admin-mobile-ready .admin-table td.td-complex-label::before { content: none !important; display: none !important; }
-  .mobile-complex-label { display: none; }
-  body.admin-mobile-ready .admin-table td .mobile-complex-label {
-    display: block; flex: 0 0 38%; color: var(--muted); font-size: 11px;
-    font-weight: 600; text-align: left; text-transform: uppercase; letter-spacing: .04em;
-  }
-  body.admin-mobile-ready .admin-table td[data-label*="Статус"].color-red::before { color: #d26e6e !important; }
-  body.admin-mobile-ready .admin-table td[data-label*="Брони"].color-red::before { color: #d26e6e !important; }
-  body.admin-mobile-ready .admin-table td:last-child { border-bottom: 0 !important; }
-  body.admin-mobile-ready .admin-table td::before {
-    content: attr(data-label); flex: 0 0 38%; color: var(--muted); font-size: 11px;
-    font-weight: 600; text-align: left; text-transform: uppercase; letter-spacing: .04em;
-  }
-  body.admin-mobile-ready .admin-table td .btn,
-  body.admin-mobile-ready .admin-table td button,
-  body.admin-mobile-ready .admin-table td select { width: auto !important; min-width: 0; }
-
+  body.admin-mobile-ready .admin-table { width: 100%; min-width: 600px; }
+  
   body.admin-mobile-ready .modal-overlay,
   body.admin-mobile-ready .modal-overlay.active { align-items: end; padding: 0 !important; }
   body.admin-mobile-ready .modal,
@@ -155,16 +128,36 @@
     aspect-ratio: 1; min-width: 0; min-height: 0 !important; height: auto !important;
     padding: 3px 1px !important; border-radius: 7px !important; overflow: hidden;
   }
-  body.admin-mobile-ready .day-price { font-size: 8px !important; overflow-wrap: anywhere; }
-  body.admin-mobile-ready .external-source { font-size: 9px !important; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; text-align: center; }
+  body.admin-mobile-ready .day-price,
+  body.admin-mobile-ready .external-source { font-size: 7px !important; overflow-wrap: anywhere; }
 
   body.admin-mobile-ready .chat-layout,
-  body.admin-mobile-ready .chats-layout { grid-template-columns: 1fr !important; min-width: 0; }
-  body.admin-mobile-ready .chat-list-body { max-height: 230px; overflow-y: auto; }
-  body.admin-mobile-ready .messages-box { min-height: 260px; height: 46dvh !important; padding: 10px; }
+  body.admin-mobile-ready .chats-layout,
+  body.admin-mobile-ready .chat-admin-shell { 
+    grid-template-columns: 1fr !important; min-width: 0; position: relative; overflow: hidden; 
+    min-height: 0 !important; height: calc(100dvh - 180px) !important;
+  }
+  
+  body.admin-mobile-ready .chat-list { display: block; height: 100%; }
+  body.admin-mobile-ready .chat-thread {
+    display: none; background: var(--bg);
+    flex-direction: column; height: 100%; width: 100%;
+  }
+  body.admin-mobile-ready.chat-open .chat-list { display: none !important; }
+  body.admin-mobile-ready.chat-open .chat-thread { display: flex !important; }
+  
+  body.admin-mobile-ready .mobile-chat-back {
+    display: flex !important; align-items: center; justify-content: center;
+    width: 40px; min-width: 40px; height: 40px; border-radius: 8px;
+    background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+    color: var(--cream); cursor: pointer; padding: 0; margin-right: 12px;
+  }
+  
+  body.admin-mobile-ready .chat-list-body { max-height: 100%; overflow-y: auto; height: calc(100% - 60px); }
+  body.admin-mobile-ready .messages-box { flex: 1; height: auto !important; min-height: 0; padding: 12px; overflow-y: auto; }
   body.admin-mobile-ready .message-bubble,
   body.admin-mobile-ready .chat-message { max-width: 88%; overflow-wrap: anywhere; }
-  body.admin-mobile-ready .reply-form { grid-template-columns: auto minmax(0, 1fr) auto !important; gap: 7px; }
+  body.admin-mobile-ready .reply-form { grid-template-columns: auto minmax(0, 1fr) auto !important; gap: 7px; margin-top: auto; }
   body.admin-mobile-ready .metric-grid,
   body.admin-mobile-ready .metrics-grid,
   body.admin-mobile-ready .analytics-grid,

@@ -1,11 +1,7 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v12';
+const CACHE_VERSION = 'eco-gorniy-pwa-v22';
 const STATIC_CACHE = [
   '/',
   '/index.html',
-  '/css/main.css?v=29',
-  '/js/api.js?v=8',
-  '/js/pwa.js?v=6',
-  '/js/mobile-shell.js?v=7',
   '/manifest.webmanifest',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
@@ -38,6 +34,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
 
+  // Навигация — network-first, fallback на кэш
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -50,6 +47,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // JS и CSS файлы — всегда network-first (свежие при F5)
+  if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_VERSION).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Остальные ресурсы (иконки, шрифты, изображения) — cache-first
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;

@@ -115,8 +115,8 @@
       margin-bottom: 48px;
     }
   </style>
-  <link rel="stylesheet" href="/css/admin.css?v=8">
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=8">
+  <link rel="stylesheet" href="/css/admin.css?v=9">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=9">
   <script src="/js/lucide.min.js?v=012708"></script>
 </head>
 <body>
@@ -219,7 +219,7 @@
           <textarea id="serviceDescription" rows="3"></textarea>
         </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="responsive-grid-2">
           <div class="form-group">
             <label>Цена (₽)</label>
             <input type="number" id="servicePrice" min="0" step="100">
@@ -230,6 +230,7 @@
               <option value="per_stay">За весь период</option>
               <option value="per_day">За сутки</option>
               <option value="per_guest">За гостя</option>
+              <option value="per_piece">За штуку</option>
             </select>
           </div>
         </div>
@@ -257,8 +258,8 @@
   <script src="/js/api.js?v=9"></script>
   <script src="/js/icons.js?v=3"></script>
   <script src="/js/icon-picker.js?v=4"></script>
-  <script src="/js/admin-settings.js?v=7"></script>
+  <script src="/js/admin-settings.js?v=9"></script>
   <script src="/js/pwa.js?v=4"></script>
-  <script src="/js/admin-mobile.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=5"></script>
 </body>
 </html>

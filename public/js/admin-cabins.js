@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSettings.fundName = fundName;
         await EcoApi.post('/api/admin/settings', currentSettings);
         if (window.showToast) window.showToast('Название фонда сохранено', 'success');
+        if (window.clearDirty) window.clearDirty();
       } catch (e) {
         if (window.showToast) window.showToast('Ошибка при сохранении', 'error');
       } finally {
@@ -189,6 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('#cabinTagsGrid input[type="checkbox"]').forEach(cb => {
         cb.checked = cabinTags.includes(cb.value);
       });
+
+      // Формируем ссылку на iCal
+      const exportLink = `${window.location.origin}/api/ical/export/${c.slug || c.id}.ics`;
+      const exportLinkBox = document.getElementById('cabinExportLink');
+      exportLinkBox.value = exportLink;
+      exportLinkBox.style.color = '#8bc48b'; // Обычный цвет
+      exportLinkBox.parentElement.parentElement.style.display = 'block';
+
     } else {
       // Новый домик
       document.getElementById('modalTitle').textContent = 'Новый объект';
@@ -201,6 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
       currentCabinImages = [];
       currentExternalCalendars = [];
       deleteCabinBtn.style.display = 'none';
+
+      // Показываем ссылку на iCal с текстом-подсказкой
+      const exportLinkBox = document.getElementById('cabinExportLink');
+      exportLinkBox.parentElement.parentElement.style.display = 'block';
+      exportLinkBox.value = 'Ссылка появится после первого сохранения...';
+      exportLinkBox.style.color = 'var(--muted)';
 
       // Сбрасываем чекбоксы
       document.querySelectorAll('#cabinAmenitiesGrid input[type="checkbox"]').forEach(cb => {
@@ -220,6 +235,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   addCabinBtn.addEventListener('click', () => openEditModal(null));
+
+  const copyExportLinkBtn = document.getElementById('copyExportLinkBtn');
+  if (copyExportLinkBtn) {
+    copyExportLinkBtn.addEventListener('click', () => {
+      const linkInput = document.getElementById('cabinExportLink');
+      if (linkInput && linkInput.value) {
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+          const originalText = copyExportLinkBtn.textContent;
+          copyExportLinkBtn.textContent = 'Скопировано!';
+          setTimeout(() => copyExportLinkBtn.textContent = originalText, 2000);
+        });
+      }
+    });
+  }
 
   // Рендер галереи
   function renderGallery() {
@@ -404,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Закрытие модалки
   function closeModal() {
     cleanupPendingUploads();
+    if (window.clearDirty) window.clearDirty();
     editModal.classList.remove('open');
   }
 
@@ -434,6 +464,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkChanges() {
     const current = getFormData();
     const isChanged = Object.keys(current).some(key => current[key] !== initialFormData[key]);
+    
+    window.hasUnsavedChanges = isChanged;
     
     if (isChanged) {
       saveCabinBtn.disabled = false;
