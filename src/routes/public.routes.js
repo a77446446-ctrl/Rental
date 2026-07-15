@@ -52,6 +52,7 @@ function mapCabinForPublic(cabin) {
 router.use(apiLimiter);
 
 /* ─────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    GET /api/manifest.json
    Возвращает динамический манифест для PWA
    ───────────────────────────────────────────── */
@@ -66,6 +67,10 @@ router.get('/manifest.json', (req, res) => {
     }
   } catch (err) {}
 
+  const mimeType = logoUrl.endsWith('.jpg') || logoUrl.endsWith('.jpeg') ? 'image/jpeg' :
+                   logoUrl.endsWith('.svg') ? 'image/svg+xml' :
+                   logoUrl.endsWith('.webp') ? 'image/webp' : 'image/png';
+
   res.json({
     "name": "ECO-Gorniy",
     "short_name": "ECO-Gorniy",
@@ -76,17 +81,20 @@ router.get('/manifest.json', (req, res) => {
     "icons": [
       {
         "src": logoUrl,
-        "type": "image/png",
-        "sizes": "192x192"
+        "type": mimeType,
+        "sizes": "192x192",
+        "purpose": "any"
       },
       {
         "src": logoUrl,
-        "type": "image/png",
-        "sizes": "512x512"
+        "type": mimeType,
+        "sizes": "512x512",
+        "purpose": "any maskable"
       }
     ]
   });
 });
+
 
 /* ─────────────────────────────────────────────
    GET /api/icon.png

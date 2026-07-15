@@ -1,12 +1,11 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v22';
+const CACHE_VERSION = 'eco-gorniy-pwa-v23';
 const STATIC_CACHE = [
   '/',
   '/index.html',
-  '/manifest.webmanifest',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/maskable-512.png'
+  '/api/manifest.json',
+  '/api/icon.png'
 ];
+
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
