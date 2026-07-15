@@ -258,11 +258,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         row.appendChild(actions);
 
         reviewsContainer.appendChild(row);
+
+        if (reviewDraft && reviewDraft.index === index) {
+          const draftForm = renderReviewDraftForm();
+          if (draftForm) reviewsContainer.appendChild(draftForm);
+        }
       });
     }
 
-    const draftForm = renderReviewDraftForm();
-    if (draftForm) reviewsContainer.appendChild(draftForm);
+    if (reviewDraft && reviewDraft.index === -1) {
+      const draftForm = renderReviewDraftForm();
+      if (draftForm) reviewsContainer.appendChild(draftForm);
+    }
   }
 
   function escapeReviewText(value) {

@@ -3,54 +3,19 @@ const dataStore = require('../../services/dataStore.service');
 
 exports.getAnalytics = async (req, res) => {
   try {
+    const period = req.query.period || 'all';
+    const targetDate = req.query.date;
+    const targetMonth = req.query.month;
+
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
       .select(`
-        id,
-        cabin_id,
-        check_in,
-        check_out,
-        guests_count,
-        status,
-        total_price,
-        created_at,
-        cabins ( name ),
-        guests ( full_name, phone, telegram )
+        id, cabin_id, check_in, check_out, guests_count, status, total_price, created_at,
+        cabins ( name ), guests ( full_name, phone, telegram )
       `)
       .order('created_at', { ascending: true });
 
     if (error) throw error;
-
-    const statusLabels = {
-      pending: 'Ожидает',
-      confirmed: 'Подтверждена',
-      cancelled: 'Отменена',
-      completed: 'Завершена',
-    };
-
-    const summary = {
-      total_bookings: 0,
-      active_bookings: 0,
-      pending_bookings: 0,
-      confirmed_bookings: 0,
-      cancelled_bookings: 0,
-      completed_bookings: 0,
-      gross_revenue: 0,
-      active_revenue: 0,
-      confirmed_revenue: 0,
-      pending_revenue: 0,
-      cancelled_revenue: 0,
-      avg_check: 0,
-      total_nights: 0,
-      active_nights: 0,
-      guests_count: 0,
-      unique_guests: 0,
-    };
-
-    const byStatus = {};
-    const byCabin = {};
-    const byMonth = {};
-    const guestsMap = {};
 
     function getNights(checkIn, checkOut) {
       const start = new Date(checkIn + 'T00:00:00');
@@ -59,7 +24,34 @@ exports.getAnalytics = async (req, res) => {
       return Number.isFinite(diff) && diff > 0 ? diff : 0;
     }
 
-    (bookings || []).forEach((booking) => {
+    let filteredBookings = bookings || [];
+    if (period !== 'all') {
+      const isDay = period === 'day' && targetDate;
+      const isMonth = period === 'month' && targetMonth;
+
+      filteredBookings = filteredBookings.filter(b => {
+        const cIn = b.check_in || '';
+        const cOut = b.check_out || '';
+        const createdDate = b.created_at ? b.created_at.split('T')[0] : '';
+        const createdMonth = createdDate.substring(0, 7);
+        
+        if (isDay) {
+          return createdDate === targetDate || (targetDate >= cIn && targetDate <= cOut);
+        } else if (isMonth) {
+          const cInMonth = cIn.substring(0, 7);
+          const cOutMonth = cOut.substring(0, 7);
+          return createdMonth === targetMonth || cInMonth === targetMonth || cOutMonth === targetMonth;
+        }
+        return true;
+      });
+    }
+
+    // Default All-time logic
+    const statusLabels = { pending: 'Ожидает', confirmed: 'Подтверждена', cancelled: 'Отменена', completed: 'Завершена' };
+    const summary = { total_bookings: 0, active_bookings: 0, pending_bookings: 0, confirmed_bookings: 0, cancelled_bookings: 0, completed_bookings: 0, gross_revenue: 0, active_revenue: 0, confirmed_revenue: 0, pending_revenue: 0, cancelled_revenue: 0, avg_check: 0, total_nights: 0, active_nights: 0, guests_count: 0, unique_guests: 0 };
+    const byStatus = {}; const byCabin = {}; const byMonth = {}; const guestsMap = {};
+
+    (filteredBookings || []).forEach((booking) => {
       const status = booking.status || 'pending';
       const price = Number(booking.total_price) || 0;
       const nights = getNights(booking.check_in, booking.check_out);
@@ -93,30 +85,14 @@ exports.getAnalytics = async (req, res) => {
       if (status === 'pending') summary.pending_revenue += price;
 
       if (!byStatus[status]) {
-        byStatus[status] = {
-          status,
-          label: statusLabels[status] || status,
-          bookings: 0,
-          revenue: 0,
-          nights: 0,
-        };
+        byStatus[status] = { status, label: statusLabels[status] || status, bookings: 0, revenue: 0, nights: 0 };
       }
       byStatus[status].bookings += 1;
       byStatus[status].revenue += price;
       byStatus[status].nights += nights;
 
       if (!byCabin[cabinKey]) {
-        byCabin[cabinKey] = {
-          cabin_id: booking.cabin_id,
-          cabin_name: cabinName,
-          bookings: 0,
-          active_bookings: 0,
-          revenue: 0,
-          confirmed_revenue: 0,
-          nights: 0,
-          guests_count: 0,
-          avg_check: 0,
-        };
+        byCabin[cabinKey] = { cabin_id: booking.cabin_id, cabin_name: cabinName, bookings: 0, active_bookings: 0, revenue: 0, confirmed_revenue: 0, nights: 0, guests_count: 0, avg_check: 0 };
       }
       byCabin[cabinKey].bookings += 1;
       byCabin[cabinKey].nights += nights;
@@ -128,13 +104,7 @@ exports.getAnalytics = async (req, res) => {
       if (isConfirmedRevenue) byCabin[cabinKey].confirmed_revenue += price;
 
       if (!byMonth[monthKey]) {
-        byMonth[monthKey] = {
-          month: monthKey,
-          bookings: 0,
-          active_bookings: 0,
-          revenue: 0,
-          nights: 0,
-        };
+        byMonth[monthKey] = { month: monthKey, bookings: 0, active_bookings: 0, revenue: 0, nights: 0 };
       }
       byMonth[monthKey].bookings += 1;
       byMonth[monthKey].nights += nights;
@@ -144,15 +114,7 @@ exports.getAnalytics = async (req, res) => {
       }
 
       if (!guestsMap[phone]) {
-        guestsMap[phone] = {
-          phone: booking.guests?.phone || '',
-          name: booking.guests?.full_name || 'Неизвестно',
-          telegram: booking.guests?.telegram || '',
-          bookings: 0,
-          active_bookings: 0,
-          ltv: 0,
-          last_booking: booking.created_at,
-        };
+        guestsMap[phone] = { phone: booking.guests?.phone || '', name: booking.guests?.full_name || 'Неизвестно', telegram: booking.guests?.telegram || '', bookings: 0, active_bookings: 0, ltv: 0, last_booking: booking.created_at };
       }
       guestsMap[phone].bookings += 1;
       guestsMap[phone].last_booking = booking.created_at;
@@ -163,33 +125,15 @@ exports.getAnalytics = async (req, res) => {
     });
 
     summary.unique_guests = Object.keys(guestsMap).filter((key) => !key.startsWith('unknown:')).length;
-    summary.avg_check = summary.active_bookings > 0
-      ? Math.round(summary.active_revenue / summary.active_bookings)
-      : 0;
+    summary.avg_check = summary.active_bookings > 0 ? Math.round(summary.active_revenue / summary.active_bookings) : 0;
 
-    const cabins = Object.values(byCabin)
-      .map((item) => ({
-        ...item,
-        avg_check: item.active_bookings > 0 ? Math.round(item.revenue / item.active_bookings) : 0,
-      }))
-      .sort((a, b) => b.revenue - a.revenue);
-
-    const months = Object.values(byMonth)
-      .sort((a, b) => a.month.localeCompare(b.month));
-
-    const topGuests = Object.values(guestsMap)
-      .sort((a, b) => b.ltv - a.ltv)
-      .slice(0, 10);
+    const cabins = Object.values(byCabin).map((item) => ({ ...item, avg_check: item.active_bookings > 0 ? Math.round(item.revenue / item.active_bookings) : 0 })).sort((a, b) => b.revenue - a.revenue);
+    const months = Object.values(byMonth).sort((a, b) => a.month.localeCompare(b.month));
+    const topGuests = Object.values(guestsMap).sort((a, b) => b.ltv - a.ltv).slice(0, 10);
 
     res.json({
       success: true,
-      data: {
-        summary,
-        statuses: Object.values(byStatus),
-        cabins,
-        months,
-        top_guests: topGuests,
-      },
+      data: { summary, statuses: Object.values(byStatus), cabins, months, top_guests: topGuests },
     });
   } catch (err) {
     console.error('[crm.controller] GET /analytics error:', err);

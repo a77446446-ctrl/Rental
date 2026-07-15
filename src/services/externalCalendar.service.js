@@ -315,13 +315,16 @@ async function saveSources(cabinId, sources) {
     };
   }).filter((source) => source.ical_url);
 
+  let savedDbData = null;
+
   if (supabaseAdmin) {
     const { data, error } = await supabaseAdmin.rpc('save_external_calendar_sources', {
       p_cabin_id: cabinId,
       p_sources: normalized,
     });
-    if (!error) return data || [];
-    if (isMissingRpc(error, 'save_external_calendar_sources')) {
+    if (!error) {
+      savedDbData = data || [];
+    } else if (isMissingRpc(error, 'save_external_calendar_sources')) {
       const upsert = normalized.length
         ? await supabaseAdmin.from('external_calendar_sources').upsert(normalized, { onConflict: 'id' }).select()
         : { data: [], error: null };
@@ -332,9 +335,10 @@ async function saveSources(cabinId, sources) {
           const removed = await supabaseAdmin.from('external_calendar_sources').delete().in('id', removedIds);
           if (removed.error) throw removed.error;
         }
-        return upsert.data || normalized;
+        savedDbData = upsert.data || normalized;
+      } else if (!isExternalCalendarSchemaMissing(upsert.error)) {
+        throw upsert.error;
       }
-      if (!isExternalCalendarSchemaMissing(upsert.error)) throw upsert.error;
     } else if (!isExternalCalendarSchemaMissing(error)) {
       throw error;
     }
@@ -343,7 +347,7 @@ async function saveSources(cabinId, sources) {
   let all = readData(calendarsFile).filter((source) => String(source.cabin_id) !== String(cabinId));
   all.push(...normalized);
   writeData(calendarsFile, all);
-  return normalized;
+  return savedDbData || normalized;
 }
 
 async function markSyncError(sourceId, message) {

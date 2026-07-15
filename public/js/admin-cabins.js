@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ical_url: row.querySelector('.external-ical-url').value.trim(),
         is_active: row.querySelector('.external-is-active').checked,
       };
-    }).filter(src => src.source_name || src.ical_url);
+    }).filter(src => src.ical_url && src.ical_url.trim() !== '');
   }
 
   async function saveExternalCalendars(cabinId) {

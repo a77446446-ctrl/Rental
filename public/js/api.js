@@ -64,7 +64,9 @@
     }, REQUEST_TIMEOUT_MS) : null;
 
     try {
-      const response = await fetch(url, controller ? { signal: controller.signal } : undefined);
+      var options = { cache: 'no-store' };
+      if (controller) options.signal = controller.signal;
+      const response = await fetch(url, options);
 
       if (!response.ok) {
         const errorBody = await response.json().catch(function () {

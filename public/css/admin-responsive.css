@@ -85,6 +85,14 @@
     padding: 8px 0 !important; border-bottom: 1px solid var(--line) !important;
     overflow-wrap: anywhere; text-align: right;
   }
+  body.admin-mobile-ready .admin-table td.td-complex-label::before { content: none !important; display: none !important; }
+  .mobile-complex-label { display: none; }
+  body.admin-mobile-ready .admin-table td .mobile-complex-label {
+    display: block; flex: 0 0 38%; color: var(--muted); font-size: 11px;
+    font-weight: 600; text-align: left; text-transform: uppercase; letter-spacing: .04em;
+  }
+  body.admin-mobile-ready .admin-table td[data-label*="Статус"].color-red::before { color: #d26e6e !important; }
+  body.admin-mobile-ready .admin-table td[data-label*="Брони"].color-red::before { color: #d26e6e !important; }
   body.admin-mobile-ready .admin-table td:last-child { border-bottom: 0 !important; }
   body.admin-mobile-ready .admin-table td::before {
     content: attr(data-label); flex: 0 0 38%; color: var(--muted); font-size: 11px;
@@ -162,6 +170,15 @@
   body.admin-mobile-ready .analytics-grid,
   body.admin-mobile-ready .settings-grid,
   body.admin-mobile-ready .form-grid { grid-template-columns: 1fr !important; }
+
+  /* Fix main page settings grids and overflows */
+  body.admin-mobile-ready .admin-accordion-content div[style*="display: grid"] { grid-template-columns: 1fr !important; gap: 16px !important; }
+  body.admin-mobile-ready .admin-accordion-content div[style*="display: flex"] { flex-wrap: nowrap !important; gap: 8px !important; }
+  body.admin-mobile-ready .admin-accordion-content input:not([type="checkbox"]),
+  body.admin-mobile-ready .admin-accordion-content textarea { box-sizing: border-box; width: 100%; flex: 1; min-width: 0; padding: 10px !important; font-size: 14px !important; }
+  body.admin-mobile-ready .admin-accordion-content .form-group { width: 100%; grid-column: 1 / -1 !important; gap: 6px !important; margin-bottom: 8px; }
+  body.admin-mobile-ready .admin-accordion-content label { font-size: 13px !important; line-height: 1.2; }
+  body.admin-mobile-ready .admin-accordion-content .btn[title*="Удалить"] { width: 40px !important; height: 40px !important; flex: 0 0 40px !important; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
 }
 
 @media (max-width: 560px) {
@@ -184,4 +201,14 @@
 
 @media (min-width: 901px) {
   .admin-menu-toggle, .admin-menu-backdrop { display: none !important; }
+}
+
+select option { background-color: var(--bg-1, #1e1e1e); color: var(--cream, #f1ede3); }
+
+/* Более компактные блоки для раздела Услуги / Наполнение на мобильных */
+@media (max-width: 900px) {
+  body.admin-mobile-ready .settings-section .admin-table tr { padding: 10px; gap: 4px; border-radius: 8px; }
+  body.admin-mobile-ready .settings-section .admin-table td { padding: 6px 0 !important; min-height: 32px; gap: 8px; }
+  body.admin-mobile-ready .settings-section .admin-table td::before,
+  body.admin-mobile-ready .settings-section .admin-table td .mobile-complex-label { flex: 0 0 32%; font-size: 10px; }
 }

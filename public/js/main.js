@@ -88,15 +88,7 @@
 
   function getObjectWordForms() {
     var configured = String(state.settings.fundName || 'Домик').trim() || 'Домик';
-    var key = configured.toLocaleLowerCase('ru-RU');
-    var known = {
-      'домик': { one: 'домик', many: 'домики', genOne: 'домика', genMany: 'домиков', prep: 'домике', dat: 'домику', inst: 'домиком' },
-      'вилла': { one: 'вилла', many: 'виллы', genOne: 'виллы', genMany: 'вилл', prep: 'вилле', dat: 'вилле', inst: 'виллой' },
-      'квартира': { one: 'квартира', many: 'квартиры', genOne: 'квартиры', genMany: 'квартир', prep: 'квартире', dat: 'квартире', inst: 'квартирой' },
-      'коттедж': { one: 'коттедж', many: 'коттеджи', genOne: 'коттеджа', genMany: 'коттеджей', prep: 'коттедже', dat: 'коттеджу', inst: 'коттеджем' },
-      'объект': { one: 'объект', many: 'объекты', genOne: 'объекта', genMany: 'объектов', prep: 'объекте', dat: 'объекту', inst: 'объектом' }
-    };
-    return known[key] || { one: configured, many: configured, genOne: configured, genMany: configured, prep: configured, dat: configured, inst: configured };
+    return { one: configured, many: configured, genOne: configured, genMany: configured, prep: configured, dat: configured, inst: configured };
   }
 
   function replaceObjectWords(value) {
@@ -115,9 +107,13 @@
     };
     return value.replace(/домиками|домиков|домиках|домики|домика|домике|домику|домиком|домик/gi, function(match) {
       var replacement = replacements[match.toLocaleLowerCase('ru-RU')] || forms.one;
-      return match[0] === match[0].toLocaleUpperCase('ru-RU')
-        ? replacement.charAt(0).toLocaleUpperCase('ru-RU') + replacement.slice(1)
-        : replacement;
+      
+      if (match === match.toLocaleUpperCase('ru-RU')) {
+        return replacement.toLocaleUpperCase('ru-RU');
+      } else if (match[0] === match[0].toLocaleUpperCase('ru-RU')) {
+        return replacement.charAt(0).toLocaleUpperCase('ru-RU') + replacement.slice(1);
+      }
+      return replacement;
     });
   }
 
@@ -233,7 +229,12 @@
       controller.abort();
     }, timeoutMs || 12000) : null;
 
-    return fetch(url, controller ? { signal: controller.signal } : undefined)
+    var options = { cache: 'no-store' };
+    if (controller) {
+      options.signal = controller.signal;
+    }
+
+    return fetch(url, options)
       .then(function (res) {
         return res.ok ? res.json() : {};
       })
@@ -924,7 +925,7 @@
 
       hideAppLoading();
       if (state.cabins.length === 0 && window.showToast) {
-        window.showToast('Объекты временно не загрузились. Проверьте Supabase и повторите позже.', 'error');
+        window.showToast('В базе данных пока нет активных домиков. Добавьте их в админ-панели.', 'error');
       }
     } catch (err) {
       console.error('[main] Ошибка инициализации:', err);

@@ -32,6 +32,7 @@ const app = express();
  */
 app.use(
   helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -147,6 +148,13 @@ app.get('/ready', async (_req, res) => {
    API-маршруты
    ──────────────────────────────────────── */
 
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 app.use('/api', publicRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
@@ -193,42 +201,58 @@ app.use((err, req, res, _next) => {
    ──────────────────────────────────────── */
 
 let calendarJob = null;
-const server = app.listen(config.port, () => {
-  console.log('');
-  console.log('╔══════════════════════════════════════════════╗');
-  console.log('║        🌲  EcoGorniy.ru — Сервер запущен     ║');
-  console.log('╠══════════════════════════════════════════════╣');
-  console.log(`║  Адрес:      ${config.baseUrl.padEnd(32)}║`);
-  console.log(`║  Режим:      ${config.nodeEnv.padEnd(32)}║`);
-  console.log(`║  Healthcheck: ${(config.baseUrl + '/health').padEnd(31)}║`);
-  console.log('╚══════════════════════════════════════════════╝');
-  console.log('');
-  
-  // Запускаем polling Telegram только локально. В production лучше использовать webhook.
-  if (config.nodeEnv !== 'production') {
-    const chatService = require('./services/chat.service');
-    chatService.startTelegramPolling();
-  }
+let currentPort = config.port;
+let server;
 
-  if (!config.disableBackgroundJobs) {
-    calendarJob = externalCalendarService.startExternalCalendarSync(config.externalCalendarSyncMinutes);
-  }
-});
+function startServer() {
+  server = app.listen(currentPort, () => {
+    console.log('');
+    console.log('╔══════════════════════════════════════════════╗');
+    console.log('║        🌲  EcoGorniy.ru — Сервер запущен     ║');
+    console.log('╠══════════════════════════════════════════════╣');
+    console.log(`║  Адрес:      http://localhost:${currentPort.toString().padEnd(15)}║`);
+    console.log(`║  Режим:      ${config.nodeEnv.padEnd(32)}║`);
+    console.log(`║  Healthcheck: ${(config.baseUrl + '/health').padEnd(31)}║`);
+    console.log('╚══════════════════════════════════════════════╝');
+    console.log('');
+    
+    if (config.nodeEnv !== 'production') {
+      const chatService = require('./services/chat.service');
+      chatService.startTelegramPolling();
+    }
 
-server.on('error', (err) => {
-  console.error(`[server] Не удалось запустить HTTP-сервер: ${err.message}`);
-  process.exitCode = 1;
-});
+    if (!config.disableBackgroundJobs) {
+      calendarJob = externalCalendarService.startExternalCalendarSync(config.externalCalendarSyncMinutes);
+    }
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`[server] Порт ${currentPort} занят. Пробуем порт ${currentPort + 1}...`);
+      currentPort++;
+      startServer();
+    } else {
+      console.error(`[server] Не удалось запустить HTTP-сервер: ${err.message}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
+startServer();
 
 function shutdown(signal) {
   console.log(`[server] Получен ${signal}, завершаем активные запросы...`);
   if (calendarJob) calendarJob.stop();
   const forceTimer = setTimeout(() => process.exit(1), 10000);
   forceTimer.unref();
-  server.close(() => {
-    clearTimeout(forceTimer);
+  if (server) {
+    server.close(() => {
+      clearTimeout(forceTimer);
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 }
 
 process.once('SIGTERM', () => shutdown('SIGTERM'));

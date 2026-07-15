@@ -83,9 +83,15 @@
       th, td { padding: 10px 8px; font-size: 13px; }
       th { font-size: 11px; }
       td div { font-size: 14px; }
+      .analytics-controls { flex-direction: row; width: 100%; padding: 6px; gap: 4px; }
+      .analytics-controls select { font-size: 13px; padding: 6px 4px !important; min-width: 90px; }
+      .analytics-controls input { font-size: 13px; padding: 6px 4px !important; width: 100%; }
+      .analytics-controls button { padding: 6px 8px !important; }
+      #dateControlWrap { flex: 1; gap: 2px !important; }
     }
   </style>
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=1">
+  <link rel="stylesheet" href="/css/admin.css?v=7">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=7">
   <script defer src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -116,10 +122,39 @@
     </aside>
 
     <main class="admin-content">
-      <div class="admin-content-header">
+      <div class="admin-content-header" style="flex-wrap: wrap; gap: 16px;">
         <div>
           <h2>Аналитика</h2>
           <span style="color: var(--muted);">Выручка, бронирования, статусы, объекты и гости</span>
+        </div>
+        <div class="analytics-controls" style="display: flex; gap: 8px; align-items: center; background: rgba(237, 228, 214, 0.05); padding: 8px; border-radius: 12px;">
+          <select id="analyticsPeriod" style="padding: 8px; border-radius: 8px; background: var(--bg-1); color: var(--cream); border: 1px solid var(--line); color-scheme: dark;">
+            <option value="all">Всё время</option>
+            <option value="month">Месяц</option>
+            <option value="day">День</option>
+          </select>
+          
+          <div id="dateControlWrap" style="display: none; align-items: center; gap: 4px;">
+            <button id="btnPrevDate" class="btn btn-ghost" style="padding: 6px 10px;">&larr;</button>
+            <input type="date" id="analyticsDate" style="padding: 7px; border-radius: 8px; background: var(--bg-1); color: var(--cream); border: 1px solid var(--line); color-scheme: dark;">
+            <input type="month" id="analyticsMonth" style="padding: 7px; border-radius: 8px; background: var(--bg-1); color: var(--cream); border: 1px solid var(--line); color-scheme: dark; display: none;">
+            <button id="btnNextDate" class="btn btn-ghost" style="padding: 6px 10px;">&rarr;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom: 24px;">
+        <div class="panel-head" style="cursor: pointer;" id="analyticsInstructionsToggle">
+          <h3 style="display: flex; align-items: center; gap: 8px;"><i data-lucide="info" style="width: 18px; height: 18px;"></i> Как работает аналитика?</h3>
+          <span style="font-size: 20px;" id="analyticsInstructionsIcon">+</span>
+        </div>
+        <div id="analyticsInstructions" style="display: none; padding: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; line-height: 1.5;">
+          <p><strong>За всё время:</strong> Показывает сводные данные по всем бронированиям с момента запуска.</p>
+          <p><strong>За месяц / За день:</strong> Показывает данные за выбранный период в двух разрезах:</p>
+          <ul style="margin-top: 8px; margin-left: 20px; margin-bottom: 8px;">
+            <li style="margin-bottom: 4px;"><strong>По проживанию:</strong> Метрики объектов, в которых <u>гости проживали</u> в этот период (занятость, заезды, выезды, и выручка, приходящаяся на эти дни).</li>
+            <li><strong>По продажам:</strong> Метрики по <u>новым бронированиям</u>, созданным (оформленным) в выбранный период, независимо от того, на какие даты заезд.</li>
+          </ul>
         </div>
       </div>
 
@@ -156,8 +191,8 @@
   </div>
 
   <script src="/js/api.js?v=9"></script>
-  <script src="/js/admin-analytics.js"></script>
+  <script src="/js/admin-analytics.js?v=7"></script>
   <script src="/js/pwa.js?v=3"></script>
-  <script src="/js/admin-mobile.js?v=3"></script>
+  <script src="/js/admin-mobile.js?v=4"></script>
 </body>
 </html>

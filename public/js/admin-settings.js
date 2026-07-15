@@ -103,8 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </span>
         </td>
         <td data-label="Действие">
-          <button class="btn btn-ghost house-item-toggle" data-id="${item.id}" style="padding: 4px 10px; min-height: 28px;">${item.is_active !== false ? 'Скрыть' : 'Показать'}</button>
-          <button class="btn btn-ghost house-item-delete" data-id="${item.id}" style="padding: 4px 10px; min-height: 28px; border-color: #8b3c3c; color: #ff8c8c;">Удалить</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-ghost house-item-toggle" data-id="${item.id}" style="padding: 4px 10px; min-height: 28px;">${item.is_active !== false ? 'Скрыть' : 'Показать'}</button>
+            <button class="btn btn-ghost house-item-delete" data-id="${item.id}" style="padding: 4px 10px; min-height: 28px; border-color: #8b3c3c; color: #ff8c8c;">Удалить</button>
+          </div>
         </td>
       </tr>
     `).join('');
