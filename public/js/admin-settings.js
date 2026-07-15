@@ -44,16 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const priceTypeStr = s.price_type === 'per_day' ? 'За сутки' : (s.price_type === 'per_guest' ? 'За гостя' : 'За весь период');
       return `
       <tr>
-        <td style="font-weight: 600;">${s.name}</td>
-        <td>${(s.price || 0).toLocaleString('ru-RU')} ₽</td>
-        <td>${priceTypeStr}</td>
-        <td>
+        <td data-label="Название" style="font-weight: 600;">${s.name}</td>
+        <td data-label="Цена">${(s.price || 0).toLocaleString('ru-RU')} ₽</td>
+        <td data-label="Тип">${priceTypeStr}</td>
+        <td data-label="Статус">
           <span style="color: ${s.is_active ? 'var(--moss-2)' : 'var(--muted)'};">
             ${s.is_active ? 'Активна' : 'Скрыта'}
           </span>
         </td>
-        <td>
-          <button class="btn btn-ghost edit-btn" data-id="${s.id}" style="padding: 4px 12px; min-height: 28px;">Редактировать</button>
+        <td data-label="Действие">
+          <button class="btn btn-ghost edit-btn" data-id="${s.id}" style="padding: 4px 12px; min-height: 28px;">Редакт.</button>
         </td>
       </tr>
     `}).join('');
@@ -91,18 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     houseItemsTableBody.innerHTML = currentHouseItems.map(item => `
       <tr>
-        <td>
+        <td data-label="Пункт">
           <div style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
             ${item.icon ? `<i data-lucide="${item.icon}" style="width:16px;height:16px;color:var(--gold);flex-shrink:0;"></i>` : '<div style="width:16px;height:16px;flex-shrink:0;"></div>'}
             ${item.name}
           </div>
         </td>
-        <td>
+        <td data-label="Статус">
           <span style="color: ${item.is_active !== false ? 'var(--moss-2)' : 'var(--muted)'};">
             ${item.is_active !== false ? 'Активен' : 'Скрыт'}
           </span>
         </td>
-        <td>
+        <td data-label="Действие">
           <button class="btn btn-ghost house-item-toggle" data-id="${item.id}" style="padding: 4px 10px; min-height: 28px;">${item.is_active !== false ? 'Скрыть' : 'Показать'}</button>
           <button class="btn btn-ghost house-item-delete" data-id="${item.id}" style="padding: 4px 10px; min-height: 28px; border-color: #8b3c3c; color: #ff8c8c;">Удалить</button>
         </td>

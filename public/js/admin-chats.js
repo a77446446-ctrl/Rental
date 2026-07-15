@@ -142,30 +142,37 @@ document.addEventListener('DOMContentLoaded', () => {
       bubble.className = 'message-bubble';
 
       const attachment = parseAttachment(msg.message || '');
+      let safeAttachmentUrl = null;
       if (attachment) {
+        try {
+          const parsedUrl = new URL(String(attachment.url || ''), window.location.origin);
+          if (['http:', 'https:'].includes(parsedUrl.protocol)) safeAttachmentUrl = parsedUrl.href;
+        } catch (_error) {}
+      }
+      if (attachment && safeAttachmentUrl) {
         const wrap = document.createElement('div');
         wrap.className = 'message-attachment';
 
         let media;
         if (attachment.mediaType === 'image') {
           media = document.createElement('img');
-          media.src = attachment.url;
+          media.src = safeAttachmentUrl;
           media.alt = attachment.name || 'Изображение';
         } else if (attachment.mediaType === 'video') {
           media = document.createElement('video');
-          media.src = attachment.url;
+          media.src = safeAttachmentUrl;
           media.controls = true;
           media.playsInline = true;
         } else if (attachment.mediaType === 'audio') {
           media = document.createElement('audio');
-          media.src = attachment.url;
+          media.src = safeAttachmentUrl;
           media.controls = true;
         }
 
         if (media) wrap.appendChild(media);
 
         const link = document.createElement('a');
-        link.href = attachment.url;
+        link.href = safeAttachmentUrl;
         link.target = '_blank';
         link.rel = 'noopener';
         link.textContent = attachment.name || 'Открыть файл';
@@ -213,7 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const current = conversations.find((item) => item.token === token);
 
     if (current) {
-      threadTitle.innerHTML = current.title + ' <span style="font-size:14px;color:#8e8e8e;font-weight:normal;margin-left:8px;">' + current.token_id + '</span>';
+      threadTitle.textContent = current.title || 'Диалог';
+      const tokenLabel = document.createElement('span');
+      tokenLabel.style.cssText = 'font-size:14px;color:#8e8e8e;font-weight:normal;margin-left:8px;';
+      tokenLabel.textContent = current.token_id || '';
+      threadTitle.appendChild(tokenLabel);
       threadMeta.textContent = 'Последнее сообщение: ' + formatDate(current.last_at);
     } else {
       threadTitle.textContent = 'Диалог';
@@ -328,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadConversations();
 
-  // Автообновление: опрос новых сообщений каждые 5 секунд
+  // Автообновление с умеренной частотой, чтобы не упираться в лимиты API.
   let pollingActive = true;
   let lastKnownMessageCount = 0;
 
@@ -374,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  setInterval(pollForUpdates, 5000);
+  setInterval(pollForUpdates, 15000);
 
   // Восстанавливаем заголовок при возвращении на вкладку
   document.addEventListener('visibilitychange', () => {

@@ -84,6 +84,84 @@
     cabinTags: {},
     currentTagFilter: 'all'
   };
+  var terminologyObserver = null;
+
+  function getObjectWordForms() {
+    var configured = String(state.settings.fundName || 'Домик').trim() || 'Домик';
+    var key = configured.toLocaleLowerCase('ru-RU');
+    var known = {
+      'домик': { one: 'домик', many: 'домики', genOne: 'домика', genMany: 'домиков', prep: 'домике', dat: 'домику', inst: 'домиком' },
+      'вилла': { one: 'вилла', many: 'виллы', genOne: 'виллы', genMany: 'вилл', prep: 'вилле', dat: 'вилле', inst: 'виллой' },
+      'квартира': { one: 'квартира', many: 'квартиры', genOne: 'квартиры', genMany: 'квартир', prep: 'квартире', dat: 'квартире', inst: 'квартирой' },
+      'коттедж': { one: 'коттедж', many: 'коттеджи', genOne: 'коттеджа', genMany: 'коттеджей', prep: 'коттедже', dat: 'коттеджу', inst: 'коттеджем' },
+      'объект': { one: 'объект', many: 'объекты', genOne: 'объекта', genMany: 'объектов', prep: 'объекте', dat: 'объекту', inst: 'объектом' }
+    };
+    return known[key] || { one: configured, many: configured, genOne: configured, genMany: configured, prep: configured, dat: configured, inst: configured };
+  }
+
+  function replaceObjectWords(value) {
+    if (!value || !/домик/i.test(value)) return value;
+    var forms = getObjectWordForms();
+    var replacements = {
+      'домиков': forms.genMany,
+      'домиками': forms.inst,
+      'домиках': forms.prep,
+      'домики': forms.many,
+      'домика': forms.genOne,
+      'домике': forms.prep,
+      'домику': forms.dat,
+      'домиком': forms.inst,
+      'домик': forms.one
+    };
+    return value.replace(/домиками|домиков|домиках|домики|домика|домике|домику|домиком|домик/gi, function(match) {
+      var replacement = replacements[match.toLocaleLowerCase('ru-RU')] || forms.one;
+      return match[0] === match[0].toLocaleUpperCase('ru-RU')
+        ? replacement.charAt(0).toLocaleUpperCase('ru-RU') + replacement.slice(1)
+        : replacement;
+    });
+  }
+
+  function applyObjectTerminology(root) {
+    var target = root && root.nodeType ? root : document.body;
+    if (!target) return;
+
+    if (target.nodeType === Node.TEXT_NODE) {
+      var updatedText = replaceObjectWords(target.nodeValue);
+      if (updatedText !== target.nodeValue) target.nodeValue = updatedText;
+      return;
+    }
+
+    var walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
+    var textNode;
+    while ((textNode = walker.nextNode())) {
+      var parentTag = textNode.parentElement && textNode.parentElement.tagName;
+      if (parentTag === 'SCRIPT' || parentTag === 'STYLE') continue;
+      var updated = replaceObjectWords(textNode.nodeValue);
+      if (updated !== textNode.nodeValue) textNode.nodeValue = updated;
+    }
+
+    if (target.querySelectorAll) {
+      target.querySelectorAll('[title], [placeholder], [aria-label]').forEach(function(element) {
+        ['title', 'placeholder', 'aria-label'].forEach(function(attribute) {
+          if (element.hasAttribute(attribute)) {
+            element.setAttribute(attribute, replaceObjectWords(element.getAttribute(attribute)));
+          }
+        });
+      });
+    }
+    document.title = replaceObjectWords(document.title);
+  }
+
+  function watchObjectTerminology() {
+    if (terminologyObserver || !document.body) return;
+    terminologyObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(function(node) { applyObjectTerminology(node); });
+      });
+    });
+    terminologyObserver.observe(document.body, { childList: true, subtree: true });
+  }
+
 
   /* Элементы UI */
   var els = {
@@ -666,6 +744,8 @@
       statCabinsCount.textContent = state.cabins.length;
     }
 
+    applyObjectTerminology(document.body);
+    watchObjectTerminology();
     applyMainpageSettings();
     renderTagsFilter();
 
@@ -842,14 +922,14 @@
       });
     }
 
-      if (state.cabins.length === 0) {
-        showAppLoadingError('Домики не загрузились из базы. Если Supabase сейчас недоступен, страница не будет показывать демо-версию. Проверьте подключение и нажмите «Повторить загрузку».');
-      } else {
-        hideAppLoading();
+      hideAppLoading();
+      if (state.cabins.length === 0 && window.showToast) {
+        window.showToast('Объекты временно не загрузились. Проверьте Supabase и повторите позже.', 'error');
       }
     } catch (err) {
       console.error('[main] Ошибка инициализации:', err);
-      showAppLoadingError('Произошла ошибка загрузки: ' + err.message);
+      hideAppLoading();
+      if (window.showToast) window.showToast('Не удалось загрузить данные: ' + err.message, 'error');
     }
   }
 

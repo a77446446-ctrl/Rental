@@ -16,6 +16,7 @@ const { supabaseAdmin } = require('../config/supabase');
 const { apiLimiter } = require('../middleware/rateLimit');
 const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
+const dataStore = require('../services/dataStore.service');
 
 function addOneDay(dateStr) {
   const date = new Date(dateStr + 'T00:00:00');
@@ -213,10 +214,7 @@ router.get('/cabins/:slug', async (req, res) => {
    ───────────────────────────────────────────── */
 router.get('/extra-services', async (req, res) => {
   try {
-    let services = [];
-    if (fs.existsSync(extraServicesPath)) {
-      services = JSON.parse(fs.readFileSync(extraServicesPath, 'utf8'));
-    }
+    const services = await dataStore.get('extra_services', 'extra_services.json', []);
     const active = services.filter(s => s.is_active !== false).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     res.json({ success: true, data: active });
   } catch (err) {
@@ -230,12 +228,8 @@ router.get('/extra-services', async (req, res) => {
    Возвращает публичный список наполнения домиков.
    ───────────────────────────────────────────── */
 router.get('/house-items', async (req, res) => {
-  const houseItemsPath = path.join(__dirname, '../data/house_items.json');
   try {
-    let items = [];
-    if (fs.existsSync(houseItemsPath)) {
-      items = JSON.parse(fs.readFileSync(houseItemsPath, 'utf8'));
-    }
+    const items = await dataStore.get('house_items', 'house_items.json', []);
     const active = items.filter(s => s.is_active !== false).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     res.json({ success: true, data: active });
   } catch (err) {
@@ -248,34 +242,28 @@ router.get('/house-items', async (req, res) => {
    GET /api/settings
    Возвращает глобальные настройки.
    ───────────────────────────────────────────── */
-router.get('/settings', (req, res) => {
-  const settingsPath = path.join(__dirname, '../data/settings.json');
-  let settings = { checkInTime: '16:00', checkOutTime: '14:00' };
+router.get('/settings', async (_req, res) => {
   try {
-    if (fs.existsSync(settingsPath)) {
-      settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-    }
+    const settings = await dataStore.get('settings', 'settings.json', { checkInTime: '16:00', checkOutTime: '14:00' });
+    return res.json({ success: true, data: settings });
   } catch (err) {
-    console.error('Ошибка чтения settings.json:', err);
+    console.error('[public.routes] Ошибка загрузки settings:', err);
+    return res.status(500).json({ success: false, error: 'Ошибка загрузки настроек' });
   }
-  return res.json({ success: true, data: settings });
 });
 
 /* ─────────────────────────────────────────────
    GET /api/amenities
    Возвращает привязки услуг к домикам.
    ───────────────────────────────────────────── */
-router.get('/amenities', (req, res) => {
-  const amenitiesPath = path.join(__dirname, '../data/amenities.json');
-  let amenities = {};
+router.get('/amenities', async (_req, res) => {
   try {
-    if (fs.existsSync(amenitiesPath)) {
-      amenities = JSON.parse(fs.readFileSync(amenitiesPath, 'utf8'));
-    }
+    const amenities = await dataStore.get('amenities', 'amenities.json', {});
+    return res.json({ success: true, data: amenities });
   } catch (err) {
-    console.error('Ошибка чтения amenities.json:', err);
+    console.error('[public.routes] Ошибка загрузки amenities:', err);
+    return res.status(500).json({ success: false, error: 'Ошибка загрузки наполнения' });
   }
-  return res.json({ success: true, data: amenities });
 });
 
 /* ─────────────────────────────────────────────
@@ -622,10 +610,7 @@ router.get('/amenities', async (req, res) => {
  */
 router.get('/mainpage', async (req, res) => {
   try {
-    let mainpageData = {};
-    if (fs.existsSync(mainpagePath)) {
-      mainpageData = JSON.parse(fs.readFileSync(mainpagePath, 'utf8'));
-    }
+    const mainpageData = await dataStore.get('mainpage', 'mainpage.json', {});
     res.json({ success: true, data: mainpageData });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Ошибка загрузки главной страницы' });
@@ -638,10 +623,7 @@ router.get('/mainpage', async (req, res) => {
  */
 router.get('/tags', async (req, res) => {
   try {
-    let tags = [];
-    if (fs.existsSync(tagsPath)) {
-      tags = JSON.parse(fs.readFileSync(tagsPath, 'utf8'));
-    }
+    const tags = await dataStore.get('tags', 'tags.json', []);
     res.json({ success: true, data: tags });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Ошибка загрузки тегов' });
@@ -652,16 +634,15 @@ router.get('/tags', async (req, res) => {
  * GET /api/cabin-tags
  * Получить привязки тегов к домикам
  */
-router.get('/cabin-tags', (req, res) => {
-  let cabinTags = {};
+router.get('/cabin-tags', async (_req, res) => {
   try {
-    if (fs.existsSync(cabinTagsPath)) {
-      cabinTags = JSON.parse(fs.readFileSync(cabinTagsPath, 'utf8'));
-    }
+    const cabinTags = await dataStore.get('cabin_tags', 'cabin_tags.json', {});
+    // Этот исторический endpoint возвращает объект напрямую; сохраняем контракт фронтенда.
+    return res.json(cabinTags);
   } catch (err) {
-    console.error('Ошибка чтения cabin_tags.json:', err);
+    console.error('[public.routes] Ошибка загрузки cabin-tags:', err);
+    return res.status(500).json({ success: false, error: 'Ошибка загрузки тегов домиков' });
   }
-  return res.json(cabinTags);
 });
 
 /**
@@ -670,7 +651,7 @@ router.get('/cabin-tags', (req, res) => {
  */
 router.post('/bookings', async (req, res) => {
   try {
-    const { cabin_id, check_in, check_out, guest_name, guest_phone, guest_telegram, comment, total_price, extras, guests_count, chat_token } = req.body;
+    const { cabin_id, check_in, check_out, guest_name, guest_phone, guest_telegram, comment, extras, guests_count, chat_token } = req.body;
     
     if (!cabin_id || !check_in || !check_out || !guest_name || !guest_phone) {
       return res.status(400).json({ success: false, error: 'Заполните все обязательные поля' });
@@ -714,8 +695,7 @@ router.post('/bookings', async (req, res) => {
       guest_telegram,
       comment: finalComment,
       guests_count: normalizedGuestsCount,
-      total_price: total_price || 0,
-      extras: (extras || []).map(id => ({ service_id: id, price_at_booking: 0 })) // Упрощено для публичного API
+      extras: Array.isArray(extras) ? extras : []
     });
 
     if (chat_token) {
@@ -728,7 +708,7 @@ router.post('/bookings', async (req, res) => {
         };
         const fCheckIn = formatD(check_in);
         const fCheckOut = formatD(check_out);
-        const msg = `Ваша заявка на бронирование домика «${cabinData.name}» успешно создана!\n\nДаты: ${fCheckIn} — ${fCheckOut}\nКоличество гостей: ${normalizedGuestsCount}\nИтоговая стоимость: ${total_price || 0} ₽\n\n---\n\nНаш администратор свяжется с вами в ближайшее время для подтверждения.\n\nВАЖНО: Пожалуйста, напишите нам любое сообщение (например, «Здравствуйте!»), чтобы администратор смог ответить вам прямо здесь.\nЕсли в течение 10 минут с вами не связались, попробуйте перезвонить по номеру, указанному в контактах.`;
+        const msg = `Ваша заявка на бронирование домика «${cabinData.name}» успешно создана!\n\nДаты: ${fCheckIn} — ${fCheckOut}\nКоличество гостей: ${normalizedGuestsCount}\nИтоговая стоимость: ${booking.total_price} ₽\n\n---\n\nНаш администратор свяжется с вами в ближайшее время для подтверждения.\n\nВАЖНО: Пожалуйста, напишите нам любое сообщение (например, «Здравствуйте!»), чтобы администратор смог ответить вам прямо здесь.\nЕсли в течение 10 минут с вами не связались, попробуйте перезвонить по номеру, указанному в контактах.`;
         await chatService.saveMessage(chat_token, msg, 'admin');
       } catch (err) {
         console.error('[public.routes] Ошибка отправки сообщения в чат:', err);
@@ -739,8 +719,11 @@ router.post('/bookings', async (req, res) => {
   } catch (err) {
     console.error('[public.routes] Ошибка POST /bookings:', err.message);
     const message = String(err.message || '');
-    if (message.includes('внешнем календаре')) {
+    if (message.includes('занят') || message.includes('пересекаются')) {
       return res.status(409).json({ success: false, error: message });
+    }
+    if (/неверн|обязатель|максимум|недоступ|закрыта|позже|длиннее/i.test(message)) {
+      return res.status(400).json({ success: false, error: message });
     }
     res.status(500).json({ success: false, error: 'Ошибка при создании заявки' });
   }

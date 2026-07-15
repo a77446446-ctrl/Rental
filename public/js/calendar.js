@@ -324,12 +324,12 @@
 
       btn.innerHTML =
         '<span>' + day + '</span>' +
-        (busySource && !isPast
-          ? '<small>' + escapeHtml(busySource) + '</small>'
+        (isBusy && !isPast
+          ? '<small>Занято</small>'
           : (priceHtml ? '<small>' + priceHtml + '</small>' : ''));
 
-      if (busySource && !isPast) {
-        btn.title = 'Занято: ' + busySource;
+      if (isBusy && !isPast) {
+        btn.title = 'Занято';
       }
 
       /* Обработчик клика (только для доступных и не прошедших) */

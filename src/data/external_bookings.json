@@ -1,0 +1,2977 @@
+[
+  {
+    "id": "dacdd3fb-45f4-45ab-a371-38251273fe9a",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250715_20250716@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-15",
+    "check_out": "2025-07-16",
+    "raw_event": {
+      "uid": "2174716458_manual_20250715_20250716@avito.ru",
+      "dtstart": "20250715",
+      "dtend": "20250716",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "5ef4ed9f-8be6-46db-bb28-f8a424e2efb9",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250718_20250720@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-18",
+    "check_out": "2025-07-20",
+    "raw_event": {
+      "uid": "2174716458_manual_20250718_20250720@avito.ru",
+      "dtstart": "20250718",
+      "dtend": "20250720",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "34b2b320-181b-42e8-ba99-c99f7b86bf1e",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250729_20250801@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-29",
+    "check_out": "2025-08-01",
+    "raw_event": {
+      "uid": "2174716458_manual_20250729_20250801@avito.ru",
+      "dtstart": "20250729",
+      "dtend": "20250801",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "7f41be9b-075c-47b8-95e6-44fa0b7f1b51",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250808_20250809@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-08",
+    "check_out": "2025-08-09",
+    "raw_event": {
+      "uid": "2174716458_manual_20250808_20250809@avito.ru",
+      "dtstart": "20250808",
+      "dtend": "20250809",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "8fa5fc57-83db-4466-ad01-e3aa288fe706",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250811_20250813@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-11",
+    "check_out": "2025-08-13",
+    "raw_event": {
+      "uid": "2174716458_manual_20250811_20250813@avito.ru",
+      "dtstart": "20250811",
+      "dtend": "20250813",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "02b9896b-32af-4ab5-8cba-696117f26850",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250828_20250829@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-28",
+    "check_out": "2025-08-29",
+    "raw_event": {
+      "uid": "2174716458_manual_20250828_20250829@avito.ru",
+      "dtstart": "20250828",
+      "dtend": "20250829",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "7335167f-6390-43c3-b79c-5e4e255bc556",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250905_20250906@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-05",
+    "check_out": "2025-09-06",
+    "raw_event": {
+      "uid": "2174716458_manual_20250905_20250906@avito.ru",
+      "dtstart": "20250905",
+      "dtend": "20250906",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "324018e5-121a-44d5-92f5-0251222ff37d",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250906_20250907@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-06",
+    "check_out": "2025-09-07",
+    "raw_event": {
+      "uid": "2174716458_manual_20250906_20250907@avito.ru",
+      "dtstart": "20250906",
+      "dtend": "20250907",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "08600b12-00f6-4969-a69d-ef818ed7f315",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250912_20250914@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-12",
+    "check_out": "2025-09-14",
+    "raw_event": {
+      "uid": "2174716458_manual_20250912_20250914@avito.ru",
+      "dtstart": "20250912",
+      "dtend": "20250914",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "98859e2f-318d-48c3-b036-b76f483e1489",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250916_20250917@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-16",
+    "check_out": "2025-09-17",
+    "raw_event": {
+      "uid": "2174716458_manual_20250916_20250917@avito.ru",
+      "dtstart": "20250916",
+      "dtend": "20250917",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "b992a875-eb19-41a1-ba7b-1cdb61ac6495",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20250919_20250921@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-19",
+    "check_out": "2025-09-21",
+    "raw_event": {
+      "uid": "2174716458_manual_20250919_20250921@avito.ru",
+      "dtstart": "20250919",
+      "dtend": "20250921",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "733207e1-cc6c-47a6-a960-6d3a81cde89d",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251004_20251005@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-04",
+    "check_out": "2025-10-05",
+    "raw_event": {
+      "uid": "2174716458_manual_20251004_20251005@avito.ru",
+      "dtstart": "20251004",
+      "dtend": "20251005",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "7c136561-8747-455f-b6b3-01f5937ecf4f",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251010_20251011@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-10",
+    "check_out": "2025-10-11",
+    "raw_event": {
+      "uid": "2174716458_manual_20251010_20251011@avito.ru",
+      "dtstart": "20251010",
+      "dtend": "20251011",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "1c93b54b-51e4-4a66-ad52-14295f82d113",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251011_20251012@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-11",
+    "check_out": "2025-10-12",
+    "raw_event": {
+      "uid": "2174716458_manual_20251011_20251012@avito.ru",
+      "dtstart": "20251011",
+      "dtend": "20251012",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "60903c55-4b59-46fe-97d8-ce855f658da0",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251018_20251019@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-18",
+    "check_out": "2025-10-19",
+    "raw_event": {
+      "uid": "2174716458_manual_20251018_20251019@avito.ru",
+      "dtstart": "20251018",
+      "dtend": "20251019",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "c6ddbc00-8748-4de9-8f5a-32c385c3ecd3",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251021_20251023@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-21",
+    "check_out": "2025-10-23",
+    "raw_event": {
+      "uid": "2174716458_manual_20251021_20251023@avito.ru",
+      "dtstart": "20251021",
+      "dtend": "20251023",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "72cbcf3d-974c-4d9a-b83a-d6159e0a2516",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251024_20251026@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-24",
+    "check_out": "2025-10-26",
+    "raw_event": {
+      "uid": "2174716458_manual_20251024_20251026@avito.ru",
+      "dtstart": "20251024",
+      "dtend": "20251026",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "5ba75051-9bc0-49a7-9416-40c6e9eccf25",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251101_20251102@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-01",
+    "check_out": "2025-11-02",
+    "raw_event": {
+      "uid": "2174716458_manual_20251101_20251102@avito.ru",
+      "dtstart": "20251101",
+      "dtend": "20251102",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "b6f314a6-ec07-4a45-a738-f150d1f9f297",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251102_20251103@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-02",
+    "check_out": "2025-11-03",
+    "raw_event": {
+      "uid": "2174716458_manual_20251102_20251103@avito.ru",
+      "dtstart": "20251102",
+      "dtend": "20251103",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "b4916a68-4da5-4fa8-8167-aedd7d1a4d9f",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251103_20251104@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-03",
+    "check_out": "2025-11-04",
+    "raw_event": {
+      "uid": "2174716458_manual_20251103_20251104@avito.ru",
+      "dtstart": "20251103",
+      "dtend": "20251104",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "2436e81d-b64d-4b3d-ba2c-9d8bab568845",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251108_20251109@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-08",
+    "check_out": "2025-11-09",
+    "raw_event": {
+      "uid": "2174716458_manual_20251108_20251109@avito.ru",
+      "dtstart": "20251108",
+      "dtend": "20251109",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "160a5513-cdbf-44dd-896d-9266b6b9ecc8",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251114_20251115@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-14",
+    "check_out": "2025-11-15",
+    "raw_event": {
+      "uid": "2174716458_manual_20251114_20251115@avito.ru",
+      "dtstart": "20251114",
+      "dtend": "20251115",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "cc0bd6c7-6035-4ef2-af4f-70b31e7240f3",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20251230_20260102@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-12-30",
+    "check_out": "2026-01-02",
+    "raw_event": {
+      "uid": "2174716458_manual_20251230_20260102@avito.ru",
+      "dtstart": "20251230",
+      "dtend": "20260102",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "4b11c1cf-c7d9-4897-b17d-0a6ad7875d1b",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260103_20260104@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-03",
+    "check_out": "2026-01-04",
+    "raw_event": {
+      "uid": "2174716458_manual_20260103_20260104@avito.ru",
+      "dtstart": "20260103",
+      "dtend": "20260104",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "91bbb055-2ff4-4989-88ac-e755fb391cee",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260104_20260105@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-04",
+    "check_out": "2026-01-05",
+    "raw_event": {
+      "uid": "2174716458_manual_20260104_20260105@avito.ru",
+      "dtstart": "20260104",
+      "dtend": "20260105",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "affac921-a7ae-4a0a-9e28-42f8536c69e9",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260106_20260108@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-06",
+    "check_out": "2026-01-08",
+    "raw_event": {
+      "uid": "2174716458_manual_20260106_20260108@avito.ru",
+      "dtstart": "20260106",
+      "dtend": "20260108",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.881Z"
+  },
+  {
+    "id": "7c117af2-f3f0-44f8-b7a4-c67ab05519ff",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260116_20260118@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-16",
+    "check_out": "2026-01-18",
+    "raw_event": {
+      "uid": "2174716458_manual_20260116_20260118@avito.ru",
+      "dtstart": "20260116",
+      "dtend": "20260118",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "2e2773b6-7fde-474e-bfd5-d08575da357f",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260206_20260208@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-06",
+    "check_out": "2026-02-08",
+    "raw_event": {
+      "uid": "2174716458_manual_20260206_20260208@avito.ru",
+      "dtstart": "20260206",
+      "dtend": "20260208",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "f2c4e767-b826-4b34-aae7-000f848bb958",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260218_20260219@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-18",
+    "check_out": "2026-02-19",
+    "raw_event": {
+      "uid": "2174716458_manual_20260218_20260219@avito.ru",
+      "dtstart": "20260218",
+      "dtend": "20260219",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "7f191c15-ac70-44ba-8f6d-4f3db09b2f0a",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260220_20260223@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-20",
+    "check_out": "2026-02-23",
+    "raw_event": {
+      "uid": "2174716458_manual_20260220_20260223@avito.ru",
+      "dtstart": "20260220",
+      "dtend": "20260223",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "b480e4ef-ffe5-4b53-82d2-3c28af8f037b",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260227_20260228@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-27",
+    "check_out": "2026-02-28",
+    "raw_event": {
+      "uid": "2174716458_manual_20260227_20260228@avito.ru",
+      "dtstart": "20260227",
+      "dtend": "20260228",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "94fe3681-eb8b-49a1-94a4-7cd50c057677",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260306_20260307@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-03-06",
+    "check_out": "2026-03-07",
+    "raw_event": {
+      "uid": "2174716458_manual_20260306_20260307@avito.ru",
+      "dtstart": "20260306",
+      "dtend": "20260307",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "9fbdf24f-a59a-4147-9949-24516562b8e0",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260310_20260314@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-03-10",
+    "check_out": "2026-03-14",
+    "raw_event": {
+      "uid": "2174716458_manual_20260310_20260314@avito.ru",
+      "dtstart": "20260310",
+      "dtend": "20260314",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "2d733f40-fded-45f8-9aad-b0a968fbbf64",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260427_20260509@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-04-27",
+    "check_out": "2026-05-09",
+    "raw_event": {
+      "uid": "2174716458_manual_20260427_20260509@avito.ru",
+      "dtstart": "20260427",
+      "dtend": "20260509",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "03fedefd-a9b6-4a87-a619-4993c26ed89c",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260509_20260601@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-05-09",
+    "check_out": "2026-06-01",
+    "raw_event": {
+      "uid": "2174716458_manual_20260509_20260601@avito.ru",
+      "dtstart": "20260509",
+      "dtend": "20260601",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "800c9c99-50b8-406e-baef-af5a2140431e",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2776191993379749714@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-07-11",
+    "check_out": "2025-07-13",
+    "raw_event": {
+      "uid": "2776191993379749714@avito.ru",
+      "dtstart": "20250711",
+      "dtend": "20250713",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "d22455b6-9f2d-48fc-8b17-00c4299804ab",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2776365209145660722@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-01",
+    "check_out": "2025-08-03",
+    "raw_event": {
+      "uid": "2776365209145660722@avito.ru",
+      "dtstart": "20250801",
+      "dtend": "20250803",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "5ac941a8-eff3-4f98-b3f3-2dbe1c3353d6",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2776537057005235682@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-07-27",
+    "check_out": "2025-07-29",
+    "raw_event": {
+      "uid": "2776537057005235682@avito.ru",
+      "dtstart": "20250727",
+      "dtend": "20250729",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "d3537bde-abe8-4e57-8095-16c9a2b92242",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2776826017081336370@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-16",
+    "check_out": "2025-08-18",
+    "raw_event": {
+      "uid": "2776826017081336370@avito.ru",
+      "dtstart": "20250816",
+      "dtend": "20250818",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "4ea6b799-b174-4a73-9085-d2aaf3719e23",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2776919786696872082@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-29",
+    "check_out": "2025-08-31",
+    "raw_event": {
+      "uid": "2776919786696872082@avito.ru",
+      "dtstart": "20250829",
+      "dtend": "20250831",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "daf08737-1dc1-42a4-ae06-68d09fdae80c",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2777116277992151074@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-22",
+    "check_out": "2025-08-24",
+    "raw_event": {
+      "uid": "2777116277992151074@avito.ru",
+      "dtstart": "20250822",
+      "dtend": "20250824",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "02fb6f24-3a36-42e8-b052-a761e84ff577",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2777675070807114994@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-09-26",
+    "check_out": "2025-09-28",
+    "raw_event": {
+      "uid": "2777675070807114994@avito.ru",
+      "dtstart": "20250926",
+      "dtend": "20250928",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "c86e6d79-f9b6-4c1a-8c54-6e51ac8ede28",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2778822083167640597@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-11-17",
+    "check_out": "2025-11-23",
+    "raw_event": {
+      "uid": "2778822083167640597@avito.ru",
+      "dtstart": "20251117",
+      "dtend": "20251123",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "d5926b96-f7ee-4cb9-90bb-69b49b952c71",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2779057646969116851@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-11-15",
+    "check_out": "2025-11-16",
+    "raw_event": {
+      "uid": "2779057646969116851@avito.ru",
+      "dtstart": "20251115",
+      "dtend": "20251116",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "8670c96a-c391-4000-a0b2-9226cc15e8f1",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2779541780058165730@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-12-06",
+    "check_out": "2025-12-07",
+    "raw_event": {
+      "uid": "2779541780058165730@avito.ru",
+      "dtstart": "20251206",
+      "dtend": "20251207",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "4be6ffca-c518-43cc-8f7e-6eba49d30cc0",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2780641104030230263@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-01-23",
+    "check_out": "2026-01-25",
+    "raw_event": {
+      "uid": "2780641104030230263@avito.ru",
+      "dtstart": "20260123",
+      "dtend": "20260125",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "9b2aeaa1-84da-42de-8371-ff4a4b10c6b7",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2780747233580091221@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-02-14",
+    "check_out": "2026-02-15",
+    "raw_event": {
+      "uid": "2780747233580091221@avito.ru",
+      "dtstart": "20260214",
+      "dtend": "20260215",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "58bdd423-78d6-40a5-894a-277dcb7714e1",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2780890586949376112@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-01-31",
+    "check_out": "2026-02-01",
+    "raw_event": {
+      "uid": "2780890586949376112@avito.ru",
+      "dtstart": "20260131",
+      "dtend": "20260201",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "b1afca72-c2df-49e4-8425-22f4a87ccc0d",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2781447227132543426@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-02-25",
+    "check_out": "2026-02-26",
+    "raw_event": {
+      "uid": "2781447227132543426@avito.ru",
+      "dtstart": "20260225",
+      "dtend": "20260226",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "35e10c87-03e5-4769-8c7a-6d4897680039",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2782239247379692582@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-04-04",
+    "check_out": "2026-04-05",
+    "raw_event": {
+      "uid": "2782239247379692582@avito.ru",
+      "dtstart": "20260404",
+      "dtend": "20260405",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "3efc0525-ddfe-459b-9a51-78324b6c76c1",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2782562338093367714@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-04-25",
+    "check_out": "2026-04-26",
+    "raw_event": {
+      "uid": "2782562338093367714@avito.ru",
+      "dtstart": "20260425",
+      "dtend": "20260426",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "d4836194-9131-48c4-b495-5bfe80fb6fd9",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20261001_20270501@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-10-01",
+    "check_out": "2027-05-01",
+    "raw_event": {
+      "uid": "2174716458_manual_20261001_20270501@avito.ru",
+      "dtstart": "20261001",
+      "dtend": "20270501",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "fbdfd018-09ff-4c0a-a126-994400c7797e",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260605_20260607@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-05",
+    "check_out": "2026-06-07",
+    "raw_event": {
+      "uid": "2174716458_manual_20260605_20260607@avito.ru",
+      "dtstart": "20260605",
+      "dtend": "20260607",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "892974dd-04f5-4681-9a3b-0d3f304562e3",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2783902733941126532@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-06-11",
+    "check_out": "2026-06-14",
+    "raw_event": {
+      "uid": "2783902733941126532@avito.ru",
+      "dtstart": "20260611",
+      "dtend": "20260614",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "23de6b8f-f084-43f3-afa1-32e43c086f08",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260616_20260618@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-16",
+    "check_out": "2026-06-18",
+    "raw_event": {
+      "uid": "2174716458_manual_20260616_20260618@avito.ru",
+      "dtstart": "20260616",
+      "dtend": "20260618",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "cf17b93f-6914-49f4-ab2c-70e835a4adad",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260626_20260628@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-26",
+    "check_out": "2026-06-28",
+    "raw_event": {
+      "uid": "2174716458_manual_20260626_20260628@avito.ru",
+      "dtstart": "20260626",
+      "dtend": "20260628",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "9807c2bc-e700-4b48-a7ef-6cfd49d2b707",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260628_20260629@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-28",
+    "check_out": "2026-06-29",
+    "raw_event": {
+      "uid": "2174716458_manual_20260628_20260629@avito.ru",
+      "dtstart": "20260628",
+      "dtend": "20260629",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "44729652-13a5-4e14-9e1c-fe14950aed47",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260703_20260705@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-03",
+    "check_out": "2026-07-05",
+    "raw_event": {
+      "uid": "2174716458_manual_20260703_20260705@avito.ru",
+      "dtstart": "20260703",
+      "dtend": "20260705",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "46268afd-5743-43c7-a32d-c77c30dd3de0",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260710_20260712@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-10",
+    "check_out": "2026-07-12",
+    "raw_event": {
+      "uid": "2174716458_manual_20260710_20260712@avito.ru",
+      "dtstart": "20260710",
+      "dtend": "20260712",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "cc75c07f-b20d-4207-895b-a0a97bf4a4be",
+    "source_id": "9339d46a-3f32-4900-9342-452156db55ac",
+    "cabin_id": "0bed6b6c-9083-46b2-90fd-d4d903c8d596",
+    "external_uid": "2174716458_manual_20260724_20260726@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-24",
+    "check_out": "2026-07-26",
+    "raw_event": {
+      "uid": "2174716458_manual_20260724_20260726@avito.ru",
+      "dtstart": "20260724",
+      "dtend": "20260726",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-13T10:24:34.882Z"
+  },
+  {
+    "id": "f9a14cca-1acc-4884-9538-741ac4643f32",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250715_20250716@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-15",
+    "check_out": "2025-07-16",
+    "raw_event": {
+      "uid": "2174716458_manual_20250715_20250716@avito.ru",
+      "dtstart": "20250715",
+      "dtend": "20250716",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "29189d9f-f86f-4d41-a8b1-a5ef10dccf83",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250718_20250720@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-18",
+    "check_out": "2025-07-20",
+    "raw_event": {
+      "uid": "2174716458_manual_20250718_20250720@avito.ru",
+      "dtstart": "20250718",
+      "dtend": "20250720",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "a5868757-90c8-457c-8072-ed944673fad6",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250729_20250801@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-29",
+    "check_out": "2025-08-01",
+    "raw_event": {
+      "uid": "2174716458_manual_20250729_20250801@avito.ru",
+      "dtstart": "20250729",
+      "dtend": "20250801",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "80f42d33-626e-4a20-a0f4-71d17853c0e2",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250808_20250809@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-08",
+    "check_out": "2025-08-09",
+    "raw_event": {
+      "uid": "2174716458_manual_20250808_20250809@avito.ru",
+      "dtstart": "20250808",
+      "dtend": "20250809",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "e525f491-b2d7-438f-9cfc-fff33edc4c5d",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250811_20250813@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-11",
+    "check_out": "2025-08-13",
+    "raw_event": {
+      "uid": "2174716458_manual_20250811_20250813@avito.ru",
+      "dtstart": "20250811",
+      "dtend": "20250813",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "ab6f1932-edbc-49ac-8304-4a669870a39e",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250828_20250829@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-28",
+    "check_out": "2025-08-29",
+    "raw_event": {
+      "uid": "2174716458_manual_20250828_20250829@avito.ru",
+      "dtstart": "20250828",
+      "dtend": "20250829",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "f8f2d590-548b-4342-a0a9-3410de950bad",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250905_20250906@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-05",
+    "check_out": "2025-09-06",
+    "raw_event": {
+      "uid": "2174716458_manual_20250905_20250906@avito.ru",
+      "dtstart": "20250905",
+      "dtend": "20250906",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "004e8365-d72d-4ee2-b00c-1cf387150c77",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250906_20250907@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-06",
+    "check_out": "2025-09-07",
+    "raw_event": {
+      "uid": "2174716458_manual_20250906_20250907@avito.ru",
+      "dtstart": "20250906",
+      "dtend": "20250907",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.463Z"
+  },
+  {
+    "id": "5e2697c1-b0f5-4673-a53b-aacf5bc4e43b",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250912_20250914@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-12",
+    "check_out": "2025-09-14",
+    "raw_event": {
+      "uid": "2174716458_manual_20250912_20250914@avito.ru",
+      "dtstart": "20250912",
+      "dtend": "20250914",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "f0f9d1cc-4418-4e06-bf76-2bb28dc517ec",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250916_20250917@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-16",
+    "check_out": "2025-09-17",
+    "raw_event": {
+      "uid": "2174716458_manual_20250916_20250917@avito.ru",
+      "dtstart": "20250916",
+      "dtend": "20250917",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "3b298157-cded-4f6f-a1a8-e7972e29f304",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20250919_20250921@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-19",
+    "check_out": "2025-09-21",
+    "raw_event": {
+      "uid": "2174716458_manual_20250919_20250921@avito.ru",
+      "dtstart": "20250919",
+      "dtend": "20250921",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "002d9323-028b-40bf-befd-c3b157bdd012",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251004_20251005@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-04",
+    "check_out": "2025-10-05",
+    "raw_event": {
+      "uid": "2174716458_manual_20251004_20251005@avito.ru",
+      "dtstart": "20251004",
+      "dtend": "20251005",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "83428a25-5a3e-428a-a8df-8493a6d63ff5",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251010_20251011@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-10",
+    "check_out": "2025-10-11",
+    "raw_event": {
+      "uid": "2174716458_manual_20251010_20251011@avito.ru",
+      "dtstart": "20251010",
+      "dtend": "20251011",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "66668e6d-87a4-4c33-b30f-60b4471cd4cb",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251011_20251012@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-11",
+    "check_out": "2025-10-12",
+    "raw_event": {
+      "uid": "2174716458_manual_20251011_20251012@avito.ru",
+      "dtstart": "20251011",
+      "dtend": "20251012",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "58f83fae-72e3-43b2-984c-d09c86e734dd",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251018_20251019@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-18",
+    "check_out": "2025-10-19",
+    "raw_event": {
+      "uid": "2174716458_manual_20251018_20251019@avito.ru",
+      "dtstart": "20251018",
+      "dtend": "20251019",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "6e57f3e0-6065-40df-87e5-a4ee4750f4d3",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251021_20251023@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-21",
+    "check_out": "2025-10-23",
+    "raw_event": {
+      "uid": "2174716458_manual_20251021_20251023@avito.ru",
+      "dtstart": "20251021",
+      "dtend": "20251023",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "6e3a98c0-53c0-4327-b49e-dbf85d9ffa57",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251024_20251026@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-24",
+    "check_out": "2025-10-26",
+    "raw_event": {
+      "uid": "2174716458_manual_20251024_20251026@avito.ru",
+      "dtstart": "20251024",
+      "dtend": "20251026",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "92321a74-9ae6-449f-8a20-9b9a99fdcffd",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251101_20251102@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-01",
+    "check_out": "2025-11-02",
+    "raw_event": {
+      "uid": "2174716458_manual_20251101_20251102@avito.ru",
+      "dtstart": "20251101",
+      "dtend": "20251102",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "4dc8691e-b60e-47ef-a66b-27ea418266d8",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251102_20251103@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-02",
+    "check_out": "2025-11-03",
+    "raw_event": {
+      "uid": "2174716458_manual_20251102_20251103@avito.ru",
+      "dtstart": "20251102",
+      "dtend": "20251103",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "4d62d7c3-afb4-4e1f-beb5-fc71ac817116",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251103_20251104@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-03",
+    "check_out": "2025-11-04",
+    "raw_event": {
+      "uid": "2174716458_manual_20251103_20251104@avito.ru",
+      "dtstart": "20251103",
+      "dtend": "20251104",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "96aee5c9-aae9-4fc9-bcdd-2fab38be122e",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251108_20251109@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-08",
+    "check_out": "2025-11-09",
+    "raw_event": {
+      "uid": "2174716458_manual_20251108_20251109@avito.ru",
+      "dtstart": "20251108",
+      "dtend": "20251109",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "22b31032-e564-435c-80be-ff4c6bd6b9a6",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251114_20251115@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-14",
+    "check_out": "2025-11-15",
+    "raw_event": {
+      "uid": "2174716458_manual_20251114_20251115@avito.ru",
+      "dtstart": "20251114",
+      "dtend": "20251115",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "9c15fe39-4953-4841-bf6c-176e69b55020",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20251230_20260102@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-12-30",
+    "check_out": "2026-01-02",
+    "raw_event": {
+      "uid": "2174716458_manual_20251230_20260102@avito.ru",
+      "dtstart": "20251230",
+      "dtend": "20260102",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "2b0b0778-fd8b-44f4-943b-c5260cece8d6",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260103_20260104@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-03",
+    "check_out": "2026-01-04",
+    "raw_event": {
+      "uid": "2174716458_manual_20260103_20260104@avito.ru",
+      "dtstart": "20260103",
+      "dtend": "20260104",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "68797d38-260f-4cf7-a181-cc3a7ac76562",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260104_20260105@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-04",
+    "check_out": "2026-01-05",
+    "raw_event": {
+      "uid": "2174716458_manual_20260104_20260105@avito.ru",
+      "dtstart": "20260104",
+      "dtend": "20260105",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "2e704259-d957-4123-a870-a2d06fe5c0ec",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260106_20260108@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-06",
+    "check_out": "2026-01-08",
+    "raw_event": {
+      "uid": "2174716458_manual_20260106_20260108@avito.ru",
+      "dtstart": "20260106",
+      "dtend": "20260108",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "67c89ce0-4a66-4a28-aece-07341a89d1fe",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260116_20260118@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-16",
+    "check_out": "2026-01-18",
+    "raw_event": {
+      "uid": "2174716458_manual_20260116_20260118@avito.ru",
+      "dtstart": "20260116",
+      "dtend": "20260118",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "4532937c-11da-41eb-a4a1-8ccff923b3f2",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260206_20260208@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-06",
+    "check_out": "2026-02-08",
+    "raw_event": {
+      "uid": "2174716458_manual_20260206_20260208@avito.ru",
+      "dtstart": "20260206",
+      "dtend": "20260208",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "62c9e8db-828f-46da-9a23-1aec84697fa8",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260218_20260219@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-18",
+    "check_out": "2026-02-19",
+    "raw_event": {
+      "uid": "2174716458_manual_20260218_20260219@avito.ru",
+      "dtstart": "20260218",
+      "dtend": "20260219",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "ffb90ccf-1999-4052-98b6-4c4fa4933f0f",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260220_20260223@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-20",
+    "check_out": "2026-02-23",
+    "raw_event": {
+      "uid": "2174716458_manual_20260220_20260223@avito.ru",
+      "dtstart": "20260220",
+      "dtend": "20260223",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "0a0faea1-4b24-4db3-933c-c96746fc1cbb",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260227_20260228@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-27",
+    "check_out": "2026-02-28",
+    "raw_event": {
+      "uid": "2174716458_manual_20260227_20260228@avito.ru",
+      "dtstart": "20260227",
+      "dtend": "20260228",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "7e74e403-5105-4de7-a7fa-fe7bbcb1737b",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260306_20260307@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-03-06",
+    "check_out": "2026-03-07",
+    "raw_event": {
+      "uid": "2174716458_manual_20260306_20260307@avito.ru",
+      "dtstart": "20260306",
+      "dtend": "20260307",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "0ad0cc03-b1cc-4ac1-bd39-1e30150f370a",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260310_20260314@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-03-10",
+    "check_out": "2026-03-14",
+    "raw_event": {
+      "uid": "2174716458_manual_20260310_20260314@avito.ru",
+      "dtstart": "20260310",
+      "dtend": "20260314",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "ef899f10-8381-4a85-a01b-5e8274b781dd",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260427_20260509@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-04-27",
+    "check_out": "2026-05-09",
+    "raw_event": {
+      "uid": "2174716458_manual_20260427_20260509@avito.ru",
+      "dtstart": "20260427",
+      "dtend": "20260509",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "98bce31f-504d-4372-a328-4a1b36b07180",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260509_20260601@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-05-09",
+    "check_out": "2026-06-01",
+    "raw_event": {
+      "uid": "2174716458_manual_20260509_20260601@avito.ru",
+      "dtstart": "20260509",
+      "dtend": "20260601",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "c2625565-5d3d-4781-8c63-e7ec388ff51c",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2776191993379749714@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-07-11",
+    "check_out": "2025-07-13",
+    "raw_event": {
+      "uid": "2776191993379749714@avito.ru",
+      "dtstart": "20250711",
+      "dtend": "20250713",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "8fa67318-749e-4fc5-af09-d0751ef5db57",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2776365209145660722@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-01",
+    "check_out": "2025-08-03",
+    "raw_event": {
+      "uid": "2776365209145660722@avito.ru",
+      "dtstart": "20250801",
+      "dtend": "20250803",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "1e30cd37-052f-4b86-9913-ca8c4a89df56",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2776537057005235682@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-07-27",
+    "check_out": "2025-07-29",
+    "raw_event": {
+      "uid": "2776537057005235682@avito.ru",
+      "dtstart": "20250727",
+      "dtend": "20250729",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "bd738db6-84b6-4a17-ab0d-d12d6369e06a",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2776826017081336370@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-16",
+    "check_out": "2025-08-18",
+    "raw_event": {
+      "uid": "2776826017081336370@avito.ru",
+      "dtstart": "20250816",
+      "dtend": "20250818",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "9a9cbd8d-2655-46d4-9641-142222cb4ec1",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2776919786696872082@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-29",
+    "check_out": "2025-08-31",
+    "raw_event": {
+      "uid": "2776919786696872082@avito.ru",
+      "dtstart": "20250829",
+      "dtend": "20250831",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "6d925886-e54c-4d4d-8540-45160494cfeb",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2777116277992151074@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-22",
+    "check_out": "2025-08-24",
+    "raw_event": {
+      "uid": "2777116277992151074@avito.ru",
+      "dtstart": "20250822",
+      "dtend": "20250824",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "100fb3bd-9850-4f0c-b6b2-2f13ff2b2d4e",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2777675070807114994@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-09-26",
+    "check_out": "2025-09-28",
+    "raw_event": {
+      "uid": "2777675070807114994@avito.ru",
+      "dtstart": "20250926",
+      "dtend": "20250928",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "baa44a6a-2cbf-48c9-baa6-260d0df7f703",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2778822083167640597@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-11-17",
+    "check_out": "2025-11-23",
+    "raw_event": {
+      "uid": "2778822083167640597@avito.ru",
+      "dtstart": "20251117",
+      "dtend": "20251123",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "c4fa10a2-b613-441c-b663-ff047e40512e",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2779057646969116851@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-11-15",
+    "check_out": "2025-11-16",
+    "raw_event": {
+      "uid": "2779057646969116851@avito.ru",
+      "dtstart": "20251115",
+      "dtend": "20251116",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "90e2450e-2300-403a-aeb0-e0fda9df6a84",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2779541780058165730@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-12-06",
+    "check_out": "2025-12-07",
+    "raw_event": {
+      "uid": "2779541780058165730@avito.ru",
+      "dtstart": "20251206",
+      "dtend": "20251207",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "6f16eb52-023b-40a0-b498-6029c2a919cc",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2780641104030230263@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-01-23",
+    "check_out": "2026-01-25",
+    "raw_event": {
+      "uid": "2780641104030230263@avito.ru",
+      "dtstart": "20260123",
+      "dtend": "20260125",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "b899f4dd-dc94-4e3e-969c-40fa9f16d248",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2780747233580091221@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-02-14",
+    "check_out": "2026-02-15",
+    "raw_event": {
+      "uid": "2780747233580091221@avito.ru",
+      "dtstart": "20260214",
+      "dtend": "20260215",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "558a1202-9efa-45a0-a440-a7058366fede",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2780890586949376112@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-01-31",
+    "check_out": "2026-02-01",
+    "raw_event": {
+      "uid": "2780890586949376112@avito.ru",
+      "dtstart": "20260131",
+      "dtend": "20260201",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "37186b7d-f8c7-4145-94b7-67bb19deaaa8",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2781447227132543426@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-02-25",
+    "check_out": "2026-02-26",
+    "raw_event": {
+      "uid": "2781447227132543426@avito.ru",
+      "dtstart": "20260225",
+      "dtend": "20260226",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "37aa8f2a-1999-44d6-9f09-d5f94428b931",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2782239247379692582@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-04-04",
+    "check_out": "2026-04-05",
+    "raw_event": {
+      "uid": "2782239247379692582@avito.ru",
+      "dtstart": "20260404",
+      "dtend": "20260405",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "73b27b9c-33d1-4e5a-8939-51406f98a193",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2782562338093367714@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-04-25",
+    "check_out": "2026-04-26",
+    "raw_event": {
+      "uid": "2782562338093367714@avito.ru",
+      "dtstart": "20260425",
+      "dtend": "20260426",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "a0d293c1-e56b-44ff-bccd-058f7c68e858",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20261001_20270501@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-10-01",
+    "check_out": "2027-05-01",
+    "raw_event": {
+      "uid": "2174716458_manual_20261001_20270501@avito.ru",
+      "dtstart": "20261001",
+      "dtend": "20270501",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "0ae5b77b-56de-45d0-a9e9-8c7325e06d80",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260605_20260607@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-05",
+    "check_out": "2026-06-07",
+    "raw_event": {
+      "uid": "2174716458_manual_20260605_20260607@avito.ru",
+      "dtstart": "20260605",
+      "dtend": "20260607",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "68061d59-df46-4f01-a2eb-3f4e16a01e94",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2783902733941126532@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-06-11",
+    "check_out": "2026-06-14",
+    "raw_event": {
+      "uid": "2783902733941126532@avito.ru",
+      "dtstart": "20260611",
+      "dtend": "20260614",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "948365d9-85bc-4152-bffe-c39d0a573193",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260616_20260618@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-16",
+    "check_out": "2026-06-18",
+    "raw_event": {
+      "uid": "2174716458_manual_20260616_20260618@avito.ru",
+      "dtstart": "20260616",
+      "dtend": "20260618",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "1c86dd49-3f1c-49f0-980b-dae0c40f6459",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260626_20260628@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-26",
+    "check_out": "2026-06-28",
+    "raw_event": {
+      "uid": "2174716458_manual_20260626_20260628@avito.ru",
+      "dtstart": "20260626",
+      "dtend": "20260628",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "c99523bb-2da0-45ab-b1df-e14c195654ae",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260628_20260629@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-28",
+    "check_out": "2026-06-29",
+    "raw_event": {
+      "uid": "2174716458_manual_20260628_20260629@avito.ru",
+      "dtstart": "20260628",
+      "dtend": "20260629",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "c8444f46-9048-4a79-aecf-3bc9b935acc9",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260703_20260705@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-03",
+    "check_out": "2026-07-05",
+    "raw_event": {
+      "uid": "2174716458_manual_20260703_20260705@avito.ru",
+      "dtstart": "20260703",
+      "dtend": "20260705",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "b8846754-a045-42a3-a134-b63099f8791d",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260710_20260712@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-10",
+    "check_out": "2026-07-12",
+    "raw_event": {
+      "uid": "2174716458_manual_20260710_20260712@avito.ru",
+      "dtstart": "20260710",
+      "dtend": "20260712",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "f557bb20-18e3-40a8-8b98-783048a8a183",
+    "source_id": "aa6874da-466f-4805-bcdf-ef96ca3fe44e",
+    "cabin_id": "6615aa5b-7261-46d7-a355-818f77baaf88",
+    "external_uid": "2174716458_manual_20260724_20260726@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-24",
+    "check_out": "2026-07-26",
+    "raw_event": {
+      "uid": "2174716458_manual_20260724_20260726@avito.ru",
+      "dtstart": "20260724",
+      "dtend": "20260726",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.464Z"
+  },
+  {
+    "id": "b6ac0ff8-65c0-4070-b876-8a745819d407",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250711_20250713@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-11",
+    "check_out": "2025-07-13",
+    "raw_event": {
+      "uid": "2622042232_manual_20250711_20250713@avito.ru",
+      "dtstart": "20250711",
+      "dtend": "20250713",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "032f5749-d93b-4468-9a09-7ffc7b2748e5",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250715_20250716@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-15",
+    "check_out": "2025-07-16",
+    "raw_event": {
+      "uid": "2622042232_manual_20250715_20250716@avito.ru",
+      "dtstart": "20250715",
+      "dtend": "20250716",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "8b90e942-0a74-443b-8552-e27ef51d289b",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250719_20250720@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-19",
+    "check_out": "2025-07-20",
+    "raw_event": {
+      "uid": "2622042232_manual_20250719_20250720@avito.ru",
+      "dtstart": "20250719",
+      "dtend": "20250720",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "68a108f9-2408-4ef5-a7ed-fec5d9296d35",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250801_20250803@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-01",
+    "check_out": "2025-08-03",
+    "raw_event": {
+      "uid": "2622042232_manual_20250801_20250803@avito.ru",
+      "dtstart": "20250801",
+      "dtend": "20250803",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "f1437a98-3f50-4cee-a15a-553620d9ac4b",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250725_20250727@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-25",
+    "check_out": "2025-07-27",
+    "raw_event": {
+      "uid": "2622042232_manual_20250725_20250727@avito.ru",
+      "dtstart": "20250725",
+      "dtend": "20250727",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "53e4223f-ed7d-4724-8017-2a071eb812db",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250728_20250801@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-07-28",
+    "check_out": "2025-08-01",
+    "raw_event": {
+      "uid": "2622042232_manual_20250728_20250801@avito.ru",
+      "dtstart": "20250728",
+      "dtend": "20250801",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "c2403384-48b9-4fcf-a521-d47753ed39c7",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2776768556712052640@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-08",
+    "check_out": "2025-08-10",
+    "raw_event": {
+      "uid": "2776768556712052640@avito.ru",
+      "dtstart": "20250808",
+      "dtend": "20250810",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "386bec91-5121-4a7b-807a-445ee58254c2",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250811_20250813@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-11",
+    "check_out": "2025-08-13",
+    "raw_event": {
+      "uid": "2622042232_manual_20250811_20250813@avito.ru",
+      "dtstart": "20250811",
+      "dtend": "20250813",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "e9bf5eb7-3c7c-4410-8630-e3dcbb5bf7a4",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2776918931967260464@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-08-29",
+    "check_out": "2025-08-31",
+    "raw_event": {
+      "uid": "2776918931967260464@avito.ru",
+      "dtstart": "20250829",
+      "dtend": "20250831",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "48920998-00d4-4176-a646-81a245bd3104",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250823_20250824@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-23",
+    "check_out": "2025-08-24",
+    "raw_event": {
+      "uid": "2622042232_manual_20250823_20250824@avito.ru",
+      "dtstart": "20250823",
+      "dtend": "20250824",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "5cd3909d-8ff4-4810-b0fb-d3c9d4d36fac",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250828_20250829@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-08-28",
+    "check_out": "2025-08-29",
+    "raw_event": {
+      "uid": "2622042232_manual_20250828_20250829@avito.ru",
+      "dtstart": "20250828",
+      "dtend": "20250829",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "f267dae9-3cdf-470f-a25c-2101da124555",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250906_20250907@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-06",
+    "check_out": "2025-09-07",
+    "raw_event": {
+      "uid": "2622042232_manual_20250906_20250907@avito.ru",
+      "dtstart": "20250906",
+      "dtend": "20250907",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "cffb8360-bd63-4bdf-a4fd-53ff03a1d269",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250905_20250906@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-05",
+    "check_out": "2025-09-06",
+    "raw_event": {
+      "uid": "2622042232_manual_20250905_20250906@avito.ru",
+      "dtstart": "20250905",
+      "dtend": "20250906",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "5a1c74b2-5344-4d25-9378-ea756f7e2087",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250912_20250914@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-12",
+    "check_out": "2025-09-14",
+    "raw_event": {
+      "uid": "2622042232_manual_20250912_20250914@avito.ru",
+      "dtstart": "20250912",
+      "dtend": "20250914",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "452815a6-ce36-4d59-88c9-af27c580c98c",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2777730418778195664@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-09-15",
+    "check_out": "2025-09-17",
+    "raw_event": {
+      "uid": "2777730418778195664@avito.ru",
+      "dtstart": "20250915",
+      "dtend": "20250917",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "3eee3413-34d1-4148-939e-fe0396253000",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250919_20250921@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-19",
+    "check_out": "2025-09-21",
+    "raw_event": {
+      "uid": "2622042232_manual_20250919_20250921@avito.ru",
+      "dtstart": "20250919",
+      "dtend": "20250921",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "3072b958-51f6-44a6-b728-9ab3cf47f698",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251004_20251005@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-04",
+    "check_out": "2025-10-05",
+    "raw_event": {
+      "uid": "2622042232_manual_20251004_20251005@avito.ru",
+      "dtstart": "20251004",
+      "dtend": "20251005",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "b157cfa1-9124-4c22-8733-1eac577193b9",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251010_20251011@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-10",
+    "check_out": "2025-10-11",
+    "raw_event": {
+      "uid": "2622042232_manual_20251010_20251011@avito.ru",
+      "dtstart": "20251010",
+      "dtend": "20251011",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "769b68ea-20f4-41b8-838c-f1319ab3610e",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20250927_20250928@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-09-27",
+    "check_out": "2025-09-28",
+    "raw_event": {
+      "uid": "2622042232_manual_20250927_20250928@avito.ru",
+      "dtstart": "20250927",
+      "dtend": "20250928",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "28759f92-655f-4d37-8ba4-a3b4e8599b2a",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251011_20251012@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-11",
+    "check_out": "2025-10-12",
+    "raw_event": {
+      "uid": "2622042232_manual_20251011_20251012@avito.ru",
+      "dtstart": "20251011",
+      "dtend": "20251012",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "18cc166b-f672-40f9-a80b-51433441ba49",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251018_20251019@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-18",
+    "check_out": "2025-10-19",
+    "raw_event": {
+      "uid": "2622042232_manual_20251018_20251019@avito.ru",
+      "dtstart": "20251018",
+      "dtend": "20251019",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "8d80cff9-5e1f-4aa4-b403-7e811f744cc1",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2778413586292898432@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2025-10-26",
+    "check_out": "2025-10-27",
+    "raw_event": {
+      "uid": "2778413586292898432@avito.ru",
+      "dtstart": "20251026",
+      "dtend": "20251027",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "4a6b78f4-47cc-400a-adcf-10dddba6a819",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251024_20251026@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-24",
+    "check_out": "2025-10-26",
+    "raw_event": {
+      "uid": "2622042232_manual_20251024_20251026@avito.ru",
+      "dtstart": "20251024",
+      "dtend": "20251026",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "4c939dee-d57a-48f2-b87e-6606f2b30ee6",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251021_20251023@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-10-21",
+    "check_out": "2025-10-23",
+    "raw_event": {
+      "uid": "2622042232_manual_20251021_20251023@avito.ru",
+      "dtstart": "20251021",
+      "dtend": "20251023",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "a6e4f2fc-7256-4858-b82b-e9856af35de5",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251102_20251103@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-02",
+    "check_out": "2025-11-03",
+    "raw_event": {
+      "uid": "2622042232_manual_20251102_20251103@avito.ru",
+      "dtstart": "20251102",
+      "dtend": "20251103",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "35554287-5b34-43a5-aa54-670bbd63e7f7",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251103_20251104@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-03",
+    "check_out": "2025-11-04",
+    "raw_event": {
+      "uid": "2622042232_manual_20251103_20251104@avito.ru",
+      "dtstart": "20251103",
+      "dtend": "20251104",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "88253a4e-43b7-48e8-bcf6-b37c479a5e1f",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251101_20251102@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-01",
+    "check_out": "2025-11-02",
+    "raw_event": {
+      "uid": "2622042232_manual_20251101_20251102@avito.ru",
+      "dtstart": "20251101",
+      "dtend": "20251102",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "8abdda49-50ec-48a6-8d90-ff1d6f199234",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251108_20251109@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-08",
+    "check_out": "2025-11-09",
+    "raw_event": {
+      "uid": "2622042232_manual_20251108_20251109@avito.ru",
+      "dtstart": "20251108",
+      "dtend": "20251109",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "a10bfdf2-7657-4880-9178-f01006acf4dd",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251114_20251116@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-11-14",
+    "check_out": "2025-11-16",
+    "raw_event": {
+      "uid": "2622042232_manual_20251114_20251116@avito.ru",
+      "dtstart": "20251114",
+      "dtend": "20251116",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "e3eb6967-6fba-4830-a0d4-f01402211715",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260106_20260108@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-06",
+    "check_out": "2026-01-08",
+    "raw_event": {
+      "uid": "2622042232_manual_20260106_20260108@avito.ru",
+      "dtstart": "20260106",
+      "dtend": "20260108",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "03087091-ca75-4658-9151-0d6e59dac38e",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20251231_20260102@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2025-12-31",
+    "check_out": "2026-01-02",
+    "raw_event": {
+      "uid": "2622042232_manual_20251231_20260102@avito.ru",
+      "dtstart": "20251231",
+      "dtend": "20260102",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "06072f3f-75b7-4cdd-a518-cc5b49ce2565",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260103_20260104@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-03",
+    "check_out": "2026-01-04",
+    "raw_event": {
+      "uid": "2622042232_manual_20260103_20260104@avito.ru",
+      "dtstart": "20260103",
+      "dtend": "20260104",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "35ef6747-5094-460e-8507-41820bfcc823",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260102_20260103@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-02",
+    "check_out": "2026-01-03",
+    "raw_event": {
+      "uid": "2622042232_manual_20260102_20260103@avito.ru",
+      "dtstart": "20260102",
+      "dtend": "20260103",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "a60edaac-a8bf-4748-afc8-03239dfc2641",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260104_20260105@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-04",
+    "check_out": "2026-01-05",
+    "raw_event": {
+      "uid": "2622042232_manual_20260104_20260105@avito.ru",
+      "dtstart": "20260104",
+      "dtend": "20260105",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "b3fd1034-d389-4deb-9964-1982f8a71580",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260116_20260118@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-16",
+    "check_out": "2026-01-18",
+    "raw_event": {
+      "uid": "2622042232_manual_20260116_20260118@avito.ru",
+      "dtstart": "20260116",
+      "dtend": "20260118",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "67172de7-9d0b-4aca-a966-773b0eae48d1",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260123_20260125@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-23",
+    "check_out": "2026-01-25",
+    "raw_event": {
+      "uid": "2622042232_manual_20260123_20260125@avito.ru",
+      "dtstart": "20260123",
+      "dtend": "20260125",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "56f86174-d547-41d5-aa05-bafc8291c463",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260131_20260201@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-01-31",
+    "check_out": "2026-02-01",
+    "raw_event": {
+      "uid": "2622042232_manual_20260131_20260201@avito.ru",
+      "dtstart": "20260131",
+      "dtend": "20260201",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "9e74dc25-0a6d-408d-8d8b-90c41ddf3a63",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260207_20260208@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-07",
+    "check_out": "2026-02-08",
+    "raw_event": {
+      "uid": "2622042232_manual_20260207_20260208@avito.ru",
+      "dtstart": "20260207",
+      "dtend": "20260208",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "45bddafd-267b-4d4e-b635-2a02f2fc3eb3",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260214_20260215@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-14",
+    "check_out": "2026-02-15",
+    "raw_event": {
+      "uid": "2622042232_manual_20260214_20260215@avito.ru",
+      "dtstart": "20260214",
+      "dtend": "20260215",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "bcf12653-6fff-4fa0-853f-e2c6faa47c55",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260310_20260314@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-03-10",
+    "check_out": "2026-03-14",
+    "raw_event": {
+      "uid": "2622042232_manual_20260310_20260314@avito.ru",
+      "dtstart": "20260310",
+      "dtend": "20260314",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "0a6556c6-d3dd-40ce-81ba-7f0e010138dd",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260221_20260223@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-21",
+    "check_out": "2026-02-23",
+    "raw_event": {
+      "uid": "2622042232_manual_20260221_20260223@avito.ru",
+      "dtstart": "20260221",
+      "dtend": "20260223",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "53e202e5-764f-490d-924f-8f1cea29bb61",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260218_20260219@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-18",
+    "check_out": "2026-02-19",
+    "raw_event": {
+      "uid": "2622042232_manual_20260218_20260219@avito.ru",
+      "dtstart": "20260218",
+      "dtend": "20260219",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.099Z"
+  },
+  {
+    "id": "166d36f9-1cdf-408b-a3e2-b7eeaba3dfd7",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260223_20260224@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-23",
+    "check_out": "2026-02-24",
+    "raw_event": {
+      "uid": "2622042232_manual_20260223_20260224@avito.ru",
+      "dtstart": "20260223",
+      "dtend": "20260224",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "0dc27354-c824-479e-9c4a-cb3f3a121468",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260227_20260228@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-02-27",
+    "check_out": "2026-02-28",
+    "raw_event": {
+      "uid": "2622042232_manual_20260227_20260228@avito.ru",
+      "dtstart": "20260227",
+      "dtend": "20260228",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "4e56fe02-21d5-43dd-bdd8-d6ca5dc96564",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260426_20260601@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-04-26",
+    "check_out": "2026-06-01",
+    "raw_event": {
+      "uid": "2622042232_manual_20260426_20260601@avito.ru",
+      "dtstart": "20260426",
+      "dtend": "20260601",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "bd46a1c6-d8d6-4d8b-8c22-d790e1669056",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260602_20260609@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-02",
+    "check_out": "2026-06-09",
+    "raw_event": {
+      "uid": "2622042232_manual_20260602_20260609@avito.ru",
+      "dtstart": "20260602",
+      "dtend": "20260609",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "ad93471f-2e72-4fa3-ad25-4ae70b99d5ca",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260609_20260616@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-09",
+    "check_out": "2026-06-16",
+    "raw_event": {
+      "uid": "2622042232_manual_20260609_20260616@avito.ru",
+      "dtstart": "20260609",
+      "dtend": "20260616",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "ad0c2776-c69f-4046-a305-f3d309327648",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2783936198328298741@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-07-20",
+    "check_out": "2026-07-29",
+    "raw_event": {
+      "uid": "2783936198328298741@avito.ru",
+      "dtstart": "20260720",
+      "dtend": "20260729",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "d5f79e6f-0d65-453c-b7bd-810d44bfd30c",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260901_20270101@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-09-01",
+    "check_out": "2027-01-01",
+    "raw_event": {
+      "uid": "2622042232_manual_20260901_20270101@avito.ru",
+      "dtstart": "20260901",
+      "dtend": "20270101",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "04bb3cc1-98fc-4d25-b717-c656809459e4",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260629_20260701@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-29",
+    "check_out": "2026-07-01",
+    "raw_event": {
+      "uid": "2622042232_manual_20260629_20260701@avito.ru",
+      "dtstart": "20260629",
+      "dtend": "20260701",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "8fb997d0-dc7c-4540-9c3d-4a928382b30e",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260701_20260707@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-01",
+    "check_out": "2026-07-07",
+    "raw_event": {
+      "uid": "2622042232_manual_20260701_20260707@avito.ru",
+      "dtstart": "20260701",
+      "dtend": "20260707",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "03fdd9ed-2aa9-4ea9-9014-cdb421874bbc",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260616_20260619@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-06-16",
+    "check_out": "2026-06-19",
+    "raw_event": {
+      "uid": "2622042232_manual_20260616_20260619@avito.ru",
+      "dtstart": "20260616",
+      "dtend": "20260619",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "01b61288-a44c-4b81-b15b-fbbbe3e5ee96",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2784328240462058615@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Booked)",
+    "check_in": "2026-06-27",
+    "check_out": "2026-06-29",
+    "raw_event": {
+      "uid": "2784328240462058615@avito.ru",
+      "dtstart": "20260627",
+      "dtend": "20260629",
+      "summary": "Avito (Booked)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "a4dea343-f125-4ffb-957f-01ed3c76c31d",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260717_20260719@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-17",
+    "check_out": "2026-07-19",
+    "raw_event": {
+      "uid": "2622042232_manual_20260717_20260719@avito.ru",
+      "dtstart": "20260717",
+      "dtend": "20260719",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  },
+  {
+    "id": "bef6154b-5f5c-4099-a1d3-8c08924cf256",
+    "source_id": "363c3c2e-b1c0-4559-a141-b35c34edd40a",
+    "cabin_id": "ee7fab48-494e-475f-8a22-32e28e940bf7",
+    "external_uid": "2622042232_manual_20260710_20260712@avito.ru",
+    "source_name": "Avito",
+    "summary": "Avito (Closed)",
+    "check_in": "2026-07-10",
+    "check_out": "2026-07-12",
+    "raw_event": {
+      "uid": "2622042232_manual_20260710_20260712@avito.ru",
+      "dtstart": "20260710",
+      "dtend": "20260712",
+      "summary": "Avito (Closed)"
+    },
+    "last_seen_at": "2026-07-14T06:56:31.100Z"
+  }
+]

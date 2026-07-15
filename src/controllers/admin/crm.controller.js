@@ -1,7 +1,5 @@
 const { supabaseAdmin } = require('../../config/supabase');
-const fs = require('fs');
-const path = require('path');
-const guestNotesPath = path.join(__dirname, '../../data/guest_notes.json');
+const dataStore = require('../../services/dataStore.service');
 
 exports.getAnalytics = async (req, res) => {
   try {
@@ -213,10 +211,7 @@ exports.getGuests = async (req, res) => {
 
     if (error) throw error;
 
-    let notes = {};
-    if (fs.existsSync(guestNotesPath)) {
-      notes = JSON.parse(fs.readFileSync(guestNotesPath, 'utf8'));
-    }
+    const notes = await dataStore.get('guest_notes', 'guest_notes.json', {});
 
     const guestsMap = {};
 
@@ -257,13 +252,10 @@ exports.updateGuestNotes = async (req, res) => {
     const { phone } = req.params;
     const { notes } = req.body;
     
-    let currentNotes = {};
-    if (fs.existsSync(guestNotesPath)) {
-      currentNotes = JSON.parse(fs.readFileSync(guestNotesPath, 'utf8'));
-    }
-
-    currentNotes[phone] = notes;
-    fs.writeFileSync(guestNotesPath, JSON.stringify(currentNotes, null, 2));
+    await dataStore.update('guest_notes', 'guest_notes.json', {}, (currentNotes) => {
+      currentNotes[String(phone).slice(0, 30)] = String(notes || '').slice(0, 5000);
+      return currentNotes;
+    });
 
     res.json({ success: true });
   } catch (err) {

@@ -1,154 +1,132 @@
-const fs = require('fs');
-const path = require('path');
-const extraServicesPath = path.join(__dirname, '../../data/extra_services.json');
-const houseItemsPath = path.join(__dirname, '../../data/house_items.json');
+const crypto = require('crypto');
+const dataStore = require('../../services/dataStore.service');
 
-exports.getExtraServices = async (req, res) => {
+const EXTRA = ['extra_services', 'extra_services.json', []];
+const ITEMS = ['house_items', 'house_items.json', []];
+
+function sortRows(rows) {
+  return rows.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+}
+
+function servicePayload(body, previous = {}) {
+  const name = String(body.name == null ? previous.name || '' : body.name).trim();
+  if (!name) throw new Error('Название обязательно');
+  const price = Number(body.price == null ? previous.price || 0 : body.price);
+  if (!Number.isFinite(price) || price < 0) throw new Error('Некорректная цена');
+  return {
+    ...previous,
+    name: name.slice(0, 255),
+    description: String(body.description == null ? previous.description || '' : body.description).trim().slice(0, 2000),
+    price: Math.round(price),
+    price_type: ['per_booking', 'per_day', 'per_person'].includes(body.price_type)
+      ? body.price_type
+      : previous.price_type || 'per_booking',
+    is_active: body.is_active !== false,
+    sort_order: Number(body.sort_order) || previous.sort_order || 0,
+  };
+}
+
+exports.getExtraServices = async (_req, res) => {
   try {
-    let services = [];
-    if (fs.existsSync(extraServicesPath)) {
-      services = JSON.parse(fs.readFileSync(extraServicesPath, 'utf8'));
-    }
-    services.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-    res.json({ success: true, data: services });
+    res.json({ success: true, data: sortRows(await dataStore.get(...EXTRA)) });
   } catch (err) {
-    console.error('[services.controller] GET /extra-services error:', err);
-    res.status(500).json({ success: false, error: 'Ошибка загрузки наполнения' });
+    res.status(500).json({ success: false, error: 'Ошибка загрузки услуг' });
   }
 };
 
 exports.createExtraService = async (req, res) => {
   try {
-    const { name, description, price, price_type, is_active, sort_order } = req.body;
-    let services = [];
-    if (fs.existsSync(extraServicesPath)) {
-      services = JSON.parse(fs.readFileSync(extraServicesPath, 'utf8'));
-    }
-    const newService = {
-      id: Date.now().toString(),
-      name, description, price, price_type, is_active, sort_order: sort_order || 0
-    };
-    services.push(newService);
-    fs.writeFileSync(extraServicesPath, JSON.stringify(services, null, 2));
-    res.json({ success: true, data: newService });
+    const created = servicePayload(req.body);
+    created.id = crypto.randomUUID();
+    await dataStore.update(...EXTRA, (rows) => {
+      rows.push(created);
+      return rows;
+    });
+    res.json({ success: true, data: created });
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Ошибка создания услуги' });
+    res.status(400).json({ success: false, error: err.message || 'Ошибка создания услуги' });
   }
 };
 
 exports.updateExtraService = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, description, price, price_type, is_active, sort_order } = req.body;
-    let services = [];
-    if (fs.existsSync(extraServicesPath)) {
-      services = JSON.parse(fs.readFileSync(extraServicesPath, 'utf8'));
-    }
-    const idx = services.findIndex(s => s.id == id);
-    if (idx === -1) throw new Error('Услуга не найдена');
-    
-    services[idx] = { ...services[idx], name, description, price, price_type, is_active, sort_order };
-    fs.writeFileSync(extraServicesPath, JSON.stringify(services, null, 2));
-    res.json({ success: true, data: services[idx] });
+    let updated;
+    await dataStore.update(...EXTRA, (rows) => {
+      const index = rows.findIndex((row) => String(row.id) === String(req.params.id));
+      if (index === -1) throw new Error('Услуга не найдена');
+      updated = servicePayload(req.body, rows[index]);
+      rows[index] = updated;
+      return rows;
+    });
+    res.json({ success: true, data: updated });
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Ошибка обновления услуги' });
+    res.status(err.message === 'Услуга не найдена' ? 404 : 400).json({ success: false, error: err.message });
   }
 };
 
 exports.removeExtraService = async (req, res) => {
   try {
-    const { id } = req.params;
-    let services = [];
-    if (fs.existsSync(extraServicesPath)) {
-      services = JSON.parse(fs.readFileSync(extraServicesPath, 'utf8'));
-    }
-    services = services.filter(s => s.id != id);
-    fs.writeFileSync(extraServicesPath, JSON.stringify(services, null, 2));
+    await dataStore.update(...EXTRA, (rows) => rows.filter((row) => String(row.id) !== String(req.params.id)));
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Ошибка удаления услуги' });
   }
 };
 
-exports.getHouseItems = async (req, res) => {
+exports.getHouseItems = async (_req, res) => {
   try {
-    let items = [];
-    if (fs.existsSync(houseItemsPath)) {
-      items = JSON.parse(fs.readFileSync(houseItemsPath, 'utf8'));
-    }
-    items.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-    res.json({ success: true, data: items });
+    res.json({ success: true, data: sortRows(await dataStore.get(...ITEMS)) });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Ошибка загрузки наполнения домика' });
   }
 };
 
+function itemPayload(body, previous = {}, fallbackOrder = 0) {
+  const name = String(body.name == null ? previous.name || '' : body.name).trim();
+  if (!name) throw new Error('Название обязательно');
+  return {
+    ...previous,
+    name: name.slice(0, 255),
+    is_active: body.is_active !== false,
+    sort_order: Number(body.sort_order) || previous.sort_order || fallbackOrder,
+    icon: String(body.icon || previous.icon || 'check').replace(/[^a-z0-9-]/gi, '').slice(0, 60) || 'check',
+  };
+}
+
 exports.createHouseItem = async (req, res) => {
   try {
-    const { name, is_active, sort_order, icon } = req.body;
-    if (!name || !String(name).trim()) {
-      return res.status(400).json({ success: false, error: 'Название обязательно' });
-    }
-
-    let items = [];
-    if (fs.existsSync(houseItemsPath)) {
-      items = JSON.parse(fs.readFileSync(houseItemsPath, 'utf8'));
-    }
-
-    const newItem = {
-      id: Date.now().toString(),
-      name: String(name).trim(),
-      is_active: is_active !== false,
-      sort_order: Number(sort_order) || items.length + 1,
-      icon: icon || 'check'
-    };
-
-    items.push(newItem);
-    fs.writeFileSync(houseItemsPath, JSON.stringify(items, null, 2));
-    res.json({ success: true, data: newItem });
+    let created;
+    await dataStore.update(...ITEMS, (rows) => {
+      created = itemPayload(req.body, {}, rows.length + 1);
+      created.id = crypto.randomUUID();
+      rows.push(created);
+      return rows;
+    });
+    res.json({ success: true, data: created });
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Ошибка создания пункта наполнения' });
+    res.status(400).json({ success: false, error: err.message || 'Ошибка создания пункта' });
   }
 };
 
 exports.updateHouseItem = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, is_active, sort_order, icon } = req.body;
-    let items = [];
-    if (fs.existsSync(houseItemsPath)) {
-      items = JSON.parse(fs.readFileSync(houseItemsPath, 'utf8'));
-    }
-
-    const idx = items.findIndex(item => item.id == id);
-    if (idx === -1) {
-      return res.status(404).json({ success: false, error: 'Пункт не найден' });
-    }
-
-    items[idx] = {
-      ...items[idx],
-      name: String(name || items[idx].name).trim(),
-      is_active: is_active !== false,
-      sort_order: Number(sort_order) || items[idx].sort_order || 0,
-      icon: icon || items[idx].icon || 'check'
-    };
-
-    fs.writeFileSync(houseItemsPath, JSON.stringify(items, null, 2));
-    res.json({ success: true, data: items[idx] });
+    let updated;
+    await dataStore.update(...ITEMS, (rows) => {
+      const index = rows.findIndex((row) => String(row.id) === String(req.params.id));
+      if (index === -1) throw new Error('Пункт не найден');
+      updated = itemPayload(req.body, rows[index]);
+      rows[index] = updated;
+      return rows;
+    });
+    res.json({ success: true, data: updated });
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Ошибка обновления пункта наполнения' });
+    res.status(err.message === 'Пункт не найден' ? 404 : 400).json({ success: false, error: err.message });
   }
 };
 
 exports.removeHouseItem = async (req, res) => {
   try {
-    const { id } = req.params;
-    let items = [];
-    if (fs.existsSync(houseItemsPath)) {
-      items = JSON.parse(fs.readFileSync(houseItemsPath, 'utf8'));
-    }
-    items = items.filter(item => item.id != id);
-    fs.writeFileSync(houseItemsPath, JSON.stringify(items, null, 2));
+    await dataStore.update(...ITEMS, (rows) => rows.filter((row) => String(row.id) !== String(req.params.id)));
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Ошибка удаления пункта наполнения' });

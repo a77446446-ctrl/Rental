@@ -68,5 +68,9 @@
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') setMenu(false);
     });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 900) setMenu(false);
+    });
   });
 })();

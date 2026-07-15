@@ -4,10 +4,18 @@ const router = express.Router();
 const chatService = require('../services/chat.service');
 const { config } = require('../config/env');
 const storageService = require('../services/storage.service');
+const { cleanText, validateUuid } = require('../utils/validation');
+
+const CHAT_FILE_LIMIT = 15 * 1024 * 1024;
+const CHAT_MIME_PREFIXES = ['image/', 'video/', 'audio/'];
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 },
+  limits: { fileSize: CHAT_FILE_LIMIT, files: 1 },
+  fileFilter: (_req, file, callback) => {
+    const allowed = CHAT_MIME_PREFIXES.some((prefix) => file.mimetype && file.mimetype.startsWith(prefix));
+    callback(allowed ? null : new Error('UNSUPPORTED_CHAT_FILE'), allowed);
+  },
 });
 
 /**
@@ -33,8 +41,9 @@ router.get('/messages/:token', async (req, res) => {
     const { token } = req.params;
     
     // Простая валидация UUID v4
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(token)) {
+    try {
+      validateUuid(token, 'Токен чата');
+    } catch (_error) {
       return res.status(400).json({ success: false, error: 'Неверный формат токена' });
     }
 
@@ -58,15 +67,14 @@ router.post('/messages', async (req, res) => {
   try {
     const { token, message } = req.body;
 
-    if (!token || !message) {
-      return res.status(400).json({ success: false, error: 'Отсутствует токен или текст сообщения' });
-    }
+    validateUuid(token, 'Токен чата');
+    const safeMessage = cleanText(message, { field: 'Сообщение', required: true, max: 2000 });
 
     // Сохраняем сообщение в базу
-    const savedMsg = await chatService.saveMessage(token, message, 'guest');
+    const savedMsg = await chatService.saveMessage(token, safeMessage, 'guest');
 
     // Асинхронно отправляем уведомление админу в ТГ (не ждем завершения)
-    chatService.notifyAdmin(token, message).catch(err => {
+    chatService.notifyAdmin(token, safeMessage).catch(err => {
       console.error('[chat.routes] Ошибка фоновой отправки в ТГ:', err);
     });
 
@@ -87,18 +95,22 @@ router.post('/messages', async (req, res) => {
 router.post('/upload', (req, res, next) => {
   upload.single('file')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      return res.status(400).json({ success: false, error: 'Размер файла превышает лимит (50 МБ)' });
+      return res.status(400).json({ success: false, error: 'Размер файла превышает лимит (15 МБ)' });
     } else if (err) {
-      return res.status(500).json({ success: false, error: 'Ошибка загрузки файла' });
+      const unsupported = err.message === 'UNSUPPORTED_CHAT_FILE';
+      return res.status(unsupported ? 400 : 500).json({
+        success: false,
+        error: unsupported ? 'Можно загрузить только изображение, видео или аудио' : 'Ошибка загрузки файла'
+      });
     }
     next();
   });
 }, async (req, res) => {
   try {
     const { token } = req.body;
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-    if (!token || !uuidRegex.test(token)) {
+    try {
+      validateUuid(token, 'Токен чата');
+    } catch (_error) {
       return res.status(400).json({ success: false, error: 'Неверный формат токена' });
     }
 

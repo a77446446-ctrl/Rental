@@ -170,7 +170,7 @@
         '<div style="color:var(--cream-2);font-size:13px;line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">' + esc(review.text || '') + '</div>';
       var actions = document.createElement('div');
       actions.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;';
-      var edit = button('Редактировать');
+      var edit = button('Редакт.');
       edit.addEventListener('click', function() { editDraft(index); });
       var remove = button('Удалить', 'danger');
       remove.addEventListener('click', function() { state.reviews.splice(index, 1); setDirty(); render(); });

@@ -7,6 +7,25 @@
 (function () {
   'use strict';
 
+  // Автоматическая CSRF-защита всех изменяющих same-origin запросов админки,
+  // включая исторические прямые вызовы fetch() вне EcoApi.
+  var nativeFetch = window.fetch.bind(window);
+  window.fetch = function (input, init) {
+    var options = init ? Object.assign({}, init) : {};
+    var method = String(options.method || 'GET').toUpperCase();
+    var url = typeof input === 'string' ? input : input && input.url;
+    var isSameOrigin = !url || url.charAt(0) === '/' || url.indexOf(window.location.origin) === 0;
+    if (isSameOrigin && !/^(GET|HEAD|OPTIONS)$/.test(method)) {
+      var match = document.cookie.match(/(?:^|;\s*)eco_admin_csrf=([^;]+)/);
+      if (match) {
+        var headers = new Headers(options.headers || (input instanceof Request ? input.headers : undefined));
+        headers.set('X-CSRF-Token', decodeURIComponent(match[1]));
+        options.headers = headers;
+      }
+    }
+    return nativeFetch(input, options);
+  };
+
   /**
    * Вспомогательная функция для тостов (уведомлений)
    */
@@ -120,6 +139,15 @@
     return year + '-' + month + '-' + day;
   }
 
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   var EcoApi = {
     /**
      * Получить список всех активных домиков.
@@ -203,6 +231,7 @@
 
     /** Date → "YYYY-MM-DD" */
     toDateString: toDateString,
+    escapeHtml: escapeHtml,
     /**
      * Выполнить произвольный GET запрос
      */

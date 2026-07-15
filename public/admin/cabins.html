@@ -1,4 +1,4 @@
-?<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -165,7 +165,7 @@
       .admin-table td div { font-size: 14px; }
     }
   </style>
-  <link rel="stylesheet" href="/css/admin-mobile.css?v=6">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=2">
   <script src="/js/lucide.min.js?v=012708"></script>
 </head>
 <body>
@@ -291,7 +291,7 @@
           <textarea id="cabinDescription" rows="4"></textarea>
         </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="cabin-numbers-grid">
           <div class="form-group">
             <label>Вместимость (гостей)</label>
             <input type="number" id="cabinCapacity" min="1" max="10">
@@ -348,8 +348,8 @@
     </div>
   </div>
 
-  <script src="/js/api.js?v=4"></script>
-  <script src="/js/admin-cabins.js?v=8"></script>
+  <script src="/js/api.js?v=9"></script>
+  <script src="/js/admin-cabins.js?v=9"></script>
   <script src="/js/pwa.js?v=4"></script>
   <script src="/js/admin-mobile.js?v=3"></script>
 </body>

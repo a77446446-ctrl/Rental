@@ -22,15 +22,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
       tableBody.innerHTML = sortedGuests.map(g => {
         const lastBookingDate = new Date(g.last_booking).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const safeName = EcoApi.escapeHtml(g.name);
+        const safePhone = EcoApi.escapeHtml(g.phone);
+        const encodedPhone = encodeURIComponent(String(g.phone || ''));
+        const safeTelegram = EcoApi.escapeHtml(String(g.telegram || '').replace('@', ''));
+        const safeNotes = EcoApi.escapeHtml(g.notes || '');
         
         return `
           <tr>
             <td data-label="Гость">
-              <div style="font-weight:600; font-size:16px;">${g.name}</div>
+              <div style="font-weight:600; font-size:16px;">${safeName}</div>
             </td>
             <td data-label="Контакты">
-              <div style="color:var(--cream);">${g.phone}</div>
-              ${g.telegram ? `<div style="color:var(--muted); font-size:12px;">@${g.telegram.replace('@', '')}</div>` : ''}
+              <div style="color:var(--cream);">${safePhone}</div>
+              ${g.telegram ? `<div style="color:var(--muted); font-size:12px;">@${safeTelegram}</div>` : ''}
             </td>
             <td data-label="Бронирования">
               <div style="font-weight:600;">${g.total_bookings} шт.</div>
@@ -40,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
               ${EcoApi.formatPrice(g.ltv)}
             </td>
             <td data-label="Заметки">
-              <textarea class="notes-input" data-phone="${g.phone}" placeholder="Добавить заметку о клиенте...">${g.notes || ''}</textarea>
-              <button class="save-notes-btn" data-phone="${g.phone}" style="display:none;">Сохранить</button>
+              <textarea class="notes-input" data-phone="${encodedPhone}" placeholder="Добавить заметку о клиенте...">${safeNotes}</textarea>
+              <button class="save-notes-btn" data-phone="${encodedPhone}" style="display:none;">Сохранить</button>
             </td>
           </tr>
         `;
@@ -49,8 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Привязываем слушатели изменения заметок
       document.querySelectorAll('.notes-input').forEach(input => {
-        const phone = input.dataset.phone;
-        const saveBtn = document.querySelector(`.save-notes-btn[data-phone="${phone}"]`);
+        const encodedPhone = input.dataset.phone;
+        const phone = decodeURIComponent(encodedPhone);
+        const saveBtn = document.querySelector(`.save-notes-btn[data-phone="${encodedPhone}"]`);
         
         input.addEventListener('input', () => {
           saveBtn.style.display = 'inline-block';

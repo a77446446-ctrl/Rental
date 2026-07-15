@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentCabins = [];
   let currentCabinImages = [];
+  const pendingUploadPaths = new Set();
   let globalAmenities = {};
   let globalExtraServices = [];
   let globalTags = [];
@@ -57,9 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
           .filter(item => item.is_active !== false)
           .map(item => `
             <label style="display: flex; align-items: center; gap: 6px;">
-              <input type="checkbox" value="${item.name}">
-              ${item.icon ? `<i data-lucide="${item.icon}" style="width: 16px; height: 16px; color: var(--gold);"></i>` : ''}
-              ${item.name}
+              <input type="checkbox" value="${escapeAttr(item.name)}">
+              ${item.icon ? `<i data-lucide="${escapeAttr(item.icon)}" style="width: 16px; height: 16px; color: var(--gold);"></i>` : ''}
+              ${escapeAttr(item.name)}
             </label>
           `)
           .join('');
@@ -79,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const tagsGrid = document.getElementById('cabinTagsGrid');
       if (tagsGrid) {
         tagsGrid.innerHTML = globalTags.map(tag => 
-          `<label><input type="checkbox" value="${tag}"> ${tag}</label>`
+          `<label><input type="checkbox" value="${escapeAttr(tag)}"> ${escapeAttr(tag)}</label>`
         ).join('');
       }
       
@@ -107,9 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return `
       <tr>
         <td data-label="Фото">
-          <div class="cabin-avatar" style="--img: url('${mainImg.url}'); width: 40px; height: 40px; border-radius: 4px; background-size: cover;"></div>
+          <div class="cabin-avatar" data-image-url="${escapeAttr(mainImg.url)}" style="width: 40px; height: 40px; border-radius: 4px; background-size: cover;"></div>
         </td>
-        <td data-label="Название" style="font-weight: 600;">${c.name}${(c.external_calendars && c.external_calendars.length) ? `<div style="color:var(--muted); font-size:12px; font-weight:500; margin-top:4px;">iCal: ${c.external_calendars.map(src => escapeAttr(src.source_name)).join(', ')}</div>` : ''}</td>
+        <td data-label="Название" style="font-weight: 600;">${escapeAttr(c.name)}${(c.external_calendars && c.external_calendars.length) ? `<div style="color:var(--muted); font-size:12px; font-weight:500; margin-top:4px;">iCal: ${c.external_calendars.map(src => escapeAttr(src.source_name)).join(', ')}</div>` : ''}</td>
         <td data-label="Вместимость">до ${c.capacity || 0} гостей</td>
         <td data-label="Цена">${(c.base_price || 0).toLocaleString('ru-RU')} ₽</td>
         <td data-label="Статус">
@@ -118,10 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
           </span>
         </td>
         <td data-label="Действие">
-          <button class="btn btn-ghost edit-btn" data-id="${c.id}" style="padding: 4px 12px; min-height: 28px;">Редактировать</button>
+          <button class="btn btn-ghost edit-btn" data-id="${c.id}" style="padding: 4px 12px; min-height: 28px;">Редакт.</button>
         </td>
       </tr>
     `}).join('');
+
+    tableBody.querySelectorAll('.cabin-avatar[data-image-url]').forEach((element) => {
+      element.style.backgroundImage = `url("${element.dataset.imageUrl.replace(/["\\\n\r]/g, '')}")`;
+    });
 
     // Обработчики кнопок редактирования
     document.querySelectorAll('.edit-btn').forEach(btn => {
@@ -236,13 +241,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = document.createElement('div');
       el.className = 'gallery-item';
       el.innerHTML = `
-        <img src="${img.url}">
+        <img src="${escapeAttr(img.url)}" alt="Фото домика">
         <button type="button" class="remove-btn">&times;</button>
       `;
       el.querySelector('.remove-btn').addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        currentCabinImages.splice(index, 1);
+        const removed = currentCabinImages.splice(index, 1)[0];
+        if (removed && removed.storage_path && pendingUploadPaths.has(removed.storage_path)) {
+          pendingUploadPaths.delete(removed.storage_path);
+          deleteUploadedFile(removed.storage_path);
+        }
         renderGallery();
         checkChanges();
       });
@@ -266,13 +275,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.removeImage = function(index) {
-    currentCabinImages.splice(index, 1);
+    const removed = currentCabinImages.splice(index, 1)[0];
+    if (removed && removed.storage_path && pendingUploadPaths.has(removed.storage_path)) {
+      pendingUploadPaths.delete(removed.storage_path);
+      deleteUploadedFile(removed.storage_path);
+    }
     renderGallery();
     checkChanges();
   };
 
   function escapeAttr(value) {
-    return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return EcoApi.escapeHtml(value);
   }
 
   function renderExternalCalendars() {
@@ -370,8 +383,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  async function deleteUploadedFile(path) {
+    try {
+      await fetch('/api/admin/uploads/images', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path })
+      });
+    } catch (err) {
+      console.error('[admin-cabins] Не удалось очистить временное фото:', err);
+    }
+  }
+
+  function cleanupPendingUploads() {
+    const paths = Array.from(pendingUploadPaths);
+    pendingUploadPaths.clear();
+    paths.forEach(deleteUploadedFile);
+  }
+
   // Закрытие модалки
   function closeModal() {
+    cleanupPendingUploads();
     editModal.classList.remove('open');
   }
 
@@ -525,7 +557,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!data.success) throw new Error(data.error);
         
-        currentCabinImages.push({ url: data.url, category });
+        currentCabinImages.push({ url: data.url, storage_path: data.path, category, pending: true });
+        if (data.path) pendingUploadPaths.add(data.path);
         renderGallery();
         checkChanges();
         
@@ -550,30 +583,29 @@ document.addEventListener('DOMContentLoaded', () => {
     payload.capacity = parseInt(payload.capacity);
     payload.base_price = parseInt(payload.base_price);
     payload.images = currentCabinImages;
+    payload.id = id;
+    payload.selectedAmenities = payload.amenities ? payload.amenities.split(',') : [];
+    payload.selectedTags = payload.tags ? payload.tags.split(',') : [];
+    payload.externalCalendars = collectExternalCalendarsFromDom();
 
     const originalText = saveCabinBtn.textContent;
     saveCabinBtn.textContent = 'Сохранение...';
     saveCabinBtn.disabled = true;
 
     try {
-      let res;
-      if (id === 'new') {
-        res = await fetch(`/api/admin/cabins`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } else {
-        res = await fetch(`/api/admin/cabins/${id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      }
+      const res = await fetch('/api/admin/cabins/save-full', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
       
       const data = await res.json();
 
       if (!data.success) throw new Error(data.error);
+
+      // Файлы уже привязаны к сохраненному домику; закрытие формы не должно их удалять.
+      currentCabinImages.forEach((image) => { delete image.pending; });
+      pendingUploadPaths.clear();
 
       let savedCabinId = id;
       if (id === 'new') {
@@ -581,17 +613,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cabinIdField.value = savedCabinId; // Устанавливаем новый ID
       }
       
-      await saveExternalCalendars(savedCabinId);
-
-      // Сохраняем наполнение домика
-      const selectedAmenities = payload.amenities ? payload.amenities.split(',') : [];
-      await EcoApi.post('/api/admin/amenities', { cabinId: savedCabinId, selectedAmenities });
-      globalAmenities[savedCabinId] = selectedAmenities;
-
-      // Сохраняем теги
-      const selectedTags = payload.tags ? payload.tags.split(',') : [];
-      await EcoApi.post('/api/admin/cabin-tags', { cabinId: savedCabinId, selectedTags });
-      globalCabinTags[savedCabinId] = selectedTags;
+      currentExternalCalendars = data.data.external_calendars || payload.externalCalendars;
+      globalAmenities[savedCabinId] = payload.selectedAmenities;
+      globalCabinTags[savedCabinId] = payload.selectedTags;
 
       saveCabinBtn.textContent = 'Сохранено ✓';
       saveCabinBtn.disabled = true;

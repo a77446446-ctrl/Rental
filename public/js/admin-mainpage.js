@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const actions = document.createElement('div');
         actions.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;';
-        const edit = makeReviewButton('Редактировать');
+        const edit = makeReviewButton('Редакт.');
         edit.addEventListener('click', function() { editReview(index); });
         const remove = makeReviewButton('Удалить', 'danger');
         remove.addEventListener('click', function() { deleteReview(index); });

@@ -16,17 +16,22 @@ const settingsController = require('../controllers/admin/settings.controller');
 
 const router = express.Router();
 
-// Настройка Multer для хранения файлов в памяти (до 50MB)
-const upload = multer({
+const photoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 12 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) => callback(null,
+    ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'].includes(file.mimetype)),
+});
+const chatUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 },
 });
 
 // Middleware для обработки ошибок multer (фото домиков)
 const handlePhotoUpload = (req, res, next) => {
-  upload.single('photo')(req, res, function (err) {
+  photoUpload.single('photo')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      return res.status(400).json({ success: false, error: 'Размер файла превышает лимит (50 МБ)' });
+      return res.status(400).json({ success: false, error: 'Файл отклонен. Максимум 12 МБ; форматы JPG, PNG, WEBP, AVIF или GIF.' });
     } else if (err) {
       return res.status(500).json({ success: false, error: 'Неизвестная ошибка загрузки' });
     }
@@ -36,7 +41,7 @@ const handlePhotoUpload = (req, res, next) => {
 
 // Middleware для обработки ошибок multer (файлы чата)
 const handleChatUpload = (req, res, next) => {
-  upload.single('file')(req, res, function (err) {
+  chatUpload.single('file')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ success: false, error: 'Размер файла превышает лимит (50 МБ)' });
     } else if (err) {
@@ -50,18 +55,20 @@ const handleChatUpload = (req, res, next) => {
 // Auth
 // -----------------------------------------------------------------------------
 router.post('/login', authLimiter, authController.login);
-router.post('/logout', authController.logout);
+router.post('/logout', requireAdmin, authController.logout);
 router.get('/me', requireAdmin, authController.me);
 
 // -----------------------------------------------------------------------------
 // Cabins
 // -----------------------------------------------------------------------------
 router.get('/cabins', requireAdmin, cabinsController.getAll);
+router.post('/cabins/save-full', requireAdmin, cabinsController.saveFull);
 router.post('/cabins', requireAdmin, cabinsController.create);
 router.patch('/cabins/:id', requireAdmin, cabinsController.update);
 router.delete('/cabins/:id', requireAdmin, cabinsController.remove);
 router.post('/cabins/upload', requireAdmin, handlePhotoUpload, cabinsController.uploadImage);
 router.post('/upload', requireAdmin, handlePhotoUpload, cabinsController.uploadImage);
+router.delete('/uploads/images', requireAdmin, cabinsController.removeUploadedImage);
 
 // -----------------------------------------------------------------------------
 // External Calendars

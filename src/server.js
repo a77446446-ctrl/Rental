@@ -14,6 +14,7 @@ const chatRoutes = require('./routes/chat.routes');
 const adminRoutes = require('./routes/admin.routes');
 const { requireAdmin } = require('./middleware/auth');
 const externalCalendarService = require('./services/externalCalendar.service');
+const { supabaseAdmin } = require('./config/supabase');
 
 /* Валидация переменных окружения */
 validateEnv();
@@ -85,10 +86,9 @@ app.use(cookieParser(config.cookieSecret));
    Rate Limiting
    ──────────────────────────────────────── */
 
-app.use(generalLimiter);
-
 /* Для Railway: доверять прокси, чтобы rate-limiter видел реальный IP */
 app.set('trust proxy', 1);
+app.use(generalLimiter);
 
 /* ────────────────────────────────────────
    Защита статики админ-панели
@@ -108,6 +108,11 @@ app.use(
   express.static(path.join(__dirname, '..', 'public'), {
     extensions: ['html'],
     maxAge: config.nodeEnv === 'production' ? '1d' : 0,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    },
   })
 );
 
@@ -121,6 +126,20 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: Math.floor(process.uptime()),
     environment: config.nodeEnv,
+  });
+});
+
+app.get('/ready', async (_req, res) => {
+  if (!supabaseAdmin) return res.status(503).json({ status: 'not_ready', database: false, migration_006: false });
+  const [database, migration] = await Promise.all([
+    supabaseAdmin.from('cabins').select('id', { head: true, count: 'exact' }).limit(1),
+    supabaseAdmin.from('app_config').select('key', { head: true, count: 'exact' }).limit(1),
+  ]);
+  const ready = !database.error && !migration.error;
+  return res.status(ready ? 200 : 503).json({
+    status: ready ? 'ready' : 'not_ready',
+    database: !database.error,
+    migration_006: !migration.error,
   });
 });
 
@@ -173,7 +192,8 @@ app.use((err, req, res, _next) => {
    Запуск сервера
    ──────────────────────────────────────── */
 
-app.listen(config.port, () => {
+let calendarJob = null;
+const server = app.listen(config.port, () => {
   console.log('');
   console.log('╔══════════════════════════════════════════════╗');
   console.log('║        🌲  EcoGorniy.ru — Сервер запущен     ║');
@@ -190,7 +210,28 @@ app.listen(config.port, () => {
     chatService.startTelegramPolling();
   }
 
-  externalCalendarService.startExternalCalendarSync(config.externalCalendarSyncMinutes);
+  if (!config.disableBackgroundJobs) {
+    calendarJob = externalCalendarService.startExternalCalendarSync(config.externalCalendarSyncMinutes);
+  }
 });
+
+server.on('error', (err) => {
+  console.error(`[server] Не удалось запустить HTTP-сервер: ${err.message}`);
+  process.exitCode = 1;
+});
+
+function shutdown(signal) {
+  console.log(`[server] Получен ${signal}, завершаем активные запросы...`);
+  if (calendarJob) calendarJob.stop();
+  const forceTimer = setTimeout(() => process.exit(1), 10000);
+  forceTimer.unref();
+  server.close(() => {
+    clearTimeout(forceTimer);
+    process.exit(0);
+  });
+}
+
+process.once('SIGTERM', () => shutdown('SIGTERM'));
+process.once('SIGINT', () => shutdown('SIGINT'));
 
 module.exports = app;

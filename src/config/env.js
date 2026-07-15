@@ -34,6 +34,7 @@ const config = {
 
   /* Внешние iCal-календари */
   externalCalendarSyncMinutes: parseInt(process.env.EXTERNAL_CALENDAR_SYNC_MINUTES, 10) || 30,
+  disableBackgroundJobs: process.env.DISABLE_BACKGROUND_JOBS === 'true',
 };
 
 /**

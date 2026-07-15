@@ -158,24 +158,23 @@
     background: transparent !important;
   }
 
-  body.admin-mobile-ready table,
   body.admin-mobile-ready .admin-table {
     display: block;
     width: 100%;
     min-width: 0 !important;
   }
 
-  body.admin-mobile-ready thead {
+  body.admin-mobile-ready .admin-table thead {
     display: none;
   }
 
-  body.admin-mobile-ready tbody {
+  body.admin-mobile-ready .admin-table tbody {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
 
-  body.admin-mobile-ready tr {
+  body.admin-mobile-ready .admin-table tr {
     display: flex;
     flex-direction: column;
     background: rgba(237, 228, 214, 0.02);
@@ -184,8 +183,8 @@
     padding: 16px;
   }
 
-  body.admin-mobile-ready td,
-  body.admin-mobile-ready th {
+  body.admin-mobile-ready .admin-table td,
+  body.admin-mobile-ready .admin-table th {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -195,7 +194,7 @@
     font-size: 13px !important;
   }
   
-  body.admin-mobile-ready td:last-child {
+  body.admin-mobile-ready .admin-table td:last-child {
     border-bottom: none !important;
   }
 
@@ -567,7 +566,7 @@
   }
 
   body.admin-mobile-ready table {
-    min-width: 620px;
+    min-width: 0 !important;
   }
 
   body.admin-mobile-ready .modal-header {
@@ -1285,6 +1284,201 @@
     margin: 0 !important;
     font-size: 8px !important;
     line-height: 1 !important;
+    gap: 4px !important;
+  }
+
+  body.admin-mobile-ready .chat-list-head h3,
+  body.admin-mobile-ready .chat-thread-head h3 {
+    font-size: 16px !important;
+    line-height: 1.1 !important;
+  }
+
+  body.admin-mobile-ready .chat-list-head span,
+  body.admin-mobile-ready .chat-thread-head span {
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+  }
+
+  body.admin-mobile-ready .chat-list-body {
+    max-height: 230px !important;
+    overflow-y: auto !important;
+  }
+
+  body.admin-mobile-ready .chat-list-item {
+    padding: 10px 12px !important;
+    gap: 4px !important;
+  }
+
+  body.admin-mobile-ready .chat-list-item strong,
+  body.admin-mobile-ready .dialog-item strong {
+    font-size: 12px !important;
+  }
+
+  body.admin-mobile-ready .chat-list-item p,
+  body.admin-mobile-ready .dialog-item p,
+  body.admin-mobile-ready .chat-list-item span,
+  body.admin-mobile-ready .dialog-item span {
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+  }
+
+  body.admin-mobile-ready .messages-box {
+    height: auto !important;
+    max-height: 50dvh !important;
+    min-height: 260px !important;
+    padding: 10px !important;
+    overflow-x: hidden !important;
+  }
+
+  body.admin-mobile-ready .message-bubble,
+  body.admin-mobile-ready .chat-message {
+    max-width: 86% !important;
+    padding: 9px 10px !important;
+    border-radius: 10px !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body.admin-mobile-ready .message-bubble small,
+  body.admin-mobile-ready .message-meta {
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+  }
+
+  body.admin-mobile-ready .reply-form {
+    display: grid !important;
+    grid-template-columns: 36px 1fr 40px !important;
+    gap: 7px !important;
+    padding: 9px !important;
+  }
+
+  body.admin-mobile-ready .reply-form textarea {
+    min-height: 38px !important;
+    max-height: 86px !important;
+    padding: 9px 10px !important;
+  }
+
+  body.admin-mobile-ready .admin-chat-attach,
+  body.admin-mobile-ready #replyBtn {
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 !important;
+    border-radius: 9px !important;
+    font-size: 0 !important;
+  }
+
+  body.admin-mobile-ready .admin-chat-attach {
+    font-size: 18px !important;
+  }
+
+  body.admin-mobile-ready #replyBtn::before {
+    content: ">";
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  body.admin-mobile-ready .metric-grid,
+  body.admin-mobile-ready .metrics-grid,
+  body.admin-mobile-ready .analytics-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  body.admin-mobile-ready .metric-card {
+    min-height: 0 !important;
+  }
+
+  body.admin-mobile-ready .metric-label {
+    font-size: 10px !important;
+  }
+
+  body.admin-mobile-ready .metric-value {
+    font-size: 24px !important;
+    line-height: 1 !important;
+  }
+}
+
+@media (max-width: 420px) {
+  body.admin-mobile-ready .admin-content {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  body.admin-mobile-ready .admin-brand h1 {
+    max-width: 112px !important;
+    font-size: 12px !important;
+  }
+
+  body.admin-mobile-ready .settings-section,
+  body.admin-mobile-ready .form-section,
+  body.admin-mobile-ready .settings-card,
+  body.admin-mobile-ready .section-card,
+  body.admin-mobile-ready .content-card,
+  body.admin-mobile-ready .admin-card,
+  body.admin-mobile-ready .panel,
+  body.admin-mobile-ready .metric-card,
+  body.admin-mobile-ready .chart-card,
+  body.admin-mobile-ready .table-container,
+  body.admin-mobile-ready #adminContent > section,
+  body.admin-mobile-ready #adminContent > div:not(.admin-content-header) {
+    padding: 10px !important;
+  }
+
+  body.admin-mobile-ready .gallery-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.admin-mobile-ready table,
+  body.admin-mobile-ready .admin-table {
+    min-width: 0 !important;
+  }
+}
+
+
+/* Square admin calendar mobile polish 2026-07-07 */
+@media (max-width: 900px) {
+  body.admin-mobile-ready .calendar-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+  }
+
+  body.admin-mobile-ready .weekday {
+    min-width: 0 !important;
+    padding-bottom: 5px !important;
+    margin-bottom: 4px !important;
+    font-size: 10px !important;
+  }
+
+  body.admin-mobile-ready .day-cell,
+  body.admin-mobile-ready .price-day {
+    aspect-ratio: 1 / 1 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 4px 2px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    text-align: center !important;
+  }
+
+  body.admin-mobile-ready .day-cell strong,
+  body.admin-mobile-ready .price-day strong {
+    font-size: 12px !important;
+    line-height: 1 !important;
+  }
+
+  body.admin-mobile-ready .day-price,
+  body.admin-mobile-ready .external-source {
+    max-width: 100% !important;
+    margin: 0 !important;
+    font-size: 8px !important;
+    line-height: 1 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -1295,5 +1489,37 @@
     right: 5px !important;
     font-size: 9px !important;
     line-height: 1 !important;
+  }
+
+  /* Fix sticky top header */
+  body.admin-mobile-ready {
+    overflow-x: clip !important;
+  }
+
+  /* Make content header compact */
+  body.admin-mobile-ready .admin-content-header {
+    background: transparent;
+    padding: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-bottom: none;
+  }
+
+  /* Compact the cards and buttons */
+  body.admin-mobile-ready .admin-table tr {
+    padding: 12px 10px !important;
+  }
+  body.admin-mobile-ready .admin-table td .btn,
+  body.admin-mobile-ready .admin-table td button,
+  body.admin-mobile-ready .admin-table td a.btn {
+    width: auto !important;
+    flex: 0 1 auto !important;
+    padding: 4px 12px !important;
+    min-height: 32px !important;
+    font-size: 12px !important;
+    margin-top: 8px;
+  }
+  body.admin-mobile-ready .admin-table td:last-child {
+    justify-content: flex-end !important;
   }
 }

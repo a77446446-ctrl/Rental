@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const createdDate = new Date(b.created_at).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         const shortId = b.id.split('-')[0].toUpperCase();
         globalBookingsMap[b.id] = b;
+        const safeGuestName = EcoApi.escapeHtml(b.guest_name);
+        const safeGuestPhone = EcoApi.escapeHtml(b.guest_phone);
+        const safeTelegram = EcoApi.escapeHtml(String(b.guest_telegram || '').replace('@', ''));
+        const safeCabinName = EcoApi.escapeHtml(b.cabins ? b.cabins.name : 'Удаленный объект');
         
         let statusBadge = '';
         if (b.status === 'pending') statusBadge = '<span class="status-badge status-pending">Ожидает</span>';
@@ -36,12 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
             <td data-label="Гость">
               <div class="guest-info">
-                <strong>${b.guest_name}</strong>
-                <small>${b.guest_phone}</small>
-                ${b.guest_telegram ? `<small>@${b.guest_telegram.replace('@', '')}</small>` : ''}
+                <strong>${safeGuestName}</strong>
+                <small>${safeGuestPhone}</small>
+                ${b.guest_telegram ? `<small>@${safeTelegram}</small>` : ''}
               </div>
             </td>
-            <td data-label="Объект">${b.cabins ? b.cabins.name : 'Удаленный объект'}</td>
+            <td data-label="Объект">${safeCabinName}</td>
             <td data-label="Заезд - Выезд" style="white-space:nowrap;">
               ${b.check_in} &rarr; ${b.check_out}
             </td>
@@ -53,27 +57,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтвердить</option>
                 <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Отменить</option>
               </select>
-              <button class="btn btn-outline edit-booking-btn" data-id="${b.id}" style="padding: 6px 10px; font-size: 13px;">Изменить</button>
+              <button class="btn btn-outline apply-status-btn" data-id="${b.id}" style="padding: 6px 10px; font-size: 13px;" disabled>Применить</button>
             </td>
           </tr>
         `;
       }).join('');
 
-      // Привязываем слушатели изменения статуса
+      // Статус сначала выбираем, затем явно применяем кнопкой.
       document.querySelectorAll('.status-select').forEach(sel => {
-        sel.addEventListener('change', async (e) => {
-          const id = e.target.dataset.id;
-          const newStatus = e.target.value;
-          
-          if (newStatus === 'cancelled') {
-            if (!confirm('Отменить эту бронь? Это освободит даты в календаре.')) {
-              // Возвращаем как было
-              loadBookings();
-              return;
-            }
-          }
+        sel.dataset.originalStatus = sel.value;
+        sel.addEventListener('change', (e) => {
+          const row = e.target.closest('tr');
+          const applyBtn = row && row.querySelector('.apply-status-btn');
+          if (!applyBtn) return;
+          applyBtn.disabled = e.target.value === e.target.dataset.originalStatus;
+        });
+      });
 
-          e.target.disabled = true;
+      document.querySelectorAll('.apply-status-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.currentTarget.dataset.id;
+          const row = e.currentTarget.closest('tr');
+          const select = row && row.querySelector('.status-select');
+          if (!select) return;
+
+          const newStatus = select.value;
+          if (newStatus === select.dataset.originalStatus) return;
+          if (newStatus === 'cancelled' && !confirm('Отменить эту бронь? Гость получит уведомление, а даты освободятся в календаре.')) return;
+
+          e.currentTarget.disabled = true;
+          select.disabled = true;
           try {
             const res = await fetch(`/api/admin/bookings/${id}/status`, {
               method: 'PATCH',
@@ -87,27 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
           } catch (err) {
             console.error(err);
             window.showToast('Ошибка при обновлении', 'error');
-            loadBookings();
+            select.disabled = false;
+            e.currentTarget.disabled = false;
           }
-        });
-      });
-
-      // Привязываем слушатели для редактирования
-      document.querySelectorAll('.edit-booking-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const id = e.currentTarget.dataset.id;
-          const b = globalBookingsMap[id];
-          if (!b) return;
-          
-          document.getElementById('editBookingId').value = b.id;
-          document.getElementById('editGuestName').value = b.guest_name || '';
-          document.getElementById('editGuestPhone').value = b.guest_phone || '';
-          document.getElementById('editGuestTelegram').value = b.guest_telegram || '';
-          document.getElementById('editCheckIn').value = b.check_in || '';
-          document.getElementById('editCheckOut').value = b.check_out || '';
-          document.getElementById('editTotalPrice').value = b.total_price || 0;
-          
-          document.getElementById('editBookingModal').classList.add('active');
         });
       });
 
@@ -137,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastPendingCount = 0;
 
   async function pollBookings() {
+    if (document.hidden) return;
     try {
       const res = await fetch('/api/admin/bookings');
       const data = await res.json();
@@ -171,12 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  setInterval(pollBookings, 10000);
+  setInterval(pollBookings, 20000);
 
   // Восстанавливаем заголовок при возвращении на вкладку
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       document.title = 'Бронирования | EcoGorniy Admin';
+      pollBookings();
     }
   });
 

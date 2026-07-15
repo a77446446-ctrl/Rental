@@ -27,8 +27,13 @@
    * Генерация UUID v4 для анонимного чата
    */
   function uuidv4() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      var bytes = new Uint8Array(1);
+      window.crypto.getRandomValues(bytes);
+      var r = bytes[0] & 15, v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
@@ -146,34 +151,43 @@
   }
 
   function renderAttachment(container, attachment) {
+    let safeUrl;
+    try {
+      const parsedUrl = new URL(String(attachment.url || ''), window.location.origin);
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) return false;
+      safeUrl = parsedUrl.href;
+    } catch (_error) {
+      return false;
+    }
     const wrap = document.createElement('div');
     wrap.className = 'chat-attachment';
 
     let media;
     if (attachment.mediaType === 'image') {
       media = document.createElement('img');
-      media.src = attachment.url;
+      media.src = safeUrl;
       media.alt = attachment.name || 'Изображение';
     } else if (attachment.mediaType === 'video') {
       media = document.createElement('video');
-      media.src = attachment.url;
+      media.src = safeUrl;
       media.controls = true;
       media.playsInline = true;
     } else if (attachment.mediaType === 'audio') {
       media = document.createElement('audio');
-      media.src = attachment.url;
+      media.src = safeUrl;
       media.controls = true;
     }
 
     if (media) wrap.appendChild(media);
 
     const link = document.createElement('a');
-    link.href = attachment.url;
+    link.href = safeUrl;
     link.target = '_blank';
     link.rel = 'noopener';
     link.textContent = attachment.name || 'Открыть файл';
     wrap.appendChild(link);
     container.appendChild(wrap);
+    return true;
   }
 
   function renderMessage(msg) {
@@ -181,9 +195,7 @@
     div.className = 'chat-message ' + (msg.sender_type === 'guest' ? 'guest' : 'admin');
 
     const attachment = parseAttachment(msg.message || '');
-    if (attachment) {
-      renderAttachment(div, attachment);
-    } else {
+    if (!attachment || !renderAttachment(div, attachment)) {
       const text = msg.message || '';
       if (text.includes('---')) {
         const parts = text.split('---');
@@ -270,7 +282,7 @@
 
   async function pollForNewMessages() {
     // Если Realtime уже доказал свою работоспособность — не тратим трафик на polling
-    if (realtimeWorking) return;
+    if (realtimeWorking || document.hidden) return;
     
     try {
       const res = await fetch('/api/chat/messages/' + chatToken);
@@ -295,7 +307,7 @@
     }
   }
 
-  setInterval(pollForNewMessages, 5000);
+  setInterval(pollForNewMessages, 15000);
 
   /**
    * Отправка сообщения
@@ -308,7 +320,7 @@
     els.input.value = '';
     
     // Оптимистичный рендер
-    renderMessage({ sender_type: 'guest', message: text.replace(/</g, "&lt;").replace(/>/g, "&gt;") });
+    renderMessage({ sender_type: 'guest', message: text });
     scrollToBottom();
 
     try {
