@@ -125,30 +125,24 @@ exports.uploadMedia = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Файл не передан' });
     }
 
-    const url = await storageService.uploadChatAttachment(
+    const uploaded = await storageService.uploadChatAttachment(
       req.file.buffer,
       req.file.originalname,
       req.file.mimetype
     );
 
-    const mediaType = req.file.mimetype.startsWith('image/')
-      ? 'image'
-      : req.file.mimetype.startsWith('video/')
-        ? 'video'
-        : 'audio';
-
     const payload = JSON.stringify({
       kind: 'attachment',
-      mediaType,
-      url,
+      mediaType: uploaded.mediaType,
+      url: uploaded.url,
       name: req.file.originalname,
-      mimeType: req.file.mimetype,
+      mimeType: uploaded.mimeType,
     });
 
     const saved = await chatService.saveMessage(token, payload, 'admin');
     res.json({ success: true, data: saved });
   } catch (err) {
     console.error('[chats.controller] POST /chats upload error:', err);
-    res.status(500).json({ success: false, error: err.message || 'Ошибка загрузки файла' });
+    res.status(err.statusCode || 500).json({ success: false, error: err.message || 'Ошибка загрузки файла' });
   }
 };

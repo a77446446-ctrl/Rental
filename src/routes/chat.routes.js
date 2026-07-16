@@ -5,6 +5,7 @@ const chatService = require('../services/chat.service');
 const { config } = require('../config/env');
 const storageService = require('../services/storage.service');
 const { cleanText, validateUuid } = require('../utils/validation');
+const { chatUploadLimiter } = require('../middleware/rateLimit');
 
 const CHAT_FILE_LIMIT = 15 * 1024 * 1024;
 const CHAT_MIME_PREFIXES = ['image/', 'video/', 'audio/'];
@@ -92,7 +93,7 @@ router.post('/messages', async (req, res) => {
  * POST /api/chat/upload
  * Отправка изображения, видео или аудио от гостя.
  */
-router.post('/upload', (req, res, next) => {
+router.post('/upload', chatUploadLimiter, (req, res, next) => {
   upload.single('file')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ success: false, error: 'Размер файла превышает лимит (15 МБ)' });
@@ -118,24 +119,18 @@ router.post('/upload', (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Файл не передан' });
     }
 
-    const url = await storageService.uploadChatAttachment(
+    const uploaded = await storageService.uploadChatAttachment(
       req.file.buffer,
       req.file.originalname,
       req.file.mimetype
     );
 
-    const mediaType = req.file.mimetype.startsWith('image/')
-      ? 'image'
-      : req.file.mimetype.startsWith('video/')
-        ? 'video'
-        : 'audio';
-
     const attachment = {
       kind: 'attachment',
-      mediaType,
-      url,
+      mediaType: uploaded.mediaType,
+      url: uploaded.url,
       name: req.file.originalname,
-      mimeType: req.file.mimetype,
+      mimeType: uploaded.mimeType,
     };
 
     const payload = JSON.stringify(attachment);
@@ -149,7 +144,10 @@ router.post('/upload', (req, res, next) => {
     res.json({ success: true, data: savedMsg });
   } catch (error) {
     console.error('[chat.routes] POST /upload error:', error);
-    res.status(500).json({ success: false, error: error.message || 'Ошибка сервера при загрузке файла' });
+    res.status(error.statusCode || 500).json({
+      success: false,
+      error: error.statusCode === 400 ? error.message : 'Ошибка сервера при загрузке файла',
+    });
   }
 });
 
@@ -159,6 +157,9 @@ router.post('/upload', (req, res, next) => {
  */
 router.post('/webhook', async (req, res) => {
   try {
+    if (!chatService.isValidTelegramWebhook(req.get('x-telegram-bot-api-secret-token'))) {
+      return res.status(401).json({ success: false, error: 'Неверная подпись webhook' });
+    }
     // В ответ на вебхук от ТГ всегда нужно быстро отдавать 200 OK, 
     // чтобы Telegram не пытался отправлять сообщение повторно
     res.sendStatus(200);

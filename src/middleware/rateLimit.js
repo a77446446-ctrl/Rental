@@ -62,4 +62,20 @@ const authLimiter = rateLimit({
   skip: skipLocalRequests,
 });
 
-module.exports = { generalLimiter, apiLimiter, authLimiter };
+/**
+ * Отдельный лимит для тяжёлых публичных загрузок чата.
+ * Не позволяет одному адресу быстро заполнить публичное хранилище.
+ */
+const chatUploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 12,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Слишком много загрузок. Попробуйте позже.',
+  },
+  skip: skipLocalRequests,
+});
+
+module.exports = { generalLimiter, apiLimiter, authLimiter, chatUploadLimiter };

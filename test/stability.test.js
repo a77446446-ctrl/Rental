@@ -7,6 +7,8 @@ const { validateStay, cleanText, validateUuid } = require('../src/utils/validati
 const { escapeHtml } = require('../src/utils/html');
 const { parseIcsEvents, isPrivateAddress } = require('../src/services/externalCalendar.service');
 const storage = require('../src/services/storage.service');
+const chatService = require('../src/services/chat.service');
+const { config } = require('../src/config/env');
 const session = require('../src/services/adminSession.service');
 const { requireAdmin } = require('../src/middleware/auth');
 
@@ -67,6 +69,29 @@ test('storage cleanup accepts cabin paths and rejects chat traversal', () => {
   assert.equal(storage.isCabinPath('../secret'), false);
 });
 
+test('media uploads are identified by file signature instead of client MIME only', () => {
+  const png = Buffer.from('89504e470d0a1a0a0000000000000000', 'hex');
+  assert.deepEqual(storage.detectMediaFile(png, 'image/png'), {
+    mimeType: 'image/png', extension: 'png', mediaType: 'image',
+  });
+  assert.throws(
+    () => storage.detectMediaFile(Buffer.from('this is not an image'), 'image/png'),
+    /не поддерживается/
+  );
+});
+
+test('Telegram webhook uses a timing-safe shared secret', () => {
+  const previous = config.telegramWebhookSecret;
+  config.telegramWebhookSecret = 'test_webhook_secret_1234567890';
+  try {
+    const secret = chatService.getTelegramWebhookSecret();
+    assert.equal(chatService.isValidTelegramWebhook(secret), true);
+    assert.equal(chatService.isValidTelegramWebhook('wrong-secret'), false);
+  } finally {
+    config.telegramWebhookSecret = previous;
+  }
+});
+
 test('admin session payload is unique, expiring and carries CSRF token', () => {
   const cookies = [];
   const res = { cookie: (name, value, options) => cookies.push({ name, value, options }) };
@@ -102,12 +127,21 @@ test('critical contracts remain server-controlled in source', () => {
   const publicRoutes = fs.readFileSync(path.join(root, 'src/routes/public.routes.js'), 'utf8');
   const bookingService = fs.readFileSync(path.join(root, 'src/services/booking.service.js'), 'utf8');
   const migration = fs.readFileSync(path.join(root, 'src/sql/006_stability_hardening.sql'), 'utf8');
+  const chatRoutes = fs.readFileSync(path.join(root, 'src/routes/chat.routes.js'), 'utf8');
   assert.doesNotMatch(publicRoutes, /total_price:\s*total_price/);
   assert.match(bookingService, /calculateBookingTotal/);
   assert.match(migration, /create_booking_atomic/);
   assert.match(migration, /save_cabin_full/);
   assert.match(migration, /replace_external_bookings/);
   assert.match(migration, /DROP POLICY IF EXISTS "Allow guests to read their own chats"/);
+  assert.match(chatRoutes, /x-telegram-bot-api-secret-token/);
+  assert.doesNotMatch(publicRoutes, /SUMMARY:Занято —/);
+});
+
+test('GitHub Actions verifies tests, lint and production dependency audit', () => {
+  const workflow = fs.readFileSync(path.join(__dirname, '..', '.github/workflows/ci.yml'), 'utf8');
+  assert.match(workflow, /npm run check/);
+  assert.match(workflow, /npm audit --omit=dev --audit-level=high/);
 });
 
 test('every admin page uses the unified responsive stylesheet', () => {

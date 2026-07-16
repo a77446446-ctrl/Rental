@@ -1,6 +1,7 @@
 const { supabaseAdmin } = require('../config/supabase');
 const { config } = require('../config/env');
 const storageService = require('./storage.service');
+const crypto = require('crypto');
 
 /**
  * Сервис для работы с чатом поддержки
@@ -37,6 +38,52 @@ async function callTelegram(method, payload) {
   }
 
   return true;
+}
+
+function getTelegramWebhookSecret() {
+  const explicit = String(config.telegramWebhookSecret || '').trim();
+  if (explicit) {
+    if (!/^[A-Za-z0-9_-]{16,256}$/.test(explicit)) {
+      throw new Error('TELEGRAM_WEBHOOK_SECRET должен содержать 16–256 символов A-Z, a-z, 0-9, _ или -');
+    }
+    return explicit;
+  }
+  if (!config.telegramBotToken || !config.cookieSecret) return '';
+  return crypto
+    .createHmac('sha256', config.cookieSecret)
+    .update(`telegram-webhook:${config.telegramBotToken}`)
+    .digest('hex');
+}
+
+function isValidTelegramWebhook(providedSecret) {
+  const expected = getTelegramWebhookSecret();
+  const actual = String(providedSecret || '');
+  if (!expected || actual.length !== expected.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(actual), Buffer.from(expected));
+}
+
+async function configureTelegramWebhook() {
+  if (!config.telegramBotToken) return false;
+  const baseUrl = String(config.baseUrl || '').replace(/\/+$/, '');
+  if (!/^https:\/\//i.test(baseUrl)) {
+    console.warn('[chat.service] Telegram webhook не настроен: BASE_URL должен начинаться с https://');
+    return false;
+  }
+  const secret = getTelegramWebhookSecret();
+  if (!secret) {
+    console.warn('[chat.service] Telegram webhook не настроен: отсутствует секрет');
+    return false;
+  }
+  const configured = await callTelegram('setWebhook', {
+    url: `${baseUrl}/api/chat/webhook`,
+    secret_token: secret,
+    allowed_updates: ['message'],
+    drop_pending_updates: false,
+  });
+  console.log(configured
+    ? '[chat.service] Защищённый Telegram webhook настроен.'
+    : '[chat.service] Не удалось настроить Telegram webhook.');
+  return configured;
 }
 
 /**
@@ -243,7 +290,7 @@ async function uploadTelegramAttachment(telegramAttachment) {
   }
 
   const arrayBuffer = await fileResponse.arrayBuffer();
-  const url = await storageService.uploadChatAttachment(
+  const uploaded = await storageService.uploadChatAttachment(
     Buffer.from(arrayBuffer),
     telegramAttachment.name,
     telegramAttachment.mimeType
@@ -251,10 +298,10 @@ async function uploadTelegramAttachment(telegramAttachment) {
 
   return {
     kind: 'attachment',
-    mediaType: telegramAttachment.mediaType,
-    url,
+    mediaType: uploaded.mediaType,
+    url: uploaded.url,
     name: telegramAttachment.name,
-    mimeType: telegramAttachment.mimeType,
+    mimeType: uploaded.mimeType,
     telegramFileUniqueId: telegramAttachment.fileUniqueId
   };
 }
@@ -286,6 +333,12 @@ async function hasRecentDuplicate(chatToken, message) {
  * @param {Object} payload - Тело запроса от Telegram
  */
 async function handleTelegramWebhook(payload) {
+  const messageChatId = payload && payload.message && payload.message.chat
+    ? payload.message.chat.id
+    : null;
+  if (String(messageChatId || '') !== String(config.telegramChatId || '')) {
+    return;
+  }
   if (payload.update_id && processedUpdateIds.has(payload.update_id)) {
     return;
   }
@@ -394,5 +447,8 @@ module.exports = {
   notifyAdminAttachment,
   handleTelegramWebhook,
   getChatHistory,
-  startTelegramPolling
+  startTelegramPolling,
+  getTelegramWebhookSecret,
+  isValidTelegramWebhook,
+  configureTelegramWebhook,
 };

@@ -9,6 +9,7 @@
  */
 
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
@@ -52,7 +53,6 @@ function mapCabinForPublic(cabin) {
 router.use(apiLimiter);
 
 /* ─────────────────────────────────────────────
-/* ─────────────────────────────────────────────
    GET /api/manifest.json
    Возвращает динамический манифест для PWA
    ───────────────────────────────────────────── */
@@ -67,9 +67,14 @@ router.get('/manifest.json', (req, res) => {
     }
   } catch (err) {}
 
-  const mimeType = logoUrl.endsWith('.jpg') || logoUrl.endsWith('.jpeg') ? 'image/jpeg' :
-                   logoUrl.endsWith('.svg') ? 'image/svg+xml' :
-                   logoUrl.endsWith('.webp') ? 'image/webp' : 'image/png';
+  const cleanLogoUrl = logoUrl.split('?')[0].toLowerCase();
+  const mimeType = cleanLogoUrl.endsWith('.jpg') || cleanLogoUrl.endsWith('.jpeg')
+    ? 'image/jpeg'
+    : cleanLogoUrl.endsWith('.svg')
+      ? 'image/svg+xml'
+      : cleanLogoUrl.endsWith('.webp')
+        ? 'image/webp'
+        : 'image/png';
 
   res.json({
     "name": "ECO-Gorniy",
@@ -82,19 +87,12 @@ router.get('/manifest.json', (req, res) => {
       {
         "src": logoUrl,
         "type": mimeType,
-        "sizes": "192x192",
+        "sizes": "any",
         "purpose": "any"
-      },
-      {
-        "src": logoUrl,
-        "type": mimeType,
-        "sizes": "512x512",
-        "purpose": "any maskable"
       }
     ]
   });
 });
-
 
 /* ─────────────────────────────────────────────
    GET /api/icon.png
@@ -767,13 +765,7 @@ router.get('/ical/export/:slug', async (req, res) => {
     // Загружаем активные бронирования (pending + confirmed)
     const { data: bookings, error: bookingsError } = await supabaseAdmin
       .from('bookings')
-      .select(`
-        id,
-        check_in,
-        check_out,
-        status,
-        guests ( full_name )
-      `)
+      .select('id, check_in, check_out, status')
       .eq('cabin_id', cabin.id)
       .in('status', ['pending', 'confirmed']);
 
@@ -796,29 +788,35 @@ router.get('/ical/export/:slug', async (req, res) => {
       return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     };
 
+    const escapeIcalText = (value) => String(value || '')
+      .replace(/\\/g, '\\\\')
+      .replace(/\r?\n/g, '\\n')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,');
+
     let ical = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
       'PRODID:-//EcoGorniy//Cabin Rental//RU',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
-      `X-WR-CALNAME:${cabin.name} — eco-gorniy.ru`,
+      `X-WR-CALNAME:${escapeIcalText(cabin.name)} — eco-gorniy.ru`,
       `X-WR-TIMEZONE:Europe/Moscow`,
     ];
 
     // Добавляем бронирования как события
     if (bookings && bookings.length > 0) {
       bookings.forEach((booking) => {
-        const guestName = booking.guests && booking.guests.full_name
-          ? booking.guests.full_name
-          : 'Гость';
-        const uid = booking.id + '@eco-gorniy.ru';
+        // Не публикуем имя гостя и внутренний UUID в доступной по ссылке iCal-ленте.
+        const uid = crypto.createHash('sha256')
+          .update(`booking:${booking.id}`)
+          .digest('hex') + '@eco-gorniy.ru';
 
         ical.push('BEGIN:VEVENT');
         ical.push(`UID:${uid}`);
         ical.push(`DTSTART;VALUE=DATE:${formatDate(booking.check_in)}`);
         ical.push(`DTEND;VALUE=DATE:${formatDate(booking.check_out)}`);
-        ical.push(`SUMMARY:Занято — ${guestName}`);
+        ical.push('SUMMARY:Занято');
         ical.push(`DESCRIPTION:Бронирование через eco-gorniy.ru`);
         ical.push(`STATUS:CONFIRMED`);
         ical.push(`DTSTAMP:${formatTimestamp(now)}`);

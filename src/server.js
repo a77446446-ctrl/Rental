@@ -216,9 +216,13 @@ function startServer() {
     console.log('╚══════════════════════════════════════════════╝');
     console.log('');
     
+    const chatService = require('./services/chat.service');
     if (config.nodeEnv !== 'production') {
-      const chatService = require('./services/chat.service');
       chatService.startTelegramPolling();
+    } else {
+      chatService.configureTelegramWebhook().catch((err) => {
+        console.error('[server] Ошибка настройки Telegram webhook:', err.message);
+      });
     }
 
     if (!config.disableBackgroundJobs) {
