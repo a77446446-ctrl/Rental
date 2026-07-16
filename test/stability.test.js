@@ -144,6 +144,18 @@ test('GitHub Actions verifies tests, lint and production dependency audit', () =
   assert.match(workflow, /npm audit --omit=dev --audit-level=high/);
 });
 
+test('Yandex verification and search indexing files are present', () => {
+  const publicDir = path.join(__dirname, '..', 'public');
+  const verification = fs.readFileSync(path.join(publicDir, 'yandex_16b72d70203cd3ca.html'), 'utf8');
+  const robots = fs.readFileSync(path.join(publicDir, 'robots.txt'), 'utf8');
+  const sitemap = fs.readFileSync(path.join(publicDir, 'sitemap.xml'), 'utf8');
+  const index = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  assert.match(verification, /Verification: 16b72d70203cd3ca/);
+  assert.match(robots, /Sitemap: https:\/\/eco-gorniy\.ru\/sitemap\.xml/);
+  assert.match(sitemap, /<loc>https:\/\/eco-gorniy\.ru\/<\/loc>/);
+  assert.match(index, /rel="canonical" href="https:\/\/eco-gorniy\.ru\/"/);
+});
+
 test('every admin page uses the unified responsive stylesheet', () => {
   const adminDir = path.join(__dirname, '..', 'public/admin');
   const pages = fs.readdirSync(adminDir).filter((name) => name.endsWith('.html'));

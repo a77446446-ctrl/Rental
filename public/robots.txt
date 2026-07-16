@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/chat/
+Disallow: /success.html
+
+Host: eco-gorniy.ru
+Sitemap: https://eco-gorniy.ru/sitemap.xml
