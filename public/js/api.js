@@ -55,7 +55,7 @@
    * Внутренний метод для выполнения GET-запросов к API.
    * Обрабатывает ошибки сети, HTTP-статусы и структуру ответа.
    */
-  var REQUEST_TIMEOUT_MS = 6000;
+  var REQUEST_TIMEOUT_MS = 30000;
 
   async function _request(url) {
     var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
