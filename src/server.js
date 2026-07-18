@@ -110,8 +110,11 @@ app.use(
     extensions: ['html'],
     maxAge: config.nodeEnv === 'production' ? '1d' : 0,
     setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.html')) {
-        res.setHeader('Cache-Control', 'no-cache');
+      if (filePath.endsWith('sw.js')) {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        res.setHeader('Service-Worker-Allowed', '/');
+      } else if (filePath.endsWith('.html') || filePath.endsWith('.js') || filePath.endsWith('.css') || filePath.endsWith('.webmanifest')) {
+        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
       }
     },
   })

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v24';
+const CACHE_VERSION = 'eco-gorniy-pwa-v25';
 const STATIC_CACHE = [
   '/',
   '/index.html',
@@ -37,7 +37,7 @@ self.addEventListener('fetch', (event) => {
   // Навигация — network-first, fallback на кэш
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-store' })
         .then((response) => response)
         .catch(() => {
           if (url.pathname.startsWith('/admin/')) return Response.error();
@@ -50,7 +50,7 @@ self.addEventListener('fetch', (event) => {
   // JS и CSS файлы — всегда network-first (свежие при F5)
   if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-store' })
         .then((response) => {
           if (response.ok) {
             const clone = response.clone();

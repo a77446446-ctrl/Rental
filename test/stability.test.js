@@ -165,3 +165,15 @@ test('every admin page uses the unified responsive stylesheet', () => {
     assert.match(html, /admin-responsive\.css/, name);
   });
 });
+
+test('ordinary refresh receives the current frontend release without Ctrl+F5', () => {
+  const root = path.join(__dirname, '..');
+  const server = fs.readFileSync(path.join(root, 'src/server.js'), 'utf8');
+  const worker = fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8');
+  const pwa = fs.readFileSync(path.join(root, 'public/js/pwa.js'), 'utf8');
+  assert.match(server, /no-store, no-cache, must-revalidate/);
+  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v25'/);
+  assert.match(worker, /fetch\(request, \{ cache: 'no-store' \}\)/);
+  assert.match(pwa, /updateViaCache: 'none'/);
+  assert.match(pwa, /registration\.update\(\)/);
+});
