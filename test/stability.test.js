@@ -231,6 +231,13 @@ test('every admin page uses the unified responsive stylesheet', () => {
   });
 });
 
+test('admin login uses neutral credentials hints and provides a site exit', () => {
+  const login = fs.readFileSync(path.join(__dirname, '..', 'public/admin/login.html'), 'utf8');
+  assert.match(login, /placeholder="Введите логин"/);
+  assert.doesNotMatch(login, /placeholder="admin"/);
+  assert.match(login, /<a href="\/"[^>]*>Вернуться на главную<\/a>/);
+});
+
 test('ordinary refresh receives the current frontend release without Ctrl+F5', () => {
   const root = path.join(__dirname, '..');
   const server = fs.readFileSync(path.join(root, 'src/server.js'), 'utf8');
