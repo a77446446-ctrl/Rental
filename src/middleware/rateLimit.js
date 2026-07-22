@@ -1,10 +1,12 @@
 /**
  * Middleware для ограничения частоты запросов (Rate Limiting).
  * Защищает API от перебора и спама.
- * Экспортирует три лимитера для разных уровней защиты:
- * - generalLimiter: общий лимит для всех маршрутов
- * - apiLimiter: усиленный лимит для API-маршрутов
+ * Ограничения применяются только к чувствительным операциям:
  * - authLimiter: строгий лимит для маршрутов авторизации
+ * - chatUploadLimiter: лимит для тяжёлых публичных загрузок
+ *
+ * Обычные страницы, статические файлы и публичные GET API намеренно
+ * не ограничиваются, чтобы активная работа с сайтом не приводила к HTTP 429.
  */
 
 const rateLimit = require('express-rate-limit');
@@ -13,38 +15,6 @@ const rateLimit = require('express-rate-limit');
 const skipLocalRequests = (req) => {
   return req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1';
 };
-
-/**
- * Общий лимитер для всех маршрутов.
- * 200 запросов за 15 минут с одного IP.
- */
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 200,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    error: 'Слишком много запросов. Пожалуйста, подождите 15 минут.',
-  },
-  skip: skipLocalRequests,
-});
-
-/**
- * Лимитер для API-маршрутов.
- * 100 запросов за 15 минут с одного IP.
- */
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    error: 'Превышен лимит запросов к API. Попробуйте позже.',
-  },
-  skip: skipLocalRequests,
-});
 
 /**
  * Строгий лимитер для маршрутов авторизации.
@@ -78,4 +48,4 @@ const chatUploadLimiter = rateLimit({
   skip: skipLocalRequests,
 });
 
-module.exports = { generalLimiter, apiLimiter, authLimiter, chatUploadLimiter };
+module.exports = { authLimiter, chatUploadLimiter };

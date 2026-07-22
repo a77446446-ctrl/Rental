@@ -14,7 +14,6 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const { supabaseAdmin } = require('../config/supabase');
-const { apiLimiter } = require('../middleware/rateLimit');
 const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
@@ -48,9 +47,6 @@ function mapCabinForPublic(cabin) {
     image_url: images.length > 0 ? images[0].url : '',
   };
 }
-
-/* Применяем API rate-limit ко всем маршрутам этого роутера */
-router.use(apiLimiter);
 
 /* ─────────────────────────────────────────────
    GET /api/manifest.json

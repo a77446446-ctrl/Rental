@@ -8,7 +8,6 @@ const path = require('path');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { config, validateEnv } = require('./config/env');
-const { generalLimiter } = require('./middleware/rateLimit');
 const publicRoutes = require('./routes/public.routes');
 const chatRoutes = require('./routes/chat.routes');
 const adminRoutes = require('./routes/admin.routes');
@@ -83,13 +82,9 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(cookieParser(config.cookieSecret));
 
-/* ────────────────────────────────────────
-   Rate Limiting
-   ──────────────────────────────────────── */
-
-/* Для Railway: доверять прокси, чтобы rate-limiter видел реальный IP */
+/* Доверяем первому прокси Coolify, чтобы точечные защитные лимитеры
+   авторизации и загрузок видели реальный IP посетителя. */
 app.set('trust proxy', 1);
-app.use(generalLimiter);
 
 /* ────────────────────────────────────────
    Защита статики админ-панели

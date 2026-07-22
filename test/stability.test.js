@@ -138,6 +138,19 @@ test('critical contracts remain server-controlled in source', () => {
   assert.doesNotMatch(publicRoutes, /SUMMARY:Занято —/);
 });
 
+test('ordinary site traffic is not globally rate limited', () => {
+  const root = path.join(__dirname, '..');
+  const server = fs.readFileSync(path.join(root, 'src/server.js'), 'utf8');
+  const publicRoutes = fs.readFileSync(path.join(root, 'src/routes/public.routes.js'), 'utf8');
+  const rateLimit = fs.readFileSync(path.join(root, 'src/middleware/rateLimit.js'), 'utf8');
+
+  assert.doesNotMatch(server, /app\.use\(generalLimiter\)/);
+  assert.doesNotMatch(publicRoutes, /router\.use\(apiLimiter\)/);
+  assert.doesNotMatch(rateLimit, /Слишком много запросов\. Пожалуйста, подождите 15 минут\./);
+  assert.match(rateLimit, /const authLimiter = rateLimit/);
+  assert.match(rateLimit, /const chatUploadLimiter = rateLimit/);
+});
+
 test('GitHub Actions verifies tests, lint and production dependency audit', () => {
   const workflow = fs.readFileSync(path.join(__dirname, '..', '.github/workflows/ci.yml'), 'utf8');
   assert.match(workflow, /npm run check/);
