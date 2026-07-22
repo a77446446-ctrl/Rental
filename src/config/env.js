@@ -32,6 +32,8 @@ const config = {
   telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || '',
   telegramChatId: process.env.TELEGRAM_CHAT_ID || '',
   telegramWebhookSecret: process.env.TELEGRAM_WEBHOOK_SECRET || '',
+  telegramRelayUrl: process.env.TELEGRAM_RELAY_URL || '',
+  telegramRelaySecret: process.env.TELEGRAM_RELAY_SECRET || '',
 
   /* Внешние iCal-календари */
   externalCalendarSyncMinutes: parseInt(process.env.EXTERNAL_CALENDAR_SYNC_MINUTES, 10) || 30,
