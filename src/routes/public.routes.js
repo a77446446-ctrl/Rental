@@ -17,6 +17,7 @@ const { supabaseAdmin } = require('../config/supabase');
 const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
+const { toSameOriginMediaPath } = require('./media.routes');
 
 function addOneDay(dateStr) {
   const date = new Date(dateStr + 'T00:00:00');
@@ -27,7 +28,6 @@ function addOneDay(dateStr) {
 const settingsPath = path.join(__dirname, '../data/settings.json');
 const amenitiesPath = path.join(__dirname, '../data/amenities.json');
 const extraServicesPath = path.join(__dirname, '../data/extra_services.json');
-const mainpagePath = path.join(__dirname, '../data/mainpage.json');
 const tagsPath = path.join(__dirname, '../data/tags.json');
 const cabinTagsPath = path.join(__dirname, '../data/cabin_tags.json');
 
@@ -52,14 +52,12 @@ function mapCabinForPublic(cabin) {
    GET /api/manifest.json
    Возвращает динамический манифест для PWA
    ───────────────────────────────────────────── */
-router.get('/manifest.json', (req, res) => {
+router.get('/manifest.json', async (req, res) => {
   let logoUrl = '/icons/icon-192.png';
   try {
-    if (fs.existsSync(mainpagePath)) {
-      const data = JSON.parse(fs.readFileSync(mainpagePath, 'utf8'));
-      if (data.logo && data.logo.url) {
-        logoUrl = data.logo.url;
-      }
+    const data = await dataStore.get('mainpage', 'mainpage.json', {});
+    if (data.logo && data.logo.url) {
+      logoUrl = toSameOriginMediaPath(data.logo.url);
     }
   } catch (err) {}
 
@@ -94,14 +92,12 @@ router.get('/manifest.json', (req, res) => {
    GET /api/icon.png
    Динамический фавикон (редирект на актуальный логотип)
    ───────────────────────────────────────────── */
-router.get('/icon.png', (req, res) => {
+router.get('/icon.png', async (req, res) => {
   let logoUrl = '/icons/icon-192.png';
   try {
-    if (fs.existsSync(mainpagePath)) {
-      const data = JSON.parse(fs.readFileSync(mainpagePath, 'utf8'));
-      if (data.logo && data.logo.url) {
-        logoUrl = data.logo.url;
-      }
+    const data = await dataStore.get('mainpage', 'mainpage.json', {});
+    if (data.logo && data.logo.url) {
+      logoUrl = toSameOriginMediaPath(data.logo.url);
     }
   } catch (err) {}
   

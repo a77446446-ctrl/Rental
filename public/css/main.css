@@ -83,6 +83,32 @@ img { display: block; max-width: 100%; }
   color: var(--gold); font-family: "Cormorant Garamond", serif; font-size: 24px; font-weight: 700;
 }
 
+.brand-mark.has-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(237, 228, 214, .38);
+  background: linear-gradient(145deg, rgba(245, 239, 225, .98), rgba(196, 199, 174, .92));
+  box-shadow: 0 5px 20px rgba(0, 0, 0, .38), inset 0 0 0 1px rgba(255, 255, 255, .42);
+}
+
+.brand-mark.has-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: contrast(1.08) saturate(1.04) drop-shadow(0 1px 2px rgba(0, 0, 0, .35));
+}
+
+.brand-mark.logo-fallback {
+  display: grid;
+  place-items: center;
+}
+
 .brand > div:not(.brand-mark) {
   display: flex;
   flex-direction: column;
@@ -227,6 +253,20 @@ h2 { margin-top: 18px; font-size: clamp(46px, 6vw, 84px); line-height: .9; lette
   background: linear-gradient(180deg, rgba(18,15,13,.04), rgba(18,15,13,.68));
   background-size: cover; background-position: center;
   box-shadow: 0 30px 90px rgba(0,0,0,.32);
+}
+
+.video-panel.media-load-error::after {
+  content: "Видео временно не загрузилось — нажмите для повторной попытки";
+  position: absolute;
+  inset: auto 18px 18px;
+  z-index: 2;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--cream);
+  background: rgba(18, 15, 13, .84);
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .play {
@@ -486,18 +526,53 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   width: 100%; display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: end;
   position: relative; z-index: 2;
 }
-.territory-content h2 { max-width: 740px; }
-.territory-content p { max-width: 620px; margin-top: 20px; color: var(--muted); line-height: 1.65; }
+.territory-content > div:first-child {
+  max-width: 780px;
+  padding: 24px;
+  border: 1px solid rgba(237, 228, 214, .2);
+  border-radius: 12px;
+  background: rgba(12, 10, 8, .68);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .34);
+}
+.territory-content h2 {
+  max-width: 740px;
+  color: #fffaf0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .95), 0 8px 28px rgba(0, 0, 0, .9);
+}
+.territory-content p {
+  max-width: 620px;
+  margin-top: 20px;
+  color: rgba(255, 250, 240, .94);
+  line-height: 1.65;
+  font-weight: 500;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, .95), 0 5px 18px rgba(0, 0, 0, .9);
+}
 
 .side-card {
   padding: 20px; border: 1px solid var(--line); border-radius: 10px;
-  background: rgba(18,15,13,.54); backdrop-filter: blur(20px);
+  background: rgba(12, 10, 8, .82); backdrop-filter: blur(20px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .38);
 }
 .side-card h3 { font-size: 32px; font-weight: 500; letter-spacing: -.04em; margin-bottom: 16px; }
 
 .side-item { padding: 14px 0; border-top: 1px solid rgba(237, 228, 214, .09); }
-.side-item b { display: block; font-weight: 600; }
-.side-item span { display: block; margin-top: 6px; color: var(--muted-2); font-size: 13px; line-height: 1.45; }
+.side-item b {
+  display: block;
+  color: #fffaf0;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .95);
+}
+.side-item span {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 250, 240, .9);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .95);
+}
 
 .reviews { padding: 0 8px 96px; }
 
@@ -599,6 +674,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   .section-heading-content { align-items: flex-start; text-align: left; }
   .mission, .houses, .feature, .calendar-section, .territory, .reviews, .cta, .footer, .intro { padding-left: 0; padding-right: 0; }
   .calendar-card, .checkout-card, .feature-panel, .cta-card, .territory-stage { padding: 20px; }
+  .territory-content > div:first-child { padding: 17px; }
   .calendar-day { min-height: 54px; padding: 7px; }
   .calendar-day small { display: none; }
   .extras-grid { grid-template-columns: 1fr; }

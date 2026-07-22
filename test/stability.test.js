@@ -11,6 +11,7 @@ const chatService = require('../src/services/chat.service');
 const { config } = require('../src/config/env');
 const session = require('../src/services/adminSession.service');
 const { requireAdmin } = require('../src/middleware/auth');
+const { buildSupabaseMediaUrl, toSameOriginMediaPath } = require('../src/routes/media.routes');
 
 test('validateStay accepts a normal interval and rejects invalid dates', () => {
   assert.equal(validateStay('2026-07-13', '2026-07-16').nights, 3);
@@ -67,6 +68,28 @@ test('storage cleanup accepts cabin paths and rejects chat traversal', () => {
   assert.equal(storage.isCabinPath('cabins/abc.jpg'), true);
   assert.equal(storage.isCabinPath('chat/abc.jpg'), false);
   assert.equal(storage.isCabinPath('../secret'), false);
+});
+
+test('public media proxy only targets the configured Supabase bucket', () => {
+  const previousUrl = config.supabaseUrl;
+  const previousBucket = config.supabaseStorageBucket;
+  config.supabaseUrl = 'https://project.supabase.co';
+  config.supabaseStorageBucket = 'cabin-photos';
+  try {
+    assert.equal(
+      buildSupabaseMediaUrl('cabin-photos/folder/photo one.jpg').href,
+      'https://project.supabase.co/storage/v1/object/public/cabin-photos/folder/photo%20one.jpg'
+    );
+    assert.equal(
+      toSameOriginMediaPath('https://project.supabase.co/storage/v1/object/public/cabin-photos/folder/photo%20one.jpg'),
+      '/media/supabase/cabin-photos/folder/photo%20one.jpg'
+    );
+    assert.equal(buildSupabaseMediaUrl('other-bucket/photo.jpg'), null);
+    assert.equal(buildSupabaseMediaUrl('cabin-photos/../secret'), null);
+  } finally {
+    config.supabaseUrl = previousUrl;
+    config.supabaseStorageBucket = previousBucket;
+  }
 });
 
 test('media uploads are identified by file signature instead of client MIME only', () => {
@@ -151,6 +174,35 @@ test('ordinary site traffic is not globally rate limited', () => {
   assert.match(rateLimit, /const chatUploadLimiter = rateLimit/);
 });
 
+test('booking confirmation opens at the beginning of the chat message', () => {
+  const chat = fs.readFileSync(path.join(__dirname, '..', 'public/js/chat.js'), 'utf8');
+  assert.match(chat, /chat_booking_focus_until/);
+  assert.match(chat, /els\.messages\.scrollTop = 0/);
+  assert.match(chat, /scrollToPreferredPosition\(\)/);
+});
+
+test('Supabase media is rewritten through the same-origin proxy', () => {
+  const root = path.join(__dirname, '..');
+  const server = fs.readFileSync(path.join(root, 'src/server.js'), 'utf8');
+  const apiClient = fs.readFileSync(path.join(root, 'public/js/api.js'), 'utf8');
+  assert.match(server, /app\.use\('\/media', mediaRoutes\)/);
+  assert.match(apiClient, /\/media\/supabase\//);
+  assert.match(apiClient, /MutationObserver/);
+});
+
+test('territory content and local video modal keep valid UI targets', () => {
+  const root = path.join(__dirname, '..');
+  const index = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
+  const main = fs.readFileSync(path.join(root, 'public/js/main.js'), 'utf8');
+  for (let indexNumber = 0; indexNumber < 3; indexNumber++) {
+    assert.match(index, new RegExp(`id="territory-item-title-${indexNumber}"`));
+    assert.match(index, new RegExp(`id="territory-item-desc-${indexNumber}"`));
+  }
+  assert.match(index, /id="territory-side-title"/);
+  assert.match(main, /videoModalBody\.appendChild\(vid\)/);
+  assert.doesNotMatch(main, /querySelector\('\.video-container'\)/);
+});
+
 test('GitHub Actions verifies tests, lint and production dependency audit', () => {
   const workflow = fs.readFileSync(path.join(__dirname, '..', '.github/workflows/ci.yml'), 'utf8');
   assert.match(workflow, /npm run check/);
@@ -185,7 +237,7 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
   const worker = fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8');
   const pwa = fs.readFileSync(path.join(root, 'public/js/pwa.js'), 'utf8');
   assert.match(server, /no-store, no-cache, must-revalidate/);
-  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v25'/);
+  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v26'/);
   assert.match(worker, /fetch\(request, \{ cache: 'no-store' \}\)/);
   assert.match(pwa, /updateViaCache: 'none'/);
   assert.match(pwa, /registration\.update\(\)/);

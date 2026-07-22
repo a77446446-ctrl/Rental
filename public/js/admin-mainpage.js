@@ -308,6 +308,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderFeatures() {
     featuresContainer.innerHTML = '';
     mainpageData.features.forEach((feat, index) => {
+      const featurePreviewUrl = window.EcoMedia ? window.EcoMedia.url(feat.image_url || '') : (feat.image_url || '');
       const div = document.createElement('div');
       div.style.display = 'grid';
       div.style.gridTemplateColumns = '1fr 1fr';
@@ -341,7 +342,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <label style="font-size: 13px; color: var(--muted); font-weight: 600; margin-top: 8px;">Или загрузите фото</label>
           <input type="file" id="featFile_${index}" accept="image/*" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
           <input type="hidden" id="featUrl_${index}" value="${feat.image_url || ''}">
-          <div id="featPreview_${index}" style="margin-top: 8px; width: 100%; height: 80px; background-size: cover; background-position: center; border-radius: 8px; background-image: url('${feat.image_url || ''}'); border: 1px solid var(--line); ${feat.icon ? 'opacity: 0.3;' : ''}"></div>
+          <div id="featPreview_${index}" style="margin-top: 8px; width: 100%; height: 80px; background-size: cover; background-position: center; border-radius: 8px; background-image: url('${featurePreviewUrl}'); border: 1px solid var(--line);"></div>
         </div>
       `;
       featuresContainer.appendChild(div);
@@ -350,8 +351,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const iconBtn = document.getElementById(`featIconBtn_${index}`);
       const iconNameLabel = document.getElementById(`featIconName_${index}`);
       const iconClearBtn = document.getElementById(`featIconClearBtn_${index}`);
-      const previewDiv = document.getElementById(`featPreview_${index}`);
-      
+
       iconBtn.addEventListener('click', () => {
         if (window.openIconPicker) {
           window.openIconPicker((iconName) => {
@@ -360,7 +360,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (window.lucide) { window.lucide.createIcons({ root: iconBtn, nameAttr: 'data-lucide' }); }
             iconNameLabel.textContent = iconName;
             iconClearBtn.style.display = 'block';
-            previewDiv.style.opacity = '0.3';
             if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
           });
         }
@@ -372,7 +371,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (window.lucide) { window.lucide.createIcons({ root: iconBtn, nameAttr: 'data-lucide' }); }
         iconNameLabel.textContent = 'Не выбрана';
         iconClearBtn.style.display = 'none';
-        previewDiv.style.opacity = '1';
         if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
       });
 

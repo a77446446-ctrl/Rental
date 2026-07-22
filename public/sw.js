@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v25';
+const CACHE_VERSION = 'eco-gorniy-pwa-v26';
 const STATIC_CACHE = [
   '/',
   '/index.html',

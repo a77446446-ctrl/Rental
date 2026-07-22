@@ -7,6 +7,110 @@
 (function () {
   'use strict';
 
+  /**
+   * Public Supabase media is displayed through the application domain.
+   * This avoids blank images and videos on networks where *.supabase.co is
+   * slow or unavailable, while the original URL remains unchanged in CMS
+   * form values and in the database.
+   */
+  var SUPABASE_PUBLIC_PREFIX = '/storage/v1/object/public/';
+
+  function safeDecodeMediaSegment(value) {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  }
+
+  function toProxiedMediaUrl(value) {
+    var raw = String(value || '').trim();
+    if (!raw || raw.indexOf('/media/supabase/') === 0) return raw;
+
+    try {
+      var parsed = new URL(raw, window.location.origin);
+      if (!/\.supabase\.co$/i.test(parsed.hostname)) return raw;
+      var prefixIndex = parsed.pathname.indexOf(SUPABASE_PUBLIC_PREFIX);
+      if (prefixIndex === -1) return raw;
+
+      var relativePath = parsed.pathname.slice(prefixIndex + SUPABASE_PUBLIC_PREFIX.length);
+      var encodedPath = relativePath.split('/').map(function (segment) {
+        return encodeURIComponent(safeDecodeMediaSegment(segment));
+      }).join('/');
+      return '/media/supabase/' + encodedPath;
+    } catch {
+      return raw;
+    }
+  }
+
+  function rewriteCssMediaUrls(value) {
+    return String(value || '').replace(
+      /https:\/\/[a-z0-9.-]+\.supabase\.co\/storage\/v1\/object\/public\/[^\s"'()]+/gi,
+      function (url) { return toProxiedMediaUrl(url); }
+    );
+  }
+
+  function rewriteMediaElement(element) {
+    if (!element || element.nodeType !== 1) return;
+
+    ['src', 'poster'].forEach(function (attribute) {
+      if (!element.hasAttribute(attribute)) return;
+      var current = element.getAttribute(attribute);
+      var rewritten = toProxiedMediaUrl(current);
+      if (rewritten && rewritten !== current) element.setAttribute(attribute, rewritten);
+    });
+
+    if (element.hasAttribute('srcset')) {
+      var srcset = element.getAttribute('srcset');
+      var rewrittenSrcset = srcset.split(',').map(function (candidate) {
+        var parts = candidate.trim().split(/\s+/);
+        parts[0] = toProxiedMediaUrl(parts[0]);
+        return parts.join(' ');
+      }).join(', ');
+      if (rewrittenSrcset !== srcset) element.setAttribute('srcset', rewrittenSrcset);
+    }
+
+    if (element.hasAttribute('style')) {
+      var style = element.getAttribute('style');
+      var rewrittenStyle = rewriteCssMediaUrls(style);
+      if (rewrittenStyle !== style) element.setAttribute('style', rewrittenStyle);
+    }
+
+    if (element.tagName === 'LINK' && /(?:^|\s)(?:icon|apple-touch-icon)(?:\s|$)/i.test(element.rel || '')) {
+      var href = element.getAttribute('href');
+      var rewrittenHref = toProxiedMediaUrl(href);
+      if (rewrittenHref && rewrittenHref !== href) element.setAttribute('href', rewrittenHref);
+    }
+  }
+
+  function rewriteMediaTree(root) {
+    if (!root) return;
+    rewriteMediaElement(root);
+    if (root.querySelectorAll) {
+      root.querySelectorAll('[src], [srcset], [poster], [style], link[rel]').forEach(rewriteMediaElement);
+    }
+  }
+
+  window.EcoMedia = {
+    url: toProxiedMediaUrl,
+    rewriteTree: rewriteMediaTree
+  };
+
+  rewriteMediaTree(document.documentElement);
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.type === 'attributes') rewriteMediaElement(mutation.target);
+        mutation.addedNodes.forEach(rewriteMediaTree);
+      });
+    }).observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['src', 'srcset', 'poster', 'style', 'href']
+    });
+  }
+
   // Автоматическая CSRF-защита всех изменяющих same-origin запросов админки,
   // включая исторические прямые вызовы fetch() вне EcoApi.
   var nativeFetch = window.fetch.bind(window);

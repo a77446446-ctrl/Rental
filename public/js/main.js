@@ -1033,6 +1033,45 @@
     };
   }
   // --- Главная страница (CMS) ---
+  function mountBrandLogo(target, url, label) {
+    if (!target) return;
+    target.replaceChildren();
+    target.classList.remove('has-image', 'logo-fallback');
+
+    if (!url) {
+      target.style.display = 'none';
+      return;
+    }
+
+    var fallbackText = String(label || 'ECO Gorniy')
+      .split(/[\s-]+/)
+      .filter(Boolean)
+      .map(function (part) { return part.charAt(0); })
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || 'EG';
+    var displayUrl = window.EcoMedia ? window.EcoMedia.url(url) : url;
+    var image = document.createElement('img');
+    image.src = displayUrl;
+    image.alt = 'Логотип ' + (label || 'ECO-Gorniy');
+    image.decoding = 'async';
+    image.loading = target.id === 'main-logo-img' ? 'eager' : 'lazy';
+    if (target.id === 'main-logo-img') image.fetchPriority = 'high';
+    image.addEventListener('load', function () {
+      target.classList.add('has-image');
+    });
+    image.addEventListener('error', function () {
+      target.replaceChildren();
+      target.textContent = fallbackText;
+      target.classList.remove('has-image');
+      target.classList.add('logo-fallback');
+    });
+
+    target.appendChild(image);
+    target.style.display = 'flex';
+    target.classList.add('has-image');
+  }
+
   function applyMainpageSettings() {
     const data = state.mainpage;
     if (!data || Object.keys(data).length === 0) return;
@@ -1051,44 +1090,25 @@
     if (data.logo) {
       const logoEl = document.getElementById('main-logo-img');
       const footerLogoEl = document.getElementById('footer-brand-mark');
-      if (logoEl) {
-        if (data.logo.url) {
-          // Dynamic favicon and apple-touch-icon
-          let favicon = document.querySelector('link[rel="icon"]');
-          if (!favicon) {
-            favicon = document.createElement('link');
-            favicon.rel = 'icon';
-            document.head.appendChild(favicon);
-          }
-          favicon.href = data.logo.url;
-
-          let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-          if (!appleIcon) {
-            appleIcon = document.createElement('link');
-            appleIcon.rel = 'apple-touch-icon';
-            document.head.appendChild(appleIcon);
-          }
-          appleIcon.href = data.logo.url;
-
-          const imgHtml = `<img src="${data.logo.url}" style="width: 100%; height: 100%; object-fit: contain;">`;
-          logoEl.innerHTML = imgHtml;
-          logoEl.style.display = 'flex';
-          logoEl.style.background = 'none';
-          logoEl.style.border = 'none';
-          logoEl.style.borderRadius = '0';
-          if (footerLogoEl) {
-            footerLogoEl.innerHTML = imgHtml;
-            footerLogoEl.style.display = 'flex';
-            footerLogoEl.style.background = 'none';
-            footerLogoEl.style.border = 'none';
-            footerLogoEl.style.borderRadius = '0';
-          }
-        } else {
-          logoEl.style.display = 'none';
-          if (footerLogoEl) {
-            footerLogoEl.style.display = 'none';
-          }
+      mountBrandLogo(logoEl, data.logo.url, data.logo.text);
+      mountBrandLogo(footerLogoEl, data.logo.url, data.logo.text);
+      if (data.logo.url) {
+        var displayLogoUrl = window.EcoMedia ? window.EcoMedia.url(data.logo.url) : data.logo.url;
+        var favicon = document.querySelector('link[rel="icon"]');
+        if (!favicon) {
+          favicon = document.createElement('link');
+          favicon.rel = 'icon';
+          document.head.appendChild(favicon);
         }
+        favicon.href = displayLogoUrl;
+
+        var appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+        if (!appleIcon) {
+          appleIcon = document.createElement('link');
+          appleIcon.rel = 'apple-touch-icon';
+          document.head.appendChild(appleIcon);
+        }
+        appleIcon.href = displayLogoUrl;
       }
       if (data.logo.text) {
         const textEl = document.getElementById('main-logo-text');
@@ -1151,6 +1171,7 @@
       const videoSection = document.getElementById('about-video-section');
       const videoPanel = videoSection ? videoSection.querySelector('.video-panel') : null;
       if (videoPanel) {
+        videoPanel.classList.remove('media-loaded', 'media-load-error');
         // Убираем старое видео
         const oldMedia = videoPanel.querySelector('iframe, video, div[style*="rgba(29, 23, 18"]');
         if (oldMedia) {
@@ -1175,16 +1196,16 @@
 
             if (data.about.video_file_url) {
               const vid = document.createElement('video');
-              vid.src = data.about.video_file_url;
+              vid.src = window.EcoMedia ? window.EcoMedia.url(data.about.video_file_url) : data.about.video_file_url;
               vid.autoplay = true;
               vid.loop = true;
               vid.muted = true;
               vid.playsInline = true;
+              vid.preload = 'auto';
               // Важно для iOS и многих браузеров:
               vid.setAttribute('muted', '');
               vid.setAttribute('playsinline', '');
               vid.setAttribute('autoplay', '');
-              vid.setAttribute('controls', ''); // Временно для отладки
               vid.style.width = '100%';
               vid.style.height = '100%';
               vid.style.objectFit = 'cover';
@@ -1195,6 +1216,14 @@
               vid.style.border = 'none';
               vid.style.zIndex = '0';
               vid.style.pointerEvents = 'none';
+              vid.addEventListener('canplay', function () {
+                videoPanel.classList.add('media-loaded');
+                videoPanel.classList.remove('media-load-error');
+              }, { once: true });
+              vid.addEventListener('error', function () {
+                videoPanel.classList.add('media-load-error');
+                if (playBtn) playBtn.style.display = '';
+              }, { once: true });
               
               // Темный фильтр поверх видео
               const overlay = document.createElement('div');
@@ -1219,7 +1248,11 @@
               videoPanel.appendChild(vid);
               videoPanel.appendChild(overlay);
               vid.load();
-              vid.play().catch(e => console.error("Video autoplay blocked:", e));
+              vid.play().catch(function () {
+                // На устройствах со строгой политикой autoplay оставляем кадр
+                // видео и кнопку для ручного открытия ролика.
+                if (playBtn) playBtn.style.display = '';
+              });
             } else if (data.about.video_url) {
               let vUrl = data.about.video_url;
               const iframeMatch = vUrl.match(/src=["'](.*?)["']/);
@@ -1280,7 +1313,7 @@
     // Территория
     applyTerritoryText(data.territory);
     if (data.territory && data.territory.background_url) {
-      document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${data.territory.background_url}')`;
+      document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,.66) 55%, rgba(0,0,0,.9) 100%), url('${data.territory.background_url}')`;
       document.getElementById('territory-stage').style.backgroundSize = 'cover';
       document.getElementById('territory-stage').style.backgroundPosition = 'center';
     }
@@ -1444,6 +1477,7 @@
   const closeVideoBtn = document.getElementById('closeVideoBtn');
   const playVideoBtn = document.getElementById('playVideoBtn');
   const videoIframe = document.getElementById('videoIframe');
+  const videoModalBody = document.getElementById('videoModalBody');
 
   function getYoutubeId(url) {
     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -1463,17 +1497,18 @@
         // Локальный файл в модалке
         videoIframe.style.display = 'none';
         let vid = document.getElementById('modalVideoFile');
-        if (!vid) {
+        if (!vid && videoModalBody) {
           vid = document.createElement('video');
           vid.id = 'modalVideoFile';
           vid.controls = true;
           vid.style.width = '100%';
           vid.style.height = '100%';
           vid.style.borderRadius = '12px';
-          videoModal.querySelector('.video-container').appendChild(vid);
+          videoModalBody.appendChild(vid);
         }
+        if (!vid) return;
         vid.style.display = 'block';
-        vid.src = vUrl;
+          vid.src = window.EcoMedia ? window.EcoMedia.url(vUrl) : vUrl;
         
         if (state.mainpage?.about?.video_start > 0 || state.mainpage?.about?.video_end > 0) {
            const start = state.mainpage.about.video_start || 0;

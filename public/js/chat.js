@@ -8,6 +8,7 @@
   let chatToken = localStorage.getItem('eco_chat_token');
   let supabaseClient = null;
   let chatChannel = null;
+  let bookingFocusUntil = Number(localStorage.getItem('chat_booking_focus_until') || 0);
 
   const els = {
     widget: document.getElementById('chat-widget'),
@@ -42,6 +43,12 @@
    * Инициализация чата
    */
   async function initChat() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('openChat') === 'true') {
+      bookingFocusUntil = Date.now() + 15000;
+      localStorage.setItem('chat_booking_focus_until', String(bookingFocusUntil));
+    }
+
     // 1. Инициализация токена
     if (!chatToken) {
       chatToken = uuidv4();
@@ -79,7 +86,6 @@
     }
 
     // 5. Автооткрытие по параметру из URL (после успешной заявки)
-    const params = new URLSearchParams(window.location.search);
     if (params.get('openChat') === 'true') {
       localStorage.setItem('chat_force_open', 'true');
       setTimeout(() => {
@@ -120,7 +126,7 @@
     if (!isOpening) {
       localStorage.removeItem('chat_force_open');
     } else {
-      scrollToBottom();
+      scrollToPreferredPosition();
       els.input.focus();
     }
   }
@@ -222,6 +228,23 @@
     els.messages.scrollTop = els.messages.scrollHeight;
   }
 
+  function shouldFocusBookingStart() {
+    if (bookingFocusUntil > Date.now()) return true;
+    if (bookingFocusUntil) {
+      bookingFocusUntil = 0;
+      localStorage.removeItem('chat_booking_focus_until');
+    }
+    return false;
+  }
+
+  function scrollToPreferredPosition() {
+    if (shouldFocusBookingStart()) {
+      els.messages.scrollTop = 0;
+    } else {
+      scrollToBottom();
+    }
+  }
+
   /**
    * Загрузка истории из API
    */
@@ -232,7 +255,7 @@
       if (json.success && json.data) {
         els.messages.innerHTML = '';
         json.data.forEach(renderMessage);
-        scrollToBottom();
+        scrollToPreferredPosition();
         lastKnownCount = json.data.length;
       }
     } catch (e) {
@@ -261,7 +284,7 @@
           if (newMsg.sender_type === 'admin') {
             realtimeWorking = true; // Realtime работает — polling не нужен
             renderMessage(newMsg);
-            scrollToBottom();
+            scrollToPreferredPosition();
             lastKnownCount = els.messages.children.length;
             
             // Если чат закрыт, показываем уведомление
@@ -293,7 +316,7 @@
           // Есть новые сообщения — перерисовываем
           els.messages.innerHTML = '';
           json.data.forEach(renderMessage);
-          scrollToBottom();
+          scrollToPreferredPosition();
           lastKnownCount = serverCount;
           
           // Если чат закрыт, показываем уведомление

@@ -11,6 +11,7 @@ const { config, validateEnv } = require('./config/env');
 const publicRoutes = require('./routes/public.routes');
 const chatRoutes = require('./routes/chat.routes');
 const adminRoutes = require('./routes/admin.routes');
+const { router: mediaRoutes } = require('./routes/media.routes');
 const { requireAdmin } = require('./middleware/auth');
 const externalCalendarService = require('./services/externalCalendar.service');
 const { supabaseAdmin } = require('./config/supabase');
@@ -85,6 +86,10 @@ app.use(cookieParser(config.cookieSecret));
 /* Доверяем первому прокси Coolify, чтобы точечные защитные лимитеры
    авторизации и загрузок видели реальный IP посетителя. */
 app.set('trust proxy', 1);
+
+/* Публичные изображения и видео отдаём через домен приложения. Это позволяет
+   сайту работать у провайдеров, где прямой доступ к *.supabase.co нестабилен. */
+app.use('/media', mediaRoutes);
 
 /* ────────────────────────────────────────
    Защита статики админ-панели
