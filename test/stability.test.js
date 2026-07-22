@@ -236,9 +236,28 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
   const server = fs.readFileSync(path.join(root, 'src/server.js'), 'utf8');
   const worker = fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8');
   const pwa = fs.readFileSync(path.join(root, 'public/js/pwa.js'), 'utf8');
+  const publicPages = [
+    path.join(root, 'public/index.html'),
+    path.join(root, 'public/cabin.html'),
+    path.join(root, 'public/success.html'),
+    ...fs.readdirSync(path.join(root, 'public/admin'))
+      .filter((name) => name.endsWith('.html'))
+      .map((name) => path.join(root, 'public/admin', name)),
+  ];
   assert.match(server, /no-store, no-cache, must-revalidate/);
-  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v26'/);
+  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v27'/);
   assert.match(worker, /fetch\(request, \{ cache: 'no-store' \}\)/);
+  assert.match(worker, /self\.skipWaiting\(\)/);
+  assert.match(worker, /self\.clients\.claim\(\)/);
   assert.match(pwa, /updateViaCache: 'none'/);
   assert.match(pwa, /registration\.update\(\)/);
+  assert.match(pwa, /controllerchange/);
+  assert.match(pwa, /window\.location\.reload\(\)/);
+  publicPages.forEach((pagePath) => {
+    const html = fs.readFileSync(pagePath, 'utf8');
+    assert.doesNotMatch(html, /v=20260716/, pagePath);
+    if (/\/(?:css|js)\//.test(html)) {
+      assert.match(html, /v=20260722-2/, pagePath);
+    }
+  });
 });
