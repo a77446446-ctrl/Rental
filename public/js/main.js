@@ -1453,7 +1453,8 @@
     const splitAt = Math.min(Math.max(Number(leadCount) || 1, 1), words.length);
     const accent = document.createElement('span');
     accent.className = id + '-accent';
-    accent.textContent = words.slice(0, splitAt).join(' ');
+    const leadText = words.slice(0, splitAt).join(' ').toLocaleLowerCase('ru-RU');
+    accent.textContent = leadText.charAt(0).toLocaleUpperCase('ru-RU') + leadText.slice(1);
     title.appendChild(accent);
     if (splitAt < words.length) {
       const rest = document.createElement('span');
