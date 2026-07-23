@@ -411,6 +411,18 @@ h2 { margin-top: 18px; font-size: clamp(46px, 6vw, 84px); line-height: .9; lette
 .calendar-day:hover { transform: translateY(-3px); border-color: var(--line-2); }
 .calendar-day.busy { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
 .calendar-day.busy:hover { transform: none; }
+.calendar-day.busy.checkout-option {
+  opacity: .82;
+  text-decoration: none;
+  cursor: pointer;
+  border-color: rgba(187, 164, 111, .34);
+  background: rgba(95, 103, 73, .18);
+}
+.calendar-day.busy.checkout-option:hover {
+  transform: translateY(-2px);
+  border-color: rgba(187, 164, 111, .52);
+}
+.calendar-day.busy.checkout-option small { color: var(--gold); }
 .calendar-day.selected { background: rgba(95, 103, 73, .46); border-color: rgba(187, 164, 111, .42); }
 .calendar-day.range-between { background: rgba(95, 103, 73, .22); border-color: rgba(187, 164, 111, .22); }
 .calendar-day.promo::after { content: "★"; position: absolute; top: 7px; right: 8px; color: var(--gold); font-size: 12px; }

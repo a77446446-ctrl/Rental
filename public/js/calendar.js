@@ -159,11 +159,34 @@
    * Обрабатывает клик по дате. Реализует выбор диапазона:
    * первый клик — checkIn, второй — checkOut.
    */
+  EcoCalendar.prototype.isRangeAvailable = function (checkIn, checkOut) {
+    if (!checkIn || !checkOut || checkOut <= checkIn) return false;
+
+    var current = new Date(checkIn + 'T00:00:00');
+    var end = new Date(checkOut + 'T00:00:00');
+
+    /* Проверяем ночи [заезд, выезд), не включая дату выезда. */
+    while (current < end) {
+      var dateStr = EcoApi.toDateString(current);
+      var dayData = this.availabilityMap[dateStr];
+      if (!dayData || !dayData.available) return false;
+      current.setDate(current.getDate() + 1);
+    }
+
+    return true;
+  };
+
   EcoCalendar.prototype.handleDayClick = function (dateStr) {
     var dayData = this.availabilityMap[dateStr];
+    var canUseAsCheckout = Boolean(
+      this.checkIn &&
+      !this.checkOut &&
+      dateStr > this.checkIn &&
+      this.isRangeAvailable(this.checkIn, dateStr)
+    );
 
-    /* Нельзя выбрать занятую или прошедшую дату */
-    if (!dayData || !dayData.available) {
+    /* Занятую ночь можно нажать только как дату выезда. */
+    if (!dayData || (!dayData.available && !canUseAsCheckout)) {
       return;
     }
 
@@ -183,26 +206,14 @@
         this.checkIn = dateStr;
         this.checkOut = null;
       } else {
-        /* Проверяем, нет ли занятых дат в диапазоне */
-        var hasBlockedDate = false;
-        var current = new Date(this.checkIn + 'T00:00:00');
-        var end = new Date(dateStr + 'T00:00:00');
-
-        while (current < end) {
-          var checkDateStr = EcoApi.toDateString(current);
-          var checkData = this.availabilityMap[checkDateStr];
-
-          if (checkData && !checkData.available) {
-            hasBlockedDate = true;
-            break;
-          }
-          current.setDate(current.getDate() + 1);
-        }
+        var hasBlockedDate = !this.isRangeAvailable(this.checkIn, dateStr);
 
         if (hasBlockedDate) {
-          /* Занятая дата в диапазоне — начинаем заново */
-          this.checkIn = dateStr;
-          this.checkOut = null;
+          /* Свободную дату можно использовать как начало нового выбора. */
+          if (dayData.available) {
+            this.checkIn = dateStr;
+            this.checkOut = null;
+          }
         } else {
           this.checkOut = dateStr;
         }
@@ -282,6 +293,17 @@
       var dayData = this.availabilityMap[dateStr];
       var isPast = dateStr < todayStr;
       var isBusy = dayData ? !dayData.available : false;
+      var canBeCheckout = Boolean(
+        !isPast &&
+        isBusy &&
+        this.checkIn &&
+        !this.checkOut &&
+        dateStr > this.checkIn &&
+        this.isRangeAvailable(this.checkIn, dateStr)
+      );
+      var isCheckoutBoundary = canBeCheckout || Boolean(
+        isBusy && this.checkOut && dateStr === this.checkOut
+      );
       var isPromo = dayData ? dayData.is_promo : false;
       var price = dayData ? dayData.price : this.basePrice;
       var busySource = dayData ? dayData.busy_source : null;
@@ -305,6 +327,7 @@
       } else if (isBusy) {
         btn.className += ' busy';
       }
+      if (isCheckoutBoundary) btn.className += ' checkout-option';
 
       if (isPromo && !isPast) {
         btn.className += ' promo';
@@ -325,15 +348,15 @@
       btn.innerHTML =
         '<span>' + day + '</span>' +
         (isBusy && !isPast
-          ? '<small>Занято</small>'
+          ? '<small>' + (isCheckoutBoundary ? 'Выезд' : 'Занято') + '</small>'
           : (priceHtml ? '<small>' + priceHtml + '</small>' : ''));
 
       if (isBusy && !isPast) {
-        btn.title = 'Занято';
+        btn.title = isCheckoutBoundary ? 'Дата выезда' : 'Занято';
       }
 
-      /* Обработчик клика (только для доступных и не прошедших) */
-      if (!isPast && !isBusy) {
+      /* Занятая дата кликабельна только как граница выезда. */
+      if (!isPast && (!isBusy || canBeCheckout)) {
         btn.setAttribute('data-date', dateStr);
         btn.addEventListener('click', (function (ds) {
           return function () {
