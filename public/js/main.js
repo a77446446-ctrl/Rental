@@ -1135,7 +1135,7 @@
 
     // Hero
     if (data.hero) {
-      setOptionalText('hero-title', data.hero.title, 'Заголовок главного экрана');
+      setSplitLeadWords('hero-title', data.hero.title, 'Заголовок главного экрана', 2);
       if (data.hero.background_url) {
         const heroSection = document.getElementById('hero-section');
         heroSection.style.backgroundImage = `linear-gradient(rgba(18, 15, 13, 0.35), rgba(18, 15, 13, 0.55)), url('${data.hero.background_url}')`;
@@ -1442,6 +1442,25 @@
     rest.className = 'territory-title-rest';
     rest.textContent = text.slice(commaIndex + 1).trim();
     title.append(accent, document.createTextNode(' '), rest);
+  }
+
+  function setSplitLeadWords(id, value, fallbackValue, leadCount) {
+    const title = document.getElementById(id);
+    if (!title) return;
+    const words = String(value || fallbackValue || '').trim().split(/\s+/).filter(Boolean);
+    title.replaceChildren();
+    if (!words.length) return;
+    const splitAt = Math.min(Math.max(Number(leadCount) || 1, 1), words.length);
+    const accent = document.createElement('span');
+    accent.className = id + '-accent';
+    accent.textContent = words.slice(0, splitAt).join(' ');
+    title.appendChild(accent);
+    if (splitAt < words.length) {
+      const rest = document.createElement('span');
+      rest.className = id + '-rest';
+      rest.textContent = words.slice(splitAt).join(' ');
+      title.append(document.createTextNode(' '), rest);
+    }
   }
 
 
