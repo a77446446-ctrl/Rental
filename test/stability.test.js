@@ -264,7 +264,8 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
     const html = fs.readFileSync(pagePath, 'utf8');
     assert.doesNotMatch(html, /v=20260716/, pagePath);
     if (/\/(?:css|js)\//.test(html)) {
-      assert.match(html, /v=20260722-2/, pagePath);
+      assert.match(html, /v=20260723-1/, pagePath);
     }
   });
 });
+

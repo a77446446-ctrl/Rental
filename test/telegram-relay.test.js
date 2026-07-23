@@ -1,66 +1,51 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { once } = require('node:events');
-const { createRelayServer } = require('../telegram-relay/server');
 const { config } = require('../src/config/env');
 const { sendBookingNotification } = require('../src/services/telegram.service');
 
-async function withRelay(fetchImpl, callback) {
-  const server = createRelayServer({
-    botToken: 'test-bot-token',
-    relaySecret: 'a'.repeat(32),
-    fetchImpl,
-  });
-  server.listen(0, '127.0.0.1');
-  await once(server, 'listening');
-  const { port } = server.address();
-  try {
-    await callback(`http://127.0.0.1:${port}`);
-  } finally {
-    server.close();
-    await once(server, 'close');
-  }
+async function callWorker(request, fetchImpl) {
+  const worker = await import('../cloudflare-worker/src/worker.mjs');
+  return worker.handleRequest(request, {
+    TELEGRAM_BOT_TOKEN: 'test-bot-token',
+    TELEGRAM_RELAY_SECRET: 'a'.repeat(32),
+  }, fetchImpl);
 }
 
-test('Telegram relay rejects requests without its shared secret', async () => {
+test('Cloudflare Telegram relay rejects requests without its shared secret', async () => {
   let forwarded = false;
-  await withRelay(async () => {
+  const response = await callWorker(new Request('https://relay.example.test/telegram/sendMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: '1', text: 'Booking' }),
+  }), async () => {
     forwarded = true;
     return new globalThis.Response('{"ok":true}', { status: 200 });
-  }, async (baseUrl) => {
-    const response = await fetch(`${baseUrl}/telegram/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: '1', text: 'Booking' }),
-    });
-    assert.equal(response.status, 401);
-    assert.equal(forwarded, false);
   });
+  assert.equal(response.status, 401);
+  assert.equal(forwarded, false);
 });
 
-test('Telegram relay forwards an authorized booking notification', async () => {
+test('Cloudflare Telegram relay forwards an authorized booking notification', async () => {
   let forwardedUrl = '';
   let forwardedPayload = null;
-  await withRelay(async (url, options) => {
+  const response = await callWorker(new Request('https://relay.example.test/telegram/sendMessage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Telegram-Relay-Secret': 'a'.repeat(32),
+    },
+    body: JSON.stringify({ chat_id: '42', text: 'New booking' }),
+  }), async (url, options) => {
     forwardedUrl = url;
     forwardedPayload = JSON.parse(options.body);
     return new globalThis.Response('{"ok":true,"result":{}}', { status: 200 });
-  }, async (baseUrl) => {
-    const response = await fetch(`${baseUrl}/telegram/sendMessage`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Telegram-Relay-Secret': 'a'.repeat(32),
-      },
-      body: JSON.stringify({ chat_id: '42', text: 'New booking' }),
-    });
-    assert.equal(response.status, 200);
-    assert.match(forwardedUrl, /api\.telegram\.org\/bottest-bot-token\/sendMessage$/);
-    assert.deepEqual(forwardedPayload, { chat_id: '42', text: 'New booking' });
   });
+  assert.equal(response.status, 200);
+  assert.match(forwardedUrl, /api\.telegram\.org\/bottest-bot-token\/sendMessage$/);
+  assert.deepEqual(forwardedPayload, { chat_id: '42', text: 'New booking' });
 });
 
-test('booking notifications use the configured Railway relay', async () => {
+test('booking notifications use the configured Cloudflare relay', async () => {
   const previous = {
     relayUrl: config.telegramRelayUrl,
     relaySecret: config.telegramRelaySecret,

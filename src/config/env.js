@@ -62,7 +62,7 @@ function validateEnv() {
     if (config.nodeEnv === 'production') {
       throw new Error(
         `[env] Отсутствуют обязательные переменные окружения: ${names}. ` +
-        'Заполните .env или добавьте их в Railway.'
+        'Заполните .env или добавьте их в настройки хостинга.'
       );
     }
 

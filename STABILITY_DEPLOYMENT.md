@@ -7,7 +7,7 @@
 1. Создать резервную копию Supabase Database и убедиться, что Storage bucket с фотографиями доступен.
 2. В Supabase SQL Editor последовательно применить отсутствующие миграции из `src/sql` вплоть до `005_external_calendars.sql`.
 3. Одним запуском применить `src/sql/006_stability_hardening.sql`.
-4. Развернуть приложение на Railway.
+4. Развернуть приложение на VPS/Coolify.
 5. Проверить `GET /health` — ожидается HTTP 200.
 6. Проверить `GET /ready` — ожидается HTTP 200 и `migration_006: true`.
 7. Войти в админку заново, чтобы получить новую сессию и CSRF-cookie.
