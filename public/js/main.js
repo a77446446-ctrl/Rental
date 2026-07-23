@@ -31,6 +31,19 @@
     }, 4000);
   };
 
+  /* Обычное обновление страницы всегда возвращает гостя к главному экрану. */
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  if (!window.location.hash) {
+    window.scrollTo(0, 0);
+    window.addEventListener('pageshow', function () {
+      window.requestAnimationFrame(function () {
+        window.scrollTo(0, 0);
+      });
+    }, { once: true });
+  }
+
   /* Пасхалка: секретный вход в админку */
   var logoBtn = document.getElementById('main-logo-link');
   var logoClicks = 0;
@@ -1400,7 +1413,7 @@
   function applyTerritoryText(territory) {
     const fallback = getDefaultTerritoryText();
     const source = territory || {};
-    setOptionalText('territory-title', source.title, fallback.title);
+    setSplitTerritoryTitle(source.title, fallback.title);
     setOptionalText('territory-desc', source.desc, fallback.desc);
     setOptionalText('territory-side-title', source.side_title, fallback.side_title);
     const items = Array.isArray(source.items) ? source.items : [];
@@ -1410,6 +1423,25 @@
       setOptionalText('territory-item-title-' + i, item.title, fallbackItem.title || ('Пункт правого блока ' + (i + 1)));
       setOptionalText('territory-item-desc-' + i, item.desc, fallbackItem.desc || 'Здесь администратор заполняет описание пункта.');
     }
+  }
+
+  function setSplitTerritoryTitle(value, fallbackValue) {
+    const title = document.getElementById('territory-title');
+    if (!title) return;
+    const text = String(value || fallbackValue || '').trim();
+    const commaIndex = text.indexOf(',');
+    title.replaceChildren();
+    if (commaIndex < 0) {
+      title.textContent = text;
+      return;
+    }
+    const accent = document.createElement('span');
+    accent.className = 'territory-title-accent';
+    accent.textContent = text.slice(0, commaIndex + 1);
+    const rest = document.createElement('span');
+    rest.className = 'territory-title-rest';
+    rest.textContent = text.slice(commaIndex + 1).trim();
+    title.append(accent, document.createTextNode(' '), rest);
   }
 
 
