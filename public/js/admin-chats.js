@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const threadTitle = document.getElementById('threadTitle');
   const threadMeta = document.getElementById('threadMeta');
   const messagesBox = document.getElementById('messagesBox');
+  const chatShell = document.getElementById('chatAdminShell');
+  const chatListSection = document.getElementById('chatListSection');
+  const chatThread = document.getElementById('chatThread');
   const replyForm = document.getElementById('replyForm');
   const replyInput = document.getElementById('replyInput');
   const replyBtn = document.getElementById('replyBtn');
@@ -15,6 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('adminChatFileInput');
 
   let conversations = [];
+  const isMobileChat = () => window.matchMedia('(max-width: 760px)').matches;
+
+  function closeMobileThread() {
+    if (chatThread && chatShell && chatThread.parentElement !== chatShell) chatShell.appendChild(chatThread);
+    if (chatThread) chatThread.classList.remove('is-mobile-open');
+  }
+
+  function placeMobileThread() {
+    if (!chatThread || !chatList || !selectedToken || !isMobileChat()) return;
+    const activeItem = chatList.querySelector('.conversation-item.active');
+    if (!activeItem) return;
+    activeItem.insertAdjacentElement('afterend', chatThread);
+    chatThread.classList.add('is-mobile-open');
+  }
   let selectedToken = null;
 
   function formatDate(value) {
@@ -72,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderConversationList() {
+    closeMobileThread();
     clearNode(chatList);
     chatListMeta.textContent = conversations.length
       ? conversations.length + ' диалогов'
@@ -120,10 +138,19 @@ document.addEventListener('DOMContentLoaded', () => {
       button.appendChild(subtitle);
       button.appendChild(last);
       button.appendChild(date);
-      button.addEventListener('click', () => selectConversation(item.token));
+      button.addEventListener('click', () => {
+        if (isMobileChat() && selectedToken === item.token && chatThread.classList.contains('is-mobile-open')) {
+          selectedToken = null;
+          closeMobileThread();
+          renderConversationList();
+          return;
+        }
+        selectConversation(item.token);
+      });
 
       chatList.appendChild(button);
     });
+    placeMobileThread();
   }
 
   function formatMessageTime(value) {
@@ -232,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
       conversations = json.data || [];
       renderConversationList();
 
-      if (!selectedToken && conversations.length > 0) {
+      if (!selectedToken && conversations.length > 0 && !isMobileChat()) {
         await selectConversation(conversations[0].token);
       }
     } catch (err) {
@@ -263,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (attachBtn) attachBtn.disabled = false;
 
     renderConversationList();
+    placeMobileThread();
     setEmpty(messagesBox, 'Загрузка сообщений...');
 
     try {
@@ -365,6 +393,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadConversations();
+
+  window.addEventListener('resize', () => {
+    if (!isMobileChat()) {
+      closeMobileThread();
+      if (chatThread && chatShell) chatShell.appendChild(chatThread);
+    } else {
+      renderConversationList();
+    }
+  });
 
   // Автообновление с умеренной частотой, чтобы не упираться в лимиты API.
   let pollingActive = true;

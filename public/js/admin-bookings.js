@@ -4,6 +4,11 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const tableBody = document.getElementById('bookingsTableBody');
+  const archivedTableBody = document.getElementById('archivedBookingsTableBody');
+  const pendingCount = document.getElementById('pendingBookingsCount');
+  const activeCount = document.getElementById('activeBookingsCount');
+  const archivedCount = document.getElementById('archivedBookingsCount');
+  const archiveSummaryCount = document.getElementById('archiveSummaryCount');
   let globalBookingsMap = {};
 
   async function loadBookings() {
@@ -18,7 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      tableBody.innerHTML = data.data.map(b => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const isArchivedBooking = (booking) => {
+        const checkOut = new Date(booking.check_out + 'T00:00:00');
+        return booking.status === 'cancelled' || checkOut <= today;
+      };
+      const activeBookings = data.data.filter((booking) => !isArchivedBooking(booking));
+      const archivedBookings = data.data.filter(isArchivedBooking);
+
+      pendingCount.textContent = String(activeBookings.filter((booking) => booking.status === 'pending').length);
+      activeCount.textContent = String(activeBookings.length);
+      archivedCount.textContent = String(archivedBookings.length);
+      archiveSummaryCount.textContent = String(archivedBookings.length);
+
+      const renderRows = (bookings) => bookings.map(b => {
         const createdDate = new Date(b.created_at).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         const shortId = b.id.split('-')[0].toUpperCase();
         globalBookingsMap[b.id] = b;
@@ -59,7 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
             <td data-label="Сумма" style="font-weight:600; color:var(--gold);">${EcoApi.formatPrice(b.total_price)}</td>
             <td data-label="Статус">${statusBadge}</td>
-            <td data-label="Действие" style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+            <td data-label="Действие">
+              <div class="booking-actions">
               ${(isCompleted || b.status === 'cancelled') ? `<span style="color:var(--muted); font-size:12px;">${isCompleted ? 'Завершена' : 'Отменена'}</span>` : `
               <select class="action-select status-select" data-id="${b.id}" style="max-width: 130px;">
                 <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>Ожидает</option>
@@ -68,10 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
               </select>
               <button class="btn btn-outline apply-status-btn" data-id="${b.id}" style="padding: 6px 10px; font-size: 13px;" disabled>Применить</button>
               `}
+              </div>
             </td>
           </tr>
         `;
       }).join('');
+
+      tableBody.innerHTML = activeBookings.length
+        ? renderRows(activeBookings)
+        : '<tr><td colspan="7" style="text-align:center; color:var(--muted); padding:32px;">Нет актуальных заявок</td></tr>';
+      archivedTableBody.innerHTML = archivedBookings.length
+        ? renderRows(archivedBookings)
+        : '<tr><td colspan="7" style="text-align:center; color:var(--muted); padding:24px;">Архив пока пуст</td></tr>';
 
       // Статус сначала выбираем, затем явно применяем кнопкой.
       document.querySelectorAll('.status-select').forEach(sel => {

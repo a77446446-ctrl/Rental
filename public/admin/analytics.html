@@ -57,6 +57,24 @@
     .panel-head { padding: 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; align-items: center; }
     .panel-head h3 { margin: 0; color: var(--cream); font-size: 18px; text-transform: none; letter-spacing: 0; }
     .panel-head span { color: var(--muted); font-size: 12px; }
+    details.panel > summary.panel-head { list-style: none; cursor: pointer; }
+    details.panel > summary.panel-head::-webkit-details-marker { display: none; }
+    details.panel > summary.panel-head::after { content: "⌄"; color: var(--gold); font-size: 20px; transition: transform .2s ease; }
+    details.panel[open] > summary.panel-head::after { transform: rotate(180deg); }
+    .analytics-panel-title { display: grid; gap: 3px; }
+    .analytics-panel-title h3, .analytics-panel-title span { display: block; }
+    .analytics-mobile-guests { display: none; }
+    .analytics-guest-card { border-bottom: 1px solid var(--line); }
+    .analytics-guest-card:last-child { border-bottom: 0; }
+    .analytics-guest-card summary { list-style: none; cursor: pointer; padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; }
+    .analytics-guest-card summary::-webkit-details-marker { display: none; }
+    .analytics-guest-card-name { color: var(--cream); font-weight: 650; overflow-wrap: anywhere; }
+    .analytics-guest-card-ltv { color: var(--gold); font-weight: 700; }
+    .analytics-guest-card-phone { color: var(--muted); font-size: 11px; }
+    .analytics-guest-details { padding: 0 12px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .analytics-guest-detail { padding: 9px; border: 1px solid var(--line); border-radius: 8px; background: rgba(237, 228, 214, .025); }
+    .analytics-guest-detail span { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; }
+    .analytics-guest-detail strong { display: block; margin-top: 3px; color: var(--cream); font-size: 13px; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
     th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); font-size: 14px; vertical-align: middle; }
     th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -74,7 +92,11 @@
     @media (max-width: 760px) {
       .admin-layout { grid-template-columns: 1fr; }
       .admin-sidebar { border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
-      .metric-grid { grid-template-columns: 1fr; }
+      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px; }
+      .metric-card { min-height: 86px; padding: 11px; border-radius: 10px; }
+      .metric-label { font-size: 9px; }
+      .metric-value { margin-top: 7px; font-size: 19px; }
+      .metric-note { margin-top: 5px; font-size: 10px; line-height: 1.25; }
       .admin-content { padding: 20px; }
       .admin-content-header h2 { font-size: 34px; }
       th, td { padding: 10px 8px; font-size: 13px; }
@@ -85,6 +107,14 @@
       .analytics-controls input { font-size: 13px; padding: 6px 4px !important; width: 100%; }
       .analytics-controls button { padding: 6px 8px !important; }
       #dateControlWrap { flex: 1; gap: 2px !important; }
+      .analytics-grid { gap: 0 !important; }
+      .analytics-grid .panel { margin-bottom: 10px; }
+      details.panel > summary.panel-head { padding: 12px; border-bottom: 0; }
+      details.panel[open] > summary.panel-head { border-bottom: 1px solid var(--line); }
+      .analytics-panel-title h3 { font-size: 15px; }
+      .analytics-panel-title span { font-size: 10px; }
+      .analytics-desktop-guests { display: none !important; }
+      .analytics-mobile-guests { display: block !important; }
     }
   </style>
   <link rel="stylesheet" href="/css/admin.css?v=20260723-2">
@@ -161,34 +191,34 @@
 
       <div class="analytics-grid">
         <div>
-          <section class="panel">
-            <div class="panel-head"><h3>Объекты</h3><span>Выручка без отмененных броней</span></div>
+          <details class="panel analytics-disclosure" open>
+            <summary class="panel-head"><div class="analytics-panel-title"><h3>Объекты</h3><span>Выручка без отмененных броней</span></div></summary>
             <div id="cabinsTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
-          </section>
+          </details>
 
-          <section class="panel">
-            <div class="panel-head"><h3>Месяцы заезда</h3><span>Динамика по датам проживания</span></div>
+          <details class="panel analytics-disclosure">
+            <summary class="panel-head"><div class="analytics-panel-title"><h3>Месяцы заезда</h3><span>Динамика по датам проживания</span></div></summary>
             <div id="monthsTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
-          </section>
+          </details>
         </div>
 
         <div>
-          <section class="panel">
-            <div class="panel-head"><h3>Статусы</h3><span>Заявки и суммы</span></div>
+          <details class="panel analytics-disclosure">
+            <summary class="panel-head"><div class="analytics-panel-title"><h3>Статусы</h3><span>Заявки и суммы</span></div></summary>
             <div id="statusesTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
-          </section>
+          </details>
 
-          <section class="panel">
-            <div class="panel-head"><h3>Топ гостей</h3><span>LTV без отмененных броней</span></div>
+          <details class="panel analytics-disclosure">
+            <summary class="panel-head"><div class="analytics-panel-title"><h3>Топ гостей</h3><span>LTV без отмененных броней</span></div></summary>
             <div id="guestsTableWrap" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;"></div>
-          </section>
+          </details>
         </div>
       </div>
     </main>
   </div>
 
   <script src="/js/api.js?v=20260723-2"></script>
-  <script src="/js/admin-analytics.js?v=20260723-2"></script>
+  <script src="/js/admin-analytics.js?v=20260723-3"></script>
   <script src="/js/pwa.js?v=20260723-2"></script>
   <script src="/js/admin-mobile.js?v=20260723-2"></script>
 </body>

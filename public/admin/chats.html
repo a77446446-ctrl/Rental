@@ -78,6 +78,29 @@
     .empty-state { padding: 32px; text-align: center; color: var(--muted); }
     @media (max-width: 980px) { .chat-admin-shell { grid-template-columns: 1fr; } }
     @media (max-width: 760px) {
+      .chat-admin-shell { display: block; min-height: 0; }
+      .chat-list { overflow: visible; }
+      .chat-list-head { padding: 12px 13px; }
+      .chat-list-body { max-height: none !important; overflow: visible !important; padding: 7px; }
+      .conversation-item {
+        position: relative; margin: 0 0 7px; padding: 12px; border: 1px solid var(--line);
+        border-radius: 11px; background: rgba(237, 228, 214, .025);
+      }
+      .conversation-item::after { content: "⌄"; position: absolute; right: 12px; bottom: 10px; color: var(--gold); font-size: 18px; }
+      .conversation-item.active { margin-bottom: 0; border-radius: 11px 11px 0 0; border-color: rgba(187, 164, 111, .34); }
+      .conversation-item.active::after { transform: rotate(180deg); }
+      .conversation-title { padding-right: 28px; }
+      .conversation-last { padding-right: 22px; font-size: 12px; }
+      .chat-thread { display: none; min-height: 0; margin: 0 0 9px; border-radius: 0 0 11px 11px; border-top: 0; }
+      .chat-thread.is-mobile-open { display: grid; animation: mobileChatOpen .22s ease-out both; }
+      .chat-thread-head { padding: 11px 12px; }
+      .chat-thread-head h3 { font-size: 15px; }
+      .messages-box { min-height: 230px !important; height: min(52dvh, 430px) !important; max-height: 430px; padding: 10px !important; }
+      .message-bubble { max-width: 90%; padding: 9px 10px; font-size: 13px; }
+      .reply-form { position: sticky; bottom: 0; padding: 8px; }
+      @keyframes mobileChatOpen { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
+    }
+    @media (max-width: 760px) {
       .admin-layout { grid-template-columns: 1fr; }
       .admin-sidebar { border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
       .admin-content { padding: 20px; }
@@ -126,8 +149,8 @@
         </div>
       </div>
 
-      <div class="chat-admin-shell">
-        <section class="chat-list">
+      <div class="chat-admin-shell" id="chatAdminShell">
+        <section class="chat-list" id="chatListSection">
           <div class="chat-list-head">
             <h3>Диалоги</h3>
             <span id="chatListMeta">Загрузка...</span>
@@ -137,7 +160,7 @@
           </div>
         </section>
 
-        <section class="chat-thread">
+        <section class="chat-thread" id="chatThread">
           <div class="chat-thread-head">
             <h3 id="threadTitle">Выберите диалог</h3>
             <span id="threadMeta">История сообщений появится здесь</span>
@@ -157,7 +180,7 @@
   </div>
 
   <script src="/js/api.js?v=20260723-2"></script>
-  <script src="/js/admin-chats.js?v=20260723-2"></script>
+  <script src="/js/admin-chats.js?v=20260723-3"></script>
   <script src="/js/pwa.js?v=20260723-2"></script>
   <script src="/js/admin-mobile.js?v=20260723-2"></script>
 </body>

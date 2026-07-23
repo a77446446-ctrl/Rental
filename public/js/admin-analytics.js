@@ -146,8 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    guestsTableWrap.innerHTML =
-      '<table class="admin-table analytics-table">' +
+    const desktopTable =
+      '<table class="admin-table analytics-table analytics-desktop-guests">' +
         '<thead><tr><th>Гость</th><th><span class="color-moss">Активные</span>/Всего</th><th>LTV (Выручка)</th></tr></thead>' +
         '<tbody>' +
           items.map((item) => (
@@ -165,6 +165,26 @@ document.addEventListener('DOMContentLoaded', () => {
           )).join('') +
         '</tbody>' +
       '</table>';
+
+    const mobileCards =
+      '<div class="analytics-mobile-guests">' +
+        items.map((item) => (
+          '<details class="analytics-guest-card">' +
+            '<summary>' +
+              '<span class="analytics-guest-card-name">' + escapeHtml(item.name) + '</span>' +
+              '<span class="analytics-guest-card-ltv">' + formatPrice(item.ltv) + '</span>' +
+              '<span class="analytics-guest-card-phone">' + escapeHtml(item.phone || item.telegram || 'Контакт не указан') + '</span>' +
+            '</summary>' +
+            '<div class="analytics-guest-details">' +
+              '<div class="analytics-guest-detail"><span>Активные брони</span><strong>' + formatNumber(item.active_bookings) + '</strong></div>' +
+              '<div class="analytics-guest-detail"><span>Всего броней</span><strong>' + formatNumber(item.bookings) + '</strong></div>' +
+              '<div class="analytics-guest-detail" style="grid-column:1/-1;"><span>LTV / выручка</span><strong>' + formatPrice(item.ltv) + '</strong></div>' +
+            '</div>' +
+          '</details>'
+        )).join('') +
+      '</div>';
+
+    guestsTableWrap.innerHTML = desktopTable + mobileCards;
   }
 
   async function loadAnalytics(queryString = '') {
