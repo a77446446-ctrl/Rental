@@ -13,16 +13,47 @@ const crypto = require('crypto');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 const { supabaseAdmin } = require('../config/supabase');
 const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
-const { toSameOriginMediaPath } = require('./media.routes');
+const { buildSupabaseMediaUrl, toSameOriginMediaPath } = require('./media.routes');
+
+const publicRoot = path.join(__dirname, '../../public');
 
 function addOneDay(dateStr) {
   const date = new Date(dateStr + 'T00:00:00');
   date.setDate(date.getDate() + 1);
   return date.toISOString().slice(0, 10);
+}
+
+async function getConfiguredLogoUrl() {
+  try {
+    const data = await dataStore.get('mainpage', 'mainpage.json', {});
+    if (data.logo && data.logo.url) return toSameOriginMediaPath(data.logo.url);
+  } catch (err) {}
+  return '/icons/icon-192.png';
+}
+
+async function readConfiguredLogoBuffer(logoUrl) {
+  if (logoUrl.startsWith('/media/supabase/')) {
+    const encodedPath = logoUrl.slice('/media/supabase/'.length);
+    const relativePath = encodedPath.split('/').map((segment) => decodeURIComponent(segment)).join('/');
+    const upstreamUrl = buildSupabaseMediaUrl(relativePath);
+    if (!upstreamUrl) throw new Error('Некорректный адрес логотипа');
+    const response = await fetch(upstreamUrl, { signal: AbortSignal.timeout(8000) });
+    if (!response.ok) throw new Error('Логотип временно недоступен');
+    return Buffer.from(await response.arrayBuffer());
+  }
+
+  if (logoUrl.startsWith('/')) {
+    const localPath = path.resolve(publicRoot, '.' + logoUrl.split('?')[0]);
+    if (!localPath.startsWith(publicRoot + path.sep)) throw new Error('Некорректный путь логотипа');
+    return fs.promises.readFile(localPath);
+  }
+
+  throw new Error('Неподдерживаемый адрес логотипа');
 }
 
 const settingsPath = path.join(__dirname, '../data/settings.json');
@@ -53,39 +84,63 @@ function mapCabinForPublic(cabin) {
    Возвращает динамический манифест для PWA
    ───────────────────────────────────────────── */
 router.get('/manifest.json', async (req, res) => {
-  let logoUrl = '/icons/icon-192.png';
-  try {
-    const data = await dataStore.get('mainpage', 'mainpage.json', {});
-    if (data.logo && data.logo.url) {
-      logoUrl = toSameOriginMediaPath(data.logo.url);
-    }
-  } catch (err) {}
-
-  const cleanLogoUrl = logoUrl.split('?')[0].toLowerCase();
-  const mimeType = cleanLogoUrl.endsWith('.jpg') || cleanLogoUrl.endsWith('.jpeg')
-    ? 'image/jpeg'
-    : cleanLogoUrl.endsWith('.svg')
-      ? 'image/svg+xml'
-      : cleanLogoUrl.endsWith('.webp')
-        ? 'image/webp'
-        : 'image/png';
-
-  res.json({
+  const logoUrl = await getConfiguredLogoUrl();
+  const iconVersion = crypto.createHash('sha1').update(logoUrl).digest('hex').slice(0, 12);
+  res.type('application/manifest+json').json({
+    "id": "/",
     "name": "ECO-Gorniy",
     "short_name": "ECO-Gorniy",
+    "description": "Бронирование домиков ECO-Gorniy",
+    "lang": "ru-RU",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
+    "display_override": ["standalone", "minimal-ui"],
+    "orientation": "portrait-primary",
     "background_color": "#120f0d",
     "theme_color": "#120f0d",
+    "categories": ["travel", "lifestyle"],
     "icons": [
       {
-        "src": logoUrl,
-        "type": mimeType,
-        "sizes": "any",
+        "src": `/api/pwa-icon/192.png?v=${iconVersion}`,
+        "type": "image/png",
+        "sizes": "192x192",
+        "purpose": "any"
+      },
+      {
+        "src": `/api/pwa-icon/512.png?v=${iconVersion}`,
+        "type": "image/png",
+        "sizes": "512x512",
         "purpose": "any"
       }
     ]
   });
+});
+
+router.get('/pwa-icon/:size.png', async (req, res) => {
+  const size = Number(req.params.size);
+  if (size !== 192 && size !== 512) {
+    return res.status(404).end();
+  }
+
+  try {
+    const logoUrl = await getConfiguredLogoUrl();
+    const source = await readConfiguredLogoBuffer(logoUrl);
+    const icon = await sharp(source)
+      .resize(size, size, {
+        fit: 'contain',
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+        withoutEnlargement: false,
+      })
+      .png()
+      .toBuffer();
+
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return res.type('image/png').send(icon);
+  } catch (err) {
+    console.error('[pwa-icon] Не удалось подготовить логотип:', err.message);
+    return res.redirect(302, size === 512 ? '/icons/icon-512.png' : '/icons/icon-192.png');
+  }
 });
 
 /* ─────────────────────────────────────────────
@@ -93,19 +148,8 @@ router.get('/manifest.json', async (req, res) => {
    Динамический фавикон (редирект на актуальный логотип)
    ───────────────────────────────────────────── */
 router.get('/icon.png', async (req, res) => {
-  let logoUrl = '/icons/icon-192.png';
-  try {
-    const data = await dataStore.get('mainpage', 'mainpage.json', {});
-    if (data.logo && data.logo.url) {
-      logoUrl = toSameOriginMediaPath(data.logo.url);
-    }
-  } catch (err) {}
-  
-  if (logoUrl.startsWith('http') || logoUrl.startsWith('/')) {
-    res.redirect(302, logoUrl);
-  } else {
-    res.redirect(302, '/' + logoUrl);
-  }
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  return res.redirect(302, '/api/pwa-icon/192.png');
 });
 
 /* ─────────────────────────────────────────────

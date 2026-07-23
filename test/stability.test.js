@@ -252,7 +252,7 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
       .map((name) => path.join(root, 'public/admin', name)),
   ];
   assert.match(server, /no-store, no-cache, must-revalidate/);
-  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v27'/);
+  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v28'/);
   assert.match(worker, /fetch\(request, \{ cache: 'no-store' \}\)/);
   assert.match(worker, /self\.skipWaiting\(\)/);
   assert.match(worker, /self\.clients\.claim\(\)/);

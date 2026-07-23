@@ -1115,13 +1115,6 @@
         }
         favicon.href = displayLogoUrl;
 
-        var appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-        if (!appleIcon) {
-          appleIcon = document.createElement('link');
-          appleIcon.rel = 'apple-touch-icon';
-          document.head.appendChild(appleIcon);
-        }
-        appleIcon.href = displayLogoUrl;
       }
       if (data.logo.text) {
         const textEl = document.getElementById('main-logo-text');

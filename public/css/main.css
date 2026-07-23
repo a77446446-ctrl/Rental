@@ -2847,6 +2847,158 @@ body .chat-widget:not(:has(.chat-body[style*="none"])) #chat-toggle .chat-ring-l
   }
 }
 
+/* PWA installation invitation */
+.pwa-install-prompt {
+  position: fixed;
+  top: 96px;
+  right: 22px;
+  z-index: 120;
+  width: min(390px, calc(100vw - 28px));
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 15px;
+  padding: 18px;
+  border: 1px solid rgba(237, 228, 214, .2);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.018)), rgba(18,15,13,.88);
+  -webkit-backdrop-filter: blur(26px) saturate(1.18);
+  backdrop-filter: blur(26px) saturate(1.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 24px 80px rgba(0,0,0,.52);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-22px) scale(.96);
+  transform-origin: right top;
+  transition: opacity .28s ease, visibility .28s ease, transform .36s cubic-bezier(.2,.78,.22,1);
+}
+
+.pwa-install-prompt.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.pwa-install-close {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(237,228,214,.055);
+  color: rgba(255,250,240,.74);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pwa-install-icon {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(237,228,214,.2);
+  border-radius: 16px;
+  background: transparent;
+  box-shadow: 0 10px 28px rgba(0,0,0,.34);
+}
+
+.pwa-install-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.pwa-install-copy { min-width: 0; padding-right: 22px; }
+.pwa-install-kicker {
+  display: block;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.pwa-install-copy strong {
+  display: block;
+  margin-top: 5px;
+  color: #fffaf0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 27px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.pwa-install-description,
+.pwa-install-ios-hint {
+  margin: 9px 0 0;
+  color: rgba(255,250,240,.72);
+  font-size: 12.5px;
+  line-height: 1.48;
+}
+
+.pwa-install-ios-hint {
+  padding: 10px 11px;
+  border: 1px solid rgba(187,164,111,.18);
+  border-radius: 10px;
+  background: rgba(187,164,111,.07);
+  color: rgba(255,250,240,.88);
+}
+
+.pwa-install-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.pwa-install-actions button {
+  min-height: 39px;
+  padding: 0 15px;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pwa-install-primary {
+  border: 1px solid rgba(210,177,113,.46);
+  background: linear-gradient(180deg, #b47a4c, #8e5d36);
+  color: #fffaf0;
+  box-shadow: 0 8px 22px rgba(112,70,38,.3);
+}
+
+.pwa-install-later {
+  border: 1px solid rgba(237,228,214,.13);
+  background: rgba(237,228,214,.045);
+  color: rgba(255,250,240,.72);
+}
+
+@media (max-width: 760px) {
+  .pwa-install-prompt {
+    top: 74px;
+    right: 10px;
+    width: calc(100vw - 20px);
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 12px;
+    padding: 15px;
+    border-radius: 15px;
+    transform-origin: center top;
+  }
+  .pwa-install-icon { width: 54px; height: 54px; border-radius: 14px; }
+  .pwa-install-copy strong { font-size: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pwa-install-prompt { transition: opacity .15s ease, visibility .15s ease; }
+}
+
 /* The label travels around the ring while the chat glyph flips separately. */
 @keyframes eco-chat-ring-orbit {
   to { transform: rotate(360deg); }
