@@ -220,8 +220,10 @@ function startServer() {
     console.log('');
     
     const chatService = require('./services/chat.service');
+    const maxService = require('./services/max.service');
     if (config.nodeEnv !== 'production') {
       chatService.startTelegramPolling();
+      maxService.startMaxPolling(chatService.saveMessage);
     } else {
       chatService.configureTelegramWebhook().catch((err) => {
         console.error('[server] Ошибка настройки Telegram webhook:', err.message);

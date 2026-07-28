@@ -16,6 +16,8 @@
     header: document.getElementById('chat-header'),
     body: document.getElementById('chat-body'),
     toggle: document.getElementById('chat-toggle'),
+    badge: document.getElementById('chat-badge'),
+    toastBanner: document.getElementById('chat-toast-banner'),
     messages: document.getElementById('chat-messages'),
     form: document.getElementById('chat-form'),
     input: document.getElementById('chat-input'),
@@ -24,6 +26,38 @@
   };
 
   if (!els.widget) return;
+
+  let unreadCount = 0;
+
+  function updateUnreadBadge(count) {
+    unreadCount = Math.max(0, count);
+    if (!els.badge) return;
+    if (unreadCount > 0 && els.body.style.display === 'none') {
+      els.badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+      els.badge.style.display = 'block';
+    } else {
+      els.badge.style.display = 'none';
+    }
+  }
+
+  function showAdminReplyNotification() {
+    if (els.body.style.display !== 'none') return;
+    if (els.toastBanner) {
+      els.toastBanner.textContent = '💬 Ответ от администратора: вам новое сообщение!';
+      els.toastBanner.style.display = 'block';
+    }
+    if (window.showToast) {
+      window.showToast('💬 Ответ от администратора: вам новое сообщение!', 'success');
+    }
+  }
+
+  function clearUnread() {
+    updateUnreadBadge(0);
+    if (els.toastBanner) {
+      els.toastBanner.style.display = 'none';
+    }
+    localStorage.setItem('chat_last_read_time', new Date().toISOString());
+  }
 
   /**
    * Генерация UUID v4 для анонимного чата
@@ -80,6 +114,13 @@
     // 4. Навешивание событий
     syncToggleIcon(els.body.style.display !== 'none');
     els.header.addEventListener('click', toggleChat);
+    if (els.toastBanner) {
+      els.toastBanner.addEventListener('click', function() {
+        if (els.body.style.display === 'none') {
+          toggleChat();
+        }
+      });
+    }
     els.form.addEventListener('submit', sendMessage);
     if (els.attachBtn && els.fileInput) {
       els.attachBtn.addEventListener('click', function() { els.fileInput.click(); });
@@ -122,6 +163,7 @@
     const isOpening = els.body.style.display === 'none';
 
     if (isOpening) {
+      clearUnread();
       els.widget.classList.remove('is-closing');
       els.body.style.display = 'flex';
       requestAnimationFrame(function() {
@@ -183,29 +225,45 @@
     const wrap = document.createElement('div');
     wrap.className = 'chat-attachment';
 
-    let media;
     if (attachment.mediaType === 'image') {
-      media = document.createElement('img');
+      const imgLink = document.createElement('a');
+      imgLink.href = safeUrl;
+      imgLink.target = '_blank';
+      imgLink.rel = 'noopener';
+      const media = document.createElement('img');
       media.src = safeUrl;
-      media.alt = attachment.name || 'Изображение';
-    } else if (attachment.mediaType === 'video') {
-      media = document.createElement('video');
+      media.alt = 'Изображение';
+      media.style.cursor = 'pointer';
+      imgLink.appendChild(media);
+      wrap.appendChild(imgLink);
+      container.appendChild(wrap);
+      return true;
+    }
+
+    if (attachment.mediaType === 'video') {
+      const media = document.createElement('video');
       media.src = safeUrl;
       media.controls = true;
       media.playsInline = true;
-    } else if (attachment.mediaType === 'audio') {
-      media = document.createElement('audio');
-      media.src = safeUrl;
-      media.controls = true;
+      wrap.appendChild(media);
+      container.appendChild(wrap);
+      return true;
     }
 
-    if (media) wrap.appendChild(media);
+    if (attachment.mediaType === 'audio') {
+      const media = document.createElement('audio');
+      media.src = safeUrl;
+      media.controls = true;
+      wrap.appendChild(media);
+      container.appendChild(wrap);
+      return true;
+    }
 
     const link = document.createElement('a');
     link.href = safeUrl;
     link.target = '_blank';
     link.rel = 'noopener';
-    link.textContent = attachment.name || 'Открыть файл';
+    link.textContent = attachment.name || 'Скачать файл';
     wrap.appendChild(link);
     container.appendChild(wrap);
     return true;
@@ -254,10 +312,20 @@
 
   function scrollToPreferredPosition() {
     if (shouldFocusBookingStart()) {
-      els.messages.scrollTop = 0;
-    } else {
-      scrollToBottom();
+      const messages = els.messages.children;
+      let lastBookingMsg = null;
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].textContent.includes('Ваша заявка на бронирование')) {
+          lastBookingMsg = messages[i];
+          break;
+        }
+      }
+      if (lastBookingMsg) {
+        lastBookingMsg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
     }
+    scrollToBottom();
   }
 
   /**
@@ -272,6 +340,14 @@
         json.data.forEach(renderMessage);
         scrollToPreferredPosition();
         lastKnownCount = json.data.length;
+
+        // Вычисляем непрочитанные сообщения от админа
+        const lastRead = new Date(localStorage.getItem('chat_last_read_time') || 0).getTime();
+        const unreadAdminMsgs = json.data.filter(m => m.sender_type === 'admin' && new Date(m.created_at || Date.now()).getTime() > lastRead);
+        if (unreadAdminMsgs.length > 0 && els.body.style.display === 'none') {
+          updateUnreadBadge(unreadAdminMsgs.length);
+          showAdminReplyNotification();
+        }
       }
     } catch (e) {
       console.error('[Chat] Ошибка загрузки истории:', e);
@@ -302,9 +378,10 @@
             scrollToPreferredPosition();
             lastKnownCount = els.messages.children.length;
             
-            // Если чат закрыт, показываем уведомление
-            if (els.body.style.display === 'none' && window.showToast) {
-              window.showToast('Новое сообщение от поддержки!', 'success');
+            // Если чат закрыт, увеличиваем бейдж и показываем плашку
+            if (els.body.style.display === 'none') {
+              updateUnreadBadge(unreadCount + 1);
+              showAdminReplyNotification();
             }
           }
         }
@@ -328,15 +405,16 @@
       if (json.success && json.data) {
         const serverCount = json.data.length;
         if (serverCount > lastKnownCount) {
-          // Есть новые сообщения — перерисовываем
+          const newAdminMsgs = json.data.slice(lastKnownCount).filter(m => m.sender_type === 'admin');
           els.messages.innerHTML = '';
           json.data.forEach(renderMessage);
           scrollToPreferredPosition();
           lastKnownCount = serverCount;
           
-          // Если чат закрыт, показываем уведомление
-          if (els.body.style.display === 'none' && window.showToast) {
-            window.showToast('Новое сообщение от поддержки!', 'success');
+          // Если чат закрыт и есть новые админ-сообщения, показываем уведомления
+          if (newAdminMsgs.length > 0 && els.body.style.display === 'none') {
+            updateUnreadBadge(unreadCount + newAdminMsgs.length);
+            showAdminReplyNotification();
           }
         }
       }

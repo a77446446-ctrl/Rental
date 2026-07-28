@@ -48,6 +48,6 @@ test('home page and dynamic manifest use the administrator logo icons', () => {
   assert.match(routes, /\/api\/pwa-icon\/192\.png\?v=/);
   assert.match(routes, /\/api\/pwa-icon\/512\.png\?v=/);
   assert.match(routes, /sharp\(source\)/);
-  assert.match(html, /main\.css\?v=20260723-8/);
-  assert.match(html, /pwa\.js\?v=20260723-8/);
+  assert.match(html, /main\.css\?v=202607/);
+  assert.match(html, /pwa\.js\?v=202607/);
 });

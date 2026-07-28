@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const chatService = require('../services/chat.service');
+const maxService = require('../services/max.service');
 const { config } = require('../config/env');
 const storageService = require('../services/storage.service');
 const { cleanText, validateUuid } = require('../utils/validation');
@@ -168,6 +169,62 @@ router.post('/webhook', async (req, res) => {
     await chatService.handleTelegramWebhook(req.body);
   } catch (error) {
     console.error('[chat.routes] POST /webhook error:', error);
+  }
+});
+
+/**
+ * POST /api/chat/max-webhook
+ * Webhook для приема ответов от МАКС (MAX Bot API)
+ */
+router.post('/max-webhook', async (req, res) => {
+  try {
+    const providedSecret = req.get('x-max-bot-api-secret-token') || req.get('authorization')?.replace(/^Bearer\s+/i, '') || req.query.secret;
+    if (config.maxWebhookSecret && !maxService.isValidMaxWebhook(providedSecret)) {
+      return res.status(401).json({ success: false, error: 'Неверная подпись webhook МАКС' });
+    }
+
+    res.sendStatus(200);
+
+    await maxService.handleMaxWebhook(req.body, chatService.saveMessage);
+  } catch (error) {
+    console.error('[chat.routes] POST /max-webhook error:', error);
+  }
+});
+
+/**
+ * GET /api/chat/max-media
+ * Проксирует заблокированные/защищенные медиафайлы из МАКС в браузер гостя
+ */
+router.get('/max-media', async (req, res) => {
+  try {
+    const rawUrl = String(req.query.url || '').trim();
+    if (!rawUrl || !/^https?:\/\//i.test(rawUrl)) {
+      return res.status(400).send('Некорректный URL');
+    }
+
+    const headers = {};
+    if (config.maxBotToken && rawUrl.includes('max.ru')) {
+      headers['Authorization'] = config.maxBotToken;
+    }
+
+    let response = await fetch(rawUrl, { headers });
+    if (!response.ok && headers['Authorization']) {
+      response = await fetch(rawUrl);
+    }
+
+    if (!response.ok) {
+      return res.status(response.status).send('Ошибка загрузки файла');
+    }
+
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+
+    const arrayBuffer = await response.arrayBuffer();
+    return res.send(Buffer.from(arrayBuffer));
+  } catch (err) {
+    console.error('[chat.routes] GET /max-media error:', err);
+    return res.status(500).send('Ошибка проксирования файла');
   }
 });
 

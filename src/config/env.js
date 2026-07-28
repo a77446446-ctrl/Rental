@@ -35,6 +35,12 @@ const config = {
   telegramRelayUrl: process.env.TELEGRAM_RELAY_URL || '',
   telegramRelaySecret: process.env.TELEGRAM_RELAY_SECRET || '',
 
+  /* МАКС-уведомления */
+  maxBotToken: process.env.MAX_BOT_TOKEN || '',
+  maxChatId: process.env.MAX_CHAT_ID || '',
+  maxWebhookSecret: process.env.MAX_WEBHOOK_SECRET || '',
+  maxApiUrl: process.env.MAX_API_URL || 'https://platform-api.max.ru',
+
   /* Внешние iCal-календари */
   externalCalendarSyncMinutes: parseInt(process.env.EXTERNAL_CALENDAR_SYNC_MINUTES, 10) || 30,
   disableBackgroundJobs: process.env.DISABLE_BACKGROUND_JOBS === 'true',

@@ -145,7 +145,7 @@ img { display: block; max-width: 100%; }
 }
 .header-action:hover { transform: translateY(-2px); background: rgba(95, 103, 73, .42); }
 
-.section { position: relative; max-width: var(--max); margin: 0 auto; scroll-margin-top: 130px; }
+.section { position: relative; max-width: var(--max); margin: 0 auto; scroll-margin-top: 120px; }
 
 .hero { min-height: 940px; display: grid; align-items: end; padding: 142px 8px 72px; }
 
@@ -202,7 +202,7 @@ h1 { margin-top: 22px; font-size: clamp(64px, 8vw, 116px); line-height: .86; let
   border: 1px solid rgba(237, 228, 214, .13); border-radius: 10px;
   background: rgba(22, 18, 14, .62); backdrop-filter: blur(24px);
   box-shadow: 0 24px 80px rgba(0,0,0,.32);
-  scroll-margin-top: 100vh;
+  scroll-margin-top: 120px;
 }
 
 .hero-booking h3 { font-size: 32px; line-height: 1; font-weight: 500; letter-spacing: -.04em; }
@@ -609,10 +609,10 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .person b { display: block; font-weight: 600; }
 .person span { display: block; margin-top: 3px; color: var(--muted-2); font-size: 12px; }
 
-.cta { padding: 0 8px 46px; }
+.cta { padding: 0 8px 16px; }
 
 .cta-card {
-  min-height: 430px; display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: end;
+  min-height: auto; display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: end;
   padding: 36px; border: 1px solid var(--line); border-radius: 10px;
   background-color: var(--surface-light);
   background-size: cover; background-position: center; box-shadow: var(--shadow); overflow: hidden;
@@ -630,7 +630,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .contact-list a:hover { background: rgba(95, 103, 73, .24); }
 
 .footer {
-  max-width: var(--max); margin: 0 auto; padding: 30px 8px 44px;
+  max-width: var(--max); margin: 0 auto; padding: 20px 8px 32px;
   border-top: 1px solid var(--line); display: grid; grid-template-columns: 220px 1fr auto;
   gap: 24px; align-items: center; color: var(--muted-2); font-size: 13px;
 }
@@ -669,6 +669,9 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 }
 
 @media (max-width: 760px) {
+  .section, #houses, #features, #calendar, #territory, #contacts, #booking {
+    scroll-margin-top: 84px !important;
+  }
   .page { padding: 0 14px; }
   .top-meta { display: none; }
   .header { top: 16px; width: calc(100% - 28px); }
@@ -685,6 +688,8 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   .section-heading { flex-direction: column; align-items: flex-start; gap: 16px; }
   .section-heading-content { align-items: flex-start; text-align: left; }
   .mission, .houses, .feature, .calendar-section, .territory, .reviews, .cta, .footer, .intro { padding-left: 0; padding-right: 0; }
+  .cta { padding-bottom: 12px; }
+  .footer { padding-top: 16px; padding-bottom: 60px; }
   .calendar-card, .checkout-card, .feature-panel, .cta-card, .territory-stage { padding: 20px; }
   .territory-content > div:first-child { padding: 17px; }
   .calendar-day { min-height: 54px; padding: 7px; }
@@ -796,6 +801,65 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   font-size: 12px;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* Unread Badge & Toast Banner Styles */
+.chat-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e63946, #c1121f);
+  color: #ffffff;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 24px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(230, 57, 70, 0.6), 0 0 0 2px rgba(18, 15, 13, 0.95);
+  pointer-events: none;
+  z-index: 10000;
+  animation: chat-badge-pulse 2s infinite ease-in-out;
+}
+
+@keyframes chat-badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+
+.chat-toast-banner {
+  position: fixed;
+  bottom: 96px;
+  right: 24px;
+  z-index: 9997;
+  max-width: 320px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(187, 164, 111, 0.45);
+  background: rgba(29, 23, 18, 0.96);
+  backdrop-filter: blur(20px);
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  animation: toast-in 0.35s ease;
+}
+.chat-toast-banner:hover {
+  background: rgba(45, 36, 28, 0.98);
+  border-color: rgba(187, 164, 111, 0.7);
+}
+
+@media (max-width: 760px) {
+  .chat-toast-banner {
+    bottom: 84px;
+    right: 14px;
+    max-width: calc(100vw - 28px);
+  }
 }
 
 
@@ -1216,7 +1280,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
     padding: 16px;
   }
   .cta-card {
-    min-height: 440px;
+    min-height: auto;
     align-items: end;
   }
   #contact-map-container {
@@ -2022,12 +2086,12 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 
 
 /* Fix for anchor scrolling with sticky header */
-section[id] {
-  scroll-margin-top: 130px;
+section[id], .section, #houses, #features, #calendar, #territory, #contacts, #booking {
+  scroll-margin-top: 96px !important;
 }
 @media (max-width: 760px) {
-  section[id] {
-    scroll-margin-top: 90px;
+  section[id], .section, #houses, #features, #calendar, #territory, #contacts, #booking {
+    scroll-margin-top: 76px !important;
   }
 }
 

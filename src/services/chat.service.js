@@ -1,6 +1,7 @@
 const { supabaseAdmin } = require('../config/supabase');
 const { config } = require('../config/env');
 const storageService = require('./storage.service');
+const maxService = require('./max.service');
 const crypto = require('crypto');
 
 /**
@@ -146,13 +147,19 @@ async function getGuestNameByToken(token) {
  * @param {string} text - Текст сообщения
  */
 async function notifyAdmin(token, text) {
+  const guestName = await getGuestNameByToken(token);
+
+  // Отправляем в МАКС в фоновом режиме (если настроен)
+  maxService.notifyAdmin(token, text, guestName).catch(err => {
+    console.error('[chat.service] Исключение при отправке в МАКС:', err.message);
+  });
+
   if (!config.telegramBotToken || !config.telegramChatId) {
     console.warn('[Telegram] Токен или Chat ID не заданы. Сообщение чата не отправлено в ТГ.');
     return false;
   }
 
   const sanitizedText = escapeTelegramHtml(text).trim();
-  const guestName = await getGuestNameByToken(token);
   const alias = guestName ? `от: ${guestName}` : `(Гость ${token.split('-')[0]})`;
 
   const tgMessage = `
@@ -177,12 +184,18 @@ ${sanitizedText}
 }
 
 async function notifyAdminAttachment(token, attachment) {
+  const guestName = await getGuestNameByToken(token);
+
+  // Отправляем в МАКС в фоновом режиме (если настроен)
+  maxService.notifyAdminAttachment(token, attachment, guestName).catch(err => {
+    console.error('[chat.service] Исключение при отправке вложения в МАКС:', err.message);
+  });
+
   if (!config.telegramBotToken || !config.telegramChatId) {
     console.warn('[Telegram] Токен или Chat ID не заданы. Вложение чата не отправлено в ТГ.');
     return false;
   }
 
-  const guestName = await getGuestNameByToken(token);
   const alias = guestName ? `от: ${guestName}` : `(Гость ${token.split('-')[0]})`;
 
   const caption = `

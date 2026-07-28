@@ -1,5 +1,6 @@
 const { supabaseAdmin } = require('../config/supabase');
 const { sendBookingNotification } = require('./telegram.service');
+const maxService = require('./max.service');
 const externalCalendarService = require('./externalCalendar.service');
 const { calculateBookingTotal } = require('./bookingPricing.service');
 const { cleanText, validateStay } = require('../utils/validation');
@@ -94,20 +95,32 @@ async function createBooking(input) {
     booking = Array.isArray(rpc.data) ? rpc.data[0] : rpc.data;
   }
 
+  const tokenMatch = data.comment ? data.comment.match(/<!--CHAT_TOKEN:([a-f0-9-]+)-->/i) : null;
+  const chatToken = input.chat_token || (tokenMatch ? tokenMatch[1] : null);
+
+  const notificationData = {
+    id: booking.id,
+    cabinName: pricing.cabin.name,
+    checkIn: data.check_in,
+    checkOut: data.check_out,
+    nightsCount: pricing.nights,
+    totalPrice: pricing.totalPrice,
+    guestName: data.guest_name,
+    guestPhone: data.guest_phone,
+    guestTelegram: data.guest_telegram,
+    chatToken: chatToken,
+  };
+
   try {
-    sendBookingNotification({
-      id: booking.id,
-      cabinName: pricing.cabin.name,
-      checkIn: data.check_in,
-      checkOut: data.check_out,
-      nightsCount: pricing.nights,
-      totalPrice: pricing.totalPrice,
-      guestName: data.guest_name,
-      guestPhone: data.guest_phone,
-      guestTelegram: data.guest_telegram,
-    }).catch((err) => console.error('[booking.service] Ошибка Telegram:', err.message));
+    sendBookingNotification(notificationData).catch((err) => console.error('[booking.service] Ошибка Telegram:', err.message));
   } catch (err) {
     console.error('[booking.service] Ошибка подготовки Telegram:', err.message);
+  }
+
+  try {
+    maxService.sendBookingNotification(notificationData).catch((err) => console.error('[booking.service] Ошибка МАКС:', err.message));
+  } catch (err) {
+    console.error('[booking.service] Ошибка подготовки МАКС:', err.message);
   }
 
   return { ...booking, pricing };
