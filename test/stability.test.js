@@ -177,7 +177,7 @@ test('ordinary site traffic is not globally rate limited', () => {
 test('booking confirmation opens at the beginning of the chat message', () => {
   const chat = fs.readFileSync(path.join(__dirname, '..', 'public/js/chat.js'), 'utf8');
   assert.match(chat, /chat_booking_focus_until/);
-  assert.match(chat, /lastBookingMsg\.scrollIntoView/);
+  assert.match(chat, /lastBookingMsg\.offsetTop/);
   assert.match(chat, /scrollToPreferredPosition\(\)/);
 });
 

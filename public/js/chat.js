@@ -184,7 +184,9 @@
       localStorage.removeItem('chat_force_open');
     } else {
       scrollToPreferredPosition();
-      els.input.focus();
+      if (window.innerWidth > 768) {
+        els.input.focus();
+      }
     }
   }
 
@@ -321,7 +323,7 @@
         }
       }
       if (lastBookingMsg) {
-        lastBookingMsg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        els.messages.scrollTop = Math.max(0, lastBookingMsg.offsetTop - 12);
         return;
       }
     }

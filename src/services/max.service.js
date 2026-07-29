@@ -90,8 +90,9 @@ async function callMaxApi(method, payload = {}) {
         const details = await response.text();
         lastError = new Error(`HTTP ${response.status}: ${details.slice(0, 300)}`);
 
-        if (response.status === 404 && details.includes('chat.not.found')) {
-          break; // Пробуем следующий вариант параметра (user_id / chat_id)
+        if (!response.ok && param) {
+          console.warn(`[MAX] Вызов с ?${param}=${targetId} вернул HTTP ${response.status}: ${details.slice(0, 150)}. Пробуем альтернативный параметр...`);
+          break;
         }
       } catch (error) {
         lastError = error;
