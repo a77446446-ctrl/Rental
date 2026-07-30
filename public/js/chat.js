@@ -201,10 +201,10 @@
       });
     } else {
       els.widget.classList.add('is-closing');
-      syncToggleIcon(false);
       chatTransitionTimer = setTimeout(function() {
         els.body.style.display = 'none';
         els.widget.classList.remove('is-closing');
+        syncToggleIcon(false);
       }, 320);
     }
     
