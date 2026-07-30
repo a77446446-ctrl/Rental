@@ -1388,6 +1388,20 @@
       footerContactLinks.innerHTML = links.map(link => `<a href="${link.href}" target="_blank" rel="noopener">${link.label}</a>`).join('');
     }
 
+    const footerSlogan = document.getElementById('footer-slogan');
+    if (footerSlogan) {
+      let sloganText = 'Бронирование и аренда';
+      if (typeof contacts.footer_slogan === 'string') {
+        sloganText = contacts.footer_slogan;
+      }
+      
+      if (!sloganText.trim()) {
+        footerSlogan.innerHTML = '<span style="display:inline-block; border-bottom:1px solid var(--gold); min-width:200px; height:1em;"></span>';
+      } else {
+        footerSlogan.innerHTML = `<span style="display:inline-block; border-bottom:1px solid var(--gold); padding-bottom:4px;">${sloganText}</span>`;
+      }
+    }
+
     if (contacts.background_url) {
       const ctaCard = document.getElementById('contact-bg-card');
       if (ctaCard) {

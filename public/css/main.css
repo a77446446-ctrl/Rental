@@ -3146,9 +3146,4 @@ body .chat-widget:has(.chat-body[style*="none"]):hover #chat-toggle > svg:not(.c
   animation-play-state: paused;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  #chat-toggle .chat-ring-label,
-  body .chat-widget:has(.chat-body[style*="none"]) #chat-toggle > svg:not(.chat-ring-label) {
-    animation: none !important;
-  }
-}
+
