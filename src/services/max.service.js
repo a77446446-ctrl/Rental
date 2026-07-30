@@ -44,7 +44,6 @@ async function callMaxApi(method, payload = {}) {
   }
 
   const baseUrl = String(config.maxApiUrl || 'https://platform-api.max.ru').replace(/\/+$/, '');
-  const token = config.maxBotToken;
   const targetId = payload.user_id || payload.chat_id || config.maxChatId;
 
   if (!targetId) {
@@ -61,7 +60,6 @@ async function callMaxApi(method, payload = {}) {
       }
     : payload;
 
-  // MAX API принимает chat_id или user_id — пробуем оба варианта
   const paramCandidates = isMessage
     ? (payload.user_id ? ['user_id', 'chat_id'] : ['chat_id', 'user_id'])
     : [null];
@@ -70,8 +68,8 @@ async function callMaxApi(method, payload = {}) {
 
   for (const param of paramCandidates) {
     const url = isMessage
-      ? `${baseUrl}/messages?access_token=${encodeURIComponent(token)}&${param}=${encodeURIComponent(targetId)}`
-      : `${baseUrl}/${method.replace(/^\/+/, '')}?access_token=${encodeURIComponent(token)}`;
+      ? `${baseUrl}/messages?${param}=${encodeURIComponent(targetId)}`
+      : `${baseUrl}/${method.replace(/^\/+/, '')}`;
 
     for (const delayMs of RETRY_DELAYS_MS) {
       if (delayMs) await wait(delayMs);
@@ -79,7 +77,10 @@ async function callMaxApi(method, payload = {}) {
       try {
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': config.maxBotToken
+          },
           body: JSON.stringify(bodyContent),
           signal: getAbortSignal(),
         });
@@ -88,14 +89,9 @@ async function callMaxApi(method, payload = {}) {
 
         const details = await response.text();
         lastError = new Error(`HTTP ${response.status}: ${details.slice(0, 300)}`);
-        console.warn(`[MAX] callMaxApi(${method}) ?${param}=${targetId} → ${response.status}: ${details.slice(0, 200)}`);
 
-        // 404 chat.not.found — пробуем другой параметр (user_id ↔ chat_id)
-        if (response.status === 404 && param) {
-          break;
-        }
-        // 4xx (кроме 429) — повторять бессмысленно
-        if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+        if (!response.ok && param) {
+          console.warn(`[MAX] Вызов с ?${param}=${targetId} вернул HTTP ${response.status}: ${details.slice(0, 150)}. Пробуем альтернативный параметр...`);
           break;
         }
       } catch (error) {
@@ -318,16 +314,11 @@ async function uploadMaxAttachment(maxAttachment) {
 
   try {
     const storageService = require('./storage.service');
-    let fetchUrl = maxAttachment.url;
-    // Для MAX CDN ссылок добавляем access_token как query-параметр
-    if (config.maxBotToken && fetchUrl.includes('max.ru')) {
-      const sep = fetchUrl.includes('?') ? '&' : '?';
-      fetchUrl = `${fetchUrl}${sep}access_token=${encodeURIComponent(config.maxBotToken)}`;
-    }
-    let response = await fetch(fetchUrl);
-    if (!response.ok) {
-      // Пробуем без токена
-      response = await fetch(maxAttachment.url);
+    let response = await fetch(maxAttachment.url);
+    if (!response.ok && config.maxBotToken) {
+      response = await fetch(maxAttachment.url, {
+        headers: { 'Authorization': config.maxBotToken }
+      });
     }
 
     if (response.ok) {
@@ -408,10 +399,8 @@ async function handleMaxWebhook(payload, saveMessageFn) {
   const textRaw = msg.text || msg.body?.text || msg.caption || '';
   const senderId = msg.sender?.user_id || msg.sender?.id || msg.chat_id || msg.user_id;
 
-  console.log(`[MAX] handleMaxWebhook: updateId=${updateId}, senderId=${senderId}, textLen=${textRaw.length}, keys=${Object.keys(msg).join(',')}`);
-
   // Если кто-то пишет боту команду /id или "айди", бот автоматически сообщает его MAX ID
-  if (/^\\/?(id|айди|myid)$/i.test(textRaw.trim()) && senderId) {
+  if (/^\/?(id|айди|myid)$/i.test(textRaw.trim()) && senderId) {
     await callMaxApi('sendMessage', {
       user_id: senderId,
       text: `👤 Ваш MAX ID: ${senderId}\n\nУкажите это значение в переменной MAX_CHAT_ID.`
@@ -428,7 +417,6 @@ async function handleMaxWebhook(payload, saveMessageFn) {
     payload;
 
   const chatToken = extractToken(quotedContext);
-  console.log(`[MAX] extractToken result: ${chatToken ? chatToken.slice(0, 12) + '...' : '(не найден)'}`);
   if (!chatToken) {
     return;
   }
@@ -452,73 +440,31 @@ async function handleMaxWebhook(payload, saveMessageFn) {
 }
 
 /**
- * Запускает Long Polling для МАКС бота (работает и локально и на VPS)
+ * Запускает Long Polling для МАКС бота (полезно для локальной разработки)
  */
 let maxPollingStarted = false;
 function startMaxPolling(saveMessageFn) {
-  if (!config.maxBotToken) {
-    console.warn('[MAX] MAX_BOT_TOKEN не задан — polling МАКС не запущен.');
-    return;
-  }
+  if (!config.maxBotToken) return;
   if (maxPollingStarted) return;
   maxPollingStarted = true;
 
-  const baseUrl = String(config.maxApiUrl || 'https://platform-api.max.ru').replace(/\/+$/, '');
-  const token = config.maxBotToken;
-
-  console.log('🤖 Запущен Polling МАКС бота...');
-  console.log(`[MAX] API: ${baseUrl}, MAX_CHAT_ID: ${config.maxChatId || '(не задан)'}`);
-
-  // Удаляем возможный предыдущий webhook, чтобы он не перехватывал обновления
-  (async () => {
-    try {
-      const subRes = await fetch(`${baseUrl}/subscriptions?access_token=${encodeURIComponent(token)}`, {
-        method: 'DELETE',
-      });
-      console.log(`[MAX] Удаление webhook/подписки: ${subRes.status} ${subRes.statusText}`);
-    } catch (err) {
-      console.warn('[MAX] Не удалось удалить webhook-подписку:', err.message);
-    }
-  })();
-
-  let pollErrors = 0;
+  console.log('🤖 Запущен локальный Polling МАКС бота...');
 
   async function poll() {
     try {
-      const response = await fetch(
-        `${baseUrl}/updates?access_token=${encodeURIComponent(token)}&timeout=10&types=message_created`,
-        { signal: getAbortSignal() }
-      );
+      const baseUrl = String(config.maxApiUrl || 'https://platform-api.max.ru').replace(/\/+$/, '');
+      const response = await fetch(`${baseUrl}/updates`, {
+        headers: { 'Authorization': config.maxBotToken }
+      });
+      const json = await response.json();
 
-      if (!response.ok) {
-        pollErrors++;
-        if (pollErrors <= 3 || pollErrors % 50 === 0) {
-          const body = await response.text().catch(() => '');
-          console.error(`[MAX] Ошибка polling (${pollErrors}): HTTP ${response.status} — ${body.slice(0, 200)}`);
-        }
-      } else {
-        const json = await response.json();
-        if (pollErrors > 0) {
-          console.log(`[MAX] Polling восстановлен после ${pollErrors} ошибок.`);
-          pollErrors = 0;
-        }
-
-        if (json && Array.isArray(json.updates) && json.updates.length > 0) {
-          console.log(`[MAX] Получено ${json.updates.length} обновлений.`);
-          for (const update of json.updates) {
-            try {
-              await handleMaxWebhook(update, saveMessageFn);
-            } catch (err) {
-              console.error('[MAX] Ошибка обработки update:', err.message);
-            }
-          }
+      if (json && Array.isArray(json.updates) && json.updates.length > 0) {
+        for (const update of json.updates) {
+          await handleMaxWebhook(update, saveMessageFn);
         }
       }
     } catch (err) {
-      pollErrors++;
-      if (pollErrors <= 3 || pollErrors % 50 === 0) {
-        console.error(`[MAX] Сетевая ошибка polling (${pollErrors}):`, err.message);
-      }
+      // Игнорируем сетевые ошибки при поллинге
     }
 
     setTimeout(poll, 2000);
