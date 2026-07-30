@@ -17,22 +17,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const attachBtn = document.getElementById('adminChatAttachBtn');
   const fileInput = document.getElementById('adminChatFileInput');
   const chatDateFilter = document.getElementById('chatDateFilter');
+  const chatNameFilter = document.getElementById('chatNameFilter');
   const clearChatFilterBtn = document.getElementById('clearChatFilterBtn');
 
-  let conversations = [];
-  const isMobileChat = () => window.matchMedia('(max-width: 760px)').matches;
-
   if (chatDateFilter && clearChatFilterBtn) {
-    chatDateFilter.addEventListener('change', () => {
-      clearChatFilterBtn.style.display = chatDateFilter.value ? 'block' : 'none';
+    const applyFilters = () => {
+      clearChatFilterBtn.style.display = (chatDateFilter.value || (chatNameFilter && chatNameFilter.value.trim())) ? 'block' : 'none';
       renderConversationList();
-    });
+    };
+    chatDateFilter.addEventListener('change', applyFilters);
+    if (chatNameFilter) chatNameFilter.addEventListener('input', applyFilters);
+
     clearChatFilterBtn.addEventListener('click', () => {
       chatDateFilter.value = '';
+      if (chatNameFilter) chatNameFilter.value = '';
       clearChatFilterBtn.style.display = 'none';
       renderConversationList();
     });
   }
+
+  let conversations = [];
+  const isMobileChat = () => window.matchMedia('(max-width: 760px)').matches;
 
   function closeMobileThread() {
     if (chatThread && chatShell && chatThread.parentElement !== chatShell) chatShell.appendChild(chatThread);
@@ -109,7 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let filtered = conversations;
     if (chatDateFilter && chatDateFilter.value) {
       const filterDateStr = new Date(chatDateFilter.value).toDateString();
-      filtered = conversations.filter(c => new Date(c.last_at).toDateString() === filterDateStr);
+      filtered = filtered.filter(c => new Date(c.last_at).toDateString() === filterDateStr);
+    }
+    const nameQ = (document.getElementById('chatNameFilter') ? document.getElementById('chatNameFilter').value.trim().toLowerCase() : '');
+    if (nameQ) {
+      filtered = filtered.filter(c => (c.title || '').toLowerCase().includes(nameQ));
     }
 
     chatListMeta.textContent = filtered.length

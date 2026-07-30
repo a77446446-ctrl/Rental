@@ -107,25 +107,49 @@ function applyCabinBrand(mainpage) {
   const logo = mainpage.logo || {};
   const contacts = mainpage.contacts || {};
 
-  ['cabin-logo-text', 'cabin-footer-brand-name', 'cabin-footer-title'].forEach(id => {
+  ['cabin-logo-text', 'cabin-footer-brand-name'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = brandName;
   });
+
+  const footerTitle = document.getElementById('cabin-footer-title');
+  if (footerTitle) {
+    let sloganText = 'Бронирование и аренда';
+    if (contacts && typeof contacts.footer_slogan === 'string') {
+      sloganText = contacts.footer_slogan;
+    }
+    if (!sloganText.trim()) {
+      footerTitle.innerHTML = '<span style="display:inline-block; border-bottom:1px solid var(--gold); min-width:200px; height:1em;"></span>';
+    } else {
+      footerTitle.innerHTML = `<span style="display:inline-block; border-bottom:1px solid var(--gold); padding-bottom:4px;">${escapeHtml(sloganText)}</span>`;
+    }
+  }
 
   setLogo(document.getElementById('cabin-logo-img'), logo, brandName);
   setLogo(document.getElementById('cabin-footer-brand-mark'), logo, brandName);
 
   const links = [];
-  if (contacts.phone) links.push({ label: contacts.phone, href: contactHref('phone', contacts.phone) });
-  if (contacts.max) links.push({ label: 'МАКС', href: contactHref('max', contacts.max) });
-  if (contacts.telegram || contacts.telegram_url) links.push({ label: 'Telegram', href: contactHref('telegram', contacts.telegram_url || contacts.telegram) });
-  if (contacts.whatsapp || contacts.whatsapp_url) links.push({ label: 'WhatsApp', href: contactHref('whatsapp', contacts.whatsapp_url || contacts.whatsapp) });
-  if (contacts.vk) links.push({ label: 'ВКонтакте', href: contactHref('vk', contacts.vk) });
-  if (contacts.ok) links.push({ label: 'Одноклассники', href: contactHref('ok', contacts.ok) });
-  if (contacts.email) links.push({ label: contacts.email, href: contactHref('email', contacts.email) });
+  const addLink = (icon, label, href) => links.push({ icon, label, href });
+
+  if (contacts.phone) addLink('phone', contacts.phone, contactHref('phone', contacts.phone));
+  if (contacts.max) addLink('message-square', 'МАКС', contactHref('max', contacts.max));
+  if (contacts.telegram || contacts.telegram_url) addLink('send', 'Telegram', contactHref('telegram', contacts.telegram_url || contacts.telegram));
+  if (contacts.whatsapp || contacts.whatsapp_url) addLink('message-circle', 'WhatsApp', contactHref('whatsapp', contacts.whatsapp_url || contacts.whatsapp));
+  if (contacts.vk) addLink('hash', 'ВКонтакте', contactHref('vk', contacts.vk));
+  if (contacts.ok) addLink('smile', 'Одноклассники', contactHref('ok', contacts.ok));
+  if (contacts.email) addLink('mail', contacts.email, contactHref('email', contacts.email));
 
   const linksEl = document.getElementById('cabin-contact-links');
-  if (linksEl) linksEl.innerHTML = links.map(link => '<a href="' + escapeHtml(link.href) + '">' + escapeHtml(link.label) + '</a>').join('');
+  if (linksEl) {
+    linksEl.innerHTML = links.map(link => 
+      `<a href="${escapeHtml(link.href)}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="${link.icon}" style="width:16px; height:16px; stroke-width:2.5;"></i>${escapeHtml(link.label)}</a>`
+    ).join('');
+    const renderLucide = () => {
+      if (window.lucide) window.lucide.createIcons();
+      else setTimeout(renderLucide, 200);
+    };
+    renderLucide();
+  }
 }
 
 function renderCabinDetails(cabin, cabinAmenities, houseItems) {

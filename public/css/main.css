@@ -651,9 +651,9 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .footer-links a:hover { color: var(--cream); }
 
 .footer-slogan {
-  text-align: center;
+  text-align: right;
   color: var(--gold);
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(20px, 3.4vw, 27px);
   font-family: "Cormorant Garamond", serif;
   line-height: 1.2;
 }
@@ -1098,9 +1098,11 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   place-items: center;
   gap: 3px;
   border-radius: 12px;
-  color: var(--muted);
+  color: rgba(237, 228, 214, 0.85);
   font-size: 11px;
   font-weight: 800;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 .mobile-bottom-nav a span {
   font-size: 18px;
@@ -1390,8 +1392,8 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 
 /* Mobile polish 2026-07-07 */
 .mobile-bottom-nav svg {
-  width: 21px;
-  height: 21px;
+  width: 23px;
+  height: 23px;
   display: block;
   fill: none;
   stroke: currentColor;
@@ -1424,9 +1426,12 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
     grid-template-rows: 24px auto;
     align-content: center;
     gap: 3px;
-    font-size: 10px;
+    font-size: 10.5px;
     line-height: 1;
-    letter-spacing: 0;
+    letter-spacing: 0.02em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color: rgba(237, 228, 214, 0.85); /* Slightly brighter than .66 for better legibility */
   }
   .mobile-bottom-nav a span {
     width: 28px;
