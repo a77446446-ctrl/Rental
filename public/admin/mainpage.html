@@ -460,7 +460,17 @@
                 <input type="email" id="contactEmail" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
               </div>
             </div>
-
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+              <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Призыв к действию</label>
+              <input type="text" id="contactCta" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+            </div>
+            
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Отметка на Яндекс Карте</label>
+                <button type="button" id="clearMapBtn" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;">Убрать точку</button>
+              </div>
+              <p style="font-size: 12px; color: var(--moss-2); margin-top: -4px; margin-bottom: 4px;">Кликните на карту, чтобы установить метку. Карта появится на сайте только если установлена метка.</p>
               <div id="adminYandexMap" style="width: 100%; height: 350px; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); border-radius: 8px; overflow: hidden;"></div>
               <input type="hidden" id="contactMapCoords">
             </div>
