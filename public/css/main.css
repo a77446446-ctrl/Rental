@@ -2693,12 +2693,10 @@ body .chat-widget:has(.chat-body[style*="none"])::after {
   0% {
     opacity: 1;
     transform: translateY(0) scale(1);
-    clip-path: circle(150% at 100% 100%);
   }
   100% {
-    opacity: .72;
-    transform: translateY(16px) scale(.82);
-    clip-path: circle(36px at calc(100% - 38px) calc(100% - 38px));
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
   }
 }
 
@@ -2711,7 +2709,7 @@ body .chat-widget.is-open:not(.is-closing) {
 }
 
 body .chat-widget.is-closing {
-  animation: eco-chat-close .32s cubic-bezier(.56, .04, .46, .94) both !important;
+  animation: eco-chat-close .15s ease forwards !important;
   pointer-events: none;
 }
 body .chat-widget.is-closing .chat-header,
@@ -2725,7 +2723,7 @@ body .chat-widget.is-closing .chat-body {
     animation: eco-chat-mobile-open 0.35s cubic-bezier(0.2, 0.85, 0.2, 1) both !important;
   }
   body .chat-widget.is-closing {
-    animation: eco-chat-mobile-close 0.3s cubic-bezier(0.5, 0, 0.1, 1) both !important;
+    animation: eco-chat-mobile-close 0.15s ease forwards !important;
   }
 }
 
@@ -2742,10 +2740,10 @@ body .chat-widget.is-closing .chat-body {
 
 @keyframes eco-chat-mobile-close {
   0% {
-    clip-path: circle(150% at 50% 50%);
+    opacity: 1;
   }
   100% {
-    clip-path: circle(28px at calc(100% - 44px) calc(100% - 100px - env(safe-area-inset-bottom, 0px)));
+    opacity: 0;
   }
 }
 
