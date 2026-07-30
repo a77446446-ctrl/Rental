@@ -190,8 +190,10 @@
       return;
     }
 
-    var today = EcoApi.toDateString(getMoscowNow());
-    if (dateStr < today) {
+    var moscowNow = getMoscowNow();
+    var today = EcoApi.toDateString(moscowNow);
+    var isPastDate = dateStr < today || (dateStr === today && moscowNow.getHours() >= 21);
+    if (isPastDate) {
       return;
     }
 
@@ -274,7 +276,9 @@
     /* Количество дней в месяце */
     var daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
 
-    var todayStr = EcoApi.toDateString(getMoscowNow());
+    var moscowNow = getMoscowNow();
+    var todayStr = EcoApi.toDateString(moscowNow);
+    var currentHour = moscowNow.getHours();
     var self = this;
 
     /* Пустые ячейки до начала месяца */
@@ -293,7 +297,7 @@
         String(day).padStart(2, '0');
 
       var dayData = this.availabilityMap[dateStr];
-      var isPast = dateStr < todayStr;
+      var isPast = dateStr < todayStr || (dateStr === todayStr && currentHour >= 21);
       var isBusy = dayData ? !dayData.available : false;
       var canBeCheckout = Boolean(
         !isPast &&
