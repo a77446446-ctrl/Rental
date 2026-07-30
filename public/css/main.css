@@ -651,7 +651,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .footer-links a:hover { color: var(--cream); }
 
 .footer-slogan {
-  text-align: right;
+  text-align: center;
   color: var(--gold);
   font-size: clamp(20px, 3.4vw, 27px);
   font-family: "Cormorant Garamond", serif;
