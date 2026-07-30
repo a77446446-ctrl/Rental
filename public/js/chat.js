@@ -41,14 +41,8 @@
   }
 
   function showAdminReplyNotification() {
-    if (els.body.style.display !== 'none') return;
-    if (els.toastBanner) {
-      els.toastBanner.textContent = '💬 Ответ от администратора: вам новое сообщение!';
-      els.toastBanner.style.display = 'block';
-    }
-    if (window.showToast) {
-      window.showToast('💬 Ответ от администратора: вам новое сообщение!', 'success');
-    }
+    // Disabled text notifications per user request.
+    // We only use the red badge now.
   }
 
   function clearUnread() {
