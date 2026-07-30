@@ -2701,6 +2701,37 @@ body .chat-widget.is-closing {
   pointer-events: none;
 }
 
+@media (max-width: 760px) {
+  body .chat-widget.is-open:not(.is-closing) {
+    animation: eco-chat-mobile-open 0.35s cubic-bezier(0.2, 0.85, 0.2, 1) both !important;
+  }
+  body .chat-widget.is-closing {
+    animation: eco-chat-mobile-close 0.3s cubic-bezier(0.5, 0, 0.1, 1) both !important;
+  }
+}
+
+@keyframes eco-chat-mobile-open {
+  0% {
+    opacity: 0;
+    clip-path: circle(28px at calc(100% - 44px) calc(100% - 100px - env(safe-area-inset-bottom, 0px)));
+  }
+  100% {
+    opacity: 1;
+    clip-path: circle(150% at 50% 50%);
+  }
+}
+
+@keyframes eco-chat-mobile-close {
+  0% {
+    opacity: 1;
+    clip-path: circle(150% at 50% 50%);
+  }
+  100% {
+    opacity: 0;
+    clip-path: circle(28px at calc(100% - 44px) calc(100% - 100px - env(safe-area-inset-bottom, 0px)));
+  }
+}
+
 body .chat-widget:has(.chat-body[style*="none"]) {
   width: 78px !important;
   height: 78px !important;
