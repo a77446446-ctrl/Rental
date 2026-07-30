@@ -210,9 +210,9 @@ function renderCabinDetails(cabin, cabinAmenities, houseItems) {
 
     <div class="floating-booking">
       <div class="price">
-        ${EcoApi.formatPrice(cabin.base_price)} <span>/ сутки</span>
+        <span style="font-size: 14px; font-weight: normal; color: var(--muted);">от</span> ${EcoApi.formatPrice(cabin.base_price)} <span>/ сутки</span>
       </div>
-      <a href="/?cabin=${cabin.id}#calendar" class="btn btn-primary" style="padding: 12px 32px;">Выбрать даты</a>
+      <a href="/?cabin=${cabin.id}#calendar" class="btn btn-primary" style="padding: 10px 24px;">Выбрать даты</a>
     </div>
   `;
 

@@ -296,18 +296,26 @@
         aspect-ratio: 3 / 4;
       }
       .floating-booking {
-        width: min(360px, calc(100% - 28px));
-        bottom: max(12px, env(safe-area-inset-bottom));
-        padding: 10px 12px;
-        border-radius: 18px;
-        gap: 10px;
+        width: min(400px, calc(100% - 24px));
+        bottom: max(16px, env(safe-area-inset-bottom));
+        padding: 8px 12px 8px 20px;
+        border-radius: 100px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
       }
       .floating-booking .price {
-        font-size: 22px;
+        font-size: 18px;
         line-height: 1;
+        white-space: nowrap;
       }
       .floating-booking .btn {
-        min-height: 44px;
+        min-height: 40px;
+        width: auto;
+        padding: 10px 20px;
+        font-size: 14px;
+        white-space: nowrap;
       }
       .cabin-footer {
         grid-template-columns: 1fr;
