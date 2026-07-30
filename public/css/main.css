@@ -630,7 +630,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .contact-list a:hover { background: rgba(95, 103, 73, .24); }
 
 .footer {
-  max-width: var(--max); margin: 0 auto; padding: 20px 8px 32px;
+  max-width: var(--max); margin: 0 auto; padding: 32px 32px 48px;
   border-top: 1px solid var(--line); display: grid; grid-template-columns: 220px 1fr auto;
   gap: 24px; align-items: center; color: var(--muted-2); font-size: 13px;
 }
@@ -641,12 +641,10 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 
 .footer-slogan {
   text-align: center;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.5;
+  color: var(--gold);
+  font-size: clamp(24px, 4vw, 32px);
   font-family: "Cormorant Garamond", serif;
-  font-style: italic;
-  font-size: 18px;
+  line-height: 1.2;
 }
 
 .footer-contact-links {
@@ -731,7 +729,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   .section-heading-content { align-items: flex-start; text-align: left; }
   .mission, .houses, .feature, .calendar-section, .territory, .reviews, .cta, .footer, .intro { padding-left: 0; padding-right: 0; }
   .cta { padding-bottom: 12px; }
-  .footer { padding-top: 16px; padding-bottom: 60px; }
+  .footer { padding-top: 24px; padding-bottom: 60px; padding-left: 16px; padding-right: 16px; }
   .calendar-card, .checkout-card, .feature-panel, .cta-card, .territory-stage { padding: 20px; }
   .territory-content > div:first-child { padding: 17px; }
   .calendar-day { min-height: 54px; padding: 7px; }

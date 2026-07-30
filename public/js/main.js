@@ -1377,15 +1377,22 @@
       };
       
       const links = [];
-      if (contacts.phone) links.push({ label: contacts.phone, href: getHref('phone', contacts.phone) });
-      if (contacts.max) links.push({ label: 'МАКС', href: getHref('max', contacts.max) });
-      if (contacts.telegram) links.push({ label: 'Telegram', href: getHref('telegram', contacts.telegram) });
-      if (contacts.whatsapp) links.push({ label: 'WhatsApp', href: getHref('whatsapp', contacts.whatsapp) });
-      if (contacts.vk) links.push({ label: 'ВКонтакте', href: getHref('vk', contacts.vk) });
-      if (contacts.ok) links.push({ label: 'Одноклассники', href: getHref('ok', contacts.ok) });
-      if (contacts.email) links.push({ label: contacts.email, href: getHref('email', contacts.email) });
+      const addLink = (icon, label, href) => {
+        links.push({ icon, label, href });
+      };
 
-      footerContactLinks.innerHTML = links.map(link => `<a href="${link.href}" target="_blank" rel="noopener">${link.label}</a>`).join('');
+      if (contacts.phone) addLink('phone', contacts.phone, getHref('phone', contacts.phone));
+      if (contacts.max) addLink('message-square', 'МАКС', getHref('max', contacts.max));
+      if (contacts.telegram) addLink('send', 'Telegram', getHref('telegram', contacts.telegram));
+      if (contacts.whatsapp) addLink('message-circle', 'WhatsApp', getHref('whatsapp', contacts.whatsapp));
+      if (contacts.vk) addLink('hash', 'ВКонтакте', getHref('vk', contacts.vk));
+      if (contacts.ok) addLink('smile', 'Одноклассники', getHref('ok', contacts.ok));
+      if (contacts.email) addLink('mail', contacts.email, getHref('email', contacts.email));
+
+      footerContactLinks.innerHTML = links.map(link => 
+        `<a href="${link.href}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="${link.icon}" style="width:16px; height:16px; stroke-width:2.5;"></i>${link.label}</a>`
+      ).join('');
+      if (window.lucide) window.lucide.createIcons();
     }
 
     const footerSlogan = document.getElementById('footer-slogan');
