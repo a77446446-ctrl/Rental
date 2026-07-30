@@ -638,6 +638,45 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 28px; }
 .footer-links a { transition: color .25s ease; }
 .footer-links a:hover { color: var(--cream); }
+
+.footer-slogan {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 18px;
+}
+
+.footer-contact-links {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-contact-links a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(237, 228, 214, .045);
+  color: var(--cream);
+  font-weight: 700;
+  font-size: 12px;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+  text-decoration: none;
+}
+
+.footer-contact-links a:hover {
+  background: rgba(237, 228, 214, .08);
+  border-color: rgba(237, 228, 214, 0.2);
+}
 .footer-contact { text-align: right; line-height: 1.6; }
 
 /* Loading skeleton */
@@ -666,6 +705,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   .footer { grid-template-columns: 1fr; }
   .footer-links { justify-content: flex-start; }
   .footer-contact { text-align: left; }
+  .footer-contact-links { justify-content: flex-start; }
 }
 
 @media (max-width: 760px) {

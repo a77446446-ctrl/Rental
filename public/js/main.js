@@ -1358,12 +1358,33 @@
       }
     }
 
-    const footerContact = document.getElementById('footer-contact-info');
-    if (footerContact) {
-      const contactLines = [];
-      if (contacts.phone) contactLines.push(contacts.phone);
-      if (contacts.email) contactLines.push(contacts.email);
-      footerContact.innerHTML = contactLines.length ? contactLines.join('<br>') : 'Телефон и email заполняются администратором';
+    const footerContactLinks = document.getElementById('footer-contact-links');
+    if (footerContactLinks) {
+      const getHref = (type, val) => {
+        if (!val) return '#';
+        if (type === 'phone') return 'tel:' + val.replace(/[^\d+]/g, '');
+        if (type === 'email') return 'mailto:' + val;
+        if (type === 'whatsapp') {
+          if (val.startsWith('http')) return val;
+          return 'https://wa.me/' + val.replace(/[^\d]/g, '');
+        }
+        if (type === 'telegram') {
+          if (val.startsWith('http')) return val;
+          return 'https://t.me/' + val.replace('@', '');
+        }
+        if (type === 'vk' || type === 'ok') return val.startsWith('http') ? val : 'https://' + val;
+        return val;
+      };
+      
+      const links = [];
+      if (contacts.phone) links.push({ label: contacts.phone, href: getHref('phone', contacts.phone) });
+      if (contacts.telegram) links.push({ label: 'Telegram', href: getHref('telegram', contacts.telegram) });
+      if (contacts.whatsapp || contacts.phone) links.push({ label: 'WhatsApp', href: getHref('whatsapp', contacts.whatsapp || contacts.phone) });
+      if (contacts.vk) links.push({ label: 'ВКонтакте', href: getHref('vk', contacts.vk) });
+      if (contacts.ok) links.push({ label: 'Одноклассники', href: getHref('ok', contacts.ok) });
+      if (contacts.email) links.push({ label: contacts.email, href: getHref('email', contacts.email) });
+
+      footerContactLinks.innerHTML = links.map(link => `<a href="${link.href}" target="_blank" rel="noopener">${link.label}</a>`).join('');
     }
 
     if (contacts.background_url) {
