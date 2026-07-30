@@ -1378,8 +1378,9 @@
       
       const links = [];
       if (contacts.phone) links.push({ label: contacts.phone, href: getHref('phone', contacts.phone) });
+      if (contacts.max) links.push({ label: 'МАКС', href: contacts.max.startsWith('http') ? contacts.max : 'https://' + contacts.max });
       if (contacts.telegram) links.push({ label: 'Telegram', href: getHref('telegram', contacts.telegram) });
-      if (contacts.whatsapp || contacts.phone) links.push({ label: 'WhatsApp', href: getHref('whatsapp', contacts.whatsapp || contacts.phone) });
+      if (contacts.whatsapp) links.push({ label: 'WhatsApp', href: getHref('whatsapp', contacts.whatsapp) });
       if (contacts.vk) links.push({ label: 'ВКонтакте', href: getHref('vk', contacts.vk) });
       if (contacts.ok) links.push({ label: 'Одноклассники', href: getHref('ok', contacts.ok) });
       if (contacts.email) links.push({ label: contacts.email, href: getHref('email', contacts.email) });

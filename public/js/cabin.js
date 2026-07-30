@@ -108,6 +108,7 @@ function applyCabinBrand(mainpage) {
 
   const links = [];
   if (contacts.phone) links.push({ label: contacts.phone, href: contactHref('phone', contacts.phone) });
+  if (contacts.max) links.push({ label: 'МАКС', href: contacts.max.startsWith('http') ? contacts.max : 'https://' + contacts.max });
   if (contacts.telegram || contacts.telegram_url) links.push({ label: 'Telegram', href: contactHref('telegram', contacts.telegram_url || contacts.telegram) });
   if (contacts.whatsapp || contacts.whatsapp_url) links.push({ label: 'WhatsApp', href: contactHref('whatsapp', contacts.whatsapp_url || contacts.whatsapp) });
   if (contacts.vk) links.push({ label: 'ВКонтакте', href: contacts.vk.startsWith('http') ? contacts.vk : 'https://' + contacts.vk });
