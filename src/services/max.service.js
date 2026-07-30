@@ -433,11 +433,10 @@ async function handleMaxWebhook(payload, saveMessageFn) {
     const uploadedAttachment = await uploadMaxAttachment(rawAttachment);
     if (uploadedAttachment) {
       await saveMessageFn(chatToken, JSON.stringify(uploadedAttachment), 'admin');
-      return;
     }
   }
 
-  // 2. Если вложений нет, сохраняем текстовый ответ
+  // 2. Сохраняем текстовый ответ (или подпись к фото)
   const replyText = textRaw;
   if (replyText && typeof saveMessageFn === 'function') {
     const sanitized = sanitizeMessageText(replyText);
