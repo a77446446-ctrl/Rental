@@ -197,7 +197,7 @@ async function sendBookingNotification(bookingData) {
   } = bookingData;
 
   const tokenTag = chatToken
-    ? `\n\n💬 Чтобы ответить гостю на сайт, зажмите это сообщение и нажмите «Ответить».${encodeInvisibleToken(chatToken)}`
+    ? `\n\n💬 Чтобы ответить гостю на сайт, зажмите это сообщение и нажмите «Ответить».\n#token:${chatToken}`
     : '';
 
   const text = `
@@ -213,7 +213,11 @@ async function sendBookingNotification(bookingData) {
 💬 Контакт MAX: ${guestTelegram ? guestTelegram : 'не указан'}${tokenTag}
   `.trim();
 
-  const adminUrl = new URL('/admin/bookings.html', config.baseUrl).toString();
+  let baseUrlStr = config.baseUrl || 'http://localhost:3000';
+  if (!/^https?:\/\//i.test(baseUrlStr)) {
+    baseUrlStr = 'https://' + baseUrlStr;
+  }
+  const adminUrl = new URL('/admin/bookings.html', baseUrlStr).toString();
   const isLocalAdminUrl = /(^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:|\/|$))/i.test(adminUrl);
 
   const messagePayload = {
@@ -239,7 +243,8 @@ async function notifyAdmin(token, text, guestName = null) {
 
 ${text}
 
-💬 Чтобы ответить гостю, зажмите это сообщение и нажмите «Ответить».${encodeInvisibleToken(token)}
+💬 Чтобы ответить гостю, зажмите это сообщение и нажмите «Ответить».
+#token:${token}
   `.trim();
 
   return await callMaxApi('sendMessage', {
@@ -361,7 +366,8 @@ async function notifyAdminAttachment(token, attachment, guestName = null) {
   const caption = `
 💬 Новое ${label.toLowerCase()} из чата ${alias}
 
-💬 Чтобы ответить гостю, зажмите это сообщение и нажмите «Ответить».${encodeInvisibleToken(token)}
+💬 Чтобы ответить гостю, зажмите это сообщение и нажмите «Ответить».
+#token:${token}
   `.trim();
 
   const attType = attachment.mediaType === 'image' ? 'image' : 'file';

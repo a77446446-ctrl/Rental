@@ -126,6 +126,24 @@
       els.attachBtn.addEventListener('click', function() { els.fileInput.click(); });
       els.fileInput.addEventListener('change', sendAttachment);
     }
+    // 4.5. Поддержка клавиатуры на мобильных устройствах
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', function() {
+        if (els.widget.classList.contains('is-open') && window.innerWidth <= 760) {
+          var offset = window.innerHeight - window.visualViewport.height;
+          if (offset > 0) {
+            els.widget.style.setProperty('bottom', (offset + 10) + 'px', 'important');
+            els.widget.style.setProperty('max-height', 'calc(' + window.visualViewport.height + 'px - 20px)', 'important');
+          } else {
+            els.widget.style.removeProperty('bottom');
+            els.widget.style.removeProperty('max-height');
+          }
+        } else {
+          els.widget.style.removeProperty('bottom');
+          els.widget.style.removeProperty('max-height');
+        }
+      });
+    }
 
     // 5. Автооткрытие по параметру из URL (после успешной заявки)
     if (params.get('openChat') === 'true') {
