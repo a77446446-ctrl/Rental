@@ -121,55 +121,106 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const groups = {};
     filtered.forEach((item) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'conversation-item' + (item.token === selectedToken ? ' active' : '');
+      const dateKey = formatDate(item.last_at).split(',')[0];
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].push(item);
+    });
 
-      const title = document.createElement('div');
-      title.className = 'conversation-title';
+    const dateKeys = Object.keys(groups).sort((a, b) => {
+      const pA = a.split('.');
+      const pB = b.split('.');
+      return new Date(pB[2], pB[1] - 1, pB[0]) - new Date(pA[2], pA[1] - 1, pA[0]);
+    });
 
-      const name = document.createElement('span');
-      name.textContent = item.title;
-      title.appendChild(name);
-
-      if (item.unread_count > 0) {
-        const unread = document.createElement('span');
-        unread.className = 'unread-pill';
-        unread.textContent = item.unread_count;
-        title.appendChild(unread);
+    dateKeys.forEach((dateKey, index) => {
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'chat-date-group';
+      
+      const headerBtn = document.createElement('button');
+      headerBtn.className = 'chat-date-group-header';
+      headerBtn.type = 'button';
+      const unreadInGroup = groups[dateKey].reduce((sum, item) => sum + (item.unread_count > 0 ? 1 : 0), 0);
+      const unreadBadge = unreadInGroup > 0 ? `<span class="unread-pill" style="margin-left: 8px;">${unreadInGroup}</span>` : '';
+      headerBtn.innerHTML = `<div style="display:flex;align-items:center;"><span>${dateKey}</span>${unreadBadge}</div> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+      
+      const bodyDiv = document.createElement('div');
+      bodyDiv.className = 'chat-date-group-body';
+      
+      // Open the first group by default, or open if it contains the selectedToken
+      const hasActive = groups[dateKey].some(item => item.token === selectedToken);
+      if (hasActive || (index === 0 && !selectedToken)) {
+        headerBtn.classList.add('open');
+        bodyDiv.style.display = 'block';
+      } else {
+        bodyDiv.style.display = 'none';
       }
 
-      const subtitle = document.createElement('div');
-      subtitle.className = 'conversation-token';
-      subtitle.textContent = item.token_id;
-      subtitle.style.fontSize = '12px';
-      subtitle.style.color = '#8e8e8e';
-      subtitle.style.marginBottom = '4px';
-
-      const last = document.createElement('div');
-      last.className = 'conversation-last';
-      last.textContent = (item.last_sender === 'admin' ? 'Вы: ' : 'Гость: ') + messagePreview(item.last_message || '');
-
-      const date = document.createElement('div');
-      date.className = 'conversation-last';
-      date.textContent = formatDate(item.last_at);
-
-      button.appendChild(title);
-      button.appendChild(subtitle);
-      button.appendChild(last);
-      button.appendChild(date);
-      button.addEventListener('click', () => {
-        if (isMobileChat() && selectedToken === item.token && chatThread.classList.contains('is-mobile-open')) {
-          selectedToken = null;
-          closeMobileThread();
-          renderConversationList();
-          return;
+      headerBtn.addEventListener('click', () => {
+        const isClosed = bodyDiv.style.display === 'none';
+        document.querySelectorAll('.chat-date-group-body').forEach(b => b.style.display = 'none');
+        document.querySelectorAll('.chat-date-group-header').forEach(h => h.classList.remove('open'));
+        if (isClosed) {
+          bodyDiv.style.display = 'block';
+          headerBtn.classList.add('open');
         }
-        selectConversation(item.token);
       });
 
-      chatList.appendChild(button);
+      groups[dateKey].forEach((item) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'conversation-item' + (item.token === selectedToken ? ' active' : '');
+
+        const title = document.createElement('div');
+        title.className = 'conversation-title';
+
+        const name = document.createElement('span');
+        name.textContent = item.title;
+        title.appendChild(name);
+
+        if (item.unread_count > 0) {
+          const unread = document.createElement('span');
+          unread.className = 'unread-pill';
+          unread.textContent = item.unread_count;
+          title.appendChild(unread);
+        }
+
+        const subtitle = document.createElement('div');
+        subtitle.className = 'conversation-token';
+        subtitle.textContent = item.token_id;
+        subtitle.style.fontSize = '12px';
+        subtitle.style.color = '#8e8e8e';
+        subtitle.style.marginBottom = '4px';
+
+        const last = document.createElement('div');
+        last.className = 'conversation-last';
+        last.textContent = (item.last_sender === 'admin' ? 'Вы: ' : 'Гость: ') + messagePreview(item.last_message || '');
+
+        const date = document.createElement('div');
+        date.className = 'conversation-last';
+        date.textContent = formatDate(item.last_at).split(', ')[1];
+
+        button.appendChild(title);
+        button.appendChild(subtitle);
+        button.appendChild(last);
+        button.appendChild(date);
+        button.addEventListener('click', () => {
+          if (isMobileChat() && selectedToken === item.token && chatThread.classList.contains('is-mobile-open')) {
+            selectedToken = null;
+            closeMobileThread();
+            renderConversationList();
+            return;
+          }
+          selectConversation(item.token);
+        });
+
+        bodyDiv.appendChild(button);
+      });
+
+      groupDiv.appendChild(headerBtn);
+      groupDiv.appendChild(bodyDiv);
+      chatList.appendChild(groupDiv);
     });
     placeMobileThread();
   }

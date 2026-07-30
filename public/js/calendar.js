@@ -257,9 +257,11 @@
     this.titleEl.textContent = MONTH_NAMES[this.currentMonth] + ' ' + this.currentYear;
 
     if (this.subtitleEl) {
-      this.subtitleEl.textContent = this.cabinName
-        ? this.cabinName + ' · цена за ночь'
-        : 'Выберите домик';
+      if (this.cabinName) {
+        this.subtitleEl.innerHTML = '<span style="color: var(--gold); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; display: inline-flex; align-items: center; gap: 6px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' + escapeHtml(this.cabinName) + '</span> · цена за ночь';
+      } else {
+        this.subtitleEl.textContent = 'Выберите домик';
+      }
     }
 
     /* Очищаем сетку */
