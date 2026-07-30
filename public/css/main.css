@@ -3239,4 +3239,37 @@ body .chat-widget:has(.chat-body[style*="none"]):hover #chat-toggle > svg:not(.c
   animation-play-state: paused;
 }
 
+/* ── FAB appear animation (closing chat → gold ball) ── */
+@keyframes eco-fab-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes eco-fab-content-in {
+  0%, 60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+body .chat-widget.fab-appear {
+  animation: eco-fab-pop .32s cubic-bezier(.34, 1.56, .64, 1) both !important;
+}
+
+body .chat-widget.fab-appear #chat-toggle .chat-ring-label,
+body .chat-widget.fab-appear #chat-toggle > svg:not(.chat-ring-label) {
+  animation: eco-fab-content-in .32s ease both !important;
+}
 

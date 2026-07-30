@@ -200,12 +200,18 @@
         syncToggleIcon(true);
       });
     } else {
-      els.widget.classList.add('is-closing');
+      /* Мгновенно переключаемся в состояние «кнопка» без промежуточного
+         большого золотого пятна. Сначала скрываем тело чата, чтобы CSS-
+         селектор :has(.chat-body[style*="none"]) активировал стили FAB,
+         затем показываем кнопку с короткой анимацией появления. */
+      els.body.style.display = 'none';
+      syncToggleIcon(false);
+      els.widget.classList.remove('is-closing');
+      /* Короткая анимация появления золотой капли */
+      els.widget.classList.add('fab-appear');
       chatTransitionTimer = setTimeout(function() {
-        els.body.style.display = 'none';
-        els.widget.classList.remove('is-closing');
-        syncToggleIcon(false);
-      }, 150);
+        els.widget.classList.remove('fab-appear');
+      }, 320);
     }
     
     document.body.classList.toggle('chat-open', isOpening);
