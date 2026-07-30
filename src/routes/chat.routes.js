@@ -202,13 +202,15 @@ router.get('/max-media', async (req, res) => {
       return res.status(400).send('Некорректный URL');
     }
 
-    const headers = {};
+    // Для MAX CDN ссылок добавляем access_token как query-параметр
+    let fetchUrl = rawUrl;
     if (config.maxBotToken && rawUrl.includes('max.ru')) {
-      headers['Authorization'] = config.maxBotToken;
+      const sep = rawUrl.includes('?') ? '&' : '?';
+      fetchUrl = `${rawUrl}${sep}access_token=${encodeURIComponent(config.maxBotToken)}`;
     }
 
-    let response = await fetch(rawUrl, { headers });
-    if (!response.ok && headers['Authorization']) {
+    let response = await fetch(fetchUrl);
+    if (!response.ok && fetchUrl !== rawUrl) {
       response = await fetch(rawUrl);
     }
 
