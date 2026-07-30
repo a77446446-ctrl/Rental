@@ -495,6 +495,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       fillTerritoryFields();
 
+      document.getElementById('footerSlogan').value = mainpageData.contacts?.footer_slogan || '';
       document.getElementById('contactLabel').value = mainpageData.contacts?.label || '';
       document.getElementById('contactTitle').value = mainpageData.contacts?.title || '';
       document.getElementById('contactDesc').value = mainpageData.contacts?.desc || '';
@@ -609,6 +610,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     mainpageData.contacts = mainpageData.contacts || {};
+    mainpageData.contacts.footer_slogan = document.getElementById('footerSlogan').value;
     mainpageData.contacts.label = document.getElementById('contactLabel').value;
     mainpageData.contacts.title = document.getElementById('contactTitle').value;
     mainpageData.contacts.desc = document.getElementById('contactDesc').value;

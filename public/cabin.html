@@ -246,14 +246,22 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0 13px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(237, 228, 214, .045);
+      padding: 0 16px;
+      border: 1px solid rgba(237, 228, 214, 0.15);
+      border-radius: 100px;
+      background: rgba(237, 228, 214, 0.03);
+      backdrop-filter: blur(8px);
       color: var(--cream);
-      font-weight: 700;
-      font-size: 12px;
+      font-weight: 600;
+      font-size: 13px;
       white-space: nowrap;
+      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+      text-decoration: none;
+    }
+    .cabin-contact-links a:hover {
+      background: rgba(237, 228, 214, 0.08);
+      border-color: rgba(237, 228, 214, 0.3);
+      transform: translateY(-2px);
     }
     @media (max-width: 760px) {
       .cabin-hero {
