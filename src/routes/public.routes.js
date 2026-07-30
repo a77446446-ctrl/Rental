@@ -750,7 +750,7 @@ router.post('/bookings', async (req, res) => {
         };
         const fCheckIn = formatD(check_in);
         const fCheckOut = formatD(check_out);
-        const msg = `Ваша заявка на бронирование домика «${cabinData.name}» успешно создана!\n\nДаты: ${fCheckIn} — ${fCheckOut}\nКоличество гостей: ${normalizedGuestsCount}\nИтоговая стоимость: ${booking.total_price} ₽\n\n---\n\nНаш администратор свяжется с вами в ближайшее время для подтверждения.\n\nВАЖНО: Пожалуйста, напишите нам любое сообщение (например, «Здравствуйте!»), чтобы администратор смог ответить вам прямо здесь.\nЕсли в течение 10 минут с вами не связались, попробуйте перезвонить по номеру, указанному в контактах.`;
+        const msg = `Ваша заявка на бронирование домика «${cabinData.name}» успешно создана!\n\nДаты: ${fCheckIn} — ${fCheckOut}\nКоличество гостей: ${normalizedGuestsCount}\nИтоговая стоимость: ${booking.total_price} ₽\n\n---\n\nНаш администратор свяжется с вами в ближайшее время для подтверждения.\n\nЕсли в течение 10 минут с вами не связались, попробуйте перезвонить по номеру, указанному в контактах.`;
         await chatService.saveMessage(chat_token, msg, 'admin');
       } catch (err) {
         console.error('[public.routes] Ошибка отправки сообщения в чат:', err);
