@@ -151,9 +151,15 @@
 
       <div class="chat-admin-shell" id="chatAdminShell">
         <section class="chat-list" id="chatListSection">
-          <div class="chat-list-head">
-            <h3>Диалоги</h3>
-            <span id="chatListMeta">Загрузка...</span>
+          <div class="chat-list-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3>Диалоги</h3>
+              <span id="chatListMeta">Загрузка...</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="date" id="chatDateFilter" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 6px 10px; border-radius: 6px; font-size: 13px; color-scheme: dark;">
+              <button class="btn btn-ghost" id="clearChatFilterBtn" style="padding: 4px 8px; min-height: 28px; font-size: 12px; display: none;">Все</button>
+            </div>
           </div>
           <div id="chatList" class="chat-list-body">
             <div class="empty-state">Загрузка чатов...</div>

@@ -16,9 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const replyBtn = document.getElementById('replyBtn');
   const attachBtn = document.getElementById('adminChatAttachBtn');
   const fileInput = document.getElementById('adminChatFileInput');
+  const chatDateFilter = document.getElementById('chatDateFilter');
+  const clearChatFilterBtn = document.getElementById('clearChatFilterBtn');
 
   let conversations = [];
   const isMobileChat = () => window.matchMedia('(max-width: 760px)').matches;
+
+  if (chatDateFilter && clearChatFilterBtn) {
+    chatDateFilter.addEventListener('change', () => {
+      clearChatFilterBtn.style.display = chatDateFilter.value ? 'block' : 'none';
+      renderConversationList();
+    });
+    clearChatFilterBtn.addEventListener('click', () => {
+      chatDateFilter.value = '';
+      clearChatFilterBtn.style.display = 'none';
+      renderConversationList();
+    });
+  }
 
   function closeMobileThread() {
     if (chatThread && chatShell && chatThread.parentElement !== chatShell) chatShell.appendChild(chatThread);
@@ -91,16 +105,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderConversationList() {
     closeMobileThread();
     clearNode(chatList);
-    chatListMeta.textContent = conversations.length
-      ? conversations.length + ' диалогов'
+
+    let filtered = conversations;
+    if (chatDateFilter && chatDateFilter.value) {
+      const filterDateStr = new Date(chatDateFilter.value).toDateString();
+      filtered = conversations.filter(c => new Date(c.last_at).toDateString() === filterDateStr);
+    }
+
+    chatListMeta.textContent = filtered.length
+      ? filtered.length + ' диалогов'
       : 'Нет диалогов';
 
-    if (conversations.length === 0) {
-      setEmpty(chatList, 'Пока нет сообщений из виджета');
+    if (filtered.length === 0) {
+      setEmpty(chatList, conversations.length > 0 ? 'За выбранную дату нет чатов' : 'Пока нет сообщений из виджета');
       return;
     }
 
-    conversations.forEach((item) => {
+    filtered.forEach((item) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'conversation-item' + (item.token === selectedToken ? ' active' : '');

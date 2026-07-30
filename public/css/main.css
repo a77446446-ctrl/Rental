@@ -2740,6 +2740,35 @@ body .chat-widget:has(.chat-body[style*="none"]) {
   animation: eco-chat-flip 5.4s cubic-bezier(.4, 0, .2, 1) infinite !important;
 }
 
+#saveMainpageBtn, #saveServiceBtn, #savePricesBtn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(187, 164, 111, 0.2);
+  min-height: 48px !important;
+  padding: 0 32px !important;
+  font-size: 15px !important;
+  border-radius: 99px;
+  transition: transform 0.2s, background 0.2s, opacity 0.2s;
+}
+
+#saveMainpageBtn:hover, #saveServiceBtn:hover, #savePricesBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.7), 0 0 0 1px rgba(187, 164, 111, 0.4);
+}
+
+@media (max-width: 900px) {
+  #saveMainpageBtn, #saveServiceBtn, #savePricesBtn {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    width: calc(100% - 32px) !important;
+    border-radius: 12px;
+    padding: 0 16px !important;
+  }
+}
+
 body .chat-widget:has(.chat-body[style*="none"])::before,
 body .chat-widget:has(.chat-body[style*="none"])::after {
   display: none !important;
