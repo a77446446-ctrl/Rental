@@ -91,7 +91,16 @@ function setLogo(markEl, logo, brandName) {
   }
 }
 
-function contactHref(type, value) { if (!value) return ''; const raw = String(value).trim(); if (/^https?:\/\//i.test(raw)) return raw; if (type === 'phone') return 'tel:' + normalizePhone(raw); if (type === 'email') return 'mailto:' + raw; if (type === 'whatsapp') return 'https://wa.me/' + onlyDigits(raw); if (type === 'telegram') return 'https://t.me/' + raw.replace(/^@/, ''); return raw; }
+function contactHref(type, value) { 
+  if (!value) return ''; 
+  const raw = String(value).trim(); 
+  if (/^https?:\/\//i.test(raw)) return raw; 
+  if (type === 'phone') return 'tel:' + normalizePhone(raw); 
+  if (type === 'email') return 'mailto:' + raw; 
+  if (type === 'whatsapp') return 'https://wa.me/' + onlyDigits(raw); 
+  if (type === 'telegram' || type === 'max') return 'https://t.me/' + raw.replace(/^@/, ''); 
+  return 'https://' + raw; 
+}
 
 function applyCabinBrand(mainpage) {
   const brandName = getBrandName(mainpage);
@@ -108,11 +117,11 @@ function applyCabinBrand(mainpage) {
 
   const links = [];
   if (contacts.phone) links.push({ label: contacts.phone, href: contactHref('phone', contacts.phone) });
-  if (contacts.max) links.push({ label: 'МАКС', href: contacts.max.startsWith('http') ? contacts.max : 'https://' + contacts.max });
+  if (contacts.max) links.push({ label: 'МАКС', href: contactHref('max', contacts.max) });
   if (contacts.telegram || contacts.telegram_url) links.push({ label: 'Telegram', href: contactHref('telegram', contacts.telegram_url || contacts.telegram) });
   if (contacts.whatsapp || contacts.whatsapp_url) links.push({ label: 'WhatsApp', href: contactHref('whatsapp', contacts.whatsapp_url || contacts.whatsapp) });
-  if (contacts.vk) links.push({ label: 'ВКонтакте', href: contacts.vk.startsWith('http') ? contacts.vk : 'https://' + contacts.vk });
-  if (contacts.ok) links.push({ label: 'Одноклассники', href: contacts.ok.startsWith('http') ? contacts.ok : 'https://' + contacts.ok });
+  if (contacts.vk) links.push({ label: 'ВКонтакте', href: contactHref('vk', contacts.vk) });
+  if (contacts.ok) links.push({ label: 'Одноклассники', href: contactHref('ok', contacts.ok) });
   if (contacts.email) links.push({ label: contacts.email, href: contactHref('email', contacts.email) });
 
   const linksEl = document.getElementById('cabin-contact-links');

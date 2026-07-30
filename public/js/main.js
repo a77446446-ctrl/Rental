@@ -1368,17 +1368,17 @@
           if (val.startsWith('http')) return val;
           return 'https://wa.me/' + val.replace(/[^\d]/g, '');
         }
-        if (type === 'telegram') {
+        if (type === 'telegram' || type === 'max') {
           if (val.startsWith('http')) return val;
           return 'https://t.me/' + val.replace('@', '');
         }
         if (type === 'vk' || type === 'ok') return val.startsWith('http') ? val : 'https://' + val;
-        return val;
+        return val.startsWith('http') ? val : 'https://' + val;
       };
       
       const links = [];
       if (contacts.phone) links.push({ label: contacts.phone, href: getHref('phone', contacts.phone) });
-      if (contacts.max) links.push({ label: 'МАКС', href: contacts.max.startsWith('http') ? contacts.max : 'https://' + contacts.max });
+      if (contacts.max) links.push({ label: 'МАКС', href: getHref('max', contacts.max) });
       if (contacts.telegram) links.push({ label: 'Telegram', href: getHref('telegram', contacts.telegram) });
       if (contacts.whatsapp) links.push({ label: 'WhatsApp', href: getHref('whatsapp', contacts.whatsapp) });
       if (contacts.vk) links.push({ label: 'ВКонтакте', href: getHref('vk', contacts.vk) });
