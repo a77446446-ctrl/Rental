@@ -163,6 +163,24 @@
         }
       }, 300);
     }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        if (document.body.classList.contains('chat-open') && window.innerWidth <= 760) {
+          els.widget.style.height = window.visualViewport.height + 'px';
+          els.widget.style.top = window.visualViewport.offsetTop + 'px';
+        } else {
+          els.widget.style.height = '';
+          els.widget.style.top = '';
+        }
+        scrollToBottom();
+      });
+      window.visualViewport.addEventListener('scroll', () => {
+        if (document.body.classList.contains('chat-open') && window.innerWidth <= 760) {
+          els.widget.style.top = window.visualViewport.offsetTop + 'px';
+        }
+      });
+    }
   }
 
   function syncToggleIcon(isOpen) {
@@ -197,6 +215,14 @@
     }
     
     document.body.classList.toggle('chat-open', isOpening);
+    
+    if (isOpening && window.visualViewport && window.innerWidth <= 760) {
+      els.widget.style.height = window.visualViewport.height + 'px';
+      els.widget.style.top = window.visualViewport.offsetTop + 'px';
+    } else if (!isOpening) {
+      els.widget.style.height = '';
+      els.widget.style.top = '';
+    }
     
     if (!isOpening) {
       localStorage.removeItem('chat_force_open');

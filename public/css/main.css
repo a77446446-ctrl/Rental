@@ -1797,23 +1797,41 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 @media (max-width: 760px) {
   .chat-widget {
     box-sizing: border-box;
-    left: 8px !important;
-    right: 8px !important;
-    bottom: calc(72px + env(safe-area-inset-bottom)) !important;
-    width: auto !important;
-    max-width: calc(100vw - 16px) !important;
-    max-height: min(390px, calc(100dvh - 112px));
     overflow: hidden;
   }
 
   .chat-widget:has(.chat-body[style*="none"]) {
+    left: 8px !important;
     right: auto !important;
+    bottom: calc(72px + env(safe-area-inset-bottom)) !important;
     width: min(210px, calc(100vw - 16px)) !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .chat-widget:not(:has(.chat-body[style*="none"])) {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    max-width: 100% !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    z-index: 100000 !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-widget:not(:has(.chat-body[style*="none"])) .chat-header {
+    border-radius: 0 !important;
   }
 
   .chat-body {
-    height: min(300px, calc(100dvh - 178px));
-    min-height: 220px;
+    height: 100% !important;
+    flex-grow: 1;
+    min-height: 0;
   }
 
   .chat-messages {
