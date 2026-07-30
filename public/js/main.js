@@ -1368,9 +1368,14 @@
           if (val.startsWith('http')) return val;
           return 'https://wa.me/' + val.replace(/[^\d]/g, '');
         }
-        if (type === 'telegram' || type === 'max') {
+        if (type === 'telegram') {
           if (val.startsWith('http')) return val;
           return 'https://t.me/' + val.replace('@', '');
+        }
+        if (type === 'max') {
+          if (val.startsWith('http')) return val;
+          // Если это номер телефона, попытаемся перевести на веб-версию (требует уточнения URL у пользователя)
+          return 'https://' + val; // Временная заглушка, пока не узнаем точный URL
         }
         if (type === 'vk' || type === 'ok') return val.startsWith('http') ? val : 'https://' + val;
         return val.startsWith('http') ? val : 'https://' + val;

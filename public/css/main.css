@@ -740,7 +740,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   .section-heading-content { align-items: flex-start; text-align: left; }
   .mission, .houses, .feature, .calendar-section, .territory, .reviews, .cta, .footer, .intro { padding-left: 0; padding-right: 0; }
   .cta { padding-bottom: 12px; }
-  .footer { padding-top: 24px; padding-bottom: 60px; padding-left: 16px; padding-right: 16px; }
+  .footer { padding-top: 24px; padding-bottom: 60px; padding-left: max(16px, calc((100vw - 400px) / 2)) !important; padding-right: max(16px, calc((100vw - 400px) / 2)) !important; }
   .calendar-card, .checkout-card, .feature-panel, .cta-card, .territory-stage { padding: 20px; }
   .territory-content > div:first-child { padding: 17px; }
   .calendar-day { min-height: 54px; padding: 7px; }

@@ -249,7 +249,7 @@ function renderCabinDetails(cabin, cabinAmenities, houseItems) {
         <span style="font-size: 14px; font-weight: normal; color: var(--muted);">от</span> ${EcoApi.formatPrice(cabin.base_price)} <span>/ сутки</span>
       </div>
       <a href="/?cabin=${cabin.id}#calendar" style="display: inline-flex; align-items: center; gap: 8px; color: var(--gold); font-weight: 600; font-size: 15px; text-decoration: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(-45deg);"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/><path d="M12 8v8"/><path d="m8 12 4 4 4-4"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(90deg);"><path d="M18 11V6a2 2 0 0 0-4 0v4"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V3a2 2 0 0 0-4 0v9"/><path d="M6 14v-2a2 2 0 0 0-4 0v5.5C2 21.5 6 22 12 22s9-3 9-8V9a2 2 0 0 0-4 0v4"/></svg>
         <span style="border-bottom: 1px solid var(--gold); padding-bottom: 2px;">Выбрать даты</span>
       </a>
     </div>
