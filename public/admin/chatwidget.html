@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -223,12 +223,11 @@
     // Загрузка текущих настроек
     async function loadSettings() {
       try {
-        var token = localStorage.getItem('eco_admin_token');
-        if (!token) { window.location.href = '/admin/login.html'; return; }
-
-        var res = await fetch('/api/admin/settings', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        });
+        var res = await fetch('/api/admin/settings');
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = '/admin/login.html';
+          return;
+        }
         var json = await res.json();
         if (json.success && json.data) {
           currentColor = json.data.chatWidgetColor || 'gold';
@@ -288,18 +287,20 @@
         saveBtn.disabled = true;
         saveBtn.textContent = 'Сохранение...';
 
-        var token = localStorage.getItem('eco_admin_token');
         var res = await fetch('/api/admin/settings', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             chatWidgetColor: currentColor,
             chatWidgetText: ringTextInput.value.trim()
           })
         });
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = '/admin/login.html';
+          return;
+        }
         var json = await res.json();
         if (json.success) {
           window.showToast('Настройки виджета чата сохранены!', 'success');
@@ -315,9 +316,14 @@
     });
 
     // Логаут
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-      localStorage.removeItem('eco_admin_token');
-      window.location.href = '/admin/login.html';
+    document.getElementById('logoutBtn').addEventListener('click', async function() {
+      if (!confirm('Выйти из панели управления?')) return;
+      try {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        window.location.href = '/admin/login.html';
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
     });
 
     loadSettings();
