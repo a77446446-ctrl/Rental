@@ -8,11 +8,13 @@ const IMAGE_EXTENSIONS = {
   'image/webp': 'webp',
   'image/avif': 'avif',
   'image/gif': 'gif',
+  'video/mp4': 'mp4',
+  'video/webm': 'webm',
 };
 
 function assertImageMime(mimeType) {
   const extension = IMAGE_EXTENSIONS[mimeType];
-  if (!extension) throw new Error('Допустимы только JPG, PNG, WEBP, AVIF или GIF');
+  if (!extension) throw new Error('Допустимы только JPG, PNG, WEBP, AVIF, GIF, MP4 или WEBM');
   return extension;
 }
 
@@ -64,7 +66,7 @@ async function uploadImage(fileBuffer, _originalName, mimeType) {
   if (!supabaseAdmin) throw new Error('Хранилище временно недоступно');
   assertImageMime(mimeType);
   const detected = detectMediaFile(fileBuffer, mimeType);
-  if (detected.mediaType !== 'image') throw mediaValidationError('Файл не является изображением');
+  if (detected.mediaType !== 'image' && detected.mediaType !== 'video') throw mediaValidationError('Файл не является изображением или видео');
   const extension = detected.extension;
   const storagePath = `cabins/${crypto.randomUUID()}.${extension}`;
 

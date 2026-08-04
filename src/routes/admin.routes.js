@@ -18,9 +18,9 @@ const router = express.Router();
 
 const photoUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 12 * 1024 * 1024 },
+  limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (_req, file, callback) => callback(null,
-    ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'].includes(file.mimetype)),
+    ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'video/mp4', 'video/webm'].includes(file.mimetype)),
 });
 const chatUpload = multer({
   storage: multer.memoryStorage(),
@@ -31,7 +31,7 @@ const chatUpload = multer({
 const handlePhotoUpload = (req, res, next) => {
   photoUpload.single('photo')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      return res.status(400).json({ success: false, error: 'Файл отклонен. Максимум 12 МБ; форматы JPG, PNG, WEBP, AVIF или GIF.' });
+      return res.status(400).json({ success: false, error: 'Файл отклонен. Максимум 50 МБ; форматы JPG, PNG, WEBP, AVIF, GIF, MP4 или WEBM.' });
     } else if (err) {
       return res.status(500).json({ success: false, error: 'Неизвестная ошибка загрузки' });
     }
