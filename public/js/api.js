@@ -472,6 +472,201 @@
         window.location.href = window.pendingNavigationUrl;
       }
     };
+     * GET /api/extra-services
+     * Возвращает массив услуг или пустой массив при ошибке.
+     */
+    getExtraServices: async function () {
+      var data = await _request('/api/extra-services');
+      return data || [];
+    },
+
+    /**
+     * Получить глобальные настройки
+     */
+    getSettings: async function () {
+      var data = await _request('/api/settings');
+      return data || { checkInTime: '16:00', checkOutTime: '14:00' };
+    },
+
+    /**
+     * Получить доп. услуги для домиков (привязки)
+     */
+    getAmenities: async function () {
+      var data = await _request('/api/amenities');
+      return data || {};
+    },
+
+    /**
+     * Получить календарь цен.
+     * GET /api/prices?cabin_id=...&from=...&to=...
+     * Все параметры необязательные.
+     * Возвращает массив объектов цен или пустой массив.
+     */
+    getPrices: async function (cabinId, from, to) {
+      var query = _buildQuery({ cabin_id: cabinId, from: from, to: to });
+      var data = await _request('/api/prices' + query);
+      return data || [];
+    },
+
+    /**
+     * Получить доступность дат для домика.
+     * GET /api/availability?cabin_id=...&from=...&to=...
+     * cabin_id — обязательный.
+     * Возвращает объект { cabin_id, cabin_name, dates: [...] } или null.
+     */
+    getAvailability: async function (cabinId, from, to) {
+      if (!cabinId) {
+        console.error('[EcoApi] getAvailability: cabin_id обязателен');
+        return null;
+      }
+      var query = _buildQuery({ cabin_id: cabinId, from: from, to: to });
+      var data = await _request('/api/availability' + query);
+      return data || null;
+    },
+
+    /** Форматирование цены: 12500 → "12 500 ₽" */
+    formatPrice: formatPrice,
+
+    /** Форматирование даты: "2026-07-12" → "12 июля" */
+    formatDateShort: formatDateShort,
+
+    /** Date → "YYYY-MM-DD" */
+    toDateString: toDateString,
+    escapeHtml: escapeHtml,
+    /**
+     * Выполнить произвольный GET запрос
+     */
+    get: async function(url) {
+      return await _request(url);
+    },
+
+    /**
+     * Выполнить POST запрос
+     */
+    post: async function(url, body) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!response.ok) {
+           const err = await response.json().catch(() => ({}));
+           throw new Error(err.error || response.statusText);
+        }
+        const json = await response.json();
+        if (!json.success) throw new Error(json.error);
+        return json.data || json;
+      } catch (err) {
+        console.error('[EcoApi] POST error:', err);
+        throw err;
+      }
+    },
+
+    /**
+     * Выполнить PATCH запрос
+     */
+    patch: async function(url, body) {
+      try {
+        const response = await fetch(url, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!response.ok) {
+           const err = await response.json().catch(() => ({}));
+           throw new Error(err.error || response.statusText);
+        }
+        const json = await response.json();
+        if (!json.success) throw new Error(json.error);
+        return json.data || json;
+      } catch (err) {
+        console.error('[EcoApi] PATCH error:', err);
+        throw err;
+      }
+    },
+
+    /**
+     * Выполнить DELETE запрос
+     */
+    delete: async function(url) {
+      try {
+        const response = await fetch(url, {
+          method: 'DELETE'
+        });
+        if (!response.ok) {
+           const err = await response.json().catch(() => ({}));
+           throw new Error(err.error || response.statusText);
+        }
+        const json = await response.json();
+        if (!json.success) throw new Error(json.error);
+        return json.data || json;
+      } catch (err) {
+        console.error('[EcoApi] DELETE error:', err);
+        throw err;
+      }
+    }
+  };
+
+  window.EcoApi = EcoApi;
+
+  // Глобальная система отслеживания несохраненных изменений
+  window.hasUnsavedChanges = false;
+  window.pendingNavigationUrl = null;
+
+  window.addEventListener('beforeunload', function(e) {
+    if (window.hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!window.hasUnsavedChanges) return;
+
+    var link = e.target.closest('a');
+    if (!link && e.target.classList.contains('admin-menu-item')) link = e.target;
+    
+    if (link && link.href && !link.hasAttribute('data-bypass-warning')) {
+      var urlObj = new URL(link.href, window.location.href);
+      if (urlObj.pathname !== window.location.pathname) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.pendingNavigationUrl = link.href;
+        window.showUnsavedWarningModal();
+      }
+    }
+  }, true);
+
+  window.showUnsavedWarningModal = function() {
+    var existing = document.getElementById('unsavedWarningModal');
+    if (existing) existing.remove();
+
+    var modalHtml = `
+      <div id="unsavedWarningModal" class="modal-overlay open" style="z-index: 99999; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 32px;">
+          <h3 style="margin-top: 0; font-size: 20px;">Несохраненные изменения</h3>
+          <p style="color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.5;">Вы не сохранили внесенные данные. Если вы уйдете со страницы, они будут потеряны.</p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <button class="btn btn-secondary" id="stayOnPageBtn" style="flex: 1;">Отмена</button>
+            <button class="btn" id="leavePageBtn" style="flex: 1; background: rgba(212,107,107,0.15); border-color: rgba(212,107,107,0.4); color: #f0c6b8;">ОК (Выйти)</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    document.getElementById('stayOnPageBtn').onclick = function() {
+      document.getElementById('unsavedWarningModal').remove();
+      window.pendingNavigationUrl = null;
+    };
+
+    document.getElementById('leavePageBtn').onclick = function() {
+      window.hasUnsavedChanges = false;
+      if (window.pendingNavigationUrl) {
+        window.location.href = window.pendingNavigationUrl;
+      }
+    };
   };
 
   // Автоматическая подгрузка глобальной темы сайта для всех страниц
@@ -479,6 +674,7 @@
     EcoApi.getSettings().then(function(settings) {
       if (settings && settings.siteTheme) {
         document.body.classList.add(settings.siteTheme);
+        try { localStorage.setItem('siteTheme', settings.siteTheme); } catch(e) {}
       }
     }).catch(function() {});
   });

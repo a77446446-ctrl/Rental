@@ -17,7 +17,7 @@
     .admin-header {
       position: sticky; top: 0; z-index: 100;
       padding: 16px 32px; border-bottom: 1px solid var(--line);
-      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      background: rgba(var(--bg-rgb), 0.85); backdrop-filter: blur(24px);
       display: flex; justify-content: space-between; align-items: center;
     }
     .admin-brand { display: flex; align-items: center; gap: 16px; }
@@ -28,8 +28,8 @@
       padding: 12px 16px; border-radius: 8px; color: var(--muted); font-weight: 600; font-size: 14px;
       cursor: pointer; transition: background 0.2s, color 0.2s; text-decoration: none; display: block;
     }
-    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
-    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    .admin-menu-item:hover { background: rgba(var(--cream-rgb), 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(var(--moss-rgb), 0.3); color: var(--gold); }
     .admin-content { padding: 32px; position: relative; }
     .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
     .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
@@ -53,20 +53,20 @@
     .messages-box { padding: 20px; overflow: auto; min-height: 420px; max-height: 520px; display: flex; flex-direction: column; gap: 12px; }
     .message-row { display: flex; }
     .message-row.admin { justify-content: flex-end; }
-    .message-bubble { max-width: 72%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: rgba(237, 228, 214, 0.05); color: var(--cream); font-size: 14px; line-height: 1.45; }
+    .message-bubble { max-width: 72%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: rgba(var(--cream-rgb), 0.05); color: var(--cream); font-size: 14px; line-height: 1.45; }
     .message-row.admin .message-bubble { background: rgba(95, 103, 73, 0.28); border-color: rgba(187, 164, 111, 0.25); }
     .message-meta { margin-top: 6px; color: var(--muted); font-size: 11px; }
     .chat-date-divider { text-align: center; margin: 16px 0 8px 0; }
-    .chat-date-divider span { background: rgba(237, 228, 214, 0.05); padding: 4px 12px; color: var(--muted); font-size: 11px; font-weight: 600; border-radius: 12px; }
+    .chat-date-divider span { background: rgba(var(--cream-rgb), 0.05); padding: 4px 12px; color: var(--muted); font-size: 11px; font-weight: 600; border-radius: 12px; }
     .reply-form { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; padding: 16px; border-top: 1px solid var(--line); }
     .reply-form textarea {
-      min-height: 46px; max-height: 140px; resize: vertical; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+      min-height: 46px; max-height: 140px; resize: vertical; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line);
       color: var(--cream); padding: 12px 14px; border-radius: 8px; font-family: inherit; font-size: 14px; color-scheme: dark;
     }
     .reply-form textarea:focus { outline: none; border-color: var(--gold); background: rgba(237, 228, 214, 0.08); }
     .admin-chat-attach {
       width: 46px; height: 46px; padding: 0; border: 1px solid var(--line); border-radius: 8px;
-      background: rgba(237, 228, 214, 0.05); color: var(--gold); cursor: pointer; font-size: 22px;
+      background: rgba(var(--cream-rgb), 0.05); color: var(--gold); cursor: pointer; font-size: 22px;
     }
     .admin-chat-attach:hover { background: rgba(95, 103, 73, 0.24); color: var(--cream); }
     .message-attachment { display: grid; gap: 8px; }
@@ -114,6 +114,7 @@
   <script defer src="/js/lucide.min.js"></script>
 </head>
 <body>
+  <script>try{var _t=localStorage.getItem('siteTheme');if(_t)document.body.classList.add(_t);}catch(e){}</script>
   <div class="noise"></div>
   <div id="toast-container" class="toast-container"></div>
 
@@ -124,7 +125,7 @@
     </div>
     <div style="display: flex; gap: 16px; align-items: center;">
       <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
-      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: var(--moss);">Выйти</button>
     </div>
   </header>
 
@@ -157,8 +158,8 @@
               <span id="chatListMeta">Загрузка...</span>
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <input type="text" id="chatNameFilter" placeholder="Поиск по имени..." style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 6px 10px; border-radius: 6px; font-size: 13px; width: 140px;">
-              <input type="date" id="chatDateFilter" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 6px 10px; border-radius: 6px; font-size: 13px; color-scheme: dark;">
+              <input type="text" id="chatNameFilter" placeholder="Поиск по имени..." style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 6px 10px; border-radius: 6px; font-size: 13px; width: 140px;">
+              <input type="date" id="chatDateFilter" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 6px 10px; border-radius: 6px; font-size: 13px; color-scheme: dark;">
               <button class="btn btn-ghost" id="clearChatFilterBtn" style="padding: 4px 8px; min-height: 28px; font-size: 12px; display: none;">Все</button>
             </div>
           </div>

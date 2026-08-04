@@ -18,7 +18,7 @@
     .admin-header {
       position: sticky; top: 0; z-index: 100;
       padding: 16px 32px; border-bottom: 1px solid var(--line);
-      background: rgba(18, 15, 13, 0.85); backdrop-filter: blur(24px);
+      background: rgba(var(--bg-rgb), 0.85); backdrop-filter: blur(24px);
       display: flex; justify-content: space-between; align-items: center;
     }
     .admin-brand { display: flex; align-items: center; gap: 16px; }
@@ -40,8 +40,8 @@
       cursor: pointer; transition: background 0.2s, color 0.2s;
       text-decoration: none; display: block;
     }
-    .admin-menu-item:hover { background: rgba(237, 228, 214, 0.05); color: var(--cream); }
-    .admin-menu-item.active { background: rgba(95, 103, 73, 0.3); color: var(--gold); }
+    .admin-menu-item:hover { background: rgba(var(--cream-rgb), 0.05); color: var(--cream); }
+    .admin-menu-item.active { background: rgba(var(--moss-rgb), 0.3); color: var(--gold); }
     
     .admin-content { padding: 32px; position: relative; }
     .admin-content-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: end; }
@@ -57,7 +57,7 @@
       font-size: 14px; color: var(--cream);
     }
     .admin-table th {
-      background: rgba(237, 228, 214, 0.05); color: var(--muted); font-weight: 600;
+      background: rgba(var(--cream-rgb), 0.05); color: var(--muted); font-weight: 600;
       text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
     }
     .admin-table tr:last-child td { border-bottom: none; }
@@ -90,7 +90,7 @@
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { font-size: 13px; color: var(--muted); font-weight: 600; }
     .form-group input, .form-group textarea, .form-group select {
-      background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line);
+      background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line);
       color: var(--cream); padding: 12px; border-radius: 8px; font-family: inherit;
     }
     .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
@@ -117,6 +117,7 @@
   <script src="/js/lucide.min.js?v=20260804-1"></script>
 </head>
 <body>
+  <script>try{var _t=localStorage.getItem('siteTheme');if(_t)document.body.classList.add(_t);}catch(e){}</script>
   <div class="noise"></div>
   <div id="toast-container" class="toast-container"></div>
 
@@ -127,7 +128,7 @@
     </div>
     <div style="display: flex; gap: 16px; align-items: center;">
       <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
-      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: #5f6749;">Выйти</button>
+      <button id="logoutBtn" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px; border-color: var(--moss);">Выйти</button>
     </div>
   </header>
 
@@ -180,7 +181,7 @@
         </div>
         <div class="add-item-row" style="display: flex; gap: 8px; margin-bottom: 16px; max-width: 620px; align-items: stretch; flex-wrap: wrap;">
           <button class="btn btn-ghost" type="button" id="houseItemIconBtn" style="padding: 0; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); flex-shrink: 0;" title="Выбрать иконку" data-icon="check"><i data-lucide="check"></i></button>
-          <input type="text" id="houseItemName" placeholder="Например: Фен" style="background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px; flex: 1 1 140px;">
+          <input type="text" id="houseItemName" placeholder="Например: Фен" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px; flex: 1 1 140px;">
           <button class="btn btn-primary" type="button" id="addHouseItemBtn" style="padding: 0 16px; min-height: 42px; font-size: 14px; white-space: nowrap; flex: 1 1 100px;">+ Добавить</button>
         </div>
         <div class="table-container" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">

@@ -755,6 +755,7 @@
 
     if (state.settings.siteTheme) {
       document.body.classList.add(state.settings.siteTheme);
+      try { localStorage.setItem('siteTheme', state.settings.siteTheme); } catch(e) {}
     }
 
     const statCabinsCount = document.getElementById('stat-cabins-count');
