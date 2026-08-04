@@ -10,6 +10,7 @@
   let chatChannel = null;
   let bookingFocusUntil = Number(localStorage.getItem('chat_booking_focus_until') || 0);
   let chatTransitionTimer = null;
+  let chatRingText = 'Связаться с нами';
 
   const els = {
     widget: document.getElementById('chat-widget'),
@@ -102,10 +103,25 @@
       console.error('[Chat] Ошибка загрузки конфига:', e);
     }
 
-    // 3. Загрузка истории
+    // 3. Загрузка настроек виджета чата (цвет, текст)
+    try {
+      var settings = await EcoApi.getSettings();
+      if (settings) {
+        if (settings.chatWidgetColor) {
+          els.widget.setAttribute('data-chat-color', settings.chatWidgetColor);
+        }
+        if (settings.chatWidgetText !== undefined) {
+          chatRingText = settings.chatWidgetText;
+        }
+      }
+    } catch (e) {
+      console.error('[Chat] Ошибка загрузки настроек виджета:', e);
+    }
+
+    // 4. Загрузка истории
     loadHistory();
 
-    // 4. Навешивание событий
+    // 5. Навешивание событий
     syncToggleIcon(els.body.style.display !== 'none');
     els.header.addEventListener('click', toggleChat);
     if (els.toastBanner) {
@@ -182,7 +198,10 @@
     if (isOpen) {
       els.toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>';
     } else {
-      els.toggle.innerHTML = '<svg class="chat-ring-label" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><defs><path id="chat-ring-path" d="M60 60 m -48 0 a 48 48 0 1 1 96 0 a 48 48 0 1 1 -96 0"></path></defs><text><textPath href="#chat-ring-path" startOffset="50%" text-anchor="middle">Связаться с нами</textPath></text></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 6.5h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H10l-5 3v-3.5a2 2 0 0 1-2-2v-5.5a2 2 0 0 1 2-2Z"></path></svg>';
+      var ringHtml = chatRingText
+        ? '<svg class="chat-ring-label" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><defs><path id="chat-ring-path" d="M60 60 m -48 0 a 48 48 0 1 1 96 0 a 48 48 0 1 1 -96 0"></path></defs><text><textPath href="#chat-ring-path" startOffset="50%" text-anchor="middle">' + chatRingText + '</textPath></text></svg>'
+        : '';
+      els.toggle.innerHTML = ringHtml + '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 6.5h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H10l-5 3v-3.5a2 2 0 0 1-2-2v-5.5a2 2 0 0 1 2-2Z"></path></svg>';
     }
     els.toggle.setAttribute('aria-label', isOpen ? 'Свернуть чат' : 'Открыть чат');
     els.widget.classList.toggle('is-open', isOpen);
