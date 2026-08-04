@@ -1136,7 +1136,7 @@
       setSplitLeadWords('hero-title', data.hero.title, 'Заголовок главного экрана', 2);
       if (data.hero.background_url) {
         const heroSection = document.getElementById('hero-section');
-        heroSection.style.backgroundImage = `linear-gradient(rgba(var(--bg-rgb), 0.35), rgba(var(--bg-rgb), 0.55)), url('${data.hero.background_url}')`;
+        heroSection.style.backgroundImage = `linear-gradient(rgba(18, 15, 13, 0.45), rgba(18, 15, 13, 0.75)), url('${data.hero.background_url}')`;
         heroSection.style.backgroundSize = 'cover';
         heroSection.style.backgroundPosition = 'center';
         heroSection.style.backgroundRepeat = 'no-repeat';
