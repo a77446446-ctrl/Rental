@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const last = document.createElement('div');
         last.className = 'conversation-last';
-        last.textContent = (item.last_sender === 'admin' ? 'Вы: ' : 'Гость: ') + messagePreview(item.last_message || '');
+        last.textContent = (item.last_sender === 'admin' ? 'Вы: ' : '') + messagePreview(item.last_message || '');
 
         const date = document.createElement('div');
         date.className = 'conversation-last';
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const meta = document.createElement('div');
       meta.className = 'message-meta';
-      meta.textContent = (msg.sender_type === 'admin' ? 'Вы' : 'Гость') + ' · ' + formatMessageTime(msg.created_at);
+      meta.textContent = (msg.sender_type === 'admin' ? 'Вы · ' : '') + formatMessageTime(msg.created_at);
 
       bubble.appendChild(meta);
       row.appendChild(bubble);
@@ -497,12 +497,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const newConversations = json.data || [];
 
-      // Считаем общее количество сообщений для определения изменений
-      const totalMessages = newConversations.reduce((sum, c) => sum + c.total_messages, 0);
-      const totalUnread = newConversations.reduce((sum, c) => sum + c.unread_count, 0);
+      const newHash = JSON.stringify(newConversations.map(c => [c.token, c.total_messages, c.unread_count, c.last_at]));
+      const oldHash = JSON.stringify(conversations.map(c => [c.token, c.total_messages, c.unread_count, c.last_at]));
 
       // Если есть изменения — обновляем список чатов
-      if (totalMessages !== lastKnownMessageCount || JSON.stringify(newConversations.map(c => c.unread_count)) !== JSON.stringify(conversations.map(c => c.unread_count))) {
+      if (newHash !== oldHash) {
         conversations = newConversations;
         renderConversationList();
 
@@ -519,12 +518,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Звуковое/визуальное уведомление о новых сообщениях
+        const totalUnread = newConversations.reduce((sum, c) => sum + c.unread_count, 0);
         if (totalUnread > 0 && document.hidden) {
           document.title = '(' + totalUnread + ') Чаты | EcoGorniy Admin';
         }
       }
-
-      lastKnownMessageCount = totalMessages;
     } catch (err) {
       // Игнорируем ошибки при polling
     }
