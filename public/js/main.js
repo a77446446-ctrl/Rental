@@ -753,6 +753,10 @@
     state.tags = results[5].data || [];
     state.cabinTags = results[6] || {};
 
+    if (state.settings.siteTheme) {
+      document.body.classList.add(state.settings.siteTheme);
+    }
+
     const statCabinsCount = document.getElementById('stat-cabins-count');
     if (statCabinsCount) {
       statCabinsCount.textContent = state.cabins.length;

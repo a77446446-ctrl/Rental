@@ -153,14 +153,14 @@
       <a href="/admin/crm.html" class="admin-menu-item">CRM (Клиенты)</a>
       <a href="/admin/analytics.html" class="admin-menu-item">Аналитика</a>
       <a href="/admin/mainpage.html" class="admin-menu-item">Главный экран</a>
-      <a href="/admin/chatwidget.html" class="admin-menu-item active">Виджет чата</a>
+      <a href="/admin/chatwidget.html" class="admin-menu-item active">Виджет чата / Темы</a>
       <a href="/admin/settings.html" class="admin-menu-item">Услуги / наполнение</a>
     </aside>
     
     <main class="admin-content">
       <div class="admin-content-header">
-        <h2>Виджет чата</h2>
-        <span style="color: var(--muted); display: block; margin-top: 8px;">Настройте внешний вид кнопки чата «Связаться с нами»</span>
+        <h2>Виджет чата / Темы</h2>
+        <span style="color: var(--muted); display: block; margin-top: 8px;">Настройте внешний вид кнопки чата и общую тему сайта</span>
       </div>
 
       <!-- Цвет кнопки -->
@@ -172,6 +172,21 @@
           <div class="color-option color-blue" data-color="blue" title="Матовый голубой"></div>
           <div class="color-option color-red" data-color="red" title="Матовый красный"></div>
           <div class="color-option color-yellow" data-color="yellow" title="Матовый жёлтый"></div>
+        </div>
+      </div>
+
+      <!-- Тема сайта -->
+      <div class="settings-card">
+        <h3>Тема сайта</h3>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Глобальное оформление</label>
+          <select id="siteThemeSelect">
+            <option value="theme-dark">Тёмная (золотистая, по умолчанию)</option>
+            <option value="theme-light">Светлая</option>
+            <option value="theme-light-green">Светло-зеленая</option>
+            <option value="theme-dark-grey">Темно-серая</option>
+          </select>
+          <span class="hint">Эта тема применяется ко всему сайту. Дизайн и структура останутся прежними, изменятся только цвета фона и текста.</span>
         </div>
       </div>
 
@@ -212,9 +227,11 @@
 
     var currentColor = 'gold';
     var currentText = 'Связаться с нами';
+    var currentTheme = 'theme-dark';
 
     var colorPicker = document.getElementById('colorPicker');
     var ringTextInput = document.getElementById('chatRingText');
+    var themeSelect = document.getElementById('siteThemeSelect');
     var previewFab = document.getElementById('previewFab');
     var previewRing = document.getElementById('previewRing');
     var previewRingText = document.getElementById('previewRingText');
@@ -232,6 +249,7 @@
         if (json.success && json.data) {
           currentColor = json.data.chatWidgetColor || 'gold';
           currentText = json.data.chatWidgetText !== undefined ? json.data.chatWidgetText : 'Связаться с нами';
+          currentTheme = json.data.siteTheme || 'theme-dark';
           applySelection();
         }
       } catch (e) {
@@ -248,6 +266,9 @@
 
       // Текст
       ringTextInput.value = currentText;
+
+      // Тема
+      themeSelect.value = currentTheme;
 
       // Превью
       updatePreview();
@@ -281,6 +302,11 @@
       updatePreview();
     });
 
+    // Изменение темы
+    themeSelect.addEventListener('change', function() {
+      currentTheme = this.value;
+    });
+
     // Сохранение
     saveBtn.addEventListener('click', async function() {
       try {
@@ -294,7 +320,8 @@
           },
           body: JSON.stringify({
             chatWidgetColor: currentColor,
-            chatWidgetText: ringTextInput.value.trim()
+            chatWidgetText: ringTextInput.value.trim(),
+            siteTheme: currentTheme
           })
         });
         if (res.status === 401 || res.status === 403) {

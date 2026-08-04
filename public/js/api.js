@@ -474,4 +474,13 @@
     };
   };
 
+  // Автоматическая подгрузка глобальной темы сайта для всех страниц
+  document.addEventListener('DOMContentLoaded', function() {
+    EcoApi.getSettings().then(function(settings) {
+      if (settings && settings.siteTheme) {
+        document.body.classList.add(settings.siteTheme);
+      }
+    }).catch(function() {});
+  });
+
 })();
