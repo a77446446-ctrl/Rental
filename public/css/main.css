@@ -2943,8 +2943,7 @@ body .chat-widget:has(.chat-body[style*="none"]) .chat-header button {
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 2px;
-  text-transform: uppercase;
-}
+  }
 
 body .chat-widget:not(:has(.chat-body[style*="none"])) #chat-toggle .chat-ring-label {
   display: none !important;
@@ -3411,15 +3410,3 @@ body .chat-widget.fab-appear #chat-toggle > svg:not(.chat-ring-label) {
 .hero-content .btn-ghost { color: #ede4d6 !important; border-color: rgba(237,228,214,0.3) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
 .hero-content .btn-ghost:hover { background: rgba(237,228,214,0.1) !important; color: #fff !important; }
 
-.chat-text-label {
-  position: absolute; right: calc(100% + 14px); top: 50%; transform: translateY(-50%);
-  background: rgba(var(--panel-rgb), 0.95); backdrop-filter: blur(8px);
-  color: var(--cream); padding: 10px 16px; border: 1px solid rgba(var(--cream-rgb), 0.15);
-  border-radius: 12px; font-size: 14px; font-weight: 600; white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2); pointer-events: none; opacity: 1; transition: opacity 0.3s;
-}
-.chat-text-label::after {
-  content: ""; position: absolute; top: 50%; right: -6px; transform: translateY(-50%);
-  border-width: 6px 0 6px 6px; border-style: solid;
-  border-color: transparent transparent transparent rgba(var(--panel-rgb), 0.95);
-}
