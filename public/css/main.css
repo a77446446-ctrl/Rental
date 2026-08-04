@@ -2916,9 +2916,9 @@ body .chat-widget:has(.chat-body[style*="none"]) .chat-header button {
 
 #chat-toggle .chat-ring-label text {
   font-family: "Manrope", system-ui, sans-serif;
-  font-size: 10.5px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: 1.7px;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
@@ -3326,9 +3326,9 @@ body .chat-widget:has(.chat-body[style*="none"]) {
 
 #chat-toggle .chat-ring-label text {
   fill: #fffaf0 !important;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 1.35px;
+  letter-spacing: 2px;
 }
 
 body .chat-widget:has(.chat-body[style*="none"]) #chat-toggle > svg:not(.chat-ring-label) {

@@ -109,16 +109,17 @@
       filter: drop-shadow(0 2px 7px rgba(0, 0, 0, .48));
     }
     .preview-ring {
-      position: absolute; inset: -13px;
-      width: calc(100% + 26px); height: calc(100% + 26px);
-      fill: rgba(255, 248, 234, .92);
-      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .85));
+      position: absolute; 
+      top: -13px; left: -13px;
+      width: 82px; height: 82px;
+      fill: var(--cream);
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .2));
       animation: preview-spin 14s linear infinite;
     }
     .preview-ring text {
       font-family: "Manrope", system-ui, sans-serif;
-      font-size: 11px; font-weight: 700; letter-spacing: 1.35px;
-      text-transform: uppercase; fill: #fffaf0;
+      font-size: 15px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; fill: var(--cream);
     }
     @keyframes preview-spin {
       to { transform: rotate(360deg); }
@@ -206,7 +207,7 @@
         <div class="preview-area" id="previewArea">
           <div class="preview-fab color-gold" id="previewFab">
             <svg class="preview-ring" id="previewRing" viewBox="0 0 120 120">
-              <defs><path id="preview-ring-path" d="M 60 12 a 48 48 0 1 1 0 96 a 48 48 0 1 1 0 -96"></path></defs>
+              <defs><path id="preview-ring-path" d="M 12,60 A 48,48 0 1,1 108,60 A 48,48 0 1,1 12,60"></path></defs>
               <text><textPath href="#preview-ring-path" startOffset="50%" text-anchor="middle" id="previewRingText">Связаться с нами</textPath></text>
             </svg>
             <svg viewBox="0 0 24 24"><path d="M5 6.5h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H10l-5 3v-3.5a2 2 0 0 1-2-2v-5.5a2 2 0 0 1 2-2Z"></path></svg>
