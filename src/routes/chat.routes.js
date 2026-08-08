@@ -8,14 +8,20 @@ const storageService = require('../services/storage.service');
 const { cleanText, validateUuid } = require('../utils/validation');
 const { chatUploadLimiter } = require('../middleware/rateLimit');
 
-const CHAT_FILE_LIMIT = 15 * 1024 * 1024;
+const CHAT_FILE_LIMIT = 50 * 1024 * 1024;
 const CHAT_MIME_PREFIXES = ['image/', 'video/', 'audio/'];
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: CHAT_FILE_LIMIT, files: 1 },
   fileFilter: (_req, file, callback) => {
-    const allowed = CHAT_MIME_PREFIXES.some((prefix) => file.mimetype && file.mimetype.startsWith(prefix));
+    let allowed = CHAT_MIME_PREFIXES.some((prefix) => file.mimetype && file.mimetype.startsWith(prefix));
+    if (!allowed && file.originalname) {
+      const ext = file.originalname.split('.').pop().toLowerCase();
+      if (['mp4', 'mov', 'webm', 'ogg', 'mp3', 'm4a', 'wav', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif'].includes(ext)) {
+        allowed = true;
+      }
+    }
     callback(allowed ? null : new Error('UNSUPPORTED_CHAT_FILE'), allowed);
   },
 });
@@ -97,7 +103,7 @@ router.post('/messages', async (req, res) => {
 router.post('/upload', chatUploadLimiter, (req, res, next) => {
   upload.single('file')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      return res.status(400).json({ success: false, error: 'Размер файла превышает лимит (15 МБ)' });
+      return res.status(400).json({ success: false, error: 'Размер файла превышает лимит (50 МБ)' });
     } else if (err) {
       const unsupported = err.message === 'UNSUPPORTED_CHAT_FILE';
       return res.status(unsupported ? 400 : 500).json({

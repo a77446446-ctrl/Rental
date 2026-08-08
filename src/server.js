@@ -102,6 +102,45 @@ app.use('/admin', (req, res, next) => {
 });
 
 /* ────────────────────────────────────────
+   Техническое обслуживание (Server-side)
+   ──────────────────────────────────────── */
+app.use(async (req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/admin') && !req.path.startsWith('/api') && !req.path.startsWith('/media')) {
+    if (req.path === '/' || req.path === '/index.html' || (req.headers.accept && req.headers.accept.includes('text/html'))) {
+      try {
+        const dataStore = require('./services/dataStore.service');
+        const settings = await dataStore.get('settings', 'settings.json', {});
+        if (settings && settings.maintenanceMode) {
+          res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+          return res.status(503).send(`
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Техническое обслуживание</title>
+  <style>
+    body { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; background:#121212; color:#EDE4D6; font-family:'Helvetica Neue', sans-serif; text-align:center; padding:20px; box-sizing:border-box; }
+    h1 { font-size:32px; font-weight:300; margin-bottom:10px; }
+    p { font-size:16px; opacity:0.7; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <h1>Сайт на техническом обслуживании</h1>
+  <p>Мы проводим плановые работы.<br>Пожалуйста, зайдите позже.</p>
+</body>
+</html>
+          `);
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+  }
+  next();
+});
+
+/* ────────────────────────────────────────
    Статические файлы
    ──────────────────────────────────────── */
 

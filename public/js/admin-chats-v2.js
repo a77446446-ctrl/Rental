@@ -292,7 +292,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!selectedToken || !file) return;
 
     const allowed = ['image/', 'video/', 'audio/'];
-    if (!allowed.some((prefix) => file.type && file.type.startsWith(prefix))) {
+    let isAllowed = allowed.some((prefix) => file.type && file.type.startsWith(prefix));
+    if (!isAllowed && file.name) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'webm', 'ogg', 'mp3', 'm4a', 'wav', 'heic', 'heif'].includes(ext)) {
+        isAllowed = true;
+      }
+    }
+
+    if (!isAllowed) {
       if (window.showToast) window.showToast('Можно отправить только фото, видео или аудио', 'error');
       return;
     }

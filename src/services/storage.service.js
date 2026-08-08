@@ -33,20 +33,32 @@ function detectMediaFile(fileBuffer, declaredMime = '') {
   if (hex.startsWith('89504e470d0a1a0a')) return { mimeType: 'image/png', extension: 'png', mediaType: 'image' };
   if (ascii.startsWith('GIF87a') || ascii.startsWith('GIF89a')) return { mimeType: 'image/gif', extension: 'gif', mediaType: 'image' };
   if (ascii.startsWith('RIFF') && ascii.slice(8, 12) === 'WEBP') return { mimeType: 'image/webp', extension: 'webp', mediaType: 'image' };
-  if (ascii.slice(4, 8) === 'ftyp' && /^(avif|avis|mif1|msf1)$/.test(ascii.slice(8, 12))) {
-    return { mimeType: 'image/avif', extension: 'avif', mediaType: 'image' };
-  }
-  if (hex.startsWith('1a45dfa3')) {
-    const mediaType = String(declaredMime).startsWith('audio/') ? 'audio' : 'video';
-    return { mimeType: `${mediaType}/webm`, extension: 'webm', mediaType };
-  }
   if (ascii.slice(4, 8) === 'ftyp') {
+    const brand = ascii.slice(8, 12).replace(/\0/g, '').trim().toLowerCase();
+    // AVIF
+    if (/^(avif|avis|mif1|msf1)$/.test(brand)) {
+      return { mimeType: 'image/avif', extension: 'avif', mediaType: 'image' };
+    }
+    // HEIC / HEIF (iPhone photos)
+    if (/^(heic|heix|heim|heis|hevc|hevx|hevm|hevs|mif1|msf1)$/.test(brand)) {
+      return { mimeType: 'image/heic', extension: 'heic', mediaType: 'image' };
+    }
+    // If browser/phone declared this as an image, trust it (handles edge-case ftyp brands)
+    if (String(declaredMime).startsWith('image/')) {
+      const ext = String(declaredMime).split('/')[1] || 'heic';
+      return { mimeType: declaredMime, extension: ext.replace('+', ''), mediaType: 'image' };
+    }
+    // Audio in MP4/M4A container
     const mediaType = String(declaredMime).startsWith('audio/') ? 'audio' : 'video';
     return {
       mimeType: mediaType === 'audio' ? 'audio/mp4' : 'video/mp4',
       extension: mediaType === 'audio' ? 'm4a' : 'mp4',
       mediaType,
     };
+  }
+  if (hex.startsWith('1a45dfa3')) {
+    const mediaType = String(declaredMime).startsWith('audio/') ? 'audio' : 'video';
+    return { mimeType: `${mediaType}/webm`, extension: 'webm', mediaType };
   }
   if (ascii.startsWith('OggS')) {
     const mediaType = String(declaredMime).startsWith('video/') ? 'video' : 'audio';
@@ -57,6 +69,12 @@ function detectMediaFile(fileBuffer, declaredMime = '') {
   }
   if (ascii.startsWith('ID3') || (fileBuffer[0] === 0xff && (fileBuffer[1] & 0xe0) === 0xe0)) {
     return { mimeType: 'audio/mpeg', extension: 'mp3', mediaType: 'audio' };
+  }
+  // Fallback: trust the declared MIME type if it's a known media category
+  const fallbackCategory = String(declaredMime).split('/')[0];
+  if (['image', 'video', 'audio'].includes(fallbackCategory)) {
+    const ext = String(declaredMime).split('/')[1] || 'bin';
+    return { mimeType: declaredMime, extension: ext.replace('+', '').split(';')[0], mediaType: fallbackCategory };
   }
   throw mediaValidationError('Фактический формат файла не поддерживается');
 }
@@ -158,16 +176,19 @@ async function deleteImages(values) {
   return deletedCount;
 }
 
-async function uploadChatAttachment(fileBuffer, _originalName, mimeType) {
+async function uploadChatAttachment(fileBuffer, originalName, mimeType) {
   const allowed = ['image/', 'video/', 'audio/'];
-  if (!allowed.some((prefix) => mimeType && mimeType.startsWith(prefix))) {
+  let isAllowed = allowed.some((prefix) => mimeType && mimeType.startsWith(prefix));
+  if (!isAllowed && originalName) {
+    const ext = String(originalName).split('.').pop().toLowerCase();
+    if (['mp4', 'mov', 'webm', 'ogg', 'mp3', 'm4a', 'wav', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif'].includes(ext)) {
+      isAllowed = true;
+    }
+  }
+  if (!isAllowed) {
     throw new Error('Можно загрузить только изображение, видео или аудио');
   }
   const detected = detectMediaFile(fileBuffer, mimeType);
-  const declaredCategory = String(mimeType).split('/')[0];
-  if (declaredCategory !== detected.mediaType) {
-    throw mediaValidationError('Тип содержимого файла не соответствует заявленному');
-  }
   
   const result = await uploadFileToPB(fileBuffer, detected.mimeType, detected.extension);
   return { url: result.url, mimeType: detected.mimeType, mediaType: detected.mediaType };

@@ -432,7 +432,7 @@
           event: 'INSERT',
           schema: 'public',
           table: 'chat_logs',
-          filter: 'chat_token=eq.' + chatToken
+          filter: 'guest_id=eq.' + chatToken
         },
         (payload) => {
           const newMsg = payload.new;
@@ -527,7 +527,15 @@
     els.fileInput.value = '';
 
     const allowed = ['image/', 'video/', 'audio/'];
-    if (!allowed.some(function(prefix) { return file.type && file.type.startsWith(prefix); })) {
+    let isAllowed = allowed.some(function(prefix) { return file.type && file.type.startsWith(prefix); });
+    if (!isAllowed && file.name) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'webm', 'ogg', 'mp3', 'm4a', 'wav', 'heic', 'heif'].includes(ext)) {
+        isAllowed = true;
+      }
+    }
+
+    if (!isAllowed) {
       if (window.showToast) window.showToast('Можно отправить только фото, видео или аудио', 'error');
       return;
     }
@@ -538,6 +546,14 @@
 
     if (els.attachBtn) els.attachBtn.disabled = true;
 
+    // Показываем временное сообщение "Загрузка..."
+    var loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat-message guest';
+    loadingDiv.textContent = '⏳ Загрузка файла...';
+    loadingDiv.style.opacity = '0.6';
+    els.messages.appendChild(loadingDiv);
+    scrollToBottom();
+
     try {
       const res = await fetch('/api/chat/upload', {
         method: 'POST',
@@ -545,10 +561,18 @@
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error || 'Ошибка загрузки');
+      // Убираем временное сообщение и показываем настоящее
+      if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
       renderMessage(json.data);
       scrollToBottom();
     } catch (e) {
       console.error('[Chat] Ошибка загрузки файла:', e);
+      // Заменяем временное сообщение на сообщение об ошибке
+      if (loadingDiv.parentNode) {
+        loadingDiv.textContent = '❌ ' + (e.message || 'Ошибка загрузки файла');
+        loadingDiv.style.opacity = '1';
+        loadingDiv.style.color = '#ff6b6b';
+      }
       if (window.showToast) window.showToast(e.message || 'Ошибка загрузки файла', 'error');
     } finally {
       if (els.attachBtn) els.attachBtn.disabled = false;

@@ -206,17 +206,27 @@ ${escapeTelegramHtml(attachmentLabel(attachment))}: ${escapeTelegramHtml(attachm
   };
 
   try {
+    let success = false;
     if (attachment.mediaType === 'image') {
-      return await callTelegram('sendPhoto', { ...common, photo: attachment.url });
-    }
-    if (attachment.mediaType === 'video') {
-      return await callTelegram('sendVideo', { ...common, video: attachment.url });
-    }
-    if (attachment.mediaType === 'audio') {
-      return await callTelegram('sendAudio', { ...common, audio: attachment.url });
+      success = await callTelegram('sendPhoto', { ...common, photo: attachment.url });
+    } else if (attachment.mediaType === 'video') {
+      success = await callTelegram('sendVideo', { ...common, video: attachment.url });
+    } else if (attachment.mediaType === 'audio') {
+      success = await callTelegram('sendAudio', { ...common, audio: attachment.url });
+    } else {
+      success = await callTelegram('sendDocument', { ...common, document: attachment.url });
     }
 
-    return await callTelegram('sendDocument', { ...common, document: attachment.url });
+    if (!success) {
+      // Фолбэк для больших файлов (>20 МБ) или если Telegram не смог скачать медиа
+      const fallbackCaption = caption + `\n\n🔗 <a href="${attachment.url}">Скачать / Открыть файл</a>`;
+      return await callTelegram('sendMessage', {
+        chat_id: config.telegramChatId,
+        text: fallbackCaption,
+        parse_mode: 'HTML'
+      });
+    }
+    return true;
   } catch (err) {
     console.error('[chat.service] Исключение при отправке вложения в ТГ:', err.message);
     return false;

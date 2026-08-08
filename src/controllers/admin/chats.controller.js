@@ -5,7 +5,7 @@ const storageService = require('../../services/storage.service');
 exports.getAll = async (req, res) => {
   try {
     const dataRes = await pbAdmin.collection('chat_logs').getList(1, 500, {
-      filter: 'chat_token != null && chat_token != ""',
+      filter: 'guest_id != null && guest_id != ""',
       sort: '-created'
     });
     const data = dataRes.items;
@@ -28,7 +28,7 @@ exports.getAll = async (req, res) => {
 
     const conversationsMap = {};
     (data || []).forEach((msg) => {
-      const token = msg.chat_token;
+      const token = msg.guest_id;
       if (!token) return;
 
       if (!conversationsMap[token]) {
@@ -73,7 +73,7 @@ exports.getMessages = async (req, res) => {
 
     try {
       const unread = await pbAdmin.collection('chat_logs').getFullList({
-        filter: `chat_token = "${token}" && sender_type = "guest" && is_read = false`
+        filter: `guest_id = "${token}" && sender_type = "guest" && is_read = false`
       });
       for (let msg of unread) {
         await pbAdmin.collection('chat_logs').update(msg.id, { is_read: true });
