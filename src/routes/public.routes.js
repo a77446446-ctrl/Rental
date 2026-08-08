@@ -274,17 +274,6 @@ router.get('/house-items', async (req, res) => {
   }
 });
 
-/* ─────────────────────────────────────────────
-   GET /api/settings
-   Возвращает глобальные настройки.
-   ───────────────────────────────────────────── */
-
-    return res.json({ success: true, data: settings });
-  } catch (err) {
-    console.error('[public.routes] Ошибка загрузки settings:', err);
-    return res.status(500).json({ success: false, error: 'Ошибка загрузки настроек' });
-  }
-});
 
 /* ─────────────────────────────────────────────
    GET /api/amenities
