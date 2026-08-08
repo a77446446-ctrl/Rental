@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { supabaseAdmin } = require('../config/supabase');
+const { pbAdmin } = require('../config/pocketbase');
 
 const dataDir = path.join(__dirname, '../data');
 const warnedFallbackKeys = new Set();
@@ -33,12 +33,7 @@ function writeFallbackAtomic(fileName, value) {
 }
 
 function isMissingTable(error) {
-  const message = String(error && (error.message || error.details || error.hint) || '');
-  return error && (
-    error.code === '42P01' ||
-    error.code === 'PGRST205' ||
-    message.includes('app_config') && message.toLowerCase().includes('not')
-  );
+  return error && error.status === 404;
 }
 
 function warnFallback(key, error) {
@@ -46,59 +41,61 @@ function warnFallback(key, error) {
   warnedFallbackKeys.add(key);
   console.warn(
     `[dataStore] Для «${key}» используется локальный JSON. ` +
-    'Примените миграцию 006_stability_hardening.sql, чтобы данные сохранялись между деплоями.' +
     (error && error.message ? ` Причина: ${error.message}` : '')
   );
 }
 
 async function get(key, fileName, fallbackValue) {
-  if (!supabaseAdmin) {
+  if (!pbAdmin) {
     warnFallback(key);
     return readFallback(fileName, fallbackValue);
   }
 
-  const { data, error } = await supabaseAdmin
-    .from('app_config')
-    .select('value')
-    .eq('key', key)
-    .maybeSingle();
-
-  if (error) {
-    if (!isMissingTable(error)) {
-      console.error(`[dataStore] Ошибка чтения «${key}» из Supabase:`, error.message);
+  try {
+    const record = await pbAdmin.collection('app_config').getFirstListItem(`key="${key}"`);
+    if (record && record.value !== undefined && record.value !== null) return record.value;
+  } catch (error) {
+    if (error.status !== 404) {
+      console.error(`[dataStore] Ошибка чтения «${key}» из PocketBase:`, error.message);
+      warnFallback(key, error);
+      return readFallback(fileName, fallbackValue);
     }
-    warnFallback(key, error);
-    return readFallback(fileName, fallbackValue);
   }
 
-  if (data && data.value !== undefined && data.value !== null) return data.value;
-
   const initialValue = readFallback(fileName, fallbackValue);
-  const { error: seedError } = await supabaseAdmin
-    .from('app_config')
-    .upsert({ key, value: initialValue }, { onConflict: 'key' });
-
-  if (seedError) {
-    console.error(`[dataStore] Не удалось импортировать «${key}» в Supabase:`, seedError.message);
+  try {
+    try {
+      const existing = await pbAdmin.collection('app_config').getFirstListItem(`key="${key}"`);
+      await pbAdmin.collection('app_config').update(existing.id, { value: initialValue });
+    } catch (e) {
+      await pbAdmin.collection('app_config').create({ key, value: initialValue });
+    }
+  } catch (seedError) {
+    console.error(`[dataStore] Не удалось импортировать «${key}» в PocketBase:`, seedError.message);
   }
   return initialValue;
 }
 
 async function set(key, fileName, value) {
-  if (supabaseAdmin) {
-    const { error } = await supabaseAdmin
-      .from('app_config')
-      .upsert({ key, value }, { onConflict: 'key' });
-
-    if (!error) return clone(value);
-    if (!isMissingTable(error)) {
-      throw new Error(`Не удалось сохранить «${key}» в постоянное хранилище: ${error.message}`);
+  if (pbAdmin) {
+    try {
+      try {
+        const existing = await pbAdmin.collection('app_config').getFirstListItem(`key="${key}"`);
+        await pbAdmin.collection('app_config').update(existing.id, { value });
+      } catch (e) {
+        if (e.status === 404) {
+          await pbAdmin.collection('app_config').create({ key, value });
+        } else {
+          throw e;
+        }
+      }
+      return clone(value);
+    } catch (error) {
+      warnFallback(key, error);
     }
-    warnFallback(key, error);
   }
 
-  // Совместимость до применения миграции. Запись атомарная, но Railway-файл
-  // не считается постоянным хранилищем и используется только как аварийный режим.
+  // Локальный фоллбэк
   writeFallbackAtomic(fileName, value);
   return clone(value);
 }

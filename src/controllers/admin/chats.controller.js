@@ -1,32 +1,27 @@
-const { supabaseAdmin } = require('../../config/supabase');
+const { pbAdmin } = require('../../config/pocketbase');
 const chatService = require('../../services/chat.service');
 const storageService = require('../../services/storage.service');
 
 exports.getAll = async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('chat_logs')
-      .select('id, chat_token, sender_type, message, is_read, created_at')
-      .not('chat_token', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(500);
+    const dataRes = await pbAdmin.collection('chat_logs').getList(1, 500, {
+      filter: 'chat_token != null && chat_token != ""',
+      sort: '-created'
+    });
+    const data = dataRes.items;
 
-    if (error) throw error;
-
-    const { data: bookings } = await supabaseAdmin
-      .from('bookings')
-      .select(`
-        comment,
-        guests ( full_name )
-      `)
-      .like('comment', `%<!--CHAT_TOKEN:%`);
+    const bookings = await pbAdmin.collection('bookings').getFullList({
+      filter: 'comment ~ "<!--CHAT_TOKEN:"',
+      expand: 'guest_id'
+    });
 
     const tokenToName = {};
     if (bookings) {
       bookings.forEach(b => {
         const match = b.comment && b.comment.match(/<!--CHAT_TOKEN:([a-fA-F0-9-]+)-->/);
-        if (match && match[1] && b.guests && b.guests.full_name) {
-          tokenToName[match[1]] = b.guests.full_name;
+        const guestName = b.expand?.guest_id?.full_name;
+        if (match && match[1] && guestName) {
+          tokenToName[match[1]] = guestName;
         }
       });
     }
@@ -44,7 +39,7 @@ exports.getAll = async (req, res) => {
           token_id: '#' + token.slice(0, 8).toUpperCase(),
           last_message: msg.message || '',
           last_sender: msg.sender_type,
-          last_at: msg.created_at,
+          last_at: msg.created,
           total_messages: 0,
           unread_count: 0,
         };
@@ -76,12 +71,16 @@ exports.getMessages = async (req, res) => {
 
     const messages = await chatService.getChatHistory(token);
 
-    await supabaseAdmin
-      .from('chat_logs')
-      .update({ is_read: true })
-      .eq('chat_token', token)
-      .eq('sender_type', 'guest')
-      .eq('is_read', false);
+    try {
+      const unread = await pbAdmin.collection('chat_logs').getFullList({
+        filter: `chat_token = "${token}" && sender_type = "guest" && is_read = false`
+      });
+      for (let msg of unread) {
+        await pbAdmin.collection('chat_logs').update(msg.id, { is_read: true });
+      }
+    } catch (err) {
+      console.warn('Failed to mark messages as read', err);
+    }
 
     res.json({ success: true, data: messages });
   } catch (err) {

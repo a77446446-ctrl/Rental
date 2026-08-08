@@ -1,4 +1,4 @@
-const { supabaseAdmin } = require('../config/supabase');
+const { pbAdmin } = require('../config/pocketbase');
 const { config } = require('../config/env');
 const storageService = require('./storage.service');
 const maxService = require('./max.service');
@@ -101,18 +101,15 @@ async function saveMessage(token, text, sender = 'guest') {
     throw new Error('Message cannot be empty');
   }
 
-  const { data, error } = await supabaseAdmin
-    .from('chat_logs')
-    .insert([{
-      chat_token: token,
+  let data;
+  try {
+    data = await pbAdmin.collection('chat_logs').create({
+      guest_id: token, // Поле guest_id используется для хранения chat_token
       sender_type: sender,
       message: sanitizedText,
-      is_read: sender === 'admin' // Если пишет админ, гость пока не прочитал. Если гость - админ не прочитал.
-    }])
-    .select()
-    .single();
-
-  if (error) {
+      is_read: sender === 'admin'
+    });
+  } catch (error) {
     console.error('[chat.service] Ошибка при сохранении сообщения:', error.message);
     throw new Error('Не удалось сохранить сообщение');
   }
@@ -123,19 +120,14 @@ async function saveMessage(token, text, sender = 'guest') {
 async function getGuestNameByToken(token) {
   if (!token) return null;
   try {
-    const { data } = await supabaseAdmin
-      .from('bookings')
-      .select(`
-        guest_id,
-        guests ( full_name )
-      `)
-      .like('comment', `%<!--CHAT_TOKEN:${token}-->%`)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+    const records = await pbAdmin.collection('bookings').getList(1, 1, {
+      filter: `comment ~ "<!--CHAT_TOKEN:${token}-->"`,
+      sort: '-created',
+      expand: 'guest_id'
+    });
       
-    if (data && data.guests && data.guests.full_name) {
-      return data.guests.full_name;
+    if (records.items.length > 0 && records.items[0].expand?.guest_id) {
+      return records.items[0].expand.guest_id.full_name;
     }
   } catch (err) {}
   return null;
@@ -320,24 +312,20 @@ async function uploadTelegramAttachment(telegramAttachment) {
 }
 
 async function hasRecentDuplicate(chatToken, message) {
-  const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
-  let query = supabaseAdmin
-    .from('chat_logs')
-    .select('id')
-    .eq('chat_token', chatToken)
-    .eq('sender_type', 'admin')
-    .gte('created_at', twoMinutesAgo)
-    .limit(1);
+  const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString().replace('T', ' ');
+  try {
+    const mediaUniqueId = message.telegramFileUniqueId || message.fileUniqueId;
+    const textFilter = mediaUniqueId 
+      ? `message ~ "${mediaUniqueId}"` 
+      : `message = "${message.text.replace(/"/g, '\\"')}"`;
 
-  const mediaUniqueId = message.telegramFileUniqueId || message.fileUniqueId;
-  if (mediaUniqueId) {
-    query = query.ilike('message', `%${mediaUniqueId}%`);
-  } else {
-    query = query.eq('message', message.text);
+    const records = await pbAdmin.collection('chat_logs').getList(1, 1, {
+      filter: `guest_id="${chatToken}" && sender_type="admin" && created>="${twoMinutesAgo}" && ${textFilter}`
+    });
+    return records.items.length > 0;
+  } catch (e) {
+    return false;
   }
-
-  const { data } = await query;
-  return data && data.length > 0;
 }
 
 /**
@@ -405,18 +393,22 @@ async function handleTelegramWebhook(payload) {
  * @param {string} token - UUID чата
  */
 async function getChatHistory(token) {
-  const { data, error } = await supabaseAdmin
-    .from('chat_logs')
-    .select('id, sender_type, message, created_at')
-    .eq('chat_token', token)
-    .order('created_at', { ascending: true });
-
-  if (error) {
+  try {
+    const records = await pbAdmin.collection('chat_logs').getFullList({
+      filter: `guest_id="${token}"`,
+      sort: 'created'
+    });
+    // Нормализуем поле created_at для совместимости с фронтендом
+    return records.map(r => ({
+      id: r.id,
+      sender_type: r.sender_type,
+      message: r.message,
+      created_at: r.created
+    }));
+  } catch (error) {
     console.error('[chat.service] Ошибка при получении истории:', error.message);
     throw new Error('Не удалось получить историю чата');
   }
-
-  return data || [];
 }
 
 /**

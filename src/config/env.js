@@ -16,11 +16,10 @@ const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   baseUrl: process.env.BASE_URL || 'http://localhost:3000',
 
-  /* Supabase */
-  supabaseUrl: process.env.SUPABASE_URL || '',
-  supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
-  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  supabaseStorageBucket: process.env.SUPABASE_STORAGE_BUCKET || 'cabin-photos',
+  /* PocketBase */
+  pocketbaseUrl: process.env.POCKETBASE_URL || 'http://localhost:8090',
+  pocketbaseAdminEmail: process.env.POCKETBASE_ADMIN_EMAIL || '',
+  pocketbaseAdminPassword: process.env.POCKETBASE_ADMIN_PASSWORD || '',
 
   /* Авторизация администратора */
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
@@ -53,9 +52,9 @@ const config = {
  */
 function validateEnv() {
   const required = [
-    { key: 'SUPABASE_URL', value: config.supabaseUrl },
-    { key: 'SUPABASE_ANON_KEY', value: config.supabaseAnonKey },
-    { key: 'SUPABASE_SERVICE_ROLE_KEY', value: config.supabaseServiceRoleKey },
+    { key: 'POCKETBASE_URL', value: config.pocketbaseUrl },
+    { key: 'POCKETBASE_ADMIN_EMAIL', value: config.pocketbaseAdminEmail },
+    { key: 'POCKETBASE_ADMIN_PASSWORD', value: config.pocketbaseAdminPassword },
     { key: 'ADMIN_PASSWORD', value: config.adminPassword },
     { key: 'COOKIE_SECRET', value: config.cookieSecret },
   ];

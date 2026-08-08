@@ -1,4 +1,4 @@
-const { supabaseAdmin } = require('../../config/supabase');
+const { pbAdmin } = require('../../config/pocketbase');
 const externalCalendarService = require('../../services/externalCalendar.service');
 
 function addOneDay(dateStr) {
@@ -15,22 +15,14 @@ exports.getByCabin = async (req, res) => {
     futureDate.setFullYear(futureDate.getFullYear() + 2);
     const to = req.query.to || futureDate.toISOString().slice(0, 10);
 
-    const { data, error } = await supabaseAdmin
-      .from('prices')
-      .select('*')
-      .eq('cabin_id', cabin_id);
+    const data = await pbAdmin.collection('prices').getFullList({
+      filter: `cabin_id = "${cabin_id}"`
+    });
 
-    if (error) throw error;
-
-    const { data: bookingsData } = await supabaseAdmin
-      .from('bookings')
-      .select(`
-        check_in,
-        check_out,
-        guests ( full_name )
-      `)
-      .eq('cabin_id', cabin_id)
-      .in('status', ['pending', 'confirmed']);
+    const bookingsData = await pbAdmin.collection('bookings').getFullList({
+      filter: `cabin_id = "${cabin_id}" && (status = "pending" || status = "confirmed")`,
+      expand: 'guest_id'
+    });
 
     const external_dates = [];
     
@@ -39,7 +31,7 @@ exports.getByCabin = async (req, res) => {
       bookingsData.forEach((booking) => {
         const current = new Date(booking.check_in + 'T00:00:00');
         const end = new Date(booking.check_out + 'T00:00:00');
-        const guestName = booking.guests && booking.guests.full_name ? booking.guests.full_name : 'Гость';
+        const guestName = booking.expand?.guest_id?.full_name ? booking.expand.guest_id.full_name : 'Гость';
         // Первые 5 букв имени
         const shortName = guestName.substring(0, 5) + (guestName.length > 5 ? '.' : '');
         
@@ -92,14 +84,22 @@ exports.bulkUpsert = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Не переданы даты или домик' });
     }
 
+    const existingPrices = await pbAdmin.collection('prices').getFullList({
+      filter: `cabin_id = "${cabin_id}"`
+    });
+
+    const priceMap = {};
+    existingPrices.forEach(p => {
+      const dateKey = p.date.split(' ')[0];
+      priceMap[dateKey] = p;
+    });
+
     if (remove) {
-      const { error } = await supabaseAdmin
-        .from('prices')
-        .delete()
-        .eq('cabin_id', cabin_id)
-        .in('date', dates);
-      
-      if (error) throw error;
+      for (const date of dates) {
+        if (priceMap[date]) {
+          await pbAdmin.collection('prices').delete(priceMap[date].id);
+        }
+      }
       return res.json({ success: true });
     }
 
@@ -107,19 +107,22 @@ exports.bulkUpsert = async (req, res) => {
        return res.status(400).json({ success: false, error: 'Особая цена обязательна' });
     }
 
-    const rows = dates.map(date => ({
-      cabin_id,
-      date,
-      custom_price: custom_price ? parseInt(custom_price) : 0,
-      is_promo: Boolean(is_promo),
-      promo_description: is_closed ? 'CLOSED' : (promo_description || null)
-    }));
+    for (const date of dates) {
+      const row = {
+        cabin_id,
+        date,
+        custom_price: custom_price ? parseInt(custom_price) : 0,
+        is_promo: Boolean(is_promo),
+        promo_description: is_closed ? 'CLOSED' : (promo_description || null)
+      };
 
-    const { error } = await supabaseAdmin
-      .from('prices')
-      .upsert(rows, { onConflict: 'cabin_id, date' });
+      if (priceMap[date]) {
+        await pbAdmin.collection('prices').update(priceMap[date].id, row);
+      } else {
+        await pbAdmin.collection('prices').create(row);
+      }
+    }
 
-    if (error) throw error;
     res.json({ success: true });
   } catch (err) {
     console.error('[prices.controller] POST /prices/bulk-upsert error:', err);

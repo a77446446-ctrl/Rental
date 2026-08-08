@@ -1,56 +1,9 @@
-const { supabaseAdmin } = require('../config/supabase');
+const { pbAdmin } = require('../config/pocketbase');
 const { sendBookingNotification } = require('./telegram.service');
 const maxService = require('./max.service');
 const externalCalendarService = require('./externalCalendar.service');
 const { calculateBookingTotal } = require('./bookingPricing.service');
 const { cleanText, validateStay } = require('../utils/validation');
-
-function isMissingRpc(error) {
-  return error && (error.code === 'PGRST202' || String(error.message || '').includes('create_booking_atomic'));
-}
-
-async function insertLegacy(data, pricing) {
-  let guestId;
-  const { data: existing, error: findError } = await supabaseAdmin
-    .from('guests').select('id').eq('phone', data.guest_phone).limit(1);
-  if (findError) throw new Error('Не удалось обработать данные гостя');
-
-  if (existing && existing.length) {
-    guestId = existing[0].id;
-    await supabaseAdmin.from('guests').update({
-      full_name: data.guest_name,
-      telegram: data.guest_telegram || null,
-    }).eq('id', guestId);
-  } else {
-    const { data: guest, error } = await supabaseAdmin.from('guests').insert([{
-      full_name: data.guest_name,
-      phone: data.guest_phone,
-      telegram: data.guest_telegram || null,
-    }]).select().single();
-    if (error) throw new Error('Не удалось создать запись гостя');
-    guestId = guest.id;
-  }
-
-  const row = {
-    cabin_id: data.cabin_id,
-    guest_id: guestId,
-    check_in: data.check_in,
-    check_out: data.check_out,
-    guests_count: pricing.guestsCount,
-    comment: data.comment || null,
-    total_price: pricing.totalPrice,
-    status: 'pending',
-    extras_snapshot: pricing.extrasSnapshot,
-  };
-
-  let result = await supabaseAdmin.from('bookings').insert([row]).select().single();
-  if (result.error && String(result.error.message).includes('extras_snapshot')) {
-    delete row.extras_snapshot;
-    result = await supabaseAdmin.from('bookings').insert([row]).select().single();
-  }
-  if (result.error) throw new Error(result.error.message || 'Не удалось создать бронирование');
-  return result.data;
-}
 
 async function createBooking(input) {
   validateStay(input.check_in, input.check_out);
@@ -72,27 +25,52 @@ async function createBooking(input) {
 
   await externalCalendarService.assertNoExternalOverlap(data.cabin_id, data.check_in, data.check_out);
 
-  const params = {
-    p_cabin_id: data.cabin_id,
-    p_check_in: data.check_in,
-    p_check_out: data.check_out,
-    p_guest_name: data.guest_name,
-    p_guest_phone: data.guest_phone,
-    p_guest_telegram: data.guest_telegram || null,
-    p_comment: data.comment || null,
-    p_guests_count: pricing.guestsCount,
-    p_total_price: pricing.totalPrice,
-    p_extras_snapshot: pricing.extrasSnapshot,
+  // 1. Управление гостем
+  let guestId;
+  try {
+    let guest;
+    try {
+      guest = await pbAdmin.collection('guests').getFirstListItem(`phone="${data.guest_phone}"`);
+      // Обновляем данные существующего гостя
+      guest = await pbAdmin.collection('guests').update(guest.id, {
+        full_name: data.guest_name,
+        telegram: data.guest_telegram || null,
+      });
+      guestId = guest.id;
+    } catch (findError) {
+      if (findError.status === 404) {
+        // Создаем нового гостя
+        guest = await pbAdmin.collection('guests').create({
+          full_name: data.guest_name,
+          phone: data.guest_phone,
+          telegram: data.guest_telegram || null,
+        });
+        guestId = guest.id;
+      } else {
+        throw findError;
+      }
+    }
+  } catch (err) {
+    throw new Error('Не удалось обработать данные гостя');
+  }
+
+  // 2. Создание бронирования
+  const bookingData = {
+    cabin_id: data.cabin_id,
+    guest_id: guestId,
+    check_in_date: data.check_in + " 00:00:00.000Z",
+    check_out_date: data.check_out + " 00:00:00.000Z",
+    guests_count: pricing.guestsCount,
+    comment: data.comment || null,
+    total_price: pricing.totalPrice,
+    status: 'pending',
   };
 
   let booking;
-  const rpc = await supabaseAdmin.rpc('create_booking_atomic', params);
-  if (rpc.error) {
-    if (!isMissingRpc(rpc.error)) throw new Error(rpc.error.message || 'Не удалось создать бронирование');
-    console.warn('[booking.service] Миграция 006 не применена; используется совместимый неатомарный режим.');
-    booking = await insertLegacy(data, pricing);
-  } else {
-    booking = Array.isArray(rpc.data) ? rpc.data[0] : rpc.data;
+  try {
+    booking = await pbAdmin.collection('bookings').create(bookingData);
+  } catch (err) {
+    throw new Error(err.message || 'Не удалось создать бронирование');
   }
 
   const tokenMatch = data.comment ? data.comment.match(/<!--CHAT_TOKEN:([a-f0-9-]+)-->/i) : null;

@@ -1,7 +1,6 @@
-const { supabaseAdmin } = require('../../config/supabase');
+const { pbAdmin } = require('../../config/pocketbase');
 const externalCalendarService = require('../../services/externalCalendar.service');
 const storageService = require('../../services/storage.service');
-const dataStore = require('../../services/dataStore.service');
 
 const IMAGE_CATEGORIES = new Set(['main', 'interior', 'exterior']);
 
@@ -21,9 +20,7 @@ function normalizeImages(images) {
 }
 
 function parseStoredImages(row) {
-  return (row && row.images_urls || []).map((value) => {
-    try { return JSON.parse(value); } catch (_err) { return { url: value, category: 'main' }; }
-  });
+  return Array.isArray(row?.images) ? row.images : [];
 }
 
 async function cleanupRemovedImages(previous, next) {
@@ -38,28 +35,22 @@ async function cleanupRemovedImages(previous, next) {
 
 exports.getAll = async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('cabins')
-      .select('*')
-      .order('id', { ascending: true });
-
-    if (error) throw error;
+    const data = await pbAdmin.collection('cabins').getFullList({
+      sort: 'created'
+    });
 
     const sourcesByCabin = await externalCalendarService.getSourcesForCabins((data || []).map(c => c.id));
     
-    const mappedData = data.map(c => ({
-      ...c,
-      image_url: c.images_urls && c.images_urls.length > 0 ? (() => {
-        try { const p = JSON.parse(c.images_urls[0]); return p.url || c.images_urls[0]; }
-        catch(e) { return c.images_urls[0]; }
-      })() : '',
-      images: (c.images_urls || []).map(str => {
-        try { return JSON.parse(str); }
-        catch(e) { return { url: str, category: 'main' }; }
-      }),
-      status: c.is_active ? 'active' : 'hidden',
-      external_calendars: sourcesByCabin[c.id] || []
-    }));
+    const mappedData = data.map(c => {
+      const imagesArray = Array.isArray(c.images) ? c.images : [];
+      return {
+        ...c,
+        image_url: imagesArray.length > 0 ? imagesArray[0].url : '',
+        images: imagesArray,
+        status: c.is_active ? 'active' : 'hidden',
+        external_calendars: sourcesByCabin[c.id] || []
+      };
+    });
     
     res.json({ success: true, data: mappedData });
   } catch (err) {
@@ -79,54 +70,40 @@ exports.saveFull = async (req, res) => {
     let previousImages = [];
 
     if (cabinId) {
-      const previous = await supabaseAdmin.from('cabins').select('images_urls').eq('id', cabinId).single();
-      if (previous.error || !previous.data) return res.status(404).json({ success: false, error: 'Домик не найден' });
-      previousImages = parseStoredImages(previous.data);
+      try {
+        const previous = await pbAdmin.collection('cabins').getOne(cabinId);
+        previousImages = parseStoredImages(previous);
+      } catch (err) {
+        return res.status(404).json({ success: false, error: 'Домик не найден' });
+      }
     }
 
-    const params = {
-      p_cabin_id: cabinId,
-      p_name: String(body.name || '').trim(),
-      p_description: String(body.description || ''),
-      p_base_price: Number.parseInt(body.base_price, 10),
-      p_capacity: Number.parseInt(body.capacity, 10),
-      p_is_active: body.status === 'active',
-      p_images: normalizedImages,
-      p_amenities: selectedAmenities,
-      p_tags: selectedTags,
-      p_sources: sources,
+    const row = {
+      name: String(body.name || '').trim(),
+      description: String(body.description || ''),
+      base_price: Number.parseInt(body.base_price, 10) || 0,
+      capacity: Number.parseInt(body.capacity, 10) || 1,
+      is_active: body.status === 'active',
+      images: normalizedImages,
+      amenities: selectedAmenities,
+      tags: selectedTags
     };
 
     let saved;
-    const rpc = await supabaseAdmin.rpc('save_cabin_full', params);
-    if (!rpc.error) {
-      saved = rpc.data;
-    } else if (rpc.error.code === 'PGRST202' || rpc.error.code === '42883' || String(rpc.error.message).includes('save_cabin_full') || String(rpc.error.message).includes('uuid_generate_v4')) {
-      console.warn('[cabins.controller] Миграция 006 не применена; используется совместимый режим сохранения.');
-      const row = {
-        name: params.p_name,
-        description: params.p_description,
-        base_price: params.p_base_price,
-        capacity: params.p_capacity,
-        is_active: params.p_is_active,
-        images_urls: normalizedImages.map((image) => JSON.stringify(image)),
-      };
-      let result;
-      if (cabinId) {
-        result = await supabaseAdmin.from('cabins').update(row).eq('id', cabinId).select().single();
-      } else {
-        row.slug = `house-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-        result = await supabaseAdmin.from('cabins').insert([row]).select().single();
-      }
-      if (result.error) throw result.error;
-      saved = result.data;
-      const savedId = saved.id;
-      await dataStore.update('amenities', 'amenities.json', {}, (current) => ({ ...current, [savedId]: selectedAmenities }));
-      await dataStore.update('cabin_tags', 'cabin_tags.json', {}, (current) => ({ ...current, [savedId]: selectedTags }));
-      await externalCalendarService.saveSources(savedId, sources);
+    if (cabinId) {
+      saved = await pbAdmin.collection('cabins').update(cabinId, row);
     } else {
-      throw rpc.error;
+      const ru = 'а б в г д е ё ж з и й к л м н о п р с т у ф х ц ч ш щ ъ ы ь э ю я'.split(' ');
+      const en = 'a b v g d e e zh z i y k l m n o p r s t u f h ts ch sh shch  y  e yu ya'.split(' ');
+      let slugStr = (row.name || 'house').toLowerCase();
+      for (let i = 0; i < ru.length; i++) {
+        slugStr = slugStr.split(ru[i]).join(en[i]);
+      }
+      row.slug = slugStr.replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
+      saved = await pbAdmin.collection('cabins').create(row);
     }
+
+    await externalCalendarService.saveSources(saved.id, sources);
 
     await cleanupRemovedImages(previousImages, normalizedImages);
     saved.images = normalizedImages;
@@ -151,23 +128,19 @@ exports.create = async (req, res) => {
     }
     const slug = slugStr.replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
 
-    let images_urls = [];
+    let imagesData = [];
     if (images && Array.isArray(images)) {
-      images_urls = normalizeImages(images).map(img => JSON.stringify(img));
+      imagesData = normalizeImages(images);
     } else if (image_url) {
-      images_urls = [JSON.stringify({ url: image_url, category: 'main' })];
+      imagesData = normalizeImages([{ url: image_url, category: 'main' }]);
     }
     const is_active = (status === 'active');
 
-    const { data, error } = await supabaseAdmin
-      .from('cabins')
-      .insert([{ name, slug, description, base_price, capacity, is_active, images_urls }])
-      .select()
-      .single();
+    const data = await pbAdmin.collection('cabins').create({
+      name, slug, description, base_price, capacity, is_active, images: imagesData
+    });
 
-    if (error) throw error;
-    
-    data.images = (data.images_urls || []).map(str => { try { return JSON.parse(str) } catch(e) { return {url: str, category: 'main'}; } });
+    data.images = Array.isArray(data.images) ? data.images : [];
     data.image_url = data.images.length > 0 ? data.images[0].url : '';
     data.status = data.is_active ? 'active' : 'hidden';
     res.json({ success: true, data });
@@ -182,32 +155,28 @@ exports.update = async (req, res) => {
     const { id } = req.params;
     const { name, description, base_price, capacity, status, images, image_url } = req.body;
 
-    const { data: previousCabin, error: previousError } = await supabaseAdmin
-      .from('cabins').select('images_urls').eq('id', id).single();
-    if (previousError || !previousCabin) return res.status(404).json({ success: false, error: 'Домик не найден' });
+    let previousCabin;
+    try {
+      previousCabin = await pbAdmin.collection('cabins').getOne(id);
+    } catch (err) {
+      return res.status(404).json({ success: false, error: 'Домик не найден' });
+    }
 
     let normalizedImages = [];
-    let images_urls = [];
     if (images && Array.isArray(images)) {
       normalizedImages = normalizeImages(images);
-      images_urls = normalizedImages.map(img => JSON.stringify(img));
     } else if (image_url) {
       normalizedImages = normalizeImages([{ url: image_url, category: 'main' }]);
-      images_urls = normalizedImages.map(img => JSON.stringify(img));
     }
     const is_active = (status === 'active');
 
-    const { data, error } = await supabaseAdmin
-      .from('cabins')
-      .update({ name, description, base_price, capacity, is_active, images_urls })
-      .eq('id', id)
-      .select()
-      .single();
+    const data = await pbAdmin.collection('cabins').update(id, {
+      name, description, base_price, capacity, is_active, images: normalizedImages
+    });
 
-    if (error) throw error;
     await cleanupRemovedImages(parseStoredImages(previousCabin), normalizedImages);
     
-    data.images = (data.images_urls || []).map(str => { try { return JSON.parse(str) } catch(e) { return {url: str, category: 'main'}; } });
+    data.images = Array.isArray(data.images) ? data.images : [];
     data.image_url = data.images.length > 0 ? data.images[0].url : '';
     data.status = data.is_active ? 'active' : 'hidden';
     res.json({ success: true, data });
@@ -220,15 +189,15 @@ exports.update = async (req, res) => {
 exports.remove = async (req, res) => {
   try {
     const { id } = req.params;
-    const { data: previousCabin, error: findError } = await supabaseAdmin
-      .from('cabins').select('images_urls').eq('id', id).single();
-    if (findError || !previousCabin) return res.status(404).json({ success: false, error: 'Домик не найден' });
-    const { error } = await supabaseAdmin
-      .from('cabins')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
+    let previousCabin;
+    try {
+      previousCabin = await pbAdmin.collection('cabins').getOne(id);
+    } catch (err) {
+      return res.status(404).json({ success: false, error: 'Домик не найден' });
+    }
+    
+    await pbAdmin.collection('cabins').delete(id);
+    
     await cleanupRemovedImages(parseStoredImages(previousCabin), []);
     res.json({ success: true });
   } catch (err) {

@@ -1,4 +1,4 @@
-const { supabaseAdmin } = require('../config/supabase');
+const { pbAdmin } = require('../config/pocketbase');
 const dataStore = require('./dataStore.service');
 const { validateStay, validateUuid } = require('../utils/validation');
 
@@ -13,32 +13,33 @@ function dateStrings(checkIn, nights) {
 }
 
 async function calculateBookingTotal({ cabinId, checkIn, checkOut, guestsCount, extraIds = [] }) {
-  if (!supabaseAdmin) throw new Error('Сервис базы данных временно недоступен');
+  if (!pbAdmin) throw new Error('Сервис базы данных временно недоступен');
   validateUuid(cabinId, 'Домик');
   const { nights } = validateStay(checkIn, checkOut);
 
-  const { data: cabin, error: cabinError } = await supabaseAdmin
-    .from('cabins')
-    .select('id, name, base_price, capacity, is_active')
-    .eq('id', cabinId)
-    .eq('is_active', true)
-    .single();
+  let cabin;
+  try {
+    cabin = await pbAdmin.collection('cabins').getOne(cabinId);
+  } catch (cabinError) {
+    throw new Error('Домик не найден или временно недоступен');
+  }
 
-  if (cabinError || !cabin) throw new Error('Домик не найден или временно недоступен');
+  if (!cabin.is_active) throw new Error('Домик временно недоступен');
 
   const normalizedGuests = Math.max(1, Number.parseInt(guestsCount, 10) || 1);
   if (normalizedGuests > Number(cabin.capacity || 1)) {
     throw new Error(`В домике «${cabin.name}» максимум ${cabin.capacity} гостей`);
   }
 
-  const { data: prices, error: pricesError } = await supabaseAdmin
-    .from('prices')
-    .select('date, custom_price, promo_description')
-    .eq('cabin_id', cabinId)
-    .gte('date', checkIn)
-    .lt('date', checkOut);
-
-  if (pricesError) throw new Error('Не удалось проверить актуальные цены');
+  let prices = [];
+  try {
+    const result = await pbAdmin.collection('prices').getFullList({
+      filter: `cabin_id="${cabinId}" && date>="${checkIn}" && date<"${checkOut}"`
+    });
+    prices = result;
+  } catch (pricesError) {
+    throw new Error('Не удалось проверить актуальные цены');
+  }
   const priceMap = new Map((prices || []).map((row) => [row.date, row]));
 
   let rentPrice = 0;

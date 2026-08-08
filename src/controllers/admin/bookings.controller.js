@@ -1,25 +1,25 @@
-const { supabaseAdmin } = require('../../config/supabase');
+const { pbAdmin } = require('../../config/pocketbase');
 
 exports.getAll = async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('bookings')
-      .select(`
-        *,
-        cabins ( name ),
-        guests ( full_name, phone, telegram )
-      `)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
+    const data = await pbAdmin.collection('bookings').getFullList({
+      expand: 'cabin_id,guest_id',
+      sort: '-created_at'
+    });
     
-    const mappedData = data.map(b => ({
-      ...b,
-      guest_name: b.guests?.full_name || 'Неизвестно',
-      guest_phone: b.guests?.phone || '',
-      guest_telegram: b.guests?.telegram || '',
-      comment: b.comment ? b.comment.replace(/<!--CHAT_TOKEN:.*?-->/g, '').trim() : ''
-    }));
+    const mappedData = data.map(b => {
+      const cabin = b.expand?.cabin_id;
+      const guest = b.expand?.guest_id;
+      return {
+        ...b,
+        cabins: cabin ? { name: cabin.name } : null,
+        guests: guest ? { full_name: guest.full_name, phone: guest.phone, telegram: guest.telegram } : null,
+        guest_name: guest?.full_name || 'Неизвестно',
+        guest_phone: guest?.phone || '',
+        guest_telegram: guest?.telegram || '',
+        comment: b.comment ? b.comment.replace(/<!--CHAT_TOKEN:.*?-->/g, '').trim() : ''
+      };
+    });
 
     res.json({ success: true, data: mappedData });
   } catch (err) {
@@ -37,14 +37,13 @@ exports.updateStatus = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Неверный статус' });
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('bookings')
-      .update({ status })
-      .eq('id', id)
-      .select(`*, cabins ( name )`)
-      .single();
-
-    if (error) throw error;
+    const data = await pbAdmin.collection('bookings').update(id, { status }, {
+      expand: 'cabin_id'
+    });
+    
+    if (data.expand && data.expand.cabin_id) {
+      data.cabins = { name: data.expand.cabin_id.name };
+    }
 
     // Send chat notification if chat_token exists
     if (data && data.comment && data.comment.includes('<!--CHAT_TOKEN:')) {
@@ -77,23 +76,15 @@ exports.updateInfo = async (req, res) => {
     const { check_in, check_out, total_price, comment, guest_name, guest_phone, guest_telegram, cabin_id } = req.body;
     
     // First, fetch the booking to get guest_id
-    const { data: booking, error: fetchErr } = await supabaseAdmin
-      .from('bookings')
-      .select('guest_id')
-      .eq('id', id)
-      .single();
+    const booking = await pbAdmin.collection('bookings').getOne(id);
       
-    if (fetchErr) throw fetchErr;
-    
     if (booking.guest_id && (guest_name !== undefined || guest_phone !== undefined || guest_telegram !== undefined)) {
-      await supabaseAdmin
-        .from('guests')
-        .update({ 
-          full_name: guest_name, 
-          phone: guest_phone, 
-          telegram: guest_telegram 
-        })
-        .eq('id', booking.guest_id);
+      const guestUpdate = {};
+      if (guest_name !== undefined) guestUpdate.full_name = guest_name;
+      if (guest_phone !== undefined) guestUpdate.phone = guest_phone;
+      if (guest_telegram !== undefined) guestUpdate.telegram = guest_telegram;
+      
+      await pbAdmin.collection('guests').update(booking.guest_id, guestUpdate);
     }
     
     const updateData = {};
@@ -103,14 +94,13 @@ exports.updateInfo = async (req, res) => {
     if (comment !== undefined) updateData.comment = comment;
     if (cabin_id !== undefined) updateData.cabin_id = cabin_id;
 
-    const { data, error } = await supabaseAdmin
-      .from('bookings')
-      .update(updateData)
-      .eq('id', id)
-      .select('*, cabins(name)')
-      .single();
-
-    if (error) throw error;
+    const data = await pbAdmin.collection('bookings').update(id, updateData, {
+      expand: 'cabin_id'
+    });
+    
+    if (data.expand && data.expand.cabin_id) {
+      data.cabins = { name: data.expand.cabin_id.name };
+    }
     
     res.json({ success: true, data });
   } catch (err) {

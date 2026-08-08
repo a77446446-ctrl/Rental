@@ -9,7 +9,7 @@ exports.getSources = async (req, res) => {
     if (externalCalendarService.isExternalCalendarSchemaMissing(err)) {
       return res.status(400).json({
         success: false,
-        error: 'Сначала примените миграцию src/sql/005_external_calendars.sql в Supabase',
+        error: 'Проблема со схемой внешних календарей',
       });
     }
     res.status(500).json({ success: false, error: 'Ошибка загрузки внешних календарей' });
@@ -25,7 +25,7 @@ exports.saveSources = async (req, res) => {
     if (externalCalendarService.isExternalCalendarSchemaMissing(err)) {
       return res.status(400).json({
         success: false,
-        error: 'Сначала примените миграцию src/sql/005_external_calendars.sql в Supabase',
+        error: 'Проблема со схемой внешних календарей',
       });
     }
     res.status(500).json({ success: false, error: err.message || 'Ошибка сохранения внешних календарей' });
@@ -41,7 +41,7 @@ exports.syncSource = async (req, res) => {
     if (externalCalendarService.isExternalCalendarSchemaMissing(err)) {
       return res.status(400).json({
         success: false,
-        error: 'Сначала примените миграцию src/sql/005_external_calendars.sql в Supabase',
+        error: 'Проблема со схемой внешних календарей',
       });
     }
     res.status(500).json({ success: false, error: err.message || 'Ошибка синхронизации календаря' });
@@ -57,7 +57,7 @@ exports.syncAll = async (req, res) => {
     if (externalCalendarService.isExternalCalendarSchemaMissing(err)) {
       return res.status(400).json({
         success: false,
-        error: 'Сначала примените миграцию src/sql/005_external_calendars.sql в Supabase',
+        error: 'Проблема со схемой внешних календарей',
       });
     }
     res.status(500).json({ success: false, error: 'Ошибка синхронизации календарей' });

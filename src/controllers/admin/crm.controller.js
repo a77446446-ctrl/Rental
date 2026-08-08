@@ -1,4 +1,4 @@
-const { supabaseAdmin } = require('../../config/supabase');
+const { pbAdmin } = require('../../config/pocketbase');
 const dataStore = require('../../services/dataStore.service');
 
 exports.getAnalytics = async (req, res) => {
@@ -7,15 +7,10 @@ exports.getAnalytics = async (req, res) => {
     const targetDate = req.query.date;
     const targetMonth = req.query.month;
 
-    const { data: bookings, error } = await supabaseAdmin
-      .from('bookings')
-      .select(`
-        id, cabin_id, check_in, check_out, guests_count, status, total_price, created_at,
-        cabins ( name ), guests ( full_name, phone, telegram )
-      `)
-      .order('created_at', { ascending: true });
-
-    if (error) throw error;
+    const bookings = await pbAdmin.collection('bookings').getFullList({
+      expand: 'cabin_id,guest_id',
+      sort: 'created'
+    });
 
     function getNights(checkIn, checkOut) {
       const start = new Date(checkIn + 'T00:00:00');
@@ -32,7 +27,7 @@ exports.getAnalytics = async (req, res) => {
       filteredBookings = filteredBookings.filter(b => {
         const cIn = b.check_in || '';
         const cOut = b.check_out || '';
-        const createdDate = b.created_at ? b.created_at.split('T')[0] : '';
+        const createdDate = b.created ? b.created.split(' ')[0] : '';
         const createdMonth = createdDate.substring(0, 7);
         
         if (isDay) {
@@ -46,7 +41,6 @@ exports.getAnalytics = async (req, res) => {
       });
     }
 
-    // Default All-time logic
     const statusLabels = { pending: 'Ожидает', confirmed: 'Подтверждена', cancelled: 'Отменена', completed: 'Завершена' };
     const summary = { total_bookings: 0, active_bookings: 0, pending_bookings: 0, confirmed_bookings: 0, cancelled_bookings: 0, completed_bookings: 0, gross_revenue: 0, active_revenue: 0, confirmed_revenue: 0, pending_revenue: 0, cancelled_revenue: 0, avg_check: 0, total_nights: 0, active_nights: 0, guests_count: 0, unique_guests: 0 };
     const byStatus = {}; const byCabin = {}; const byMonth = {}; const guestsMap = {};
@@ -58,10 +52,14 @@ exports.getAnalytics = async (req, res) => {
       const guests = Number(booking.guests_count) || 0;
       const isCancelled = status === 'cancelled';
       const isConfirmedRevenue = status === 'confirmed' || status === 'completed';
-      const cabinName = booking.cabins?.name || 'Без домика';
+      
+      const cabin = booking.expand?.cabin_id;
+      const guest = booking.expand?.guest_id;
+      
+      const cabinName = cabin?.name || 'Без домика';
       const cabinKey = booking.cabin_id || cabinName;
       const monthKey = booking.check_in ? booking.check_in.slice(0, 7) : 'unknown';
-      const phone = booking.guests?.phone || 'unknown:' + booking.id;
+      const phone = guest?.phone || 'unknown:' + booking.id;
 
       summary.total_bookings += 1;
       summary.gross_revenue += price;
@@ -114,10 +112,10 @@ exports.getAnalytics = async (req, res) => {
       }
 
       if (!guestsMap[phone]) {
-        guestsMap[phone] = { phone: booking.guests?.phone || '', name: booking.guests?.full_name || 'Неизвестно', telegram: booking.guests?.telegram || '', bookings: 0, active_bookings: 0, ltv: 0, last_booking: booking.created_at };
+        guestsMap[phone] = { phone: guest?.phone || '', name: guest?.full_name || 'Неизвестно', telegram: guest?.telegram || '', bookings: 0, active_bookings: 0, ltv: 0, last_booking: booking.created };
       }
       guestsMap[phone].bookings += 1;
-      guestsMap[phone].last_booking = booking.created_at;
+      guestsMap[phone].last_booking = booking.created;
       if (!isCancelled) {
         guestsMap[phone].active_bookings += 1;
         guestsMap[phone].ltv += price;
@@ -143,40 +141,34 @@ exports.getAnalytics = async (req, res) => {
 
 exports.getGuests = async (req, res) => {
   try {
-    const { data: bookings, error } = await supabaseAdmin
-      .from('bookings')
-      .select(`
-        total_price,
-        status,
-        created_at,
-        guests ( full_name, phone, telegram )
-      `)
-      .order('created_at', { ascending: true });
-
-    if (error) throw error;
+    const bookings = await pbAdmin.collection('bookings').getFullList({
+      expand: 'guest_id',
+      sort: 'created'
+    });
 
     const notes = await dataStore.get('guest_notes', 'guest_notes.json', {});
 
     const guestsMap = {};
 
     bookings.forEach(b => {
-      const phone = b.guests?.phone;
+      const guest = b.expand?.guest_id;
+      const phone = guest?.phone;
       if (!phone) return;
 
       if (!guestsMap[phone]) {
         guestsMap[phone] = {
           phone,
-          name: b.guests?.full_name || 'Неизвестно',
-          telegram: b.guests?.telegram || '',
-          first_booking: b.created_at,
-          last_booking: b.created_at,
+          name: guest?.full_name || 'Неизвестно',
+          telegram: guest?.telegram || '',
+          first_booking: b.created,
+          last_booking: b.created,
           total_bookings: 0,
           ltv: 0,
           notes: notes[phone] || ''
         };
       }
       
-      guestsMap[phone].last_booking = b.created_at;
+      guestsMap[phone].last_booking = b.created;
       guestsMap[phone].total_bookings++;
       
       if (b.status !== 'cancelled') {

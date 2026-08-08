@@ -1,5 +1,4 @@
-const { supabaseAdmin } = require('../config/supabase');
-const { config } = require('../config/env');
+const { pbAdmin, pb } = require('../config/pocketbase');
 const crypto = require('crypto');
 
 const IMAGE_EXTENSIONS = {
@@ -62,56 +61,101 @@ function detectMediaFile(fileBuffer, declaredMime = '') {
   throw mediaValidationError('Фактический формат файла не поддерживается');
 }
 
+// Автоматическое создание коллекции media при первом запуске, если её нет
+async function ensureMediaCollection() {
+  if (!pbAdmin) return;
+  try {
+    await pbAdmin.collections.getOne('media');
+  } catch (err) {
+    if (err.status === 404) {
+      await pbAdmin.collections.create({
+        name: 'media',
+        type: 'base',
+        schema: [
+          {
+            name: 'file',
+            type: 'file',
+            maxSelect: 1,
+            maxSize: 524288000,
+          }
+        ]
+      });
+      console.log('[storage] Коллекция media успешно создана в PocketBase');
+    }
+  }
+}
+
+let mediaCollectionEnsured = false;
+
+async function uploadFileToPB(fileBuffer, mimeType, extension) {
+  if (!mediaCollectionEnsured) {
+    await ensureMediaCollection();
+    mediaCollectionEnsured = true;
+  }
+  
+  const formData = new FormData();
+  // В Node.js 18+ FormData и Blob встроены.
+  const blob = new Blob([fileBuffer], { type: mimeType });
+  const filename = `${crypto.randomUUID()}.${extension}`;
+  formData.append('file', blob, filename);
+
+  const record = await pbAdmin.collection('media').create(formData);
+  return {
+    url: pbAdmin.files.getUrl(record, record.file),
+    path: record.id // В PocketBase храним ID записи как путь
+  };
+}
+
 async function uploadImage(fileBuffer, _originalName, mimeType) {
-  if (!supabaseAdmin) throw new Error('Хранилище временно недоступно');
+  if (!pbAdmin) throw new Error('Хранилище временно недоступно');
   assertImageMime(mimeType);
   const detected = detectMediaFile(fileBuffer, mimeType);
   if (detected.mediaType !== 'image' && detected.mediaType !== 'video') throw mediaValidationError('Файл не является изображением или видео');
-  const extension = detected.extension;
-  const storagePath = `cabins/${crypto.randomUUID()}.${extension}`;
-
-  const { error } = await supabaseAdmin.storage
-    .from(config.supabaseStorageBucket)
-    .upload(storagePath, fileBuffer, {
-      contentType: detected.mimeType,
-      cacheControl: '31536000',
-      upsert: false,
-    });
-
-  if (error) throw new Error(`Не удалось загрузить изображение: ${error.message}`);
-  const { data } = supabaseAdmin.storage.from(config.supabaseStorageBucket).getPublicUrl(storagePath);
-  return { url: data.publicUrl, path: storagePath };
+  
+  const result = await uploadFileToPB(fileBuffer, detected.mimeType, detected.extension);
+  return result;
 }
 
 function extractStoragePath(value) {
   const raw = String(value || '').trim();
   if (!raw) return null;
-  if (!raw.includes('://')) return raw;
-  try {
-    const pathname = new URL(raw).pathname;
-    const marker = `/storage/v1/object/public/${config.supabaseStorageBucket}/`;
-    const index = pathname.indexOf(marker);
-    return index === -1 ? null : decodeURIComponent(pathname.slice(index + marker.length));
-  } catch (_err) {
-    return null;
+  
+  // Для PocketBase ссылки выглядят так: /api/files/media/{record_id}/{filename}
+  const match = raw.match(/\/api\/files\/media\/([^\/]+)\//);
+  if (match && match[1]) {
+    return match[1]; // Возвращаем ID записи
   }
+  
+  // Легаси Supabase
+  const marker = '/storage/v1/object/public/';
+  const index = raw.indexOf(marker);
+  if (index !== -1) return null; // Старые пути не поддерживаются для удаления
+  
+  return null;
 }
 
 function isCabinPath(value) {
-  const storagePath = extractStoragePath(value);
-  if (!storagePath || storagePath.includes('..') || storagePath.startsWith('chat/')) return false;
-  return storagePath.startsWith('cabins/') || /^[0-9a-f-]{30,}\.[a-z0-9]{2,12}$/i.test(storagePath);
+  return extractStoragePath(value) !== null;
 }
 
 async function deleteImages(values) {
-  if (!supabaseAdmin) throw new Error('Хранилище временно недоступно');
+  if (!pbAdmin) throw new Error('Хранилище временно недоступно');
   const paths = [...new Set((Array.isArray(values) ? values : [values])
     .map(extractStoragePath)
-    .filter((value) => value && isCabinPath(value)))];
+    .filter((id) => id !== null))];
+    
   if (!paths.length) return 0;
-  const { error } = await supabaseAdmin.storage.from(config.supabaseStorageBucket).remove(paths);
-  if (error) throw new Error(`Не удалось удалить изображение: ${error.message}`);
-  return paths.length;
+  
+  let deletedCount = 0;
+  for (const id of paths) {
+    try {
+      await pbAdmin.collection('media').delete(id);
+      deletedCount++;
+    } catch (e) {
+      console.warn(`[storage] Не удалось удалить запись ${id}:`, e.message);
+    }
+  }
+  return deletedCount;
 }
 
 async function uploadChatAttachment(fileBuffer, _originalName, mimeType) {
@@ -124,13 +168,9 @@ async function uploadChatAttachment(fileBuffer, _originalName, mimeType) {
   if (declaredCategory !== detected.mediaType) {
     throw mediaValidationError('Тип содержимого файла не соответствует заявленному');
   }
-  const storagePath = `chat/${crypto.randomUUID()}.${detected.extension}`;
-  const { error } = await supabaseAdmin.storage.from(config.supabaseStorageBucket).upload(storagePath, fileBuffer, {
-    contentType: detected.mimeType, cacheControl: '31536000', upsert: false,
-  });
-  if (error) throw new Error(`Не удалось загрузить вложение: ${error.message}`);
-  const { data } = supabaseAdmin.storage.from(config.supabaseStorageBucket).getPublicUrl(storagePath);
-  return { url: data.publicUrl, mimeType: detected.mimeType, mediaType: detected.mediaType };
+  
+  const result = await uploadFileToPB(fileBuffer, detected.mimeType, detected.extension);
+  return { url: result.url, mimeType: detected.mimeType, mediaType: detected.mediaType };
 }
 
 module.exports = {
