@@ -593,31 +593,13 @@ router.get('/availability', async (req, res) => {
  * GET /api/settings
  * Получить глобальные настройки
  */
-router.get('/settings', async (req, res) => {
+router.get('/settings', async (_req, res) => {
   try {
-    let settings = { checkInTime: '16:00', checkOutTime: '14:00' };
-    if (fs.existsSync(settingsPath)) {
-      settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-    }
-    res.json({ success: true, data: settings });
+    const settings = await dataStore.get('settings', 'settings.json', { checkInTime: '16:00', checkOutTime: '14:00' });
+    return res.json({ success: true, data: settings });
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Ошибка загрузки настроек' });
-  }
-});
-
-/**
- * GET /api/amenities
- * Получить услуги всех домиков
- */
-router.get('/amenities', async (req, res) => {
-  try {
-    let amenities = {};
-    if (fs.existsSync(amenitiesPath)) {
-      amenities = JSON.parse(fs.readFileSync(amenitiesPath, 'utf8'));
-    }
-    res.json({ success: true, data: amenities });
-  } catch (err) {
-    res.status(500).json({ success: false, error: 'Ошибка загрузки услуг' });
+    console.error('[public.routes] Ошибка загрузки settings:', err);
+    return res.status(500).json({ success: false, error: 'Ошибка загрузки настроек' });
   }
 });
 

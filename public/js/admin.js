@@ -3,10 +3,10 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const headerActions = document.querySelector('.admin-header > div:last-child');
-  if (headerActions) {
-    const toggleHtml = `<div style="display:flex;align-items:center;gap:8px;margin-right:16px;">
-      <span style="color:var(--muted);font-size:12px;">Тех. обслуживание:</span>
+  const sidebarMenu = document.getElementById('adminMenu');
+  if (sidebarMenu) {
+    const toggleHtml = `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--line);">
+      <span style="color:var(--muted);font-size:13px;font-weight:600;">Тех. обслуживание</span>
       <label style="position:relative;display:inline-block;width:40px;height:24px;">
         <input type="checkbox" id="maintenanceToggle" style="opacity:0;width:0;height:0;">
         <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:rgba(255,255,255,0.1);transition:.4s;border-radius:24px;">
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </span>
       </label>
     </div>`;
-    headerActions.insertAdjacentHTML('afterbegin', toggleHtml);
+    sidebarMenu.insertAdjacentHTML('afterbegin', toggleHtml);
     const toggle = document.getElementById('maintenanceToggle');
     const dot = toggle.nextElementSibling.querySelector('.slider-dot');
     
