@@ -3325,13 +3325,14 @@ body .chat-widget:not(:has(.chat-body[style*="none"])) #chat-toggle .chat-ring-l
 
 /* The label travels around the ring while the chat glyph flips separately. */
 @keyframes eco-chat-ring-orbit {
-  to { transform: rotate(360deg); }
+  0% { transform: rotate(0deg) translateZ(0); }
+  100% { transform: rotate(360deg) translateZ(0); }
 }
 
 @keyframes eco-chat-icon-flip {
-  0%, 68%, 100% { transform: perspective(760px) rotateX(0deg); }
-  84% { transform: perspective(760px) rotateX(180deg); }
-  96% { transform: perspective(760px) rotateX(360deg); }
+  0%, 68%, 100% { transform: perspective(760px) rotateX(0deg) translateZ(0); }
+  84% { transform: perspective(760px) rotateX(180deg) translateZ(0); }
+  96% { transform: perspective(760px) rotateX(360deg) translateZ(0); }
 }
 
 body .chat-widget:has(.chat-body[style*="none"]) {
@@ -3343,6 +3344,9 @@ body .chat-widget:has(.chat-body[style*="none"]) {
   transform-origin: 50% 50%;
   shape-rendering: geometricPrecision;
   text-rendering: geometricPrecision;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .85));
 }
