@@ -278,9 +278,7 @@ router.get('/house-items', async (req, res) => {
    GET /api/settings
    Возвращает глобальные настройки.
    ───────────────────────────────────────────── */
-router.get('/settings', async (_req, res) => {
-  try {
-    const settings = await dataStore.get('settings', 'settings.json', { checkInTime: '16:00', checkOutTime: '14:00' });
+
     return res.json({ success: true, data: settings });
   } catch (err) {
     console.error('[public.routes] Ошибка загрузки settings:', err);

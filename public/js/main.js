@@ -745,6 +745,15 @@
 
     clearTimeout(loadingDeadline);
 
+    if (results[2] && results[2].maintenanceMode) {
+      document.getElementById(\'app-loading-title\').textContent = \'Сайт находится на техническом обслуживании\';
+      document.getElementById(\'app-loading-text\').textContent = \'Пожалуйста, зайдите позже.\';
+      var retryBtn = document.getElementById(\'app-loading-retry\');
+      if (retryBtn) retryBtn.style.display = \'none\';
+      document.body.classList.add(\'app-loading-active\');
+      return;
+    }
+
     state.cabins = Array.isArray(results[0]) ? results[0] : [];
     state.extraServices = Array.isArray(results[1]) ? results[1] : [];
     state.settings = results[2] || state.settings;
