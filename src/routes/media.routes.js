@@ -1,11 +1,8 @@
 /**
- * Same-origin proxy for public Supabase Storage media.
+ * Same-origin proxy for public PocketBase Storage media.
  *
- * Some providers cannot reliably reach *.supabase.co without a VPN. The
- * browser therefore requests /media/supabase/... from eco-gorniy.ru, while
- * the VPS fetches the public object from the configured Supabase project.
- * The route is deliberately limited to the configured public storage bucket
- * so it cannot be used as an open proxy.
+ * The browser requests /media/pocketbase/... from eco-gorniy.ru, while
+ * the VPS fetches the file from the configured PocketBase server.
  */
 
 const express = require('express');
@@ -13,26 +10,23 @@ const { Readable, pipeline } = require('stream');
 const { config } = require('../config/env');
 
 const router = express.Router();
-const PUBLIC_STORAGE_PREFIX = '/storage/v1/object/public/';
+const PB_STORAGE_PREFIX = '/api/files/';
 
-function buildSupabaseMediaUrl(relativePath) {
-  if (!config.supabaseUrl) return null;
+function buildPocketbaseMediaUrl(relativePath) {
+  if (!config.pocketbaseUrl) return null;
 
   const normalized = String(relativePath || '').replace(/^\/+/, '');
   const segments = normalized.split('/');
-  const bucket = segments.shift();
-
+  
   if (
-    !bucket ||
-    bucket !== config.supabaseStorageBucket ||
     segments.length === 0 ||
     segments.some((segment) => !segment || segment === '.' || segment === '..' || segment.includes('\\') || segment.includes('\0'))
   ) {
     return null;
   }
 
-  const upstream = new URL(config.supabaseUrl);
-  upstream.pathname = PUBLIC_STORAGE_PREFIX + [bucket, ...segments]
+  const upstream = new URL(config.pocketbaseUrl);
+  upstream.pathname = PB_STORAGE_PREFIX + segments
     .map((segment) => encodeURIComponent(segment))
     .join('/');
   upstream.search = '';
@@ -42,25 +36,25 @@ function buildSupabaseMediaUrl(relativePath) {
 
 function toSameOriginMediaPath(value) {
   const raw = String(value || '').trim();
-  if (!raw || !config.supabaseUrl) return raw;
+  if (!raw || !config.pocketbaseUrl) return raw;
 
   try {
     const source = new URL(raw);
-    const configuredSupabase = new URL(config.supabaseUrl);
-    if (source.origin !== configuredSupabase.origin || !source.pathname.startsWith(PUBLIC_STORAGE_PREFIX)) {
+    const configuredPb = new URL(config.pocketbaseUrl);
+    if (source.origin !== configuredPb.origin || !source.pathname.startsWith(PB_STORAGE_PREFIX)) {
       return raw;
     }
 
-    const relativePath = source.pathname.slice(PUBLIC_STORAGE_PREFIX.length);
-    if (!buildSupabaseMediaUrl(relativePath)) return raw;
-    return '/media/supabase/' + relativePath.split('/').map((segment) => encodeURIComponent(decodeURIComponent(segment))).join('/');
+    const relativePath = source.pathname.slice(PB_STORAGE_PREFIX.length);
+    if (!buildPocketbaseMediaUrl(relativePath)) return raw;
+    return '/media/pocketbase/' + relativePath.split('/').map((segment) => encodeURIComponent(decodeURIComponent(segment))).join('/');
   } catch {
     return raw;
   }
 }
 
-router.get('/supabase/*', async (req, res) => {
-  const upstreamUrl = buildSupabaseMediaUrl(req.params[0]);
+router.get('/pocketbase/*', async (req, res) => {
+  const upstreamUrl = buildPocketbaseMediaUrl(req.params[0]);
   if (!upstreamUrl) {
     return res.status(400).json({ success: false, error: 'Некорректный адрес медиафайла' });
   }
@@ -107,7 +101,7 @@ router.get('/supabase/*', async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('[media-proxy] Ошибка Supabase Storage:', err.message);
+    console.error('[media-proxy] Ошибка PocketBase Storage:', err.message);
     if (!res.headersSent) {
       return res.status(502).json({ success: false, error: 'Медиафайл временно недоступен' });
     }
@@ -115,4 +109,4 @@ router.get('/supabase/*', async (req, res) => {
   }
 });
 
-module.exports = { router, buildSupabaseMediaUrl, toSameOriginMediaPath };
+module.exports = { router, buildPocketbaseMediaUrl, toSameOriginMediaPath };

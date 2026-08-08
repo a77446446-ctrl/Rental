@@ -14,11 +14,11 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
-const { supabaseAdmin } = require('../config/supabase');
+const { pbAdmin } = require('../config/pocketbase');
 const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
-const { buildSupabaseMediaUrl, toSameOriginMediaPath } = require('./media.routes');
+const { buildPocketbaseMediaUrl, toSameOriginMediaPath } = require('./media.routes');
 
 const publicRoot = path.join(__dirname, '../../public');
 
@@ -37,10 +37,10 @@ async function getConfiguredLogoUrl() {
 }
 
 async function readConfiguredLogoBuffer(logoUrl) {
-  if (logoUrl.startsWith('/media/supabase/')) {
-    const encodedPath = logoUrl.slice('/media/supabase/'.length);
+  if (logoUrl.startsWith('/media/pocketbase/')) {
+    const encodedPath = logoUrl.slice('/media/pocketbase/'.length);
     const relativePath = encodedPath.split('/').map((segment) => decodeURIComponent(segment)).join('/');
-    const upstreamUrl = buildSupabaseMediaUrl(relativePath);
+    const upstreamUrl = buildPocketbaseMediaUrl(relativePath);
     if (!upstreamUrl) throw new Error('Некорректный адрес логотипа');
     const response = await fetch(upstreamUrl, { signal: AbortSignal.timeout(8000) });
     if (!response.ok) throw new Error('Логотип временно недоступен');
@@ -159,20 +159,20 @@ router.get('/icon.png', async (req, res) => {
 
 router.get('/cabins', async (req, res) => {
   try {
-    if (!supabaseAdmin) {
+    if (!pbAdmin) {
       return res.status(503).json({
         success: false,
         error: 'Сервис базы данных временно недоступен',
       });
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('cabins')
-      .select('*')
-      .eq('is_active', true)
-      .order('id', { ascending: true });
-
-    if (error) {
+    let data;
+    try {
+      data = await pbAdmin.collection('cabins').getFullList({
+        filter: 'is_active = true',
+        sort: 'sort_order'
+      });
+    } catch (error) {
       console.error('[public.routes] Ошибка при получении домиков:', error.message);
       return res.status(500).json({
         success: false,
@@ -181,14 +181,12 @@ router.get('/cabins', async (req, res) => {
     }
 
     const mappedData = (data || [])
-      .filter(cabin => cabin.is_active !== false)
-      .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
       .map(mapCabinForPublic);
 
     return res.status(200).json({
       success: true,
       data: mappedData,
-      meta: { source: 'supabase' },
+      meta: { source: 'pocketbase' },
     });
   } catch (err) {
     console.error('[public.routes] Исключение в GET /api/cabins:', err.message);
@@ -216,21 +214,17 @@ router.get('/cabins/:slug', async (req, res) => {
       });
     }
 
-    if (!supabaseAdmin) {
+    if (!pbAdmin) {
       return res.status(503).json({
         success: false,
         error: 'Сервис базы данных временно недоступен',
       });
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('cabins')
-      .select('*')
-      .eq('slug', slug)
-      .eq('is_active', true)
-      .single();
-
-    if (error || !data) {
+    let data;
+    try {
+      data = await pbAdmin.collection('cabins').getFirstListItem(`slug="${slug}" && is_active=true`);
+    } catch (error) {
       return res.status(404).json({
         success: false,
         error: 'Домик не найден',
@@ -320,7 +314,7 @@ router.get('/amenities', async (_req, res) => {
 
 router.get('/prices', async (req, res) => {
   try {
-    if (!supabaseAdmin) {
+    if (!pbAdmin) {
       return res.status(503).json({
         success: false,
         error: 'Сервис базы данных временно недоступен',
@@ -330,7 +324,7 @@ router.get('/prices', async (req, res) => {
     const { cabin_id, from, to } = req.query;
 
     /* Валидация cabin_id (UUID формат) */
-    if (cabin_id && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cabin_id)) {
+    if (cabin_id && !/^[a-zA-Z0-9]+$/i.test(cabin_id)) {
       return res.status(400).json({
         success: false,
         error: 'Некорректный идентификатор домика',
@@ -365,20 +359,19 @@ router.get('/prices', async (req, res) => {
     const dateTo = to || defaultTo;
 
     /* Собираем запрос */
-    let query = supabaseAdmin
-      .from('prices')
-      .select('id, cabin_id, date, custom_price, is_promo, promo_description')
-      .gte('date', dateFrom)
-      .lte('date', dateTo)
-      .order('date', { ascending: true });
-
+    let filter = `date >= "${dateFrom}" && date <= "${dateTo}"`;
     if (cabin_id) {
-      query = query.eq('cabin_id', cabin_id);
+      filter += ` && cabin_id = "${cabin_id}"`;
     }
-
-    const { data, error } = await query;
-
-    if (error) {
+    
+    let data;
+    try {
+      data = await pbAdmin.collection('prices').getFullList({
+        filter: filter,
+        sort: 'date',
+        fields: 'id,cabin_id,date,custom_price,is_promo,promo_description'
+      });
+    } catch (error) {
       console.error('[public.routes] Ошибка при получении цен:', error.message);
       return res.status(500).json({
         success: false,
@@ -428,7 +421,7 @@ router.get('/availability', async (req, res) => {
     }
 
     /* Валидация UUID */
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cabin_id)) {
+    if (!/^[a-zA-Z0-9]+$/i.test(cabin_id)) {
       return res.status(400).json({
         success: false,
         error: 'Некорректный идентификатор домика',
@@ -462,7 +455,7 @@ router.get('/availability', async (req, res) => {
     const dateFrom = from || defaultFrom;
     const dateTo = to || defaultTo;
 
-    if (!supabaseAdmin) {
+    if (!pbAdmin) {
       return res.status(503).json({
         success: false,
         error: 'Сервис базы данных временно недоступен',
@@ -470,14 +463,12 @@ router.get('/availability', async (req, res) => {
     }
 
     /* 1. Получаем base_price и name домика */
-    const { data: cabinData, error: cabinError } = await supabaseAdmin
-      .from('cabins')
-      .select('id, name, base_price')
-      .eq('id', cabin_id)
-      .eq('is_active', true)
-      .single();
-
-    if (cabinError || !cabinData) {
+    let cabinData;
+    try {
+      cabinData = await pbAdmin.collection('cabins').getFirstListItem(`id="${cabin_id}" && is_active=true`, {
+        fields: 'id,name,base_price'
+      });
+    } catch (cabinError) {
       return res.status(404).json({
         success: false,
         error: 'Домик не найден',
@@ -485,14 +476,13 @@ router.get('/availability', async (req, res) => {
     }
 
     /* 2. Получаем кастомные цены в диапазоне */
-    const { data: pricesData, error: pricesError } = await supabaseAdmin
-      .from('prices')
-      .select('date, custom_price, is_promo, promo_description')
-      .eq('cabin_id', cabin_id)
-      .gte('date', dateFrom)
-      .lte('date', dateTo);
-
-    if (pricesError) {
+    let pricesData;
+    try {
+      pricesData = await pbAdmin.collection('prices').getFullList({
+        filter: `cabin_id="${cabin_id}" && date >= "${dateFrom}" && date <= "${dateTo}"`,
+        fields: 'date,custom_price,is_promo,promo_description'
+      });
+    } catch (pricesError) {
       console.error('[public.routes] Ошибка при получении цен:', pricesError.message);
       return res.status(500).json({
         success: false,
@@ -509,15 +499,13 @@ router.get('/availability', async (req, res) => {
     }
 
     /* 3. Получаем активные бронирования в диапазоне */
-    const { data: bookingsData, error: bookingsError } = await supabaseAdmin
-      .from('bookings')
-      .select('check_in, check_out')
-      .eq('cabin_id', cabin_id)
-      .in('status', ['pending', 'confirmed'])
-      .lte('check_in', dateTo)
-      .gte('check_out', dateFrom);
-
-    if (bookingsError) {
+    let bookingsData;
+    try {
+      bookingsData = await pbAdmin.collection('bookings').getFullList({
+        filter: `cabin_id="${cabin_id}" && (status="pending" || status="confirmed") && check_in <= "${dateTo}" && check_out >= "${dateFrom}"`,
+        fields: 'check_in,check_out'
+      });
+    } catch (bookingsError) {
       console.error('[public.routes] Ошибка при получении бронирований:', bookingsError.message);
       return res.status(500).json({
         success: false,
@@ -701,18 +689,16 @@ router.post('/bookings', async (req, res) => {
 
     const normalizedGuestsCount = Math.max(1, parseInt(guests_count, 10) || 2);
 
-    if (!supabaseAdmin) {
+    if (!pbAdmin) {
       return res.status(503).json({ success: false, error: 'Сервис базы данных временно недоступен' });
     }
 
-    const { data: cabinData, error: cabinError } = await supabaseAdmin
-      .from('cabins')
-      .select('id, name, capacity')
-      .eq('id', cabin_id)
-      .eq('is_active', true)
-      .single();
-
-    if (cabinError || !cabinData) {
+    let cabinData;
+    try {
+      cabinData = await pbAdmin.collection('cabins').getFirstListItem(`id="${cabin_id}" && is_active=true`, {
+        fields: 'id,name,capacity'
+      });
+    } catch (cabinError) {
       return res.status(404).json({ success: false, error: 'Домик не найден' });
     }
 
@@ -783,39 +769,42 @@ router.get('/ical/export/:slug', async (req, res) => {
       slug = slug.slice(0, -4);
     }
 
-    if (!supabaseAdmin) {
+    if (!pbAdmin) {
       return res.status(503).send('Сервис временно недоступен');
     }
 
     // Находим домик по slug
-    const { data: cabin, error: cabinError } = await supabaseAdmin
-      .from('cabins')
-      .select('id, name, slug')
-      .eq('slug', slug)
-      .single();
-
-    if (cabinError || !cabin) {
+    let cabin;
+    try {
+      cabin = await pbAdmin.collection('cabins').getFirstListItem(`slug="${slug}"`, {
+        fields: 'id,name,slug'
+      });
+    } catch (cabinError) {
       return res.status(404).send('Объект не найден');
     }
 
     // Загружаем активные бронирования (pending + confirmed)
-    const { data: bookings, error: bookingsError } = await supabaseAdmin
-      .from('bookings')
-      .select('id, check_in, check_out, status')
-      .eq('cabin_id', cabin.id)
-      .in('status', ['pending', 'confirmed']);
-
-    if (bookingsError) {
+    let bookings;
+    try {
+      bookings = await pbAdmin.collection('bookings').getFullList({
+        filter: `cabin_id="${cabin.id}" && (status="pending" || status="confirmed")`,
+        fields: 'id,check_in,check_out,status'
+      });
+    } catch (bookingsError) {
       console.error('[ical-export] Ошибка загрузки бронирований:', bookingsError.message);
       return res.status(500).send('Ошибка сервера');
     }
 
     // Загружаем закрытые даты (promo_description === 'CLOSED')
-    const { data: closedDates } = await supabaseAdmin
-      .from('prices')
-      .select('date')
-      .eq('cabin_id', cabin.id)
-      .eq('promo_description', 'CLOSED');
+    let closedDates = [];
+    try {
+      closedDates = await pbAdmin.collection('prices').getFullList({
+        filter: `cabin_id="${cabin.id}" && promo_description="CLOSED"`,
+        fields: 'date'
+      });
+    } catch (err) {
+      console.error('[ical-export] Ошибка загрузки закрытых дат:', err.message);
+    }
 
     // Формируем iCal
     const now = new Date();

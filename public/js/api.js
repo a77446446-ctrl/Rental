@@ -8,12 +8,10 @@
   'use strict';
 
   /**
-   * Public Supabase media is displayed through the application domain.
-   * This avoids blank images and videos on networks where *.supabase.co is
-   * slow or unavailable, while the original URL remains unchanged in CMS
-   * form values and in the database.
+   * Public PocketBase media is displayed through the application domain.
+   * This avoids mixed content errors when PocketBase is on HTTP and the site is HTTPS.
    */
-  var SUPABASE_PUBLIC_PREFIX = '/storage/v1/object/public/';
+  var PB_API_FILES_PREFIX = '/api/files/';
 
   function safeDecodeMediaSegment(value) {
     try {
@@ -25,19 +23,22 @@
 
   function toProxiedMediaUrl(value) {
     var raw = String(value || '').trim();
-    if (!raw || raw.indexOf('/media/supabase/') === 0) return raw;
+    if (!raw || raw.indexOf('/media/pocketbase/') === 0) return raw;
 
     try {
       var parsed = new URL(raw, window.location.origin);
-      if (!/\.supabase\.co$/i.test(parsed.hostname)) return raw;
-      var prefixIndex = parsed.pathname.indexOf(SUPABASE_PUBLIC_PREFIX);
+      // Assuming PocketBase URLs look like http://<host>/api/files/...
+      var prefixIndex = parsed.pathname.indexOf(PB_API_FILES_PREFIX);
       if (prefixIndex === -1) return raw;
+      
+      // Don't proxy if it's already on the same origin and just a relative path
+      if (parsed.origin === window.location.origin && raw.indexOf('http') !== 0) return raw;
 
-      var relativePath = parsed.pathname.slice(prefixIndex + SUPABASE_PUBLIC_PREFIX.length);
+      var relativePath = parsed.pathname.slice(prefixIndex + PB_API_FILES_PREFIX.length);
       var encodedPath = relativePath.split('/').map(function (segment) {
         return encodeURIComponent(safeDecodeMediaSegment(segment));
       }).join('/');
-      return '/media/supabase/' + encodedPath;
+      return '/media/pocketbase/' + encodedPath;
     } catch {
       return raw;
     }
@@ -45,7 +46,7 @@
 
   function rewriteCssMediaUrls(value) {
     return String(value || '').replace(
-      /https:\/\/[a-z0-9.-]+\.supabase\.co\/storage\/v1\/object\/public\/[^\s"'()]+/gi,
+      /https?:\/\/[^\/]+\/api\/files\/[^\s"'()]+/gi,
       function (url) { return toProxiedMediaUrl(url); }
     );
   }
