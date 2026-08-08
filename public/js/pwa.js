@@ -89,7 +89,7 @@
         '<img src="/api/pwa-icon/192.png" alt="">' +
       '</div>' +
       '<div class="pwa-install-copy">' +
-        '<span class="pwa-install-kicker">ECO-Gorniy всегда под рукой</span>' +
+        '<span class="pwa-install-kicker">Название проекта всегда под рукой</span>' +
         '<strong id="pwa-install-title">Установите приложение</strong>' +
         '<p class="pwa-install-description">Открывайте бронирование с рабочего стола — без вкладок и интерфейса браузера.</p>' +
         '<p class="pwa-install-ios-hint" hidden><b>1.</b> Нажмите значок «Поделиться» <span aria-hidden="true">□↑</span><br><b>2.</b> Выберите «На экран Домой».</p>' +

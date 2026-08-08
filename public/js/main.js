@@ -1,5 +1,5 @@
 /**
- * Основной скрипт eco-gorniy.ru
+ * Основной скрипт Название проекта.ru
  * Связывает UI с API, управляет состоянием бронирования.
  */
 
@@ -1071,7 +1071,7 @@
     var displayUrl = window.EcoMedia ? window.EcoMedia.url(url) : url;
     var image = document.createElement('img');
     image.src = displayUrl;
-    image.alt = 'Логотип ' + (label || 'ECO-Gorniy');
+    image.alt = 'Логотип ' + (label || 'Название проекта');
     image.decoding = 'async';
     image.loading = target.id === 'main-logo-img' ? 'eager' : 'lazy';
     if (target.id === 'main-logo-img') image.fetchPriority = 'high';
