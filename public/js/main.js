@@ -746,11 +746,22 @@
     clearTimeout(loadingDeadline);
 
     if (results[2] && results[2].maintenanceMode) {
-      document.getElementById(\'app-loading-title\').textContent = \'Сайт находится на техническом обслуживании\';
-      document.getElementById(\'app-loading-text\').textContent = \'Пожалуйста, зайдите позже.\';
-      var retryBtn = document.getElementById(\'app-loading-retry\');
-      if (retryBtn) retryBtn.style.display = \'none\';
-      document.body.classList.add(\'app-loading-active\');
+      document.getElementById('app-loading-title').textContent = 'Сайт находится на техническом обслуживании';
+      document.getElementById('app-loading-text').textContent = 'Пожалуйста, зайдите позже.';
+      var retryBtn = document.getElementById('app-loading-retry');
+      if (retryBtn) retryBtn.style.display = 'none';
+      
+      // Make sure chat is visible during maintenance mode
+      var chatWidget = document.getElementById('chat-widget');
+      if (chatWidget) {
+        chatWidget.style.zIndex = '999999';
+      }
+      var chatToggle = document.getElementById('chat-toggle');
+      if (chatToggle) {
+        chatToggle.style.zIndex = '999999';
+      }
+
+      document.body.classList.add('app-loading-active');
       return;
     }
 
