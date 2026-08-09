@@ -119,15 +119,47 @@ app.use(async (req, res, next) => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Техническое обслуживание</title>
+  <link rel="icon" href="/api/icon.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/api/pwa-icon/192.png">
+  <link rel="stylesheet" href="/css/main.css">
   <style>
-    body { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; background:#121212; color:#EDE4D6; font-family:'Helvetica Neue', sans-serif; text-align:center; padding:20px; box-sizing:border-box; }
+    body { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; background:#121212 !important; color:#EDE4D6; font-family:'Helvetica Neue', sans-serif; text-align:center; padding:20px; box-sizing:border-box; }
     h1 { font-size:32px; font-weight:300; margin-bottom:10px; }
     p { font-size:16px; opacity:0.7; line-height:1.5; }
+    /* Скрываем всё лишнее от main.css */
+    header, footer, main, nav, .hero, .section { display:none !important; }
   </style>
 </head>
 <body>
   <h1>Сайт на техническом обслуживании</h1>
   <p>Мы проводим плановые работы.<br>Пожалуйста, зайдите позже.</p>
+
+  <!-- Чат виджет -->
+  <div id="chat-widget" class="chat-widget">
+    <span id="chat-badge" class="chat-badge" style="display: none;">0</span>
+    <div class="chat-header" id="chat-header">
+      <span>Связаться с нами</span>
+      <button type="button" id="chat-toggle" aria-label="Открыть чат">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg>
+      </button>
+    </div>
+    <div class="chat-body" id="chat-body" style="display: none;">
+      <div class="chat-messages" id="chat-messages"></div>
+      <form class="chat-form" id="chat-form">
+        <input type="file" id="chat-file-input" accept="image/*,video/*,audio/*" hidden>
+        <button type="button" class="chat-attach-btn" id="chat-attach-btn" title="Прикрепить файл">＋</button>
+        <input type="text" id="chat-input" placeholder="Введите сообщение..." autocomplete="off">
+        <button type="submit">➤</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="chat-toast-banner" class="chat-toast-banner" style="display: none;">
+    💬 Ответ от администратора: вам новое сообщение!
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/js/chat.js"></script>
 </body>
 </html>
           `);
