@@ -11,7 +11,7 @@ async function createBooking(input) {
     ...input,
     guest_name: cleanText(input.guest_name, { field: 'Имя', required: true, max: 255 }),
     guest_phone: cleanText(input.guest_phone, { field: 'Телефон', required: true, max: 30 }),
-    guest_telegram: cleanText(input.guest_telegram, { field: 'Telegram', max: 100 }),
+    guest_telegram: cleanText(input.guest_telegram, { field: 'Telegram / МАКС', max: 100 }),
     comment: cleanText(input.comment, { field: 'Комментарий', max: 4000 }),
   };
 
@@ -89,11 +89,6 @@ async function createBooking(input) {
     chatToken: chatToken,
   };
 
-  try {
-    sendBookingNotification(notificationData).catch((err) => console.error('[booking.service] Ошибка Telegram:', err.message));
-  } catch (err) {
-    console.error('[booking.service] Ошибка подготовки Telegram:', err.message);
-  }
 
   try {
     maxService.sendBookingNotification(notificationData).catch((err) => console.error('[booking.service] Ошибка МАКС:', err.message));

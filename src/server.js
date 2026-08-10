@@ -14,7 +14,7 @@ const adminRoutes = require('./routes/admin.routes');
 const { router: mediaRoutes } = require('./routes/media.routes');
 const { requireAdmin } = require('./middleware/auth');
 const externalCalendarService = require('./services/externalCalendar.service');
-const { supabaseAdmin } = require('./config/supabase');
+const { pbAdmin } = require('./config/pocketbase');
 
 /* Валидация переменных окружения */
 validateEnv();
@@ -205,17 +205,16 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/ready', async (_req, res) => {
-  if (!supabaseAdmin) return res.status(503).json({ status: 'not_ready', database: false, migration_006: false });
-  const [database, migration] = await Promise.all([
-    supabaseAdmin.from('cabins').select('id', { head: true, count: 'exact' }).limit(1),
-    supabaseAdmin.from('app_config').select('key', { head: true, count: 'exact' }).limit(1),
-  ]);
-  const ready = !database.error && !migration.error;
-  return res.status(ready ? 200 : 503).json({
-    status: ready ? 'ready' : 'not_ready',
-    database: !database.error,
-    migration_006: !migration.error,
-  });
+  try {
+    await Promise.all([
+      pbAdmin.collection('cabins').getList(1, 1, { fields: 'id' }),
+      pbAdmin.collection('app_config').getList(1, 1, { fields: 'id' }),
+    ]);
+    return res.status(200).json({ status: 'ready', database: true, app_config: true });
+  } catch (error) {
+    console.error('[ready] PocketBase unavailable:', error.message);
+    return res.status(503).json({ status: 'not_ready', database: false, app_config: false });
+  }
 });
 
 /* ────────────────────────────────────────
@@ -296,6 +295,7 @@ function startServer() {
     if (config.maxBotToken) {
       maxService.startMaxPolling(chatService.saveMessage);
     }
+
 
     if (config.nodeEnv !== 'production') {
       chatService.startTelegramPolling();

@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const threadMeta = document.getElementById('threadMeta');
   const messagesBox = document.getElementById('messagesBox');
   const chatShell = document.getElementById('chatAdminShell');
-  const chatListSection = document.getElementById('chatListSection');
   const chatThread = document.getElementById('chatThread');
   const replyForm = document.getElementById('replyForm');
   const replyInput = document.getElementById('replyInput');
@@ -494,7 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Автообновление с умеренной частотой, чтобы не упираться в лимиты API.
   let pollingActive = true;
-  let lastKnownMessageCount = 0;
 
   async function pollForUpdates() {
     if (!pollingActive) return;
@@ -515,8 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Если открыт конкретный диалог и в нём появились новые сообщения — обновляем его
         if (selectedToken) {
-          const currentConv = newConversations.find(c => c.token === selectedToken);
-          const oldConv = conversations.find(c => c.token === selectedToken);
           // Перезагружаем сообщения текущего диалога
           const msgRes = await fetch('/api/admin/chats/' + encodeURIComponent(selectedToken) + '/messages');
           const msgJson = await msgRes.json();

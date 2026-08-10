@@ -244,4 +244,4 @@ function startExternalCalendarSync(intervalMinutes = 30) {
   return { stop: () => clearInterval(timer) };
 }
 
-module.exports = { parseIcsEvents, getSources, getSourcesForCabins, saveSources, syncAllActiveSources, assertNoExternalOverlap, startExternalCalendarSync };
+module.exports = { parseIcsEvents, isPrivateAddress, getSources, getSourcesForCabins, saveSources, syncAllActiveSources, assertNoExternalOverlap, startExternalCalendarSync };

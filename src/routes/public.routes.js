@@ -56,12 +56,6 @@ async function readConfiguredLogoBuffer(logoUrl) {
   throw new Error('Неподдерживаемый адрес логотипа');
 }
 
-const settingsPath = path.join(__dirname, '../data/settings.json');
-const amenitiesPath = path.join(__dirname, '../data/amenities.json');
-const extraServicesPath = path.join(__dirname, '../data/extra_services.json');
-const tagsPath = path.join(__dirname, '../data/tags.json');
-const cabinTagsPath = path.join(__dirname, '../data/cabin_tags.json');
-
 function mapCabinForPublic(cabin) {
   const imagesUrls = Array.isArray(cabin.images_urls) ? cabin.images_urls : [];
   const images = Array.isArray(cabin.images)

@@ -312,7 +312,6 @@
       );
       var isPromo = dayData ? dayData.is_promo : false;
       var price = dayData ? dayData.price : this.basePrice;
-      var busySource = dayData ? dayData.busy_source : null;
 
       var btn = document.createElement('button');
       btn.type = 'button';

@@ -1,6 +1,5 @@
 const { config } = require('../config/env');
 const crypto = require('crypto');
-const storageService = require('./storage.service');
 
 const MAX_TIMEOUT_MS = 12000;
 const RETRY_DELAYS_MS = [0, 1000, 3000];
@@ -119,6 +118,18 @@ function isValidMaxWebhook(providedSecret) {
   const actual = String(providedSecret || '');
   if (!expected || actual.length !== expected.length) return false;
   return crypto.timingSafeEqual(Buffer.from(actual), Buffer.from(expected));
+}
+
+function isTrustedMaxMediaUrl(rawUrl) {
+  try {
+    const url = new URL(rawUrl);
+    const apiHost = new URL(config.maxApiUrl).hostname.toLowerCase();
+    const hostname = url.hostname.toLowerCase();
+    return ['http:', 'https:'].includes(url.protocol)
+      && (hostname === apiHost || hostname === 'max.ru' || hostname.endsWith('.max.ru'));
+  } catch (_error) {
+    return false;
+  }
 }
 
 const HEX_MAP = {
@@ -485,6 +496,7 @@ module.exports = {
   notifyAdminAttachment,
   handleMaxWebhook,
   isValidMaxWebhook,
+  isTrustedMaxMediaUrl,
   getMaxWebhookSecret,
   startMaxPolling,
 };

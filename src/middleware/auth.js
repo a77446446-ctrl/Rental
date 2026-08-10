@@ -1,32 +1,11 @@
 const { config } = require('../config/env');
-const { supabaseAdmin } = require('../config/supabase');
 const sessionService = require('../services/adminSession.service');
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-function auditMutation(req, res) {
-  if (SAFE_METHODS.has(req.method) || !supabaseAdmin) return;
-  res.once('finish', () => {
-    const details = {
-      params: req.params || {},
-      body_keys: req.body && typeof req.body === 'object'
-        ? Object.keys(req.body).filter((key) => !/password|token|secret/i.test(key))
-        : [],
-    };
-    supabaseAdmin.from('admin_audit_log').insert({
-      actor: req.adminUser || config.adminUsername,
-      method: req.method,
-      path: req.originalUrl,
-      status_code: res.statusCode,
-      ip: req.ip,
-      user_agent: String(req.get('user-agent') || '').slice(0, 500),
-      details,
-    }).then(({ error }) => {
-      if (error && error.code !== '42P01' && error.code !== 'PGRST205') {
-        console.error('[audit] Не удалось записать действие:', error.message);
-      }
-    });
-  });
+function auditMutation(req, _res) {
+  // Supabase audit logging was retired with the database migration.
+  if (SAFE_METHODS.has(req.method)) return;
 }
 
 function unauthorized(req, res) {

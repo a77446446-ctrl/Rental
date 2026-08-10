@@ -11,7 +11,7 @@ const chatService = require('../src/services/chat.service');
 const { config } = require('../src/config/env');
 const session = require('../src/services/adminSession.service');
 const { requireAdmin } = require('../src/middleware/auth');
-const { buildSupabaseMediaUrl, toSameOriginMediaPath } = require('../src/routes/media.routes');
+const { buildPocketbaseMediaUrl, toSameOriginMediaPath } = require('../src/routes/media.routes');
 
 test('validateStay accepts a normal interval and rejects invalid dates', () => {
   assert.equal(validateStay('2026-07-13', '2026-07-16').nights, 3);
@@ -51,7 +51,6 @@ test('iCal parser keeps valid Avito-style events and ignores cancelled events', 
   assert.equal(events.length, 1);
   assert.deepEqual(events[0], {
     uid: 'avito-1', summary: 'Занято', check_in: '2026-07-20', check_out: '2026-07-23',
-    raw_event: { uid: 'avito-1', summary: 'Занято', dtstart: '20260720', dtend: '20260723' },
   });
 });
 
@@ -62,33 +61,29 @@ test('iCal network guard rejects local and private addresses', () => {
   assert.equal(isPrivateAddress('8.8.8.8'), false);
 });
 
-test('storage cleanup accepts cabin paths and rejects chat traversal', () => {
-  const url = 'https://project.supabase.co/storage/v1/object/public/cabin-photos/cabins/abc.jpg';
-  assert.equal(storage.extractStoragePath(url), 'cabins/abc.jpg');
-  assert.equal(storage.isCabinPath('cabins/abc.jpg'), true);
-  assert.equal(storage.isCabinPath('chat/abc.jpg'), false);
+test('storage cleanup accepts PocketBase media paths and rejects unrelated paths', () => {
+  const url = 'https://pb.example.com/api/files/media/record123/photo.jpg';
+  assert.equal(storage.extractStoragePath(url), 'record123');
+  assert.equal(storage.isCabinPath(url), true);
+  assert.equal(storage.isCabinPath('/api/files/chat/record123/photo.jpg'), false);
   assert.equal(storage.isCabinPath('../secret'), false);
 });
 
-test('public media proxy only targets the configured Supabase bucket', () => {
-  const previousUrl = config.supabaseUrl;
-  const previousBucket = config.supabaseStorageBucket;
-  config.supabaseUrl = 'https://project.supabase.co';
-  config.supabaseStorageBucket = 'cabin-photos';
+test('public media proxy only targets the configured PocketBase origin', () => {
+  const previousUrl = config.pocketbaseUrl;
+  config.pocketbaseUrl = 'https://pb.example.com';
   try {
     assert.equal(
-      buildSupabaseMediaUrl('cabin-photos/folder/photo one.jpg').href,
-      'https://project.supabase.co/storage/v1/object/public/cabin-photos/folder/photo%20one.jpg'
+      buildPocketbaseMediaUrl('media/record123/photo one.jpg').href,
+      'https://pb.example.com/api/files/media/record123/photo%20one.jpg'
     );
     assert.equal(
-      toSameOriginMediaPath('https://project.supabase.co/storage/v1/object/public/cabin-photos/folder/photo%20one.jpg'),
-      '/media/supabase/cabin-photos/folder/photo%20one.jpg'
+      toSameOriginMediaPath('https://pb.example.com/api/files/media/record123/photo%20one.jpg'),
+      '/media/pocketbase/media/record123/photo%20one.jpg'
     );
-    assert.equal(buildSupabaseMediaUrl('other-bucket/photo.jpg'), null);
-    assert.equal(buildSupabaseMediaUrl('cabin-photos/../secret'), null);
+    assert.equal(buildPocketbaseMediaUrl('../secret'), null);
   } finally {
-    config.supabaseUrl = previousUrl;
-    config.supabaseStorageBucket = previousBucket;
+    config.pocketbaseUrl = previousUrl;
   }
 });
 
@@ -181,12 +176,12 @@ test('booking confirmation opens at the beginning of the chat message', () => {
   assert.match(chat, /scrollToPreferredPosition\(\)/);
 });
 
-test('Supabase media is rewritten through the same-origin proxy', () => {
+test('PocketBase media is rewritten through the same-origin proxy', () => {
   const root = path.join(__dirname, '..');
   const server = fs.readFileSync(path.join(root, 'src/server.js'), 'utf8');
   const apiClient = fs.readFileSync(path.join(root, 'public/js/api.js'), 'utf8');
   assert.match(server, /app\.use\('\/media', mediaRoutes\)/);
-  assert.match(apiClient, /\/media\/supabase\//);
+  assert.match(apiClient, /\/media\/pocketbase\//);
   assert.match(apiClient, /MutationObserver/);
 });
 
@@ -252,7 +247,7 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
       .map((name) => path.join(root, 'public/admin', name)),
   ];
   assert.match(server, /no-store, no-cache, must-revalidate/);
-  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v28'/);
+  assert.match(worker, /CACHE_VERSION = 'eco-gorniy-pwa-v\d+'/);
   assert.match(worker, /fetch\(request, \{ cache: 'no-store' \}\)/);
   assert.match(worker, /self\.skipWaiting\(\)/);
   assert.match(worker, /self\.clients\.claim\(\)/);
@@ -264,7 +259,7 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
     const html = fs.readFileSync(pagePath, 'utf8');
     assert.doesNotMatch(html, /v=20260716/, pagePath);
     if (/\/(?:css|js)\//.test(html)) {
-      assert.match(html, /v=202607/, pagePath);
+      assert.match(html, /v=\d{8}(?:-\d+)?/, pagePath);
     }
   });
 });

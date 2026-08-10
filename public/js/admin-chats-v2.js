@@ -407,8 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Если открыт конкретный диалог и в нём появились новые сообщения — обновляем его
         if (selectedToken) {
-          const currentConv = newConversations.find(c => c.token === selectedToken);
-          const oldConv = conversations.find(c => c.token === selectedToken);
           // Перезагружаем сообщения текущего диалога
           const msgRes = await fetch('/api/admin/chats/' + encodeURIComponent(selectedToken) + '/messages');
           const msgJson = await msgRes.json();

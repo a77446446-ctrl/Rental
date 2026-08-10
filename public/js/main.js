@@ -338,7 +338,6 @@
     if (state.selectedDates.length > 0) {
       // Даты должны быть отсортированы
       var sortedDates = [...state.selectedDates].sort((a,b) => a.date.localeCompare(b.date));
-      var check_in = sortedDates[0].date;
       var check_out = sortedDates[sortedDates.length - 1].date; // Это последняя ночь. Выезд будет +1 день
       
       var outDate = new Date(check_out);

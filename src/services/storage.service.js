@@ -70,12 +70,6 @@ function detectMediaFile(fileBuffer, declaredMime = '') {
   if (ascii.startsWith('ID3') || (fileBuffer[0] === 0xff && (fileBuffer[1] & 0xe0) === 0xe0)) {
     return { mimeType: 'audio/mpeg', extension: 'mp3', mediaType: 'audio' };
   }
-  // Fallback: trust the declared MIME type if it's a known media category
-  const fallbackCategory = String(declaredMime).split('/')[0];
-  if (['image', 'video', 'audio'].includes(fallbackCategory)) {
-    const ext = String(declaredMime).split('/')[1] || 'bin';
-    return { mimeType: declaredMime, extension: ext.replace('+', '').split(';')[0], mediaType: fallbackCategory };
-  }
   throw mediaValidationError('Фактический формат файла не поддерживается');
 }
 

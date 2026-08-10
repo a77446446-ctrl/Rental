@@ -84,24 +84,7 @@
       chatToken = uuidv4();
       localStorage.setItem('eco_chat_token', chatToken);
     }
-
-    // 2. Получение конфига Supabase
-    try {
-      const res = await fetch('/api/chat/config');
-      const json = await res.json();
-      
-      if (json.success && json.data.supabaseUrl) {
-        // Инициализируем клиента Supabase (скрипт загружен с CDN)
-        supabaseClient = window.supabase.createClient(
-          json.data.supabaseUrl, 
-          json.data.supabaseAnonKey
-        );
-        
-        setupRealtime();
-      }
-    } catch (e) {
-      console.error('[Chat] Ошибка загрузки конфига:', e);
-    }
+    // Messages are delivered by the authenticated application API polling.
 
     // 3. Загрузка настроек виджета чата (цвет, текст)
     try {
@@ -115,7 +98,7 @@
         }
       }
     } catch (e) {
-      console.error('[Chat] Ошибка загрузки настроек виджета:', e);
+      console.error('[Chat] Widget settings load failed:', e);
     }
 
     // 4. Загрузка истории
@@ -415,7 +398,7 @@
         }
       }
     } catch (e) {
-      console.error('[Chat] Ошибка загрузки истории:', e);
+      console.error('[Чат] Не удалось загрузить историю:', e);
     }
   }
 
@@ -483,8 +466,8 @@
           }
         }
       }
-    } catch (e) {
-      // Игнорируем ошибки polling
+    } catch (_error) {
+      // Ошибка временная: следующий запрос будет выполнен по расписанию.
     }
   }
 

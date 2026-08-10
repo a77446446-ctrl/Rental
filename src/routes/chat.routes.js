@@ -34,8 +34,8 @@ router.get('/config', (req, res) => {
   res.json({
     success: true,
     data: {
-      supabaseUrl: config.supabaseUrl,
-      supabaseAnonKey: config.supabaseAnonKey
+      transport: 'polling',
+      pollingIntervalMs: 15000,
     }
   });
 });
@@ -81,9 +81,12 @@ router.post('/messages', async (req, res) => {
     // Сохраняем сообщение в базу
     const savedMsg = await chatService.saveMessage(token, safeMessage, 'guest');
 
-    // Асинхронно отправляем уведомление админу в ТГ (не ждем завершения)
+    // Каналы уведомлений независимы: ошибка одного не блокирует второй.
     chatService.notifyAdmin(token, safeMessage).catch(err => {
-      console.error('[chat.routes] Ошибка фоновой отправки в ТГ:', err);
+      console.error('[chat.routes] Ошибка фоновой отправки в Telegram:', err);
+    });
+    maxService.notifyAdmin(token, safeMessage).catch(err => {
+      console.error('[chat.routes] Ошибка фоновой отправки в МАКС:', err);
     });
 
     res.json({
@@ -145,7 +148,11 @@ router.post('/upload', chatUploadLimiter, (req, res, next) => {
     const savedMsg = await chatService.saveMessage(token, payload, 'guest');
 
     chatService.notifyAdminAttachment(token, attachment).catch(err => {
-      console.error('[chat.routes] Ошибка фоновой отправки вложения в ТГ:', err);
+      console.error('[chat.routes] Ошибка фоновой отправки вложения в Telegram:', err);
+    });
+
+    maxService.notifyAdminAttachment(token, attachment).catch(err => {
+      console.error('[chat.routes] Ошибка фоновой отправки вложения в МАКС:', err);
     });
 
     res.json({ success: true, data: savedMsg });
@@ -167,11 +174,7 @@ router.post('/webhook', async (req, res) => {
     if (!chatService.isValidTelegramWebhook(req.get('x-telegram-bot-api-secret-token'))) {
       return res.status(401).json({ success: false, error: 'Неверная подпись webhook' });
     }
-    // В ответ на вебхук от ТГ всегда нужно быстро отдавать 200 OK, 
-    // чтобы Telegram не пытался отправлять сообщение повторно
     res.sendStatus(200);
-
-    // Обрабатываем сообщение в фоне
     await chatService.handleTelegramWebhook(req.body);
   } catch (error) {
     console.error('[chat.routes] POST /webhook error:', error);
@@ -185,7 +188,7 @@ router.post('/webhook', async (req, res) => {
 router.post('/max-webhook', async (req, res) => {
   try {
     const providedSecret = req.get('x-max-bot-api-secret-token') || req.get('authorization')?.replace(/^Bearer\s+/i, '') || req.query.secret;
-    if (config.maxWebhookSecret && !maxService.isValidMaxWebhook(providedSecret)) {
+    if (!maxService.isValidMaxWebhook(providedSecret)) {
       return res.status(401).json({ success: false, error: 'Неверная подпись webhook МАКС' });
     }
 
@@ -204,7 +207,7 @@ router.post('/max-webhook', async (req, res) => {
 router.get('/max-media', async (req, res) => {
   try {
     const rawUrl = String(req.query.url || '').trim();
-    if (!rawUrl || !/^https?:\/\//i.test(rawUrl)) {
+    if (!rawUrl || !maxService.isTrustedMaxMediaUrl(rawUrl)) {
       return res.status(400).send('Некорректный URL');
     }
 

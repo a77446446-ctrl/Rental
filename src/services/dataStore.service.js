@@ -76,27 +76,18 @@ async function get(key, fileName, fallbackValue) {
   return initialValue;
 }
 
-async function set(key, fileName, value) {
-  if (pbAdmin) {
-    try {
-      try {
-        const existing = await pbAdmin.collection('app_config').getFirstListItem(`key="${key}"`);
-        await pbAdmin.collection('app_config').update(existing.id, { value });
-      } catch (e) {
-        if (e.status === 404) {
-          await pbAdmin.collection('app_config').create({ key, value });
-        } else {
-          throw e;
-        }
-      }
-      return clone(value);
-    } catch (error) {
-      warnFallback(key, error);
+async function set(key, _fileName, value) {
+  if (!pbAdmin) throw new Error('Public Base is unavailable; changes were not saved');
+  try {
+    const existing = await pbAdmin.collection('app_config').getFirstListItem(`key="${key}"`);
+    await pbAdmin.collection('app_config').update(existing.id, { value });
+  } catch (error) {
+    if (error.status === 404) {
+      await pbAdmin.collection('app_config').create({ key, value });
+    } else {
+      throw error;
     }
   }
-
-  // Локальный фоллбэк
-  writeFallbackAtomic(fileName, value);
   return clone(value);
 }
 
