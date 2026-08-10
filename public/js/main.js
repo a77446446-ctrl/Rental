@@ -1005,7 +1005,7 @@
         if (hasIcon) {
           iconHtml = '<div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--gold); box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i data-lucide="' + mainpageEscapeHtml(f.icon) + '"></i></div>';
         } else if (hasImage) {
-          iconHtml = '<div style="background-image:url(\'' + mainpageEscapeHtml(f.image_url) + '\');background-size:cover;background-position:center;border-radius:50%;width:48px;height:48px;margin-bottom:16px;"></div>';
+          iconHtml = '<div style="background-image:url(\'' + mainpageEscapeHtml(mainpageMediaUrl(f.image_url)) + '\');background-size:cover;background-position:center;border-radius:50%;width:48px;height:48px;margin-bottom:16px;"></div>';
         } else {
           iconHtml = '<div>' + (index + 1) + '</div>';
         }
@@ -1022,7 +1022,7 @@
       }
     }
 
-    const featureImages = realFeatures.map(function(f) { return f.image_url; }).filter(Boolean);
+    const featureImages = realFeatures.map(function(f) { return mainpageMediaUrl(f.image_url); }).filter(Boolean);
     if (container) {
       container.innerHTML = '';
       if (!featureImages.length) {
@@ -1117,7 +1117,7 @@
     if (data.global_bg_url) {
       const globalBg = document.getElementById('global-bg');
       if (globalBg) {
-        globalBg.style.backgroundImage = `url('${data.global_bg_url}')`;
+        globalBg.style.backgroundImage = `url('${mainpageMediaUrl(data.global_bg_url)}')`;
         globalBg.style.filter = 'sepia(0.4) brightness(0.4) contrast(1.1)';
         globalBg.style.opacity = '0.35';
       }
@@ -1155,7 +1155,7 @@
       setSplitLeadWords('hero-title', data.hero.title, 'Заголовок главного экрана', 2);
       if (data.hero.background_url) {
         const heroSection = document.getElementById('hero-section');
-        heroSection.style.backgroundImage = `linear-gradient(rgba(18, 15, 13, 0.45), rgba(18, 15, 13, 0.75)), url('${data.hero.background_url}')`;
+        heroSection.style.backgroundImage = `linear-gradient(rgba(18, 15, 13, 0.45), rgba(18, 15, 13, 0.75)), url('${mainpageMediaUrl(data.hero.background_url)}')`;
         heroSection.style.backgroundSize = 'cover';
         heroSection.style.backgroundPosition = 'center';
         heroSection.style.backgroundRepeat = 'no-repeat';
@@ -1343,7 +1343,7 @@
     // Территория
     applyTerritoryText(data.territory);
     if (data.territory && data.territory.background_url) {
-      document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,.66) 55%, rgba(0,0,0,.9) 100%), url('${data.territory.background_url}')`;
+      document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,.66) 55%, rgba(0,0,0,.9) 100%), url('${mainpageMediaUrl(data.territory.background_url)}')`;
       document.getElementById('territory-stage').style.backgroundSize = 'cover';
       document.getElementById('territory-stage').style.backgroundPosition = 'center';
     }
@@ -1441,7 +1441,7 @@
     if (contacts.background_url) {
       const ctaCard = document.getElementById('contact-bg-card');
       if (ctaCard) {
-        ctaCard.style.backgroundImage = "linear-gradient(180deg, rgba(18,15,13,.18), rgba(18,15,13,.86)), url('" + contacts.background_url + "')";
+        ctaCard.style.backgroundImage = "linear-gradient(180deg, rgba(18,15,13,.18), rgba(18,15,13,.86)), url('" + mainpageMediaUrl(contacts.background_url) + "')";
       }
     }
 
@@ -1536,6 +1536,10 @@
       { rating: 0, text: 'Добавьте второй отзыв в разделе «Главный экран». На сайте можно показать до трёх аккуратных карточек.', author: 'Имя', source: 'Источник отзыва', placeholder: true },
       { rating: 0, text: 'Добавьте третий отзыв, если нужно. Если отзывов меньше трёх, оставшиеся места будут подсказками для администратора.', author: 'Имя', source: 'Источник отзыва', placeholder: true }
     ];
+  }
+
+  function mainpageMediaUrl(value) {
+    return window.EcoMedia ? window.EcoMedia.url(value || '') : String(value || '');
   }
 
   function mainpageEscapeHtml(value) {

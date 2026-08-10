@@ -185,6 +185,15 @@ test('PocketBase media is rewritten through the same-origin proxy', () => {
   assert.match(apiClient, /MutationObserver/);
 });
 
+test('all administrator images use the PocketBase media proxy', () => {
+  const main = fs.readFileSync(path.join(__dirname, '..', 'public/js/main.js'), 'utf8');
+  assert.match(main, /mainpageMediaUrl\(data\.global_bg_url\)/);
+  assert.match(main, /mainpageMediaUrl\(data\.hero\.background_url\)/);
+  assert.match(main, /mainpageMediaUrl\(data\.territory\.background_url\)/);
+  assert.match(main, /mainpageMediaUrl\(contacts\.background_url\)/);
+  assert.match(main, /mainpageMediaUrl\(f\.image_url\)/);
+});
+
 test('territory content and local video modal keep valid UI targets', () => {
   const root = path.join(__dirname, '..');
   const index = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
