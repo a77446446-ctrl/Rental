@@ -8,12 +8,16 @@ const { config } = require('./env');
 
 const pb = new PocketBase(config.pocketbaseUrl);
 
+// Сервер обрабатывает параллельные запросы разных пользователей; их нельзя взаимно отменять.
+if (typeof pb.autoCancellation === 'function') pb.autoCancellation(false);
+
 // Auto-authenticate as admin for backend operations
 async function initPocketBase() {
   try {
     if (config.pocketbaseAdminEmail && config.pocketbaseAdminPassword) {
       await pb.admins.authWithPassword(config.pocketbaseAdminEmail, config.pocketbaseAdminPassword);
-      console.log('[PocketBase] Успешная авторизация администратора');
+      const target = new URL(config.pocketbaseUrl);
+      console.log('[PocketBase] Успешная авторизация администратора: ' + target.origin + target.pathname.replace(/\/$/, ''));
     } else {
       console.warn('[PocketBase] ВНИМАНИЕ: Не заданы POCKETBASE_ADMIN_EMAIL или POCKETBASE_ADMIN_PASSWORD');
     }

@@ -85,9 +85,6 @@ router.post('/messages', async (req, res) => {
     chatService.notifyAdmin(token, safeMessage).catch(err => {
       console.error('[chat.routes] Ошибка фоновой отправки в Telegram:', err);
     });
-    maxService.notifyAdmin(token, safeMessage).catch(err => {
-      console.error('[chat.routes] Ошибка фоновой отправки в МАКС:', err);
-    });
 
     res.json({
       success: true,
@@ -151,9 +148,6 @@ router.post('/upload', chatUploadLimiter, (req, res, next) => {
       console.error('[chat.routes] Ошибка фоновой отправки вложения в Telegram:', err);
     });
 
-    maxService.notifyAdminAttachment(token, attachment).catch(err => {
-      console.error('[chat.routes] Ошибка фоновой отправки вложения в МАКС:', err);
-    });
 
     res.json({ success: true, data: savedMsg });
   } catch (error) {

@@ -3,6 +3,8 @@ const multer = require('multer');
 
 const { requireAdmin } = require('../middleware/auth');
 const { authLimiter } = require('../middleware/rateLimit');
+const { pbAdmin } = require('../config/pocketbase');
+const { config } = require('../config/env');
 
 const authController = require('../controllers/admin/auth.controller');
 const cabinsController = require('../controllers/admin/cabins.controller');
@@ -136,5 +138,15 @@ router.post('/tags', requireAdmin, settingsController.updateTags);
 
 router.get('/cabin-tags', requireAdmin, settingsController.getCabinTags);
 router.post('/cabin-tags', requireAdmin, settingsController.updateCabinTags);
+
+router.get('/system/pocketbase-diagnostics', requireAdmin, async (_req, res) => {
+  const names = ['cabins', 'chat_logs', 'media', 'bookings', 'app_config'];
+  const entries = await Promise.all(names.map(async (name) => {
+    try { const page = await pbAdmin.collection(name).getList(1, 1, { fields: 'id' }); return [name, { records: page.totalItems }]; }
+    catch (error) { return [name, { error: error.message }]; }
+  }));
+  const target = new URL(config.pocketbaseUrl);
+  res.json({ success: true, data: { target: target.origin + target.pathname, authenticated: Boolean(pbAdmin.authStore.isValid), collections: Object.fromEntries(entries) } });
+});
 
 module.exports = router;
