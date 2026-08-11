@@ -66,3 +66,9 @@ test('создание брони защищено от пересечения �
   assert.match(controller, /updateData\.check_in_date = toPocketBaseDate\(check_in\)/);
   assert.match(controller, /updateData\.check_out_date = toPocketBaseDate\(check_out\)/);
 });
+
+test('сервис внешних календарей экспортирует чтение занятых дат', () => {
+  const externalCalendarService = require('../src/services/externalCalendar.service');
+
+  assert.equal(typeof externalCalendarService.getExternalBookingsForRange, 'function');
+});
