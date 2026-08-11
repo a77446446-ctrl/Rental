@@ -1,6 +1,7 @@
 const { pbAdmin } = require('../config/pocketbase');
 const dataStore = require('./dataStore.service');
 const { validateStay, validateUuid } = require('../utils/validation');
+const { normalizePriceRecord } = require('../utils/priceRecord');
 
 function dateStrings(checkIn, nights) {
   const result = [];
@@ -34,9 +35,9 @@ async function calculateBookingTotal({ cabinId, checkIn, checkOut, guestsCount, 
   let prices = [];
   try {
     const result = await pbAdmin.collection('prices').getFullList({
-      filter: `cabin_id="${cabinId}" && date>="${checkIn}" && date<"${checkOut}"`
+      filter: `cabin_id="${cabinId}" && date>="${checkIn} 00:00:00.000Z" && date<"${checkOut} 00:00:00.000Z"`
     });
-    prices = result;
+    prices = result.map(normalizePriceRecord);
   } catch (pricesError) {
     throw new Error('Не удалось проверить актуальные цены');
   }

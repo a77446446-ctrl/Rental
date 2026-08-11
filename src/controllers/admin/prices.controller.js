@@ -1,5 +1,6 @@
 const { pbAdmin } = require('../../config/pocketbase');
-const { normalizeBookingRecord } = require('../../utils/bookingRecord');
+const { normalizeBookingRecord, toPocketBaseDate } = require('../../utils/bookingRecord');
+const { normalizePriceRecord } = require('../../utils/priceRecord');
 const externalCalendarService = require('../../services/externalCalendar.service');
 
 function addOneDay(dateStr) {
@@ -70,7 +71,7 @@ exports.getByCabin = async (req, res) => {
       }
     });
 
-    res.json({ success: true, data, external_dates });
+    res.json({ success: true, data: data.map(normalizePriceRecord), external_dates });
   } catch (err) {
     console.error('[prices.controller] GET /prices error:', err);
     res.status(500).json({ success: false, error: 'Ошибка загрузки цен' });
@@ -90,8 +91,8 @@ exports.bulkUpsert = async (req, res) => {
     });
 
     const priceMap = {};
-    existingPrices.forEach(p => {
-      const dateKey = p.date.split(' ')[0];
+    existingPrices.map(normalizePriceRecord).forEach(p => {
+      const dateKey = p.date;
       priceMap[dateKey] = p;
     });
 
@@ -111,7 +112,7 @@ exports.bulkUpsert = async (req, res) => {
     for (const date of dates) {
       const row = {
         cabin_id,
-        date,
+        date: toPocketBaseDate(date),
         custom_price: custom_price ? parseInt(custom_price) : 0,
         is_promo: Boolean(is_promo),
         promo_description: is_closed ? 'CLOSED' : (promo_description || null)

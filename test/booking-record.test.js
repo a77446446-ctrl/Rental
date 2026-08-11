@@ -8,6 +8,7 @@ const {
   toDateOnly,
   toPocketBaseDate,
 } = require('../src/utils/bookingRecord');
+const { normalizePriceRecord } = require('../src/utils/priceRecord');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf8');
@@ -33,6 +34,25 @@ test('API доступности фильтрует реальные поля д
   assert.match(source, /check_out_date >=/);
   assert.match(source, /fields: 'check_in_date,check_out_date'/);
   assert.doesNotMatch(source, /&& check_in <=/);
+});
+
+test('дата специальной цены совпадает с календарным днём сайта', () => {
+  const price = normalizePriceRecord({
+    id: 'price-1',
+    date: '2026-08-23 00:00:00.000Z',
+    custom_price: 10000,
+  });
+
+  assert.equal(price.date, '2026-08-23');
+
+  const publicRoutes = read('src/routes/public.routes.js');
+  const adminPrices = read('src/controllers/admin/prices.controller.js');
+  const bookingPricing = read('src/services/bookingPricing.service.js');
+
+  assert.match(publicRoutes, /priceMap\[price\.date\] = price/);
+  assert.match(adminPrices, /data\.map\(normalizePriceRecord\)/);
+  assert.match(adminPrices, /date: toPocketBaseDate\(date\)/);
+  assert.match(bookingPricing, /result\.map\(normalizePriceRecord\)/);
 });
 
 test('создание брони защищено от пересечения и сохраняет оба канала уведомлений', () => {

@@ -19,6 +19,7 @@ const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
 const { normalizeBookingRecord } = require('../utils/bookingRecord');
+const { normalizePriceRecord } = require('../utils/priceRecord');
 const { buildPocketbaseMediaUrl, toSameOriginMediaPath } = require('./media.routes');
 
 const publicRoot = path.join(__dirname, '../../public');
@@ -341,7 +342,7 @@ router.get('/prices', async (req, res) => {
     const dateTo = to || defaultTo;
 
     /* Собираем запрос */
-    let filter = `date >= "${dateFrom}" && date <= "${dateTo}"`;
+    let filter = `date >= "${dateFrom} 00:00:00.000Z" && date <= "${dateTo} 23:59:59.999Z"`;
     if (cabin_id) {
       filter += ` && cabin_id = "${cabin_id}"`;
     }
@@ -363,7 +364,7 @@ router.get('/prices', async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: data || [],
+      data: (data || []).map(normalizePriceRecord),
       meta: {
         from: dateFrom,
         to: dateTo,
@@ -461,7 +462,7 @@ router.get('/availability', async (req, res) => {
     let pricesData;
     try {
       pricesData = await pbAdmin.collection('prices').getFullList({
-        filter: `cabin_id="${cabin_id}" && date >= "${dateFrom}" && date <= "${dateTo}"`,
+        filter: `cabin_id="${cabin_id}" && date >= "${dateFrom} 00:00:00.000Z" && date <= "${dateTo} 23:59:59.999Z"`,
         fields: 'date,custom_price,is_promo,promo_description'
       });
     } catch (pricesError) {
@@ -476,7 +477,8 @@ router.get('/availability', async (req, res) => {
     const priceMap = {};
     if (pricesData) {
       for (let i = 0; i < pricesData.length; i++) {
-        priceMap[pricesData[i].date] = pricesData[i];
+        const price = normalizePriceRecord(pricesData[i]);
+        priceMap[price.date] = price;
       }
     }
 
@@ -767,6 +769,7 @@ router.get('/ical/export/:slug', async (req, res) => {
         filter: `cabin_id="${cabin.id}" && promo_description="CLOSED"`,
         fields: 'date'
       });
+      closedDates = closedDates.map(normalizePriceRecord);
     } catch (err) {
       console.error('[ical-export] Ошибка загрузки закрытых дат:', err.message);
     }
