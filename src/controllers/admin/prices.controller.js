@@ -1,4 +1,5 @@
 const { pbAdmin } = require('../../config/pocketbase');
+const { normalizeBookingRecord } = require('../../utils/bookingRecord');
 const externalCalendarService = require('../../services/externalCalendar.service');
 
 function addOneDay(dateStr) {
@@ -28,7 +29,7 @@ exports.getByCabin = async (req, res) => {
     
     // Внутренние бронирования
     if (bookingsData) {
-      bookingsData.forEach((booking) => {
+      bookingsData.map(normalizeBookingRecord).forEach((booking) => {
         const current = new Date(booking.check_in + 'T00:00:00');
         const end = new Date(booking.check_out + 'T00:00:00');
         const guestName = booking.expand?.guest_id?.full_name ? booking.expand.guest_id.full_name : 'Гость';

@@ -18,6 +18,7 @@ const { pbAdmin } = require('../config/pocketbase');
 const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
+const { normalizeBookingRecord } = require('../utils/bookingRecord');
 const { buildPocketbaseMediaUrl, toSameOriginMediaPath } = require('./media.routes');
 
 const publicRoot = path.join(__dirname, '../../public');
@@ -483,8 +484,8 @@ router.get('/availability', async (req, res) => {
     let bookingsData;
     try {
       bookingsData = await pbAdmin.collection('bookings').getFullList({
-        filter: `cabin_id="${cabin_id}" && (status="pending" || status="confirmed") && check_in <= "${dateTo}" && check_out >= "${dateFrom}"`,
-        fields: 'check_in,check_out'
+        filter: `cabin_id="${cabin_id}" && (status="pending" || status="confirmed") && check_in_date <= "${dateTo} 23:59:59.999Z" && check_out_date >= "${dateFrom} 00:00:00.000Z"`,
+        fields: 'check_in_date,check_out_date'
       });
     } catch (bookingsError) {
       console.error('[public.routes] Ошибка при получении бронирований:', bookingsError.message);
@@ -501,8 +502,9 @@ router.get('/availability', async (req, res) => {
     const externalBusyMap = {};
     if (bookingsData) {
       for (let i = 0; i < bookingsData.length; i++) {
-        const checkIn = new Date(bookingsData[i].check_in + 'T00:00:00');
-        const checkOut = new Date(bookingsData[i].check_out + 'T00:00:00');
+        const booking = normalizeBookingRecord(bookingsData[i]);
+        const checkIn = new Date(booking.check_in + 'T00:00:00');
+        const checkOut = new Date(booking.check_out + 'T00:00:00');
         const current = new Date(checkIn);
 
         while (current < checkOut) {
@@ -751,7 +753,7 @@ router.get('/ical/export/:slug', async (req, res) => {
     try {
       bookings = await pbAdmin.collection('bookings').getFullList({
         filter: `cabin_id="${cabin.id}" && (status="pending" || status="confirmed")`,
-        fields: 'id,check_in,check_out,status'
+        fields: 'id,check_in_date,check_out_date,status'
       });
     } catch (bookingsError) {
       console.error('[ical-export] Ошибка загрузки бронирований:', bookingsError.message);
@@ -794,7 +796,7 @@ router.get('/ical/export/:slug', async (req, res) => {
 
     // Добавляем бронирования как события
     if (bookings && bookings.length > 0) {
-      bookings.forEach((booking) => {
+      bookings.map(normalizeBookingRecord).forEach((booking) => {
         // Не публикуем имя гостя и внутренний UUID в доступной по ссылке iCal-ленте.
         const uid = crypto.createHash('sha256')
           .update(`booking:${booking.id}`)

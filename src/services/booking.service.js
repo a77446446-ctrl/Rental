@@ -1,4 +1,5 @@
 const { pbAdmin } = require('../config/pocketbase');
+const { normalizeBookingRecord } = require('../utils/bookingRecord');
 const { sendBookingNotification } = require('./telegram.service');
 const maxService = require('./max.service');
 const externalCalendarService = require('./externalCalendar.service');
@@ -24,6 +25,14 @@ async function createBooking(input) {
   });
 
   await externalCalendarService.assertNoExternalOverlap(data.cabin_id, data.check_in, data.check_out);
+
+  const internalOverlap = await pbAdmin.collection('bookings').getList(1, 1, {
+    filter: `cabin_id="${data.cabin_id}" && (status="pending" || status="confirmed") && check_in_date < "${data.check_out} 00:00:00.000Z" && check_out_date > "${data.check_in} 00:00:00.000Z"`,
+    fields: 'id',
+  });
+  if (internalOverlap.totalItems > 0) {
+    throw new Error('Выбранные даты уже заняты');
+  }
 
   // 1. Управление гостем
   let guestId;
@@ -96,7 +105,13 @@ async function createBooking(input) {
     console.error('[booking.service] Ошибка подготовки МАКС:', err.message);
   }
 
-  return { ...booking, pricing };
+  try {
+    sendBookingNotification(notificationData).catch((err) => console.error('[booking.service] Ошибка Telegram:', err.message));
+  } catch (err) {
+    console.error('[booking.service] Ошибка подготовки Telegram:', err.message);
+  }
+
+  return { ...normalizeBookingRecord(booking), pricing };
 }
 
 module.exports = { createBooking };

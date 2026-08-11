@@ -1,5 +1,6 @@
 const { pbAdmin } = require('../../config/pocketbase');
 const dataStore = require('../../services/dataStore.service');
+const { normalizeBookingRecord } = require('../../utils/bookingRecord');
 
 exports.getAnalytics = async (req, res) => {
   try {
@@ -7,10 +8,10 @@ exports.getAnalytics = async (req, res) => {
     const targetDate = req.query.date;
     const targetMonth = req.query.month;
 
-    const bookings = await pbAdmin.collection('bookings').getFullList({
+    const bookings = (await pbAdmin.collection('bookings').getFullList({
       expand: 'cabin_id,guest_id',
       sort: 'created'
-    });
+    })).map(normalizeBookingRecord);
 
     function getNights(checkIn, checkOut) {
       const start = new Date(checkIn + 'T00:00:00');

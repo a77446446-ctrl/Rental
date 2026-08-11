@@ -1,4 +1,5 @@
 const { pbAdmin } = require('../../config/pocketbase');
+const { normalizeBookingRecord, toPocketBaseDate } = require('../../utils/bookingRecord');
 
 exports.getAll = async (req, res) => {
   try {
@@ -7,7 +8,7 @@ exports.getAll = async (req, res) => {
       sort: '-created_at'
     });
     
-    const mappedData = data.map(b => {
+    const mappedData = data.map(normalizeBookingRecord).map(b => {
       const cabin = b.expand?.cabin_id;
       const guest = b.expand?.guest_id;
       return {
@@ -63,7 +64,7 @@ exports.updateStatus = async (req, res) => {
       }
     }
 
-    res.json({ success: true, data: { ...data, comment: data.comment ? data.comment.replace(/<!--CHAT_TOKEN:.*?-->/g, '').trim() : '' } });
+    res.json({ success: true, data: { ...normalizeBookingRecord(data), comment: data.comment ? data.comment.replace(/<!--CHAT_TOKEN:.*?-->/g, '').trim() : '' } });
   } catch (err) {
     console.error('[bookings.controller] PATCH /bookings status error:', err);
     res.status(500).json({ success: false, error: 'Ошибка обновления статуса' });
@@ -88,8 +89,8 @@ exports.updateInfo = async (req, res) => {
     }
     
     const updateData = {};
-    if (check_in !== undefined) updateData.check_in = check_in;
-    if (check_out !== undefined) updateData.check_out = check_out;
+    if (check_in !== undefined) updateData.check_in_date = toPocketBaseDate(check_in);
+    if (check_out !== undefined) updateData.check_out_date = toPocketBaseDate(check_out);
     if (total_price !== undefined) updateData.total_price = total_price;
     if (comment !== undefined) updateData.comment = comment;
     if (cabin_id !== undefined) updateData.cabin_id = cabin_id;
@@ -102,7 +103,7 @@ exports.updateInfo = async (req, res) => {
       data.cabins = { name: data.expand.cabin_id.name };
     }
     
-    res.json({ success: true, data });
+    res.json({ success: true, data: normalizeBookingRecord(data) });
   } catch (err) {
     console.error('[bookings.controller] PATCH /bookings info error:', err);
     res.status(500).json({ success: false, error: 'Ошибка обновления бронирования' });
