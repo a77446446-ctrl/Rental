@@ -70,6 +70,34 @@ test('MAX передаёт ответы администратора с фото
   assert.equal(savedMessages.every((message) => message.sender === 'admin'), true);
 });
 
+test('MAX читает официальный message.body и вложенное фото из webhook', async () => {
+  const savedMessages = [];
+  const chatToken = 'bbbbbbbb-cccc-dddd-eeee-ffffffffffff';
+
+  await maxService.handleMaxWebhook({
+    update_type: 'message_created',
+    message: {
+      body: {
+        mid: 'official-photo-message',
+        attachments: [{
+          type: 'image',
+          payload: { photos: { 1280: { url: 'https://storage.supabase.co/storage/v1/object/public/chat/photo.jpg' } } },
+        }],
+      },
+      link: {
+        type: 'reply',
+        message: { body: { text: `Исходное сообщение #token:${chatToken}` } },
+      },
+    },
+  }, async (token, text, sender) => {
+    savedMessages.push({ token, text, sender });
+  });
+
+  assert.equal(savedMessages.length, 1);
+  assert.equal(savedMessages[0].token, chatToken);
+  assert.equal(savedMessages[0].sender, 'admin');
+  assert.equal(JSON.parse(savedMessages[0].text).url, 'https://storage.supabase.co/storage/v1/object/public/chat/photo.jpg');
+});
 test('MAX переключается на рабочий API-домен и параметр user_id', async () => {
   const previousUrl = config.maxApiUrl;
   const previousToken = config.maxBotToken;
@@ -84,6 +112,27 @@ test('MAX переключается на рабочий API-домен и па�
   global.fetch = async (url, options = {}) => {
     const target = String(url);
     calls.push({ url: target, body: options.body || null });
+
+    if (target === 'https://eco-gorniy.ru/api/chat/media/test-video.mp4') {
+      return {
+        ok: true,
+        status: 200,
+        headers: { get: (name) => name === 'content-type' ? 'video/mp4' : '12' },
+        arrayBuffer: async () => new Uint8Array([0, 0, 0, 0, 102, 116, 121, 112]).buffer,
+      };
+    }
+
+    if (target.includes('/uploads?type=video')) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({ url: 'https://vu.okcdn.ru/upload.do', token: 'max-video-token' }),
+      };
+    }
+
+    if (target === 'https://vu.okcdn.ru/upload.do') {
+      return { ok: true, status: 200, text: async () => '<retval>1</retval>' };
+    }
 
     if (target.startsWith('https://platform-api2.max.ru')) {
       const error = new TypeError('fetch failed');
@@ -123,12 +172,12 @@ test('MAX переключается на рабочий API-домен и па�
       'Автотест'
     );
     const sentPayloads = calls
-      .map((call) => call.body ? JSON.parse(call.body) : null)
-      .filter(Boolean);
+      .filter((call) => typeof call.body === 'string')
+      .map((call) => JSON.parse(call.body));
 
     assert.equal(attachmentDelivered, true);
-    assert.equal(sentPayloads.some((payload) => payload.attachments?.[0]?.type === 'file'), true);
-    assert.equal(sentPayloads.some((payload) => payload.attachments?.[0]?.payload?.url.includes('test-video.mp4')), true);
+    assert.equal(sentPayloads.some((payload) => payload.attachments?.[0]?.type === 'video'), true);
+    assert.equal(sentPayloads.some((payload) => payload.attachments?.[0]?.payload?.token === 'max-video-token'), true);
   } finally {
     config.maxApiUrl = previousUrl;
     config.maxBotToken = previousToken;

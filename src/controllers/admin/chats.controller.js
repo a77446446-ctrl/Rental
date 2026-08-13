@@ -134,7 +134,7 @@ exports.uploadMedia = async (req, res) => {
       kind: 'attachment',
       mediaType: uploaded.mediaType,
       url: uploaded.url,
-      name: req.file.originalname,
+      name: uploaded.name || req.file.originalname,
       mimeType: uploaded.mimeType,
     });
 

@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const sharp = require('sharp');
 
 const { validateStay, cleanText, validateUuid, validateRecordId } = require('../src/utils/validation');
 const { escapeHtml } = require('../src/utils/html');
@@ -103,6 +104,36 @@ test('media uploads are identified by file signature instead of client MIME only
   );
 });
 
+test('chat photos are resized, converted to WebP and stripped of metadata', async () => {
+  const source = await sharp({
+    create: {
+      width: 3200,
+      height: 2400,
+      channels: 3,
+      background: { r: 42, g: 108, b: 62 },
+    },
+  })
+    .jpeg({ quality: 95 })
+    .withMetadata({ orientation: 1 })
+    .toBuffer();
+
+  const optimized = await storage.optimizeChatImage(
+    source,
+    'Лес.JPG',
+    storage.detectMediaFile(source, 'image/jpeg')
+  );
+  const metadata = await sharp(optimized.buffer).metadata();
+
+  assert.equal(optimized.mimeType, 'image/webp');
+  assert.equal(optimized.extension, 'webp');
+  assert.equal(optimized.name, 'Лес.webp');
+  assert.equal(metadata.format, 'webp');
+  assert.ok(metadata.width <= 1920);
+  assert.ok(metadata.height <= 1920);
+  assert.equal(metadata.exif, undefined);
+  assert.ok(optimized.buffer.length < source.length);
+});
+
 test('Telegram webhook uses a timing-safe shared secret', () => {
   const previous = config.telegramWebhookSecret;
   config.telegramWebhookSecret = 'test_webhook_secret_1234567890';
@@ -174,11 +205,12 @@ test('ordinary site traffic is not globally rate limited', () => {
   assert.match(rateLimit, /const chatUploadLimiter = rateLimit/);
 });
 
-test('booking confirmation opens at the beginning of the chat message', () => {
+test('chat always returns to the latest message after an update', () => {
   const chat = fs.readFileSync(path.join(__dirname, '..', 'public/js/chat.js'), 'utf8');
-  assert.match(chat, /chat_booking_focus_until/);
-  assert.match(chat, /lastBookingMsg\.offsetTop/);
-  assert.match(chat, /scrollToPreferredPosition\(\)/);
+  assert.doesNotMatch(chat, /chat_booking_focus_until/);
+  assert.doesNotMatch(chat, /scrollToPreferredPosition\(\)/);
+  assert.match(chat, /requestAnimationFrame\(applyScroll\)/);
+  assert.match(chat, /media\.addEventListener\('load', scrollToBottom/);
 });
 
 test('PocketBase media is rewritten through the same-origin proxy', () => {

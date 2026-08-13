@@ -136,7 +136,7 @@ router.post('/upload', chatUploadLimiter, (req, res, next) => {
       kind: 'attachment',
       mediaType: uploaded.mediaType,
       url: uploaded.url,
-      name: req.file.originalname,
+      name: uploaded.name || req.file.originalname,
       mimeType: uploaded.mimeType,
     };
 
@@ -181,7 +181,7 @@ router.post('/webhook', async (req, res) => {
  */
 router.post('/max-webhook', async (req, res) => {
   try {
-    const providedSecret = req.get('x-max-bot-api-secret-token') || req.get('authorization')?.replace(/^Bearer\s+/i, '') || req.query.secret;
+    const providedSecret = req.get('x-max-bot-api-secret') || req.get('x-max-bot-api-secret-token') || req.get('authorization')?.replace(/^Bearer\s+/i, '') || req.query.secret;
     if (!maxService.isValidMaxWebhook(providedSecret)) {
       return res.status(401).json({ success: false, error: 'Неверная подпись webhook МАКС' });
     }

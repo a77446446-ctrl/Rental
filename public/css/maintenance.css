@@ -33,17 +33,70 @@ body.maintenance-page {
   text-align: center;
 }
 
+.maintenance-page .maintenance-card {
+  width: min(100%, 620px);
+  margin: 0 auto;
+}
+
+.maintenance-page .maintenance-illustration {
+  display: block;
+  width: clamp(150px, 25vw, 220px);
+  height: auto;
+  margin: 0 auto 18px;
+  overflow: visible;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, .24));
+}
+
+.maintenance-page .maintenance-illustration circle {
+  fill: rgba(var(--gold-rgb), .08);
+  stroke: rgba(var(--gold-rgb), .72);
+}
+
+.maintenance-page .mountain-back {
+  stroke: rgba(var(--cream-rgb), .22);
+}
+
+.maintenance-page .mountain-front,
+.maintenance-page .ground {
+  stroke: rgba(var(--cream-rgb), .34);
+}
+
+.maintenance-page .pine-crown {
+  fill: rgba(var(--moss-rgb), .34);
+  stroke: var(--gold);
+}
+
+.maintenance-page .pine-trunk {
+  stroke-width: 2;
+}
+
+.maintenance-page .maintenance-kicker {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
 .maintenance-page .maintenance-content h1 {
-  margin: 0 0 10px;
+  margin: 0 0 14px;
   font-size: clamp(28px, 4vw, 42px);
   font-weight: 400;
+  line-height: .98;
 }
 
 .maintenance-page .maintenance-content p {
   margin: 0;
   color: var(--muted);
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 @media (max-width: 760px) {
@@ -57,5 +110,22 @@ body.maintenance-page {
   .maintenance-page .brand-mark {
     width: 48px;
     height: 48px;
+  }
+
+  .maintenance-page .maintenance-content {
+    padding: 112px 22px 92px;
+  }
+
+  .maintenance-page .maintenance-illustration {
+    width: 156px;
+    margin-bottom: 12px;
+  }
+
+  .maintenance-page .maintenance-content p {
+    font-size: 15px;
+  }
+
+  .maintenance-page .maintenance-content p br {
+    display: none;
   }
 }

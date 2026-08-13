@@ -39,7 +39,7 @@ const config = {
   maxChatId: process.env.MAX_CHAT_ID || '',
   maxWebhookSecret: process.env.MAX_WEBHOOK_SECRET || '',
   /* Рабочий API-домен MAX; сервис умеет переключаться на резервный адрес. */
-  maxApiUrl: process.env.MAX_API_URL || 'https://platform-api.max.ru',
+  maxApiUrl: process.env.MAX_API_URL || 'https://platform-api2.max.ru',
 
   /* Внешние iCal-календари */
   externalCalendarSyncMinutes: parseInt(process.env.EXTERNAL_CALENDAR_SYNC_MINUTES, 10) || 30,

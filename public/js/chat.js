@@ -8,8 +8,8 @@
   let chatToken = localStorage.getItem('eco_chat_token');
   let supabaseClient = null;
   let chatChannel = null;
-  let bookingFocusUntil = Number(localStorage.getItem('chat_booking_focus_until') || 0);
   let chatTransitionTimer = null;
+  let scrollTimer = null;
   let chatRingText = 'Связаться с нами';
 
   const els = {
@@ -74,11 +74,6 @@
    */
   async function initChat() {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('openChat') === 'true') {
-      bookingFocusUntil = Date.now() + 15000;
-      localStorage.setItem('chat_booking_focus_until', String(bookingFocusUntil));
-    }
-
     // 1. Инициализация токена
     if (!chatToken) {
       chatToken = uuidv4();
@@ -229,7 +224,7 @@
     if (!isOpening) {
       localStorage.removeItem('chat_force_open');
     } else {
-      scrollToPreferredPosition();
+      scrollToBottom();
       if (window.innerWidth > 768) {
         els.input.focus();
       }
@@ -283,6 +278,7 @@
       media.alt = 'Изображение';
       media.style.cursor = 'pointer';
       imgLink.appendChild(media);
+      media.addEventListener('load', scrollToBottom, { once: true });
       wrap.appendChild(imgLink);
       container.appendChild(wrap);
       return true;
@@ -294,6 +290,7 @@
       media.controls = true;
       media.playsInline = true;
       wrap.appendChild(media);
+      media.addEventListener('loadedmetadata', scrollToBottom, { once: true });
       container.appendChild(wrap);
       return true;
     }
@@ -346,35 +343,22 @@
   }
 
   function scrollToBottom() {
-    els.messages.scrollTop = els.messages.scrollHeight;
+    if (!els.messages) return;
+
+    const applyScroll = function() {
+      els.messages.scrollTop = els.messages.scrollHeight;
+    };
+
+    applyScroll();
+    window.requestAnimationFrame(function() {
+      applyScroll();
+      window.requestAnimationFrame(applyScroll);
+    });
+
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(applyScroll, 160);
   }
 
-  function shouldFocusBookingStart() {
-    if (bookingFocusUntil > Date.now()) return true;
-    if (bookingFocusUntil) {
-      bookingFocusUntil = 0;
-      localStorage.removeItem('chat_booking_focus_until');
-    }
-    return false;
-  }
-
-  function scrollToPreferredPosition() {
-    if (shouldFocusBookingStart()) {
-      const messages = els.messages.children;
-      let lastBookingMsg = null;
-      for (let i = messages.length - 1; i >= 0; i--) {
-        if (messages[i].textContent.includes('Ваша заявка на бронирование')) {
-          lastBookingMsg = messages[i];
-          break;
-        }
-      }
-      if (lastBookingMsg) {
-        els.messages.scrollTop = Math.max(0, lastBookingMsg.offsetTop - 12);
-        return;
-      }
-    }
-    scrollToBottom();
-  }
 
   /**
    * Загрузка истории из API
@@ -386,7 +370,7 @@
       if (json.success && json.data) {
         els.messages.innerHTML = '';
         json.data.forEach(renderMessage);
-        scrollToPreferredPosition();
+        scrollToBottom();
         lastKnownCount = json.data.length;
 
         // Вычисляем непрочитанные сообщения от админа
@@ -423,7 +407,7 @@
           if (newMsg.sender_type === 'admin') {
             realtimeWorking = true; // Realtime работает — polling не нужен
             renderMessage(newMsg);
-            scrollToPreferredPosition();
+            scrollToBottom();
             lastKnownCount = els.messages.children.length;
             
             // Если чат закрыт, увеличиваем бейдж и показываем плашку
@@ -456,7 +440,7 @@
           const newAdminMsgs = json.data.slice(lastKnownCount).filter(m => m.sender_type === 'admin');
           els.messages.innerHTML = '';
           json.data.forEach(renderMessage);
-          scrollToPreferredPosition();
+          scrollToBottom();
           lastKnownCount = serverCount;
           
           // Если чат закрыт и есть новые админ-сообщения, показываем уведомления

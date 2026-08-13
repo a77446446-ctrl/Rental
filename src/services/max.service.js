@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const MAX_TIMEOUT_MS = 12000;
 const RETRY_DELAYS_MS = [0, 1000, 3000];
 const processedMaxUpdateIds = new Set();
-const MAX_API_URLS = ['https://platform-api.max.ru', 'https://platform-api2.max.ru'];
+const MAX_API_URLS = ['https://platform-api2.max.ru', 'https://platform-api.max.ru'];
 
 function maxApiBaseCandidates() {
   const configured = String(config.maxApiUrl || MAX_API_URLS[0]).replace(/\/+$/, '');
@@ -110,6 +110,11 @@ async function callMaxApi(method, payload = {}) {
           const details = await response.text();
           lastError = new Error(`HTTP ${response.status}: ${details.slice(0, 300)}`);
 
+          if (details.includes('attachment.not.ready')) {
+            lastError = new Error(`Вложение MAX ещё обрабатывается: ${details.slice(0, 200)}`);
+            continue;
+          }
+
           if (param) {
             console.warn(`[MAX] Вызов с ?${param}=${targetId} вернул HTTP ${response.status}: ${details.slice(0, 150)}. Пробуем альтернативный параметр...`);
             break;
@@ -155,8 +160,13 @@ function isTrustedMaxMediaUrl(rawUrl) {
     const url = new URL(rawUrl);
     const apiHost = new URL(config.maxApiUrl).hostname.toLowerCase();
     const hostname = url.hostname.toLowerCase();
+    const trustedCdnSuffixes = ['.max.ru', '.oneme.ru', '.okcdn.ru', '.mycdn.me'];
     return ['http:', 'https:'].includes(url.protocol)
-      && (hostname === apiHost || hostname === 'max.ru' || hostname.endsWith('.max.ru'));
+      && (
+        hostname === apiHost
+        || hostname === 'max.ru'
+        || trustedCdnSuffixes.some((suffix) => hostname.endsWith(suffix))
+      );
   } catch (_error) {
     return false;
   }
@@ -297,19 +307,111 @@ ${text}
 /**
  * Извлекает вложение (фото/видео/аудио/файл), переданное администратором в МАКС
  */
+function findMediaUrl(value, depth = 0) {
+  if (depth > 6 || value === null || value === undefined) return null;
+  if (typeof value === 'string') {
+    return /^https?:\/\//i.test(value) ? value : null;
+  }
+  if (Array.isArray(value)) {
+    for (let index = value.length - 1; index >= 0; index -= 1) {
+      const found = findMediaUrl(value[index], depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (typeof value !== 'object') return null;
+
+  const preferredKeys = ['url', 'download_url', 'downloadUrl', 'file_url', 'video_url', 'photo_url', 'src'];
+  for (const key of preferredKeys) {
+    const found = findMediaUrl(value[key], depth + 1);
+    if (found) return found;
+  }
+
+  const entries = Object.values(value);
+  for (let index = entries.length - 1; index >= 0; index -= 1) {
+    const found = findMediaUrl(entries[index], depth + 1);
+    if (found) return found;
+  }
+  return null;
+}
+
+async function requestMaxUploadEndpoint(mediaType) {
+  for (const baseUrl of maxApiBaseCandidates()) {
+    try {
+      const response = await fetch(`${baseUrl}/uploads?type=${encodeURIComponent(mediaType)}`, {
+        method: 'POST',
+        headers: { 'Authorization': config.maxBotToken },
+        signal: getAbortSignal(),
+      });
+      if (!response.ok) continue;
+      const result = await response.json();
+      if (result?.url) return result;
+    } catch (_error) {
+      // Резервный домен MAX будет проверен следующим.
+    }
+  }
+  throw new Error('MAX не вернул URL для загрузки вложения');
+}
+
+async function uploadAttachmentToMax(attachment) {
+  const mediaType = ['image', 'video', 'audio'].includes(attachment.mediaType)
+    ? attachment.mediaType
+    : 'file';
+  const sourceUrl = new URL(String(attachment.url || ''), config.baseUrl || 'http://localhost:3000');
+  const sourceResponse = await fetch(sourceUrl, { signal: getAbortSignal() });
+  if (!sourceResponse.ok) {
+    throw new Error(`Не удалось получить вложение для MAX: HTTP ${sourceResponse.status}`);
+  }
+
+  const declaredSize = Number(sourceResponse.headers.get('content-length') || 0);
+  if (declaredSize > 50 * 1024 * 1024) throw new Error('Вложение для MAX превышает 50 МБ');
+
+  const fileBuffer = await sourceResponse.arrayBuffer();
+  if (fileBuffer.byteLength > 50 * 1024 * 1024) throw new Error('Вложение для MAX превышает 50 МБ');
+
+  const endpoint = await requestMaxUploadEndpoint(mediaType);
+  const uploadForm = new FormData();
+  const mimeType = attachment.mimeType || sourceResponse.headers.get('content-type') || 'application/octet-stream';
+  uploadForm.append('data', new Blob([fileBuffer], { type: mimeType }), attachment.name || `attachment.${mediaType}`);
+
+  const uploadResponse = await fetch(endpoint.url, {
+    method: 'POST',
+    headers: { 'Authorization': config.maxBotToken },
+    body: uploadForm,
+    signal: getAbortSignal(),
+  });
+  if (!uploadResponse.ok) {
+    throw new Error(`MAX отклонил загрузку вложения: HTTP ${uploadResponse.status}`);
+  }
+
+  const responseText = await uploadResponse.text();
+  let uploaded = {};
+  if (responseText.trim().startsWith('{')) {
+    try { uploaded = JSON.parse(responseText); } catch (_error) {}
+  }
+
+  const token = uploaded.token || endpoint.token;
+  const payload = uploaded.photos
+    ? { photos: uploaded.photos }
+    : (token ? { token } : null);
+  if (!payload) throw new Error('MAX не вернул токен загруженного вложения');
+
+  return { type: mediaType, payload };
+}
+
 function extractMaxAttachment(msg) {
   if (!msg || typeof msg !== 'object') return null;
 
   const attachments = msg.attachments || msg.body?.attachments || msg.link?.message?.attachments || [];
   if (Array.isArray(attachments) && attachments.length > 0) {
     for (const att of attachments) {
-      const url = att.payload?.url || att.url || att.photo_url || att.file_url || att.video_url || att.src;
       const type = String(att.type || att.media_type || '').toLowerCase();
-      if (url) {
+      const mediaType = type.includes('video') ? 'video' : (type.includes('audio') ? 'audio' : (type.includes('file') ? 'file' : 'image'));
+      const url = findMediaUrl(att);
+      const attachmentToken = att.payload?.token || att.token || null;
+      if (url || attachmentToken) {
         return {
-          kind: 'attachment',
-          mediaType: type.includes('video') ? 'video' : (type.includes('audio') ? 'audio' : 'image'),
-          url: url,
+          kind: 'attachment', mediaType, url, token: attachmentToken,
           name: att.name || att.payload?.name || (type.includes('video') ? 'video.mp4' : 'file.jpg')
         };
       }
@@ -319,7 +421,7 @@ function extractMaxAttachment(msg) {
   const video = msg.video || msg.body?.video;
   if (video) {
     const target = Array.isArray(video) ? video[video.length - 1] : video;
-    const url = typeof target === 'string' ? target : (target.url || target.file_url || target.src || target.href);
+    const url = findMediaUrl(target);
     if (url) {
       return {
         kind: 'attachment',
@@ -333,7 +435,7 @@ function extractMaxAttachment(msg) {
   const photo = msg.photo || msg.image || msg.file || msg.body?.photo || msg.body?.image;
   if (photo) {
     const target = Array.isArray(photo) ? photo[photo.length - 1] : photo;
-    const url = typeof target === 'string' ? target : (target.url || target.file_url || target.src || target.href);
+    const url = findMediaUrl(target);
     if (url) {
       return {
         kind: 'attachment',
@@ -347,37 +449,51 @@ function extractMaxAttachment(msg) {
   return null;
 }
 
-/**
- * Загружает вложение из МАКС в Supabase Storage, возвращая публичный URL
- */
-async function uploadMaxAttachment(maxAttachment) {
-  if (!maxAttachment || !maxAttachment.url) return null;
+async function resolveMaxAttachmentUrl(maxAttachment) {
+  if (maxAttachment?.url) return maxAttachment.url;
+  if (maxAttachment?.mediaType !== 'video' || !maxAttachment.token) return null;
+  for (const baseUrl of maxApiBaseCandidates()) {
+    try {
+      const response = await fetch(`${baseUrl}/videos/${encodeURIComponent(maxAttachment.token)}`, {
+        headers: { 'Authorization': config.maxBotToken }, signal: getAbortSignal(),
+      });
+      if (!response.ok) continue;
+      const details = await response.json();
+      const url = findMediaUrl(details?.urls) || findMediaUrl(details?.thumbnail);
+      if (url) return url;
+    } catch (_error) { /* Проверяем резервный домен MAX. */ }
+  }
+  return null;
+}
 
-  // Если URL уже находится в хранилище Supabase
-  if (maxAttachment.url.includes('supabase.co') || maxAttachment.url.includes('/storage/v1/')) {
-    return maxAttachment;
+/** Загружает вложение из MAX в PocketBase и возвращает постоянный URL. */
+async function uploadMaxAttachment(maxAttachment) {
+  if (!maxAttachment) return null;
+  const resolvedUrl = await resolveMaxAttachmentUrl(maxAttachment);
+  if (!resolvedUrl) return null;
+  const resolvedAttachment = { ...maxAttachment, url: resolvedUrl };
+  if (resolvedUrl.includes('supabase.co') || resolvedUrl.includes('/storage/v1/') || resolvedUrl.includes('/api/files/')) {
+    return resolvedAttachment;
   }
 
   try {
     const storageService = require('./storage.service');
-    let response = await fetch(maxAttachment.url);
-    if (!response.ok && config.maxBotToken) {
-      response = await fetch(maxAttachment.url, {
-        headers: { 'Authorization': config.maxBotToken }
-      });
-    }
+    let response = await fetch(resolvedUrl, {
+      headers: { 'Authorization': config.maxBotToken }, signal: getAbortSignal(),
+    });
+    if (!response.ok) response = await fetch(resolvedUrl, { signal: getAbortSignal() });
 
     if (response.ok) {
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const mimeType = response.headers.get('content-type') || (maxAttachment.mediaType === 'video' ? 'video/mp4' : 'image/jpeg');
 
-      const uploaded = await storageService.uploadChatAttachment(buffer, maxAttachment.name || (maxAttachment.mediaType === 'video' ? 'video.mp4' : 'photo.jpg'), mimeType);
+      const uploaded = await storageService.uploadChatAttachment(buffer, resolvedAttachment.name || (resolvedAttachment.mediaType === 'video' ? 'video.mp4' : 'photo.jpg'), mimeType);
       return {
         kind: 'attachment',
-        mediaType: uploaded.mediaType || maxAttachment.mediaType || 'image',
+        mediaType: uploaded.mediaType || resolvedAttachment.mediaType || 'image',
         url: uploaded.url,
-        name: maxAttachment.name || 'file'
+        name: resolvedAttachment.name || 'file'
       };
     }
   } catch (err) {
@@ -385,12 +501,12 @@ async function uploadMaxAttachment(maxAttachment) {
   }
 
   // Если прямая загрузка в Supabase сбоила, оборачиваем в наш роутер-прокси
-  const proxyUrl = `/api/chat/max-media?url=${encodeURIComponent(maxAttachment.url)}`;
+  const proxyUrl = `/api/chat/max-media?url=${encodeURIComponent(resolvedUrl)}`;
   return {
     kind: 'attachment',
-    mediaType: maxAttachment.mediaType || 'image',
+    mediaType: resolvedAttachment.mediaType || 'image',
     url: proxyUrl,
-    name: maxAttachment.name || 'file'
+    name: resolvedAttachment.name || 'file'
   };
 }
 
@@ -411,18 +527,16 @@ async function notifyAdminAttachment(token, attachment, guestName = null) {
 #token:${token}
   `.trim();
 
-  const attType = attachment.mediaType === 'image' ? 'image' : 'file';
-
-  return await callMaxApi('sendMessage', {
-    chat_id: config.maxChatId,
-    text: caption,
-    attachments: [
-      {
-        type: attType,
-        payload: { url: attachment.url }
-      }
-    ]
-  });
+  try {
+    const maxAttachment = await uploadAttachmentToMax(attachment);
+    if (attachment.mediaType === 'video' || attachment.mediaType === 'audio') await wait(1200);
+    return await callMaxApi('sendMessage', {
+      chat_id: config.maxChatId, text: caption, attachments: [maxAttachment],
+    });
+  } catch (error) {
+    console.error('[MAX] Не удалось передать вложение администратору:', error.message);
+    return false;
+  }
 }
 
 /**
@@ -433,7 +547,7 @@ async function notifyAdminAttachment(token, attachment, guestName = null) {
 async function handleMaxWebhook(payload, saveMessageFn) {
   if (!payload || typeof payload !== 'object') return;
 
-  const updateId = payload.update_id || payload.id;
+  const updateId = payload.update_id || payload.id || payload.message?.body?.mid || payload.data?.body?.mid;
   if (updateId) {
     if (processedMaxUpdateIds.has(updateId)) return;
     processedMaxUpdateIds.add(updateId);
@@ -460,8 +574,7 @@ async function handleMaxWebhook(payload, saveMessageFn) {
     msg.replyTo ||
     msg.link ||
     msg.quoted_message ||
-    msg.body?.link ||
-    payload;
+    msg.body?.link;
 
   const chatToken = extractToken(quotedContext);
   if (!chatToken) {

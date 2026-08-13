@@ -1,5 +1,10 @@
 const { pbAdmin, pb } = require('../config/pocketbase');
 const crypto = require('crypto');
+const sharp = require('sharp');
+
+const CHAT_IMAGE_MAX_EDGE = 1920;
+const CHAT_IMAGE_QUALITY = 78;
+const CHAT_IMAGE_MAX_PIXELS = 60_000_000;
 
 const IMAGE_EXTENSIONS = {
   'image/jpeg': 'jpg',
@@ -21,6 +26,50 @@ function mediaValidationError(message) {
   const error = new Error(message);
   error.statusCode = 400;
   return error;
+}
+
+function safeAttachmentName(originalName, fallback) {
+  const basename = Array.from(String(originalName || '').split(/[\\/]/).pop())
+    .filter((character) => character.codePointAt(0) >= 32 && !'<>:"|?*'.includes(character))
+    .join('')
+    .trim();
+  return basename || fallback;
+}
+
+async function optimizeChatImage(fileBuffer, originalName, detected) {
+  if (detected.mediaType !== 'image' || detected.mimeType === 'image/gif') {
+    return {
+      buffer: fileBuffer,
+      mimeType: detected.mimeType,
+      extension: detected.extension,
+      name: safeAttachmentName(originalName, 'attachment.' + detected.extension),
+    };
+  }
+
+  try {
+    const buffer = await sharp(fileBuffer, { limitInputPixels: CHAT_IMAGE_MAX_PIXELS })
+      .rotate()
+      .resize({
+        width: CHAT_IMAGE_MAX_EDGE,
+        height: CHAT_IMAGE_MAX_EDGE,
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      // Sharp удаляет EXIF и GPS, если явно не вызывать withMetadata().
+      .webp({ quality: CHAT_IMAGE_QUALITY, effort: 4, smartSubsample: true })
+      .toBuffer();
+
+    const sourceName = safeAttachmentName(originalName, 'photo');
+    const baseName = sourceName.replace(/\.[^.]+$/, '').trim() || 'photo';
+    return {
+      buffer,
+      mimeType: 'image/webp',
+      extension: 'webp',
+      name: baseName + '.webp',
+    };
+  } catch (_error) {
+    throw mediaValidationError('Не удалось обработать изображение: файл повреждён или имеет слишком большое разрешение');
+  }
 }
 
 function detectMediaFile(fileBuffer, declaredMime = '') {
@@ -183,9 +232,15 @@ async function uploadChatAttachment(fileBuffer, originalName, mimeType) {
     throw new Error('Можно загрузить только изображение, видео или аудио');
   }
   const detected = detectMediaFile(fileBuffer, mimeType);
-  
-  const result = await uploadFileToPB(fileBuffer, detected.mimeType, detected.extension);
-  return { url: result.url, mimeType: detected.mimeType, mediaType: detected.mediaType };
+  const prepared = await optimizeChatImage(fileBuffer, originalName, detected);
+
+  const result = await uploadFileToPB(prepared.buffer, prepared.mimeType, prepared.extension);
+  return {
+    url: result.url,
+    mimeType: prepared.mimeType,
+    mediaType: detected.mediaType,
+    name: prepared.name,
+  };
 }
 
 module.exports = {
@@ -196,4 +251,5 @@ module.exports = {
   isCabinPath,
   assertImageMime,
   detectMediaFile,
+  optimizeChatImage,
 };
