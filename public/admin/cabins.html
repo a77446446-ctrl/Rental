@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -317,8 +317,8 @@
 
 
         <div class="form-group" style="margin-top: 16px; margin-bottom: 16px; padding: 16px; background: rgba(187, 164, 111, 0.1); border: 1px solid rgba(187, 164, 111, 0.3); border-radius: 8px;">
-          <label style="color: var(--gold);">Ссылка для экспорта (в Авито, Циан и т.д.)</label>
-          <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте эту ссылку и вставьте в настройки Авито/Циан («Импорт календаря»), чтобы защититься от двойных бронирований.</div>
+          <label style="color: var(--gold);">Шаг 1. Экспорт Eco Gorniy → Avito, Циан и другие площадки</label>
+          <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте зелёную ссылку и вставьте её на площадке в поле «Добавить / импортировать календарь». После нажатия «Добавить» поле Avito может очиститься — убедитесь, что календарь появился в списке подключённых.</div>
           <div style="display: flex; gap: 8px;">
             <input type="text" id="cabinExportLink" readonly style="flex: 1; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.3); color: #8bc48b; border: 1px solid rgba(237, 228, 214, 0.1); padding: 8px; border-radius: 4px;">
             <button type="button" class="btn btn-ghost" id="copyExportLinkBtn" style="padding: 0 12px;">Копировать</button>
@@ -326,7 +326,8 @@
         </div>
 
         <div class="form-group">
-          <label>Внешние календари занятости (iCal)</label>
+          <label>Шаг 2. Импорт Avito → Eco Gorniy</label>
+          <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">В Avito скопируйте серую ссылку из блока «Ваш календарь на Авито», затем добавьте её ниже. Зелёную ссылку Eco Gorniy сюда вставлять не нужно.</div>
           <div class="external-calendar-list" id="externalCalendarList"></div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button type="button" class="btn btn-ghost" id="addExternalCalendarBtn" style="min-height:34px; padding:0 12px; font-size:12px;">+ Добавить источник</button>
@@ -357,10 +358,12 @@
   </div>
 
   <script src="/js/api.js?v=20260811-2"></script>
-  <script src="/js/admin-cabins.js?v=20260814-1"></script>
+  <script src="/js/admin-cabins.js?v=20260814-2"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
   <script src="/js/admin-mobile.js?v=20260811-2"></script>
 </body>
 </html>
+
+
 
 

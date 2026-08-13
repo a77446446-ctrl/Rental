@@ -1,12 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+﻿const crypto = require('crypto');
 const dns = require('dns').promises;
 const net = require('net');
 const { pbAdmin } = require('../config/pocketbase');
-
-const calendarsFile = path.join(__dirname, '../data/external_calendars.json');
-const bookingsFile = path.join(__dirname, '../data/external_bookings.json');
+const { validateRecordId } = require('../utils/validation');
 
 function normalizeSourceName(value) {
   return String(value || '').trim() || 'Внешний источник';
@@ -107,99 +103,222 @@ function parseIcsEvents(icsText) {
   }).filter(e => e.uid && e.check_in && e.check_out && e.check_out > e.check_in);
 }
 
-async function getSources(cabinId) {
-  if (!pbAdmin) return [];
+let sourceFieldContract = null;
+let bookingFieldContract = null;
+
+function isExternalCalendarSchemaMissing(error) {
+  return Boolean(error && error.externalCalendarSchemaMissing);
+}
+
+async function readCollectionFields(collectionName) {
   try {
-    const records = await pbAdmin.collection('external_calendar_sources').getFullList({ filter: `cabin_id="${cabinId}"` });
-    return records;
-  } catch (e) {
-    return [];
+    const collection = await pbAdmin.collections.getOne(collectionName);
+    const schema = Array.isArray(collection.schema)
+      ? collection.schema
+      : Array.isArray(collection.fields)
+        ? collection.fields
+        : [];
+    return new Set(schema.map((field) => field.name));
+  } catch (error) {
+    if (Number(error?.status || error?.response?.status) === 404) {
+      error.externalCalendarSchemaMissing = true;
+    }
+    throw error;
   }
 }
 
+async function getSourceFieldContract() {
+  if (sourceFieldContract) return sourceFieldContract;
+  const fields = await readCollectionFields('external_calendar_sources');
+  sourceFieldContract = {
+    fields,
+    name: fields.has('source_name') ? 'source_name' : 'name',
+    url: fields.has('ical_url') ? 'ical_url' : 'url',
+  };
+  return sourceFieldContract;
+}
+
+async function getBookingFieldContract() {
+  if (bookingFieldContract) return bookingFieldContract;
+  const fields = await readCollectionFields('external_bookings');
+  bookingFieldContract = {
+    fields,
+    checkIn: fields.has('check_in') ? 'check_in' : 'check_in_date',
+    checkOut: fields.has('check_out') ? 'check_out' : 'check_out_date',
+  };
+  return bookingFieldContract;
+}
+
+function toSourceView(record) {
+  const sourceName = normalizeSourceName(record?.source_name || record?.name);
+  const icalUrl = String(record?.ical_url || record?.url || '').trim();
+  return {
+    ...record,
+    source_name: sourceName,
+    ical_url: icalUrl,
+    name: sourceName,
+    url: icalUrl,
+  };
+}
+
+function createSourceId() {
+  return crypto.randomUUID().replace(/-/g, '').slice(0, 15);
+}
+
+async function getSources(cabinId) {
+  if (!pbAdmin) return [];
+  const validCabinId = validateRecordId(cabinId, 'Объект');
+  await getSourceFieldContract();
+  const records = await pbAdmin.collection('external_calendar_sources').getFullList({
+    filter: `cabin_id="${validCabinId}"`,
+    sort: 'created',
+  });
+  return records.map(toSourceView);
+}
+
 async function getSourcesForCabins(cabinIds) {
-  if (!cabinIds || !cabinIds.length || !pbAdmin) return {};
+  if (!Array.isArray(cabinIds) || cabinIds.length === 0 || !pbAdmin) return {};
+  const validIds = cabinIds.map((id) => validateRecordId(id, 'Объект'));
   try {
-    const filterStr = cabinIds.map(id => `cabin_id="${id}"`).join(' || ');
-    const records = await pbAdmin.collection('external_calendar_sources').getFullList({ filter: filterStr });
-    const mapped = {};
-    records.forEach(r => {
-      if (!mapped[r.cabin_id]) mapped[r.cabin_id] = [];
-      mapped[r.cabin_id].push(r);
-    });
-    return mapped;
-  } catch (e) {
-    return {};
+    const filter = validIds.map((id) => `cabin_id="${id}"`).join(' || ');
+    const records = await pbAdmin.collection('external_calendar_sources').getFullList({ filter });
+    return records.reduce((result, record) => {
+      const source = toSourceView(record);
+      if (!result[source.cabin_id]) result[source.cabin_id] = [];
+      result[source.cabin_id].push(source);
+      return result;
+    }, {});
+  } catch (error) {
+    if (Number(error?.status || error?.response?.status) === 404) return {};
+    throw error;
   }
 }
 
 async function saveSources(cabinId, sources) {
-  if (!pbAdmin) return [];
-  const existing = await getSources(cabinId);
-  const normalized = (Array.isArray(sources) ? sources : []).filter(s => s.ical_url || s.url).map(s => ({
-    id: s.id || crypto.randomUUID().replace(/-/g, '').substring(0, 15),
-    cabin_id: String(cabinId),
-    name: normalizeSourceName(s.name || s.source_name),
-    url: normalizeCalendarUrl(s.url || s.ical_url),
-    is_active: s.is_active !== false
-  }));
+  if (!pbAdmin) throw new Error('Хранилище календарей временно недоступно');
+  const validCabinId = validateRecordId(cabinId, 'Объект');
+  const inputSources = Array.isArray(sources) ? sources : [];
+  if (inputSources.length > 10) throw new Error('Можно подключить не более 10 внешних календарей');
 
-  const keepIds = new Set(normalized.map(s => s.id));
-  const toDelete = existing.filter(e => !keepIds.has(e.id));
+  const contract = await getSourceFieldContract();
+  const existing = await getSources(validCabinId);
+  const existingById = new Map(existing.map((source) => [source.id, source]));
+  const seenUrls = new Set();
+  const normalized = inputSources
+    .filter((source) => source && (source.ical_url || source.url))
+    .map((source) => {
+      const url = normalizeCalendarUrl(source.ical_url || source.url);
+      if (seenUrls.has(url)) throw new Error('Один и тот же iCal-календарь добавлен дважды');
+      seenUrls.add(url);
 
-  for (const del of toDelete) {
-    try { await pbAdmin.collection('external_calendar_sources').delete(del.id); } catch(e) {}
-  }
+      const id = source.id
+        ? validateRecordId(source.id, 'Источник календаря')
+        : createSourceId();
+      if (source.id && !existingById.has(id)) {
+        throw new Error('Источник календаря не принадлежит выбранному объекту');
+      }
+      return {
+        id,
+        cabin_id: validCabinId,
+        source_name: normalizeSourceName(source.source_name || source.name).slice(0, 80),
+        ical_url: url,
+        is_active: source.is_active !== false,
+      };
+    });
 
   const results = [];
-  for (const src of normalized) {
-    try {
-      const exists = existing.find(e => e.id === src.id);
-      if (exists) {
-        results.push(await pbAdmin.collection('external_calendar_sources').update(src.id, src));
-      } else {
-        results.push(await pbAdmin.collection('external_calendar_sources').create(src));
-      }
-    } catch (e) {
-      console.error(e);
+  for (const source of normalized) {
+    const payload = {
+      cabin_id: source.cabin_id,
+      [contract.name]: source.source_name,
+      [contract.url]: source.ical_url,
+      is_active: source.is_active,
+    };
+    const saved = existingById.has(source.id)
+      ? await pbAdmin.collection('external_calendar_sources').update(source.id, payload)
+      : await pbAdmin.collection('external_calendar_sources').create({ id: source.id, ...payload });
+    results.push(toSourceView(saved));
+  }
+
+  const keepIds = new Set(normalized.map((source) => source.id));
+  for (const source of existing) {
+    if (!keepIds.has(source.id)) {
+      await pbAdmin.collection('external_calendar_sources').delete(source.id);
     }
   }
   return results;
 }
 
-async function syncSource(source) {
-  if (!source || !source.is_active || !pbAdmin) return { source_id: source.id, imported: 0, skipped: true };
+async function updateSourceSyncState(sourceId, status, errorMessage = '') {
+  const contract = await getSourceFieldContract();
+  const payload = {};
+  if (contract.fields.has('last_synced_at')) payload.last_synced_at = new Date().toISOString();
+  if (contract.fields.has('last_sync_status')) payload.last_sync_status = status;
+  if (contract.fields.has('last_sync_error')) payload.last_sync_error = errorMessage || '';
+  if (Object.keys(payload).length) {
+    await pbAdmin.collection('external_calendar_sources').update(sourceId, payload);
+  }
+}
+
+async function syncSource(sourceRecord) {
+  const source = toSourceView(sourceRecord);
+  if (!source.is_active || !pbAdmin) {
+    return { source_id: source.id, imported: 0, skipped: true };
+  }
+
   try {
-    const icsText = await fetchCalendarText(source.url || source.ical_url);
-    const events = parseIcsEvents(icsText);
-
-    // Удалить старые бронирования
-    const old = await pbAdmin.collection('external_bookings').getFullList({ filter: `source_id="${source.id}"` });
-    const seenUids = new Set(events.map(e => e.uid));
-    const toDelete = old.filter(o => !seenUids.has(o.external_uid));
-    
-    for (const o of toDelete) {
-      try { await pbAdmin.collection('external_bookings').delete(o.id); } catch(e) {}
+    const icsText = await fetchCalendarText(source.ical_url);
+    if (!/^\s*BEGIN:VCALENDAR\b/m.test(icsText)) {
+      throw new Error('По ссылке получен не iCal-календарь');
     }
+    const events = parseIcsEvents(icsText);
+    const contract = await getBookingFieldContract();
+    const old = await pbAdmin.collection('external_bookings').getFullList({
+      filter: `source_id="${source.id}"`,
+    });
+    const oldByUid = new Map(old.map((booking) => [booking.external_uid, booking]));
 
-    for (const e of events) {
-      const existing = old.find(o => o.external_uid === e.uid);
-      const data = {
+    for (const event of events) {
+      const payload = {
         source_id: source.id,
-        external_uid: e.uid,
-        check_in_date: e.check_in + " 00:00:00.000Z",
-        check_out_date: e.check_out + " 00:00:00.000Z"
+        external_uid: event.uid,
+        [contract.checkIn]: `${event.check_in} 00:00:00.000Z`,
+        [contract.checkOut]: `${event.check_out} 00:00:00.000Z`,
       };
+      if (contract.fields.has('cabin_id')) payload.cabin_id = source.cabin_id;
+      if (contract.fields.has('source_name')) payload.source_name = source.source_name;
+      if (contract.fields.has('summary')) payload.summary = event.summary;
+      if (contract.fields.has('raw_event')) payload.raw_event = event;
+      if (contract.fields.has('last_seen_at')) payload.last_seen_at = new Date().toISOString();
+
+      const existing = oldByUid.get(event.uid);
       if (existing) {
-        try { await pbAdmin.collection('external_bookings').update(existing.id, data); } catch(ex) {}
+        await pbAdmin.collection('external_bookings').update(existing.id, payload);
       } else {
-        try { await pbAdmin.collection('external_bookings').create(data); } catch(ex) {}
+        await pbAdmin.collection('external_bookings').create(payload);
       }
     }
+
+    const seenUids = new Set(events.map((event) => event.uid));
+    for (const booking of old) {
+      if (!seenUids.has(booking.external_uid)) {
+        await pbAdmin.collection('external_bookings').delete(booking.id);
+      }
+    }
+
+    await updateSourceSyncState(source.id, 'success');
     return { source_id: source.id, imported: events.length, skipped: false };
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    await updateSourceSyncState(source.id, 'error', error.message).catch(() => {});
+    error.message = `Не удалось синхронизировать «${source.source_name}»: ${error.message}`;
+    throw error;
   }
+}
+
+async function syncSourceById(sourceId) {
+  const validSourceId = validateRecordId(sourceId, 'Источник календаря');
+  const source = await pbAdmin.collection('external_calendar_sources').getOne(validSourceId);
+  return syncSource(source);
 }
 
 async function syncAllActiveSources() {
@@ -207,29 +326,37 @@ async function syncAllActiveSources() {
   const records = await pbAdmin.collection('external_calendar_sources').getFullList({ filter: 'is_active=true' });
   let failed = 0;
   const results = [];
-  for (const src of records) {
+  for (const record of records) {
     try {
-      results.push(await syncSource(src));
-    } catch (e) {
-      failed++;
+      results.push(await syncSource(record));
+    } catch (_error) {
+      failed += 1;
     }
   }
-  return { synced: results.length - failed, failed, results };
+  return { synced: results.length, failed, results };
 }
-
 async function getExternalBookingsForRange(cabinId, from, to) {
   if (!pbAdmin) return [];
   try {
-    const sources = await getSources(cabinId);
+    const sources = (await getSources(cabinId)).filter((source) => source.is_active !== false);
     if (!sources.length) return [];
-    const sourceIds = sources.map(s => `source_id="${s.id}"`).join(' || ');
+
+    const contract = await getBookingFieldContract();
+    const sourceIds = sources.map((source) => `source_id="${source.id}"`).join(' || ');
     const records = await pbAdmin.collection('external_bookings').getFullList({
-      filter: `(${sourceIds}) && check_in_date<"${to} 00:00:00.000Z" && check_out_date>"${from} 00:00:00.000Z"`,
-      expand: 'source_id'
+      filter: `(${sourceIds}) && ${contract.checkIn}<"${to} 00:00:00.000Z" && ${contract.checkOut}>"${from} 00:00:00.000Z"`,
+      expand: 'source_id',
     });
-    return records.map(r => ({ ...r, source_name: r.expand?.source_id?.name || 'Внешний календарь' }));
-  } catch (e) {
-    return [];
+    const sourcesById = new Map(sources.map((source) => [source.id, source]));
+    return records.map((record) => ({
+      ...record,
+      check_in: String(record[contract.checkIn] || '').slice(0, 10),
+      check_out: String(record[contract.checkOut] || '').slice(0, 10),
+      source_name: sourcesById.get(record.source_id)?.source_name || 'Внешний календарь',
+    }));
+  } catch (error) {
+    if (isExternalCalendarSchemaMissing(error)) return [];
+    throw error;
   }
 }
 
@@ -250,8 +377,12 @@ module.exports = {
   getSources,
   getSourcesForCabins,
   saveSources,
+  syncSourceById,
   syncAllActiveSources,
+  isExternalCalendarSchemaMissing,
   getExternalBookingsForRange,
   assertNoExternalOverlap,
   startExternalCalendarSync,
 };
+
+

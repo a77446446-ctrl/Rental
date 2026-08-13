@@ -1,4 +1,4 @@
-const { pbAdmin } = require('../../config/pocketbase');
+﻿const { pbAdmin } = require('../../config/pocketbase');
 const externalCalendarService = require('../../services/externalCalendar.service');
 const storageService = require('../../services/storage.service');
 const cabinMetadataService = require('../../services/cabinMetadata.service');
@@ -104,7 +104,7 @@ exports.saveFull = async (req, res) => {
       saved = await pbAdmin.collection('cabins').create(row);
     }
 
-    await externalCalendarService.saveSources(saved.id, sources);
+    const externalCalendars = await externalCalendarService.saveSources(saved.id, sources);
     const metadata = await cabinMetadataService.saveCabinSelections(
       saved.id,
       selectedAmenities,
@@ -117,6 +117,7 @@ exports.saveFull = async (req, res) => {
     saved.status = saved.is_active ? 'active' : 'hidden';
     saved.amenities = metadata.amenities;
     saved.tags = metadata.tags;
+    saved.external_calendars = externalCalendars;
     res.json({ success: true, data: saved });
   } catch (err) {
     console.error('[cabins.controller] POST /cabins/save-full error:', err);
@@ -252,3 +253,4 @@ exports.removeUploadedImage = async (req, res) => {
     res.status(500).json({ success: false, error: 'Не удалось удалить файл' });
   }
 };
+

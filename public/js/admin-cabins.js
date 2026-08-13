@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Логика управления домиками (Admin Cabins)
  */
 
@@ -317,6 +317,28 @@ document.addEventListener('DOMContentLoaded', () => {
     return EcoApi.escapeHtml(value);
   }
 
+  async function readApiResponse(response, fallbackMessage) {
+    const raw = await response.text();
+    let payload = null;
+    try {
+      payload = raw ? JSON.parse(raw) : null;
+    } catch (_error) {
+      throw new Error(response.ok
+        ? fallbackMessage
+        : `Сервер вернул ошибку ${response.status}. Попробуйте ещё раз.`);
+    }
+    if (!response.ok || !payload || !payload.success) {
+      throw new Error(payload?.error || `${fallbackMessage} (код ${response.status})`);
+    }
+    return payload;
+  }
+
+  function requestErrorMessage(error, fallbackMessage) {
+    if (error instanceof TypeError && /fetch|network/i.test(String(error.message || ''))) {
+      return 'Сервер не ответил. Ссылка не сохранена — проверьте соединение и повторите попытку.';
+    }
+    return error.message || fallbackMessage;
+  }
   function renderExternalCalendars() {
     if (!externalCalendarList) return;
 
@@ -378,8 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sources: currentExternalCalendars })
     });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Ошибка сохранения iCal');
+    const data = await readApiResponse(res, 'Ошибка сохранения iCal');
     currentExternalCalendars = data.data || [];
     renderExternalCalendars();
     return currentExternalCalendars;
@@ -631,9 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload)
       });
       
-      const data = await res.json();
-
-      if (!data.success) throw new Error(data.error);
+      const data = await readApiResponse(res, 'Ошибка сохранения объекта');
 
       // Файлы уже привязаны к сохраненному домику; закрытие формы не должно их удалять.
       currentCabinImages.forEach((image) => { delete image.pending; });
@@ -660,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(err);
       saveCabinBtn.textContent = originalText;
       saveCabinBtn.disabled = false;
-      window.showToast(err.message || 'Ошибка при сохранении', 'error');
+      window.showToast(requestErrorMessage(err, 'Ошибка при сохранении'), 'error');
     }
   });
 
@@ -681,3 +700,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Инициализация
   loadCabins();
 });
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Публичные API-маршруты.
  * Доступны без авторизации. Возвращают данные для фронтенда.
  *
@@ -743,14 +743,22 @@ router.get('/ical/export/:slug', async (req, res) => {
       return res.status(503).send('Сервис временно недоступен');
     }
 
-    // Находим домик по slug
-    let cabin;
+    // Сначала ищем по человекочитаемому slug, затем по стабильному ID PocketBase/UUID.
+    // Это сохраняет работоспособность уже выданных ссылок, даже если в старой записи нет slug.
+    let cabin = null;
     try {
       cabin = await pbAdmin.collection('cabins').getFirstListItem(`slug="${slug}"`, {
-        fields: 'id,name,slug'
+        fields: 'id,name,slug',
       });
-    } catch (cabinError) {
-      return res.status(404).send('Объект не найден');
+    } catch (_slugError) {
+      try {
+        const cabinId = validateRecordId(slug, 'Объект');
+        cabin = await pbAdmin.collection('cabins').getOne(cabinId, {
+          fields: 'id,name,slug',
+        });
+      } catch (_idError) {
+        return res.status(404).send('Объект не найден');
+      }
     }
 
     // Загружаем активные бронирования (pending + confirmed)
@@ -796,8 +804,10 @@ router.get('/ical/export/:slug', async (req, res) => {
       'PRODID:-//EcoGorniy//Cabin Rental//RU',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
+      'REFRESH-INTERVAL;VALUE=DURATION:PT30M',
+      'X-PUBLISHED-TTL:PT30M',
       `X-WR-CALNAME:${escapeIcalText(cabin.name)} — eco-gorniy.ru`,
-      `X-WR-TIMEZONE:Europe/Moscow`,
+      'X-WR-TIMEZONE:Europe/Moscow',
     ];
 
     // Добавляем бронирования как события
@@ -869,10 +879,11 @@ router.get('/ical/export/:slug', async (req, res) => {
 
     ical.push('END:VCALENDAR');
 
-    const icalContent = ical.join('\r\n');
+    const icalContent = ical.join('\r\n') + '\r\n';
+    const exportName = String(cabin.slug || cabin.id || slug).replace(/[^a-zA-Z0-9_-]/g, '') || 'calendar';
 
     res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="${cabin.slug}.ics"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${exportName}.ics"`);
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.send(icalContent);
 
@@ -883,3 +894,4 @@ router.get('/ical/export/:slug', async (req, res) => {
 });
 
 module.exports = router;
+
