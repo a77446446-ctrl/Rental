@@ -44,27 +44,6 @@
     }, { once: true });
   }
 
-  /* Пасхалка: секретный вход в админку */
-  var logoBtn = document.getElementById('main-logo-link');
-  var logoClicks = 0;
-  var logoClickTimer = null;
-
-  if (logoBtn) {
-    logoBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      logoClicks++;
-
-      if (logoClicks >= 6) {
-        window.location.href = '/admin/login';
-      }
-
-      clearTimeout(logoClickTimer);
-      logoClickTimer = setTimeout(function () {
-        logoClicks = 0;
-      }, 1000); // Сброс, если интервал между кликами больше 1 секунды
-    });
-  }
-
   /* Плавный скролл по якорным ссылкам */
   document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener("click", function (event) {

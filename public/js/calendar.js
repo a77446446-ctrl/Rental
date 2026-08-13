@@ -55,6 +55,8 @@
 
     /* Данные доступности: карта дат */
     this.availabilityMap = {};
+    this.availabilityLoading = false;
+    this.availabilityError = false;
 
     /* Выделенный диапазон: checkIn и checkOut */
     this.checkIn = null;
@@ -82,8 +84,19 @@
     this.checkIn = null;
     this.checkOut = null;
     this.availabilityMap = {};
+    this.availabilityLoading = true;
+    this.availabilityError = false;
 
-    await this.loadAvailability();
+    this.render();
+
+    try {
+      await this.loadAvailability();
+    } catch (error) {
+      this.availabilityError = true;
+      console.error('[calendar] Availability loading failed:', error);
+    } finally {
+      this.availabilityLoading = false;
+    }
     this.render();
     this.notifySelectionChange();
   };
@@ -99,10 +112,14 @@
     var today = new Date();
     var fromDate = window.EcoApi ? EcoApi.toDateString(today) : today.toISOString().split('T')[0];
     var futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 180);
+    futureDate.setMonth(futureDate.getMonth() + 7, 1);
     var toDate = window.EcoApi ? EcoApi.toDateString(futureDate) : futureDate.toISOString().split('T')[0];
 
     var result = await EcoApi.getAvailability(this.cabinId, fromDate, toDate);
+
+    if (!result || !Array.isArray(result.dates)) {
+      throw new Error('API доступности не вернул даты');
+    }
 
     this.availabilityMap = {};
 
@@ -177,6 +194,8 @@
   };
 
   EcoCalendar.prototype.handleDayClick = function (dateStr) {
+    if (this.availabilityLoading || this.availabilityError) return;
+
     var dayData = this.availabilityMap[dateStr];
     var canUseAsCheckout = Boolean(
       this.checkIn &&
@@ -268,6 +287,21 @@
 
     /* Очищаем сетку */
     this.gridEl.innerHTML = '';
+
+    if (this.availabilityLoading) {
+      this.gridEl.innerHTML = '<div class="calendar-status" role="status">Загружаем свободные даты…</div>';
+      return;
+    }
+
+    if (this.availabilityError) {
+      this.gridEl.innerHTML = '<button type="button" class="calendar-status calendar-retry">Не удалось загрузить даты. Нажмите, чтобы повторить.</button>';
+      var retryButton = this.gridEl.querySelector('.calendar-retry');
+      var retrySelf = this;
+      retryButton.addEventListener('click', function () {
+        retrySelf.setCabin(retrySelf.cabinId, retrySelf.cabinName, retrySelf.basePrice);
+      });
+      return;
+    }
 
     /* Первый день месяца */
     var firstDay = new Date(this.currentYear, this.currentMonth, 1);

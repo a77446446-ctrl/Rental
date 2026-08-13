@@ -5,7 +5,7 @@ exports.getAll = async (req, res) => {
   try {
     const data = await pbAdmin.collection('bookings').getFullList({
       expand: 'cabin_id,guest_id',
-      sort: '-created_at'
+      sort: '-created'
     });
     
     const mappedData = data.map(normalizeBookingRecord).map(b => {

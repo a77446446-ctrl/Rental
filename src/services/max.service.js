@@ -4,6 +4,23 @@ const crypto = require('crypto');
 const MAX_TIMEOUT_MS = 12000;
 const RETRY_DELAYS_MS = [0, 1000, 3000];
 const processedMaxUpdateIds = new Set();
+const MAX_API_URLS = ['https://platform-api.max.ru', 'https://platform-api2.max.ru'];
+
+function maxApiBaseCandidates() {
+  const configured = String(config.maxApiUrl || MAX_API_URLS[0]).replace(/\/+$/, '');
+  return [...new Set([configured, ...MAX_API_URLS])];
+}
+
+function isTlsCertificateError(error) {
+  const code = error?.cause?.code || error?.code || '';
+  return [
+    'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+    'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+    'SELF_SIGNED_CERT_IN_CHAIN',
+    'DEPTH_ZERO_SELF_SIGNED_CERT',
+    'CERT_HAS_EXPIRED',
+  ].includes(code);
+}
 
 function wait(delayMs) {
   return new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -42,7 +59,6 @@ async function callMaxApi(method, payload = {}) {
     return false;
   }
 
-  const baseUrl = String(config.maxApiUrl || 'https://platform-api.max.ru').replace(/\/+$/, '');
   const targetId = payload.user_id || payload.chat_id || config.maxChatId;
 
   if (!targetId) {
@@ -65,38 +81,52 @@ async function callMaxApi(method, payload = {}) {
 
   let lastError = null;
 
-  for (const param of paramCandidates) {
-    const url = isMessage
-      ? `${baseUrl}/messages?${param}=${encodeURIComponent(targetId)}`
-      : `${baseUrl}/${method.replace(/^\/+/, '')}`;
+  for (const baseUrl of maxApiBaseCandidates()) {
+    let skipBase = false;
 
-    for (const delayMs of RETRY_DELAYS_MS) {
-      if (delayMs) await wait(delayMs);
+    for (const param of paramCandidates) {
+      const url = isMessage
+        ? `${baseUrl}/messages?${param}=${encodeURIComponent(targetId)}`
+        : `${baseUrl}/${method.replace(/^\/+/, '')}`;
+      let receivedResponse = false;
 
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': config.maxBotToken
-          },
-          body: JSON.stringify(bodyContent),
-          signal: getAbortSignal(),
-        });
+      for (const delayMs of RETRY_DELAYS_MS) {
+        if (delayMs) await wait(delayMs);
 
-        if (response.ok) return true;
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': config.maxBotToken
+            },
+            body: JSON.stringify(bodyContent),
+            signal: getAbortSignal(),
+          });
 
-        const details = await response.text();
-        lastError = new Error(`HTTP ${response.status}: ${details.slice(0, 300)}`);
+          receivedResponse = true;
+          if (response.ok) return true;
 
-        if (!response.ok && param) {
-          console.warn(`[MAX] Вызов с ?${param}=${targetId} вернул HTTP ${response.status}: ${details.slice(0, 150)}. Пробуем альтернативный параметр...`);
-          break;
+          const details = await response.text();
+          lastError = new Error(`HTTP ${response.status}: ${details.slice(0, 300)}`);
+
+          if (param) {
+            console.warn(`[MAX] Вызов с ?${param}=${targetId} вернул HTTP ${response.status}: ${details.slice(0, 150)}. Пробуем альтернативный параметр...`);
+            break;
+          }
+        } catch (error) {
+          lastError = error;
+          if (isTlsCertificateError(error)) {
+            skipBase = true;
+            break;
+          }
         }
-      } catch (error) {
-        lastError = error;
       }
+
+      if (skipBase || !receivedResponse) break;
     }
+
+    if (skipBase) continue;
   }
 
   console.error('[MAX] Ошибка отправки запроса к API МАКС:', lastError?.message);
@@ -458,6 +488,21 @@ async function handleMaxWebhook(payload, saveMessageFn) {
 /**
  * Запускает Long Polling для МАКС бота (полезно для локальной разработки)
  */
+async function fetchMaxUpdates() {
+  for (const baseUrl of maxApiBaseCandidates()) {
+    try {
+      const response = await fetch(`${baseUrl}/updates`, {
+        headers: { 'Authorization': config.maxBotToken },
+        signal: getAbortSignal(),
+      });
+      if (response.ok) return response;
+    } catch (_error) {
+      // Следующий API-домен используется как резервный.
+    }
+  }
+  return null;
+}
+
 let maxPollingStarted = false;
 function startMaxPolling(saveMessageFn) {
   if (!config.maxBotToken) return;
@@ -468,10 +513,8 @@ function startMaxPolling(saveMessageFn) {
 
   async function poll() {
     try {
-      const baseUrl = String(config.maxApiUrl || 'https://platform-api.max.ru').replace(/\/+$/, '');
-      const response = await fetch(`${baseUrl}/updates`, {
-        headers: { 'Authorization': config.maxBotToken }
-      });
+      const response = await fetchMaxUpdates();
+      if (!response) throw new Error('API MAX недоступен');
       const json = await response.json();
 
       if (json && Array.isArray(json.updates) && json.updates.length > 0) {

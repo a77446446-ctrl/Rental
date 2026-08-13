@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { validateStay, cleanText, validateUuid } = require('../src/utils/validation');
+const { validateStay, cleanText, validateUuid, validateRecordId } = require('../src/utils/validation');
 const { escapeHtml } = require('../src/utils/html');
 const { parseIcsEvents, isPrivateAddress } = require('../src/services/externalCalendar.service');
 const storage = require('../src/services/storage.service');
@@ -27,6 +27,11 @@ test('input helpers enforce lengths and UUID format', () => {
   assert.throws(() => validateUuid('not-an-id'), /неверный/);
 });
 
+test('идентификатор записи принимает UUID и стандартный ID PocketBase', () => {
+  assert.equal(validateRecordId('4489300c-4ba1-4292-a4e3-3f138040196d'), '4489300c-4ba1-4292-a4e3-3f138040196d');
+  assert.equal(validateRecordId('a1b2c3d4e5f6g7h'), 'a1b2c3d4e5f6g7h');
+  assert.throws(() => validateRecordId('bad-id" || true'), /неверный/);
+});
 test('HTML escaping neutralizes stored XSS payloads', () => {
   assert.equal(escapeHtml('<img src=x onerror="alert(1)">'), '&lt;img src=x onerror=&quot;alert(1)&quot;&gt;');
 });

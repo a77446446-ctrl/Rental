@@ -99,8 +99,10 @@ async function createBooking(input) {
   };
 
 
+  let maxDelivered = false;
   try {
-    maxService.sendBookingNotification(notificationData).catch((err) => console.error('[booking.service] Ошибка МАКС:', err.message));
+    // MAX — основной административный канал уведомлений.
+    maxDelivered = await maxService.sendBookingNotification(notificationData);
   } catch (err) {
     console.error('[booking.service] Ошибка подготовки МАКС:', err.message);
   }
@@ -111,7 +113,11 @@ async function createBooking(input) {
     console.error('[booking.service] Ошибка подготовки Telegram:', err.message);
   }
 
-  return { ...normalizeBookingRecord(booking), pricing };
+  return {
+    ...normalizeBookingRecord(booking),
+    pricing,
+    notifications: { max: maxDelivered },
+  };
 }
 
 module.exports = { createBooking };

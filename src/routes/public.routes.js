@@ -20,6 +20,7 @@ const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
 const { normalizeBookingRecord } = require('../utils/bookingRecord');
 const { normalizePriceRecord } = require('../utils/priceRecord');
+const { validateRecordId } = require('../utils/validation');
 const { buildPocketbaseMediaUrl, toSameOriginMediaPath } = require('./media.routes');
 
 const publicRoot = path.join(__dirname, '../../public');
@@ -653,6 +654,8 @@ router.post('/bookings', async (req, res) => {
     if (!cabin_id || !check_in || !check_out || !guest_name || !guest_phone) {
       return res.status(400).json({ success: false, error: 'Заполните все обязательные поля' });
     }
+    /* Проверяем ID до включения в фильтр PocketBase. */
+    const safeCabinId = validateRecordId(cabin_id, 'Дом');
 
     const normalizedGuestsCount = Math.max(1, parseInt(guests_count, 10) || 2);
 
@@ -662,7 +665,7 @@ router.post('/bookings', async (req, res) => {
 
     let cabinData;
     try {
-      cabinData = await pbAdmin.collection('cabins').getFirstListItem(`id="${cabin_id}" && is_active=true`, {
+      cabinData = await pbAdmin.collection('cabins').getFirstListItem(`id="${safeCabinId}" && is_active=true`, {
         fields: 'id,name,capacity'
       });
     } catch (cabinError) {
@@ -682,7 +685,7 @@ router.post('/bookings', async (req, res) => {
       : comment;
 
     const booking = await bookingService.createBooking({
-      cabin_id,
+      cabin_id: safeCabinId,
       check_in,
       check_out,
       guest_name,

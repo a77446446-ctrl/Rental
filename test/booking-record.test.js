@@ -17,12 +17,14 @@ function read(relativePath) {
 test('даты бронирования PocketBase преобразуются в контракт сайта', () => {
   const booking = normalizeBookingRecord({
     id: 'booking-1',
+    created: '2026-08-13 12:30:00.000Z',
     check_in_date: '2026-08-23 00:00:00.000Z',
     check_out_date: '2026-08-25 00:00:00.000Z',
   });
 
   assert.equal(booking.check_in, '2026-08-23');
   assert.equal(booking.check_out, '2026-08-25');
+  assert.equal(booking.created_at, '2026-08-13 12:30:00.000Z');
   assert.equal(toDateOnly('2026-08-23T12:30:00.000Z'), '2026-08-23');
   assert.equal(toPocketBaseDate('2026-08-25'), '2026-08-25 00:00:00.000Z');
 });
@@ -53,6 +55,7 @@ test('дата специальной цены совпадает с кален�
   assert.match(adminPrices, /data\.map\(normalizePriceRecord\)/);
   assert.match(adminPrices, /date: toPocketBaseDate\(date\)/);
   assert.match(bookingPricing, /result\.map\(normalizePriceRecord\)/);
+  assert.match(bookingPricing, /validateRecordId\(cabinId/);
 });
 
 test('создание брони защищено от пересечения и сохраняет оба канала уведомлений', () => {
@@ -65,6 +68,7 @@ test('создание брони защищено от пересечения �
   assert.match(service, /sendBookingNotification\(notificationData\)/);
   assert.match(controller, /updateData\.check_in_date = toPocketBaseDate\(check_in\)/);
   assert.match(controller, /updateData\.check_out_date = toPocketBaseDate\(check_out\)/);
+  assert.match(controller, /sort: '-created'/);
 });
 
 test('сервис внешних календарей экспортирует чтение занятых дат', () => {

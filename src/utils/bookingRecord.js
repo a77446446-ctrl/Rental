@@ -11,6 +11,7 @@ function normalizeBookingRecord(record) {
 
   return {
     ...record,
+    created_at: record.created_at || record.created || '',
     check_in: toDateOnly(record.check_in || record.check_in_date),
     check_out: toDateOnly(record.check_out || record.check_out_date),
   };

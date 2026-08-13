@@ -38,7 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
       archiveSummaryCount.textContent = String(archivedBookings.length);
 
       const renderRows = (bookings) => bookings.map(b => {
-        const createdDate = new Date(b.created_at).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const createdValue = b.created_at || b.created;
+        const createdDate = createdValue
+          ? new Date(createdValue).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+          : 'Дата не указана';
         const shortId = b.id.split('-')[0].toUpperCase();
         globalBookingsMap[b.id] = b;
         const safeGuestName = EcoApi.escapeHtml(b.guest_name);

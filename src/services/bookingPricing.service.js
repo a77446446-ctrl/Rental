@@ -1,6 +1,6 @@
 const { pbAdmin } = require('../config/pocketbase');
 const dataStore = require('./dataStore.service');
-const { validateStay, validateUuid } = require('../utils/validation');
+const { validateStay, validateRecordId } = require('../utils/validation');
 const { normalizePriceRecord } = require('../utils/priceRecord');
 
 function dateStrings(checkIn, nights) {
@@ -15,7 +15,7 @@ function dateStrings(checkIn, nights) {
 
 async function calculateBookingTotal({ cabinId, checkIn, checkOut, guestsCount, extraIds = [] }) {
   if (!pbAdmin) throw new Error('Сервис базы данных временно недоступен');
-  validateUuid(cabinId, 'Домик');
+  validateRecordId(cabinId, 'Домик');
   const { nights } = validateStay(checkIn, checkOut);
 
   let cabin;

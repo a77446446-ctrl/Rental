@@ -1,4 +1,6 @@
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const POCKETBASE_ID_RE = /^[a-z0-9]{15}$/i;
 
 function cleanText(value, { field = 'Поле', required = false, max = 255 } = {}) {
   const text = String(value == null ? '' : value).trim();
@@ -28,10 +30,22 @@ function validateStay(checkIn, checkOut) {
 
 function validateUuid(value, field = 'Идентификатор') {
   const text = String(value || '');
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(text)) {
+  if (!UUID_RE.test(text)) {
     throw new Error(`${field}: неверный формат`);
   }
   return text;
 }
 
-module.exports = { cleanText, parseDate, validateStay, validateUuid };
+/**
+ * Проверяет идентификатор записи текущего хранилища.
+ * Поддерживает UUID прежней схемы и стандартный 15-символьный ID PocketBase.
+ */
+function validateRecordId(value, field = 'Идентификатор') {
+  const text = String(value || '');
+  if (!UUID_RE.test(text) && !POCKETBASE_ID_RE.test(text)) {
+    throw new Error(`${field}: неверный формат`);
+  }
+  return text;
+}
+
+module.exports = { cleanText, parseDate, validateStay, validateUuid, validateRecordId };
