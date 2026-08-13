@@ -91,11 +91,38 @@ body.maintenance-page {
   to { transform: rotate(360deg) translateZ(0); }
 }
 
+@keyframes maintenance-chat-icon-flip {
+  0%, 68%, 100% { transform: perspective(760px) rotateX(0deg) translateZ(0); }
+  84% { transform: perspective(760px) rotateX(180deg) translateZ(0); }
+  96% { transform: perspective(760px) rotateX(360deg) translateZ(0); }
+}
+
+.maintenance-page .chat-widget:has(.chat-body[style*="none"]) {
+  animation: none !important;
+}
+
 .maintenance-page #chat-toggle .chat-ring-label {
   animation: maintenance-chat-ring-orbit 12s linear infinite !important;
-  transform-box: fill-box;
-  transform-origin: center;
+  animation-play-state: running !important;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
   will-change: transform;
+}
+
+.maintenance-page .chat-widget:has(.chat-body[style*="none"]) #chat-toggle > svg:not(.chat-ring-label) {
+  animation: maintenance-chat-icon-flip 6.8s cubic-bezier(.4, 0, .2, 1) infinite !important;
+  animation-play-state: running !important;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  backface-visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maintenance-page #chat-toggle .chat-ring-label,
+  .maintenance-page .chat-widget:has(.chat-body[style*="none"]) #chat-toggle > svg:not(.chat-ring-label) {
+    animation-duration: 28s !important;
+  }
 }
 
 @media (max-width: 760px) {

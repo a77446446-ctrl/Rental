@@ -3,50 +3,64 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const sidebarMenu = document.getElementById('adminMenu');
-  if (sidebarMenu) {
-    const toggleHtml = `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--line);">
-      <span style="color:var(--muted);font-size:13px;font-weight:600;">Тех. обслуживание</span>
-      <label style="position:relative;display:inline-block;width:40px;height:24px;">
-        <input type="checkbox" id="maintenanceToggle" style="opacity:0;width:0;height:0;">
-        <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:rgba(255,255,255,0.1);transition:.4s;border-radius:24px;">
-          <span class="slider-dot" style="position:absolute;content:'';height:16px;width:16px;left:4px;bottom:4px;background-color:var(--muted);transition:.4s;border-radius:50%;"></span>
-        </span>
-      </label>
-    </div>`;
-    sidebarMenu.insertAdjacentHTML('afterbegin', toggleHtml);
-    const toggle = document.getElementById('maintenanceToggle');
-    const dot = toggle.nextElementSibling.querySelector('.slider-dot');
-    
+  const toggle = document.getElementById('maintenanceToggle');
+  const maintenanceControl = document.getElementById('maintenanceControl');
+  if (toggle && maintenanceControl) {
+    const switchLabel = toggle.closest('.maintenance-switch');
+
     const updateToggleUI = (checked) => {
-      toggle.nextElementSibling.style.backgroundColor = checked ? 'var(--moss)' : 'rgba(255,255,255,0.1)';
-      dot.style.transform = checked ? 'translateX(16px)' : 'translateX(0)';
-      dot.style.backgroundColor = checked ? 'var(--cream)' : 'var(--muted)';
+      toggle.checked = checked;
+      maintenanceControl.classList.toggle('is-enabled', checked);
+      maintenanceControl.setAttribute('data-state', checked ? 'on' : 'off');
+      if (switchLabel) {
+        switchLabel.title = checked
+          ? 'Выключить технические работы'
+          : 'Включить технические работы';
+      }
     };
 
-    fetch('/api/settings').then(res => res.json()).then(res => {
-      if(res.success && res.data.maintenanceMode) {
-        toggle.checked = true;
-        updateToggleUI(true);
-      }
-    });
+    fetch('/api/settings', { cache: 'no-store' })
+      .then((response) => {
+        if (!response.ok) throw new Error('Не удалось загрузить настройки');
+        return response.json();
+      })
+      .then((response) => {
+        if (!response.success || !response.data) throw new Error('Некорректный ответ настроек');
+        updateToggleUI(Boolean(response.data.maintenanceMode));
+        toggle.disabled = false;
+        maintenanceControl.setAttribute('aria-busy', 'false');
+      })
+      .catch((error) => {
+        console.error('[Admin] Ошибка загрузки режима техработ:', error);
+        maintenanceControl.classList.add('has-error');
+        maintenanceControl.setAttribute('aria-busy', 'false');
+        if (window.showToast) window.showToast('Не удалось загрузить режим техработ', 'error');
+      });
 
     toggle.addEventListener('change', async (e) => {
       const checked = e.target.checked;
       updateToggleUI(checked);
+      toggle.disabled = true;
+      maintenanceControl.setAttribute('aria-busy', 'true');
       try {
-        const res = await fetch('/api/admin/settings', {
+        const response = await fetch('/api/admin/settings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ maintenanceMode: checked })
         });
-        if (!res.ok) throw new Error('Network error');
-        window.showToast('Режим тех. обслуживания ' + (checked ? 'ВКЛЮЧЕН' : 'ВЫКЛЮЧЕН'));
-      } catch(err) {
-        console.error(err);
+        if (!response.ok) throw new Error('Не удалось сохранить настройки');
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error || 'Настройки не сохранены');
+        if (window.showToast) {
+          window.showToast('Режим тех. обслуживания ' + (checked ? 'ВКЛЮЧЕН' : 'ВЫКЛЮЧЕН'));
+        }
+      } catch (error) {
+        console.error('[Admin] Ошибка сохранения режима техработ:', error);
         if (window.showToast) window.showToast('Ошибка сохранения', 'error');
-        toggle.checked = !checked;
         updateToggleUI(!checked);
+      } finally {
+        toggle.disabled = false;
+        maintenanceControl.setAttribute('aria-busy', 'false');
       }
     });
   }

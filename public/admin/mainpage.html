@@ -108,7 +108,7 @@
     /* Скелетон загрузки */
     .loading-area { opacity: 0.6; pointer-events: none; }
   </style>
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260811-2">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260814-1">
   <script src="/js/lucide.min.js?v=20260811-2"></script>
 </head>
 <body>
@@ -119,7 +119,16 @@
   <header class="admin-header">
     <div class="admin-brand">
       <div class="brand-mark">E</div>
-      <h1>Панель управления</h1>
+      <div class="maintenance-control" id="maintenanceControl" aria-busy="true">
+        <span class="maintenance-control-label">Техработы</span>
+        <label class="maintenance-switch" title="Включить технические работы">
+          <input type="checkbox" id="maintenanceToggle" aria-label="Режим технических работ" disabled>
+          <span class="maintenance-switch-track" aria-hidden="true">
+            <span class="maintenance-switch-dot"></span>
+          </span>
+        </label>
+      </div>
+      <h1 class="admin-title-visually-hidden">Панель управления</h1>
     </div>
     <div style="display: flex; gap: 16px; align-items: center;">
       <a href="/" class="btn btn-ghost" style="min-height: 36px; padding: 0 16px;" target="_blank">На сайт</a>
@@ -530,14 +539,14 @@
   </div>
 
   <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
-  <script src="/js/admin.js?v=20260811-2"></script>
+  <script src="/js/admin.js?v=20260814-1"></script>
   <script src="/js/api.js?v=20260811-2"></script>
   <script src="/js/icons.js?v=20260811-2"></script>
   <script src="/js/icon-picker.js?v=20260811-2"></script>
   <script src="/js/admin-mainpage-meta.js?v=20260811-2"></script>
   <script src="/js/admin-mainpage.js?v=20260811-2"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
-  <script src="/js/admin-mobile.js?v=20260811-2"></script>
+  <script src="/js/admin-mobile.js?v=20260814-1"></script>
 </body>
 </html>
 

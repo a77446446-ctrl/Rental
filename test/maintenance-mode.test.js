@@ -33,6 +33,7 @@ test('техническая страница показывает логоти�
   assert.doesNotMatch(html, /maintenance-illustration|Наводим уют|Бережно обновляем/);
   assert.match(script, /heroLogo\.src = logoUrl/);
   assert.match(styles, /\.maintenance-page #chat-toggle \.chat-ring-label[\s\S]*animation: maintenance-chat-ring-orbit 12s linear infinite !important/);
+  assert.match(styles, /\.maintenance-page \.chat-widget:has\([\s\S]*#chat-toggle > svg:not\(\.chat-ring-label\)[\s\S]*animation: maintenance-chat-icon-flip 6\.8s/);
   assert.match(styles, /\.maintenance-page \.chat-widget:has\([\s\S]*right: 18px !important;[\s\S]*bottom: calc\(18px \+ env\(safe-area-inset-bottom\)\) !important/);
 });
 test('основная и техническая страницы используют единый вход по логотипу', () => {

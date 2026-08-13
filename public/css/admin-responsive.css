@@ -1,3 +1,112 @@
+/* Постоянный переключатель технических работ в шапке главного экрана. */
+.admin-title-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.maintenance-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 7px 9px 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(237, 228, 214, .035);
+  transition: border-color .2s ease, background-color .2s ease, opacity .2s ease;
+}
+
+.maintenance-control.is-enabled {
+  border-color: rgba(var(--moss-rgb), .8);
+  background: rgba(var(--moss-rgb), .18);
+}
+
+.maintenance-control.has-error {
+  border-color: rgba(210, 110, 110, .7);
+}
+
+.maintenance-control[aria-busy="true"] {
+  opacity: .68;
+}
+
+.maintenance-control-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.maintenance-control.is-enabled .maintenance-control-label {
+  color: var(--cream);
+}
+
+.maintenance-switch {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.maintenance-switch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.maintenance-switch-track {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(237, 228, 214, .12);
+  border-radius: 999px;
+  background: rgba(237, 228, 214, .11);
+  transition: background-color .22s ease, border-color .22s ease;
+  pointer-events: none;
+}
+
+.maintenance-switch-dot {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--muted);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .34);
+  transition: transform .22s ease, background-color .22s ease;
+}
+
+.maintenance-switch input:checked + .maintenance-switch-track {
+  border-color: rgba(var(--moss-rgb), .9);
+  background: var(--moss);
+}
+
+.maintenance-switch input:checked + .maintenance-switch-track .maintenance-switch-dot {
+  transform: translateX(18px);
+  background: var(--cream);
+}
+
+.maintenance-switch input:focus-visible + .maintenance-switch-track {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.maintenance-switch input:disabled {
+  cursor: wait;
+}
+
 /* Единый, предсказуемый мобильный слой админ-панели. */
 @media (max-width: 900px) {
   body:has(.login-box) { padding: 16px; min-height: 100dvh; }
@@ -18,6 +127,11 @@
     font: 600 15px/1.2 Manrope, sans-serif;
   }
   body.admin-mobile-ready .brand-mark { width: 36px; min-width: 36px; height: 36px; }
+  body.admin-mobile-ready .maintenance-control { min-height: 38px; padding: 5px 7px 5px 9px; gap: 7px; }
+  body.admin-mobile-ready .maintenance-control-label { font-size: 11px; }
+  body.admin-mobile-ready .maintenance-switch { flex-basis: 40px; width: 40px; height: 24px; }
+  body.admin-mobile-ready .maintenance-switch-dot { top: 3px; left: 3px; width: 16px; height: 16px; }
+  body.admin-mobile-ready .maintenance-switch input:checked + .maintenance-switch-track .maintenance-switch-dot { transform: translateX(16px); }
   body.admin-mobile-ready .admin-header > :last-child { gap: 6px !important; min-width: 0; }
   body.admin-mobile-ready .admin-header .btn {
     min-height: 36px !important; padding: 0 10px !important; font-size: 12px !important; white-space: nowrap;
@@ -182,6 +296,8 @@
 }
 
 @media (max-width: 560px) {
+  body.admin-mobile-ready .maintenance-control-label { display: none; }
+  body.admin-mobile-ready .maintenance-control { padding: 5px; }
   body.admin-mobile-ready .admin-header a[target="_blank"] { display: none; }
   body.admin-mobile-ready .admin-content-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
   body.admin-mobile-ready .admin-content-header > :first-child { grid-column: 1 / -1; }

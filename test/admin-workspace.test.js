@@ -37,3 +37,16 @@ test('analytics use collapsible panels and compact mobile guest cards', () => {
   assert.match(js, /<details class="analytics-guest-card">/);
   assert.match(js, /analytics-desktop-guests/);
 });
+
+test('переключатель техработ доступен в шапке главного экрана без открытия меню', () => {
+  const html = read('public/admin/mainpage.html');
+  const js = read('public/js/admin.js');
+  const mobileJs = read('public/js/admin-mobile.js');
+
+  assert.match(html, /<div class="admin-brand">[\s\S]*id="maintenanceControl"[\s\S]*id="maintenanceToggle"/);
+  assert.doesNotMatch(js, /sidebarMenu\.insertAdjacentHTML/);
+  assert.match(js, /fetch\('\/api\/settings', \{ cache: 'no-store' \}\)/);
+  assert.match(js, /toggle\.disabled = true/);
+  assert.match(js, /updateToggleUI\(!checked\)/);
+  assert.ok((mobileJs.match(/e\.target\.id === 'maintenanceToggle'/g) || []).length >= 2);
+});
