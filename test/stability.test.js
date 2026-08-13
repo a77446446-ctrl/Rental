@@ -213,6 +213,14 @@ test('chat always returns to the latest message after an update', () => {
   assert.match(chat, /media\.addEventListener\('load', scrollToBottom/);
 });
 
+test('admin price calendar keeps holiday and action controls from overlapping', () => {
+  const prices = fs.readFileSync(path.join(__dirname, '..', 'public/admin/prices.html'), 'utf8');
+  assert.match(prices, /\.day-cell\.holiday::after\s*\{[\s\S]*position:\s*static/);
+  assert.match(prices, /#calendarDays \.day-cell\s*\{[\s\S]*min-height:\s*58px\s*!important/);
+  assert.match(prices, /\.price-actions \.btn\s*\{[\s\S]*position:\s*static\s*!important/);
+  assert.match(prices, /\.price-actions #savePricesBtn\s*\{[\s\S]*margin-left:\s*auto\s*!important/);
+});
+
 test('PocketBase media is rewritten through the same-origin proxy', () => {
   const root = path.join(__dirname, '..');
   const server = fs.readFileSync(path.join(root, 'src/server.js'), 'utf8');

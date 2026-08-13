@@ -101,9 +101,23 @@
     .day-cell.friday { color: #d49a6a; }
     .day-cell.holiday { background: rgba(255, 100, 100, 0.1); border-color: rgba(255, 100, 100, 0.3); color: #a83232; }
     .day-cell.holiday::after {
-      content: "Праздник"; position: absolute; bottom: 4px; font-size: 9px;
-      color: #a83232;
+      content: "Праздник";
+      position: static;
+      order: 1;
+      flex: 0 0 auto;
+      padding: 2px 5px;
+      border: 1px solid rgba(255, 124, 124, 0.36);
+      border-radius: 999px;
+      background: rgba(113, 38, 38, 0.42);
+      color: #ff9b9b;
+      font-size: 7px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
+    .day-cell.holiday .external-source { order: 2; }
+    .day-cell.holiday .day-price { order: 3; }
     
     .day-cell.past { opacity: 0.3; pointer-events: none; }
     .day-cell.selected { border-color: var(--gold); background: rgba(187, 164, 111, 0.15); }
@@ -131,6 +145,57 @@
     }
     .legend-item { display: flex; align-items: center; gap: 6px; }
     .legend-dot { width: 12px; height: 12px; border-radius: 4px; }
+
+    .price-settings-panel { position: sticky; top: 100px; }
+    .price-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 32px;
+    }
+    .price-actions .btn {
+      position: static !important;
+      inset: auto !important;
+      width: auto !important;
+      min-height: 42px !important;
+      margin: 0 !important;
+      padding: 0 14px !important;
+      border-radius: 10px !important;
+      box-shadow: none !important;
+      font-size: 12px !important;
+      transform: none !important;
+    }
+    .price-actions #clearPricesBtn { order: 1; }
+    .price-actions #savePricesBtn { order: 2; margin-left: auto !important; }
+
+    @media (max-width: 900px) {
+      html body.admin-mobile-ready #calendarDays .day-cell {
+        aspect-ratio: auto !important;
+        min-height: 58px !important;
+        height: auto !important;
+        padding: 4px 2px !important;
+      }
+      html body.admin-mobile-ready #calendarDays .day-cell.holiday::after {
+        padding: 2px 3px;
+        font-size: 7px;
+      }
+      body.admin-mobile-ready .price-settings-panel {
+        position: static;
+        top: auto;
+      }
+      body.admin-mobile-ready .price-actions {
+        flex-direction: column;
+        align-items: stretch;
+        padding-bottom: calc(4px + env(safe-area-inset-bottom));
+      }
+      body.admin-mobile-ready .price-actions .btn {
+        width: 100% !important;
+      }
+      body.admin-mobile-ready .price-actions #savePricesBtn {
+        width: 100% !important;
+        margin-left: 0 !important;
+      }
+    }
     
   </style>
   <link rel="stylesheet" href="/css/admin-responsive.css?v=20260811-2">
@@ -218,7 +283,7 @@
         </div>
         
         <!-- Правая часть: Форма -->
-        <div class="panel" style="position: sticky; top: 100px;">
+        <div class="panel price-settings-panel">
           <h3 style="margin: 0 0 8px 0; font-size: 20px;">Настройки дат</h3>
           <p style="color: var(--muted); font-size: 13px; margin: 0 0 24px 0;">Выбрано дней: <b id="selectedCount" style="color: var(--cream);">0</b></p>
           
@@ -246,9 +311,9 @@
               </label>
             </div>
             
-            <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 12px;">
-              <button class="btn btn-primary" id="savePricesBtn" style="width: 100%;">Сохранить настройки</button>
-              <button class="btn btn-ghost" id="clearPricesBtn" style="width: 100%; border-color: #8b3c3c; color: #ff8c8c;">Сбросить до базовых</button>
+            <div class="price-actions">
+              <button class="btn btn-primary" id="savePricesBtn">Сохранить настройки</button>
+              <button class="btn btn-ghost" id="clearPricesBtn" style="border-color: #8b3c3c; color: #ff8c8c;">Сбросить до базовых</button>
             </div>
           </div>
         </div>
