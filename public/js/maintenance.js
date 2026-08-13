@@ -17,10 +17,26 @@
   function showLogo(logo) {
     var mark = document.getElementById('main-logo-img');
     var name = document.getElementById('main-logo-text');
+    var heroLogo = document.getElementById('maintenance-hero-logo');
     if (!mark || !name) return;
 
     var label = String(logo && logo.text || 'ECO Gorniy');
+    var logoUrl = logo && logo.url
+      ? (window.EcoMedia ? window.EcoMedia.url(logo.url) : logo.url)
+      : '/api/icon.png';
     name.textContent = label;
+    if (heroLogo) {
+      heroLogo.style.display = '';
+      heroLogo.onerror = function () {
+        if (heroLogo.getAttribute('src') !== '/api/icon.png') {
+          heroLogo.src = '/api/icon.png';
+        } else {
+          heroLogo.style.display = 'none';
+        }
+      };
+      heroLogo.src = logoUrl;
+      heroLogo.alt = '';
+    }
 
     if (!logo || !logo.url) {
       mark.textContent = initials(label);
@@ -29,7 +45,7 @@
     }
 
     var image = document.createElement('img');
-    image.src = window.EcoMedia ? window.EcoMedia.url(logo.url) : logo.url;
+    image.src = logoUrl;
     image.alt = 'Логотип ' + label;
     image.decoding = 'async';
     image.fetchPriority = 'high';

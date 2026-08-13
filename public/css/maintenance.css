@@ -38,43 +38,21 @@ body.maintenance-page {
   margin: 0 auto;
 }
 
-.maintenance-page .maintenance-illustration {
-  display: block;
-  width: clamp(150px, 25vw, 220px);
-  height: auto;
+.maintenance-page .maintenance-emblem {
+  display: grid;
+  place-items: center;
+  width: clamp(104px, 18vw, 148px);
+  height: clamp(92px, 16vw, 132px);
   margin: 0 auto 18px;
-  overflow: visible;
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, .24));
 }
 
-.maintenance-page .maintenance-illustration circle {
-  fill: rgba(var(--gold-rgb), .08);
-  stroke: rgba(var(--gold-rgb), .72);
+.maintenance-page .maintenance-emblem img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 30px rgba(0, 0, 0, .28));
 }
-
-.maintenance-page .mountain-back {
-  stroke: rgba(var(--cream-rgb), .22);
-}
-
-.maintenance-page .mountain-front,
-.maintenance-page .ground {
-  stroke: rgba(var(--cream-rgb), .34);
-}
-
-.maintenance-page .pine-crown {
-  fill: rgba(var(--moss-rgb), .34);
-  stroke: var(--gold);
-}
-
-.maintenance-page .pine-trunk {
-  stroke-width: 2;
-}
-
 .maintenance-page .maintenance-kicker {
   display: inline-block;
   margin-bottom: 12px;
@@ -93,10 +71,31 @@ body.maintenance-page {
 }
 
 .maintenance-page .maintenance-content p {
-  margin: 0;
+  max-width: 510px;
+  margin: 0 auto;
   color: var(--muted);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.55;
+}
+
+.maintenance-page .maintenance-content .maintenance-chat-note {
+  max-width: 480px;
+  margin-top: 10px;
+  color: rgba(var(--cream-rgb), .72);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@keyframes maintenance-chat-ring-orbit {
+  from { transform: rotate(0deg) translateZ(0); }
+  to { transform: rotate(360deg) translateZ(0); }
+}
+
+.maintenance-page #chat-toggle .chat-ring-label {
+  animation: maintenance-chat-ring-orbit 12s linear infinite !important;
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
 }
 
 @media (max-width: 760px) {
@@ -116,9 +115,26 @@ body.maintenance-page {
     padding: 112px 22px 92px;
   }
 
-  .maintenance-page .maintenance-illustration {
-    width: 156px;
+  .maintenance-page .maintenance-emblem {
+    width: 108px;
+    height: 96px;
     margin-bottom: 12px;
+  }
+
+  .maintenance-page .maintenance-content h1 {
+    font-size: clamp(27px, 8vw, 34px);
+    line-height: 1.02;
+  }
+
+  .maintenance-page .maintenance-content .maintenance-chat-note {
+    max-width: 300px;
+    font-size: 13px;
+  }
+
+  .maintenance-page .chat-widget:has(.chat-body[style*="none"]) {
+    left: auto !important;
+    right: 18px !important;
+    bottom: calc(18px + env(safe-area-inset-bottom)) !important;
   }
 
   .maintenance-page .maintenance-content p {

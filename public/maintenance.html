@@ -9,7 +9,7 @@
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" sizes="192x192" href="/api/pwa-icon/192.png">
   <link rel="stylesheet" href="/css/main.css?v=20260813-1">
-  <link rel="stylesheet" href="/css/maintenance.css?v=20260813-2">
+  <link rel="stylesheet" href="/css/maintenance.css?v=20260814-1">
 </head>
 <body class="maintenance-page">
   <script>try{var theme=localStorage.getItem('siteTheme');if(theme)document.body.classList.add(theme);}catch(error){}</script>
@@ -25,17 +25,13 @@
 
   <main class="maintenance-content">
     <div class="maintenance-card">
-      <svg class="maintenance-illustration" viewBox="0 0 220 150" role="img" aria-label="Сосна среди гор">
-        <circle cx="166" cy="35" r="18"></circle>
-        <path class="mountain-back" d="M12 121 64 63l31 35 28-25 84 48"></path>
-        <path class="mountain-front" d="M-4 132 58 92l35 23 31-15 31 20 69-43"></path>
-        <path class="pine-trunk" d="M109 126V67"></path>
-        <path class="pine-crown" d="m109 39-24 38h13L78 99h20l-25 28h72l-25-28h20l-20-22h13Z"></path>
-        <path class="ground" d="M38 132c29-8 115-8 144 0"></path>
-      </svg>
+      <div class="maintenance-emblem" aria-hidden="true">
+        <img id="maintenance-hero-logo" src="/api/icon.png" alt="">
+      </div>
       <span class="maintenance-kicker">Небольшая пауза</span>
-      <h1>Наводим уют<br>на сайте</h1>
-      <p>Бережно обновляем всё, чтобы ваш отдых начинался ещё до поездки.<br>Совсем скоро снова будем на связи.</p>
+      <h1>Проводятся<br>технические работы</h1>
+      <p>Совсем скоро снова будем на связи.</p>
+      <p class="maintenance-chat-note">Но вы всегда можете обратиться через наш чат и задать любой вопрос.</p>
     </div>
   </main>
 
@@ -63,7 +59,7 @@
 
   <script src="/js/api.js?v=20260813-1"></script>
   <script src="/js/admin-entry.js?v=20260813-1"></script>
-  <script src="/js/maintenance.js?v=20260813-2"></script>
+  <script src="/js/maintenance.js?v=20260814-1"></script>
   <script src="/js/chat.js?v=20260813-2"></script>
 </body>
 </html>
