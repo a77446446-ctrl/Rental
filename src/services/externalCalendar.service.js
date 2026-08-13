@@ -1,4 +1,4 @@
-﻿const crypto = require('crypto');
+const crypto = require('crypto');
 const dns = require('dns').promises;
 const net = require('net');
 const { pbAdmin } = require('../config/pocketbase');
@@ -20,11 +20,31 @@ function normalizeCalendarUrl(value) {
 }
 
 function isPrivateAddress(address) {
-  if (net.isIP(address) === 4) {
+  const version = net.isIP(address);
+  if (version === 4) {
     const [a, b] = address.split('.').map(Number);
-    return a === 10 || a === 127 || a === 0 || (a === 192 && b === 168);
+    return a === 0
+      || a === 10
+      || a === 127
+      || (a === 100 && b >= 64 && b <= 127)
+      || (a === 169 && b === 254)
+      || (a === 172 && b >= 16 && b <= 31)
+      || (a === 192 && b === 168)
+      || (a === 198 && (b === 18 || b === 19))
+      || a >= 224;
   }
-  return false;
+  if (version === 6) {
+    const normalized = address.toLowerCase();
+    if (normalized === '::' || normalized === '::1') return true;
+    if (normalized.startsWith('::ffff:')) {
+      return isPrivateAddress(normalized.slice('::ffff:'.length));
+    }
+    const firstGroup = Number.parseInt(normalized.split(':')[0] || '0', 16);
+    return (firstGroup >= 0xfc00 && firstGroup <= 0xfdff)
+      || (firstGroup >= 0xfe80 && firstGroup <= 0xfebf)
+      || firstGroup >= 0xff00;
+  }
+  return true;
 }
 
 async function assertSafeCalendarTarget(url) {
@@ -46,6 +66,7 @@ async function fetchCalendarText(initialUrl, redirects = 0) {
     const response = await fetch(url, { headers: { 'User-Agent': 'EcoGorniy calendar sync' }, redirect: 'manual', signal: controller.signal });
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get('location');
+      if (!location) throw new Error('Сервер календаря вернул перенаправление без адреса');
       return fetchCalendarText(new URL(location, url).toString(), redirects + 1);
     }
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -103,50 +124,34 @@ function parseIcsEvents(icsText) {
   }).filter(e => e.uid && e.check_in && e.check_out && e.check_out > e.check_in);
 }
 
-let sourceFieldContract = null;
-let bookingFieldContract = null;
+const SOURCE_FIELD_CONTRACT = {
+  fields: new Set(['cabin_id', 'name', 'url', 'is_active']),
+  name: 'name',
+  url: 'url',
+};
+const BOOKING_FIELD_CONTRACT = {
+  fields: new Set(['source_id', 'external_uid', 'check_in_date', 'check_out_date']),
+  checkIn: 'check_in_date',
+  checkOut: 'check_out_date',
+};
+
+function markMissingSchema(error) {
+  if (Number(error?.status || error?.response?.status) === 404) {
+    error.externalCalendarSchemaMissing = true;
+  }
+  return error;
+}
 
 function isExternalCalendarSchemaMissing(error) {
   return Boolean(error && error.externalCalendarSchemaMissing);
 }
 
-async function readCollectionFields(collectionName) {
-  try {
-    const collection = await pbAdmin.collections.getOne(collectionName);
-    const schema = Array.isArray(collection.schema)
-      ? collection.schema
-      : Array.isArray(collection.fields)
-        ? collection.fields
-        : [];
-    return new Set(schema.map((field) => field.name));
-  } catch (error) {
-    if (Number(error?.status || error?.response?.status) === 404) {
-      error.externalCalendarSchemaMissing = true;
-    }
-    throw error;
-  }
-}
-
 async function getSourceFieldContract() {
-  if (sourceFieldContract) return sourceFieldContract;
-  const fields = await readCollectionFields('external_calendar_sources');
-  sourceFieldContract = {
-    fields,
-    name: fields.has('source_name') ? 'source_name' : 'name',
-    url: fields.has('ical_url') ? 'ical_url' : 'url',
-  };
-  return sourceFieldContract;
+  return SOURCE_FIELD_CONTRACT;
 }
 
 async function getBookingFieldContract() {
-  if (bookingFieldContract) return bookingFieldContract;
-  const fields = await readCollectionFields('external_bookings');
-  bookingFieldContract = {
-    fields,
-    checkIn: fields.has('check_in') ? 'check_in' : 'check_in_date',
-    checkOut: fields.has('check_out') ? 'check_out' : 'check_out_date',
-  };
-  return bookingFieldContract;
+  return BOOKING_FIELD_CONTRACT;
 }
 
 function toSourceView(record) {
@@ -168,12 +173,15 @@ function createSourceId() {
 async function getSources(cabinId) {
   if (!pbAdmin) return [];
   const validCabinId = validateRecordId(cabinId, 'Объект');
-  await getSourceFieldContract();
-  const records = await pbAdmin.collection('external_calendar_sources').getFullList({
-    filter: `cabin_id="${validCabinId}"`,
-    sort: 'created',
-  });
-  return records.map(toSourceView);
+  try {
+    const records = await pbAdmin.collection('external_calendar_sources').getFullList({
+      filter: `cabin_id="${validCabinId}"`,
+      sort: 'created',
+    });
+    return records.map(toSourceView);
+  } catch (error) {
+    throw markMissingSchema(error);
+  }
 }
 
 async function getSourcesForCabins(cabinIds) {
@@ -384,5 +392,3 @@ module.exports = {
   assertNoExternalOverlap,
   startExternalCalendarSync,
 };
-
-

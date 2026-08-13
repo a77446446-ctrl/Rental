@@ -6,7 +6,12 @@ const sharp = require('sharp');
 
 const { validateStay, cleanText, validateUuid, validateRecordId } = require('../src/utils/validation');
 const { escapeHtml } = require('../src/utils/html');
-const { parseIcsEvents, isPrivateAddress } = require('../src/services/externalCalendar.service');
+const {
+  parseIcsEvents,
+  isPrivateAddress,
+  syncSourceById,
+  isExternalCalendarSchemaMissing,
+} = require('../src/services/externalCalendar.service');
 const storage = require('../src/services/storage.service');
 const cabinMetadata = require('../src/services/cabinMetadata.service');
 const chatService = require('../src/services/chat.service');
@@ -64,8 +69,32 @@ test('iCal parser keeps valid Avito-style events and ignores cancelled events', 
 test('iCal network guard rejects local and private addresses', () => {
   assert.equal(isPrivateAddress('127.0.0.1'), true);
   assert.equal(isPrivateAddress('10.20.30.40'), true);
+  assert.equal(isPrivateAddress('172.20.1.2'), true);
+  assert.equal(isPrivateAddress('169.254.169.254'), true);
   assert.equal(isPrivateAddress('192.168.1.2'), true);
+  assert.equal(isPrivateAddress('::1'), true);
+  assert.equal(isPrivateAddress('fd00::1'), true);
+  assert.equal(isPrivateAddress('fe80::1'), true);
   assert.equal(isPrivateAddress('8.8.8.8'), false);
+  assert.equal(isPrivateAddress('2606:4700:4700::1111'), false);
+});
+
+test('iCal admin API exposes source sync and explicit schema errors', () => {
+  assert.equal(typeof syncSourceById, 'function');
+  assert.equal(typeof isExternalCalendarSchemaMissing, 'function');
+  assert.equal(isExternalCalendarSchemaMissing({ externalCalendarSchemaMissing: true }), true);
+});
+
+test('iCal export accepts stable cabin IDs and the admin explains both sync directions', () => {
+  const root = path.join(__dirname, '..');
+  const publicRoutes = fs.readFileSync(path.join(root, 'src/routes/public.routes.js'), 'utf8');
+  const cabinsController = fs.readFileSync(path.join(root, 'src/controllers/admin/cabins.controller.js'), 'utf8');
+  const cabinsPage = fs.readFileSync(path.join(root, 'public/admin/cabins.html'), 'utf8');
+  assert.match(publicRoutes, /getOne\(cabinId/);
+  assert.match(publicRoutes, /REFRESH-INTERVAL;VALUE=DURATION:PT30M/);
+  assert.match(cabinsController, /saved\.external_calendars = externalCalendars/);
+  assert.match(cabinsPage, /Шаг 1\. Экспорт Eco Gorniy → Avito/);
+  assert.match(cabinsPage, /Шаг 2\. Импорт Avito → Eco Gorniy/);
 });
 
 test('storage cleanup accepts PocketBase media paths and rejects unrelated paths', () => {
@@ -333,4 +362,3 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
     }
   });
 });
-
