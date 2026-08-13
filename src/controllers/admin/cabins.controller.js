@@ -1,6 +1,7 @@
 const { pbAdmin } = require('../../config/pocketbase');
 const externalCalendarService = require('../../services/externalCalendar.service');
 const storageService = require('../../services/storage.service');
+const cabinMetadataService = require('../../services/cabinMetadata.service');
 
 const IMAGE_CATEGORIES = new Set(['main', 'interior', 'exterior']);
 
@@ -104,11 +105,18 @@ exports.saveFull = async (req, res) => {
     }
 
     await externalCalendarService.saveSources(saved.id, sources);
+    const metadata = await cabinMetadataService.saveCabinSelections(
+      saved.id,
+      selectedAmenities,
+      selectedTags
+    );
 
     await cleanupRemovedImages(previousImages, normalizedImages);
     saved.images = normalizedImages;
     saved.image_url = normalizedImages[0] ? normalizedImages[0].url : '';
     saved.status = saved.is_active ? 'active' : 'hidden';
+    saved.amenities = metadata.amenities;
+    saved.tags = metadata.tags;
     res.json({ success: true, data: saved });
   } catch (err) {
     console.error('[cabins.controller] POST /cabins/save-full error:', err);
@@ -197,7 +205,13 @@ exports.remove = async (req, res) => {
     }
     
     await pbAdmin.collection('cabins').delete(id);
-    
+
+    try {
+      await cabinMetadataService.removeCabinSelections(id);
+    } catch (err) {
+      console.error('[cabins.controller] Не удалось очистить характеристики домика:', err.message);
+    }
+
     await cleanupRemovedImages(parseStoredImages(previousCabin), []);
     res.json({ success: true });
   } catch (err) {

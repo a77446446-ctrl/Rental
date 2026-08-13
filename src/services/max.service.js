@@ -1,5 +1,6 @@
 const { config } = require('../config/env');
 const crypto = require('crypto');
+const sharp = require('sharp');
 
 const MAX_TIMEOUT_MS = 12000;
 const RETRY_DELAYS_MS = [0, 1000, 3000];
@@ -353,6 +354,46 @@ async function requestMaxUploadEndpoint(mediaType) {
   throw new Error('MAX не вернул URL для загрузки вложения');
 }
 
+function findMaxUploadToken(value, depth = 0) {
+  if (!value || depth > 5 || typeof value !== 'object') return null;
+  if (typeof value.token === 'string' && value.token.trim()) return value.token.trim();
+
+  for (const nested of Object.values(value)) {
+    const token = findMaxUploadToken(nested, depth + 1);
+    if (token) return token;
+  }
+  return null;
+}
+
+function tokenFromUploadUrl(rawUrl) {
+  try {
+    const url = new URL(rawUrl);
+    for (const [key, value] of url.searchParams.entries()) {
+      if (key.toLowerCase().includes('token') && value) return value;
+    }
+  } catch (_error) {}
+  return null;
+}
+
+async function prepareMaxUpload(fileBuffer, attachment, sourceMimeType) {
+  let buffer = Buffer.from(fileBuffer);
+  let mimeType = attachment.mimeType || sourceMimeType || 'application/octet-stream';
+  let name = attachment.name || ('attachment.' + (attachment.mediaType || 'file'));
+  const normalizedMimeType = mimeType.split(';', 1)[0].trim().toLowerCase();
+
+  // MAX не принимает WebP/AVIF: чат хранит их компактно, а для MAX создаём совместимую JPEG-копию.
+  if (attachment.mediaType === 'image' && ['image/webp', 'image/avif'].includes(normalizedMimeType)) {
+    buffer = await sharp(buffer)
+      .flatten({ background: '#f2ede3' })
+      .jpeg({ quality: 82, mozjpeg: true })
+      .toBuffer();
+    mimeType = 'image/jpeg';
+    name = String(name).replace(/\.[^.]+$/, '') + '.jpg';
+  }
+
+  return { buffer, mimeType, name };
+}
+
 async function uploadAttachmentToMax(attachment) {
   const mediaType = ['image', 'video', 'audio'].includes(attachment.mediaType)
     ? attachment.mediaType
@@ -366,17 +407,20 @@ async function uploadAttachmentToMax(attachment) {
   const declaredSize = Number(sourceResponse.headers.get('content-length') || 0);
   if (declaredSize > 50 * 1024 * 1024) throw new Error('Вложение для MAX превышает 50 МБ');
 
-  const fileBuffer = await sourceResponse.arrayBuffer();
-  if (fileBuffer.byteLength > 50 * 1024 * 1024) throw new Error('Вложение для MAX превышает 50 МБ');
+  const sourceBuffer = await sourceResponse.arrayBuffer();
+  if (sourceBuffer.byteLength > 50 * 1024 * 1024) throw new Error('Вложение для MAX превышает 50 МБ');
 
+  const prepared = await prepareMaxUpload(
+    sourceBuffer,
+    attachment,
+    sourceResponse.headers.get('content-type')
+  );
   const endpoint = await requestMaxUploadEndpoint(mediaType);
   const uploadForm = new FormData();
-  const mimeType = attachment.mimeType || sourceResponse.headers.get('content-type') || 'application/octet-stream';
-  uploadForm.append('data', new Blob([fileBuffer], { type: mimeType }), attachment.name || `attachment.${mediaType}`);
+  uploadForm.append('data', new Blob([prepared.buffer], { type: prepared.mimeType }), prepared.name);
 
   const uploadResponse = await fetch(endpoint.url, {
     method: 'POST',
-    headers: { 'Authorization': config.maxBotToken },
     body: uploadForm,
     signal: getAbortSignal(),
   });
@@ -390,10 +434,10 @@ async function uploadAttachmentToMax(attachment) {
     try { uploaded = JSON.parse(responseText); } catch (_error) {}
   }
 
-  const token = uploaded.token || endpoint.token;
-  const payload = uploaded.photos
-    ? { photos: uploaded.photos }
-    : (token ? { token } : null);
+  const token = findMaxUploadToken(uploaded)
+    || findMaxUploadToken(endpoint)
+    || tokenFromUploadUrl(endpoint.url);
+  const payload = token ? { token } : null;
   if (!payload) throw new Error('MAX не вернул токен загруженного вложения');
 
   return { type: mediaType, payload };
@@ -529,7 +573,7 @@ async function notifyAdminAttachment(token, attachment, guestName = null) {
 
   try {
     const maxAttachment = await uploadAttachmentToMax(attachment);
-    if (attachment.mediaType === 'video' || attachment.mediaType === 'audio') await wait(1200);
+    await wait(attachment.mediaType === 'image' ? 800 : 1200);
     return await callMaxApi('sendMessage', {
       chat_id: config.maxChatId, text: caption, attachments: [maxAttachment],
     });
@@ -650,6 +694,7 @@ module.exports = {
   sendBookingNotification,
   notifyAdmin,
   notifyAdminAttachment,
+  prepareMaxUpload,
   handleMaxWebhook,
   isValidMaxWebhook,
   isTrustedMaxMediaUrl,

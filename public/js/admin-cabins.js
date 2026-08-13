@@ -180,13 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
       deleteCabinBtn.style.display = 'block';
 
       // Устанавливаем чекбоксы наполнения
-      const cabinAmenities = globalAmenities[c.id] || [];
+      const cabinAmenities = globalAmenities[c.id] || (Array.isArray(c.amenities) ? c.amenities : []);
       document.querySelectorAll('#cabinAmenitiesGrid input[type="checkbox"]').forEach(cb => {
         cb.checked = cabinAmenities.includes(cb.value);
       });
 
       // Устанавливаем чекбоксы тегов
-      const cabinTags = globalCabinTags[c.id] || [];
+      const cabinTags = globalCabinTags[c.id] || (Array.isArray(c.tags) ? c.tags : []);
       document.querySelectorAll('#cabinTagsGrid input[type="checkbox"]').forEach(cb => {
         cb.checked = cabinTags.includes(cb.value);
       });

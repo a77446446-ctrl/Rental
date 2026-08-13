@@ -8,6 +8,7 @@ const { validateStay, cleanText, validateUuid, validateRecordId } = require('../
 const { escapeHtml } = require('../src/utils/html');
 const { parseIcsEvents, isPrivateAddress } = require('../src/services/externalCalendar.service');
 const storage = require('../src/services/storage.service');
+const cabinMetadata = require('../src/services/cabinMetadata.service');
 const chatService = require('../src/services/chat.service');
 const { config } = require('../src/config/env');
 const session = require('../src/services/adminSession.service');
@@ -132,6 +133,21 @@ test('chat photos are resized, converted to WebP and stripped of metadata', asyn
   assert.ok(metadata.height <= 1920);
   assert.equal(metadata.exif, undefined);
   assert.ok(optimized.buffer.length < source.length);
+});
+
+test('cabin metadata normalizes selections and save-full synchronizes public stores', () => {
+  assert.deepEqual(cabinMetadata.normalizeSelections([' Фен ', 'Фен', '', 'Посуда']), ['Фен', 'Посуда']);
+  const root = path.join(__dirname, '..');
+  const controller = fs.readFileSync(path.join(root, 'src/controllers/admin/cabins.controller.js'), 'utf8');
+  const adminCabins = fs.readFileSync(path.join(root, 'public/js/admin-cabins.js'), 'utf8');
+  const main = fs.readFileSync(path.join(root, 'public/js/main.js'), 'utf8');
+  const cabin = fs.readFileSync(path.join(root, 'public/js/cabin.js'), 'utf8');
+  assert.match(controller, /saveCabinSelections\(\s*saved\.id,\s*selectedAmenities,\s*selectedTags\s*\)/);
+  assert.match(adminCabins, /globalAmenities\[c\.id\].*c\.amenities/);
+  assert.match(adminCabins, /globalCabinTags\[c\.id\].*c\.tags/);
+  assert.match(main, /state\.amenities\[cabin\.id\].*cabin\.amenities/);
+  assert.match(main, /state\.cabinTags\[cabin\.id\].*cabin\.tags/);
+  assert.match(cabin, /amenitiesMap\[cabinId\][\s\S]*cabin\.amenities/);
 });
 
 test('Telegram webhook uses a timing-safe shared secret', () => {

@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
       console.warn('Не удалось загрузить удобства', e);
     }
-    const cabinAmenities = amenitiesMap[cabinId] || [];
+    const cabinAmenities = amenitiesMap[cabinId]
+      || (Array.isArray(cabin.amenities) ? cabin.amenities : []);
     
     let houseItems = [];
     try {

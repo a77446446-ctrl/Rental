@@ -1,5 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const sharp = require('sharp');
 const { config } = require('../src/config/env');
 const maxService = require('../src/services/max.service');
 
@@ -98,6 +99,66 @@ test('MAX читает официальный message.body и вложенное
   assert.equal(savedMessages[0].sender, 'admin');
   assert.equal(JSON.parse(savedMessages[0].text).url, 'https://storage.supabase.co/storage/v1/object/public/chat/photo.jpg');
 });
+test('MAX converts compact WebP chat photos to supported JPEG attachments', async () => {
+  const previousUrl = config.maxApiUrl;
+  const previousToken = config.maxBotToken;
+  const previousChatId = config.maxChatId;
+  const previousFetch = global.fetch;
+  const webp = await sharp({
+    create: { width: 32, height: 24, channels: 3, background: '#315f35' },
+  }).webp().toBuffer();
+  let uploadedFile = null;
+  let uploadAuthorization = null;
+  let messagePayload = null;
+
+  config.maxApiUrl = 'https://platform-api2.max.ru';
+  config.maxBotToken = 'test-token';
+  config.maxChatId = '25383544';
+  global.fetch = async (url, options = {}) => {
+    const target = String(url);
+    if (target === 'https://eco-gorniy.ru/photo.webp') {
+      return {
+        ok: true,
+        status: 200,
+        headers: { get: (name) => name === 'content-type' ? 'image/webp' : String(webp.length) },
+        arrayBuffer: async () => webp.buffer.slice(webp.byteOffset, webp.byteOffset + webp.byteLength),
+      };
+    }
+    if (target.includes('/uploads?type=image')) {
+      return { ok: true, status: 200, json: async () => ({ url: 'https://iu.oneme.ru/upload.do' }) };
+    }
+    if (target === 'https://iu.oneme.ru/upload.do') {
+      uploadedFile = options.body.get('data');
+      uploadAuthorization = options.headers?.Authorization || null;
+      return { ok: true, status: 200, text: async () => '{"token":"max-image-token"}' };
+    }
+    if (target.includes('/messages?')) {
+      messagePayload = JSON.parse(options.body);
+      return { ok: true, status: 200, text: async () => '{}' };
+    }
+    throw new Error('Неожиданный URL: ' + target);
+  };
+
+  try {
+    const delivered = await maxService.notifyAdminAttachment(
+      '11111111-2222-3333-4444-555555555555',
+      { mediaType: 'image', mimeType: 'image/webp', name: 'лес.webp', url: 'https://eco-gorniy.ru/photo.webp' },
+      'Автотест'
+    );
+    assert.equal(delivered, true);
+    assert.equal(uploadedFile.type, 'image/jpeg');
+    assert.equal(uploadedFile.name, 'лес.jpg');
+    assert.equal((await sharp(Buffer.from(await uploadedFile.arrayBuffer())).metadata()).format, 'jpeg');
+    assert.equal(uploadAuthorization, null);
+    assert.equal(messagePayload.attachments[0].payload.token, 'max-image-token');
+  } finally {
+    config.maxApiUrl = previousUrl;
+    config.maxBotToken = previousToken;
+    config.maxChatId = previousChatId;
+    global.fetch = previousFetch;
+  }
+});
+
 test('MAX переключается на рабочий API-домен и параметр user_id', async () => {
   const previousUrl = config.maxApiUrl;
   const previousToken = config.maxBotToken;

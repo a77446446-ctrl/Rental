@@ -751,6 +751,18 @@
     state.tags = results[5].data || [];
     state.cabinTags = results[6] || {};
 
+    // Восстанавливаем привязки из записи объекта, если историческое хранилище ещё не синхронизировано.
+    state.cabins.forEach(function(cabin) {
+      if ((!Array.isArray(state.amenities[cabin.id]) || state.amenities[cabin.id].length === 0)
+          && Array.isArray(cabin.amenities)) {
+        state.amenities[cabin.id] = cabin.amenities;
+      }
+      if ((!Array.isArray(state.cabinTags[cabin.id]) || state.cabinTags[cabin.id].length === 0)
+          && Array.isArray(cabin.tags)) {
+        state.cabinTags[cabin.id] = cabin.tags;
+      }
+    });
+
     if (state.settings.siteTheme) {
       document.body.classList.add(state.settings.siteTheme);
       try { localStorage.setItem('siteTheme', state.settings.siteTheme); } catch(e) {}
