@@ -328,10 +328,23 @@ h1 { margin-top: 22px; font-size: clamp(64px, 8vw, 116px); line-height: .86; let
 .marquee {
   width: max-content; display: flex; gap: 42px; padding: 18px 0;
   color: rgba(var(--cream-rgb), .52); font-size: 13px; letter-spacing: .05em;
-  text-transform: uppercase; animation: marquee 30s linear infinite;
+  text-transform: uppercase;
+  animation: marquee var(--marquee-duration, 55s) linear infinite;
 }
 
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+@media (max-width: 760px) {
+  .marquee {
+    animation-duration: var(--marquee-mobile-duration, 75s);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation-duration: 120s;
+  }
+}
 
 .intro { display: grid; grid-template-columns: .9fr 1fr; gap: 72px; padding: 92px 8px 50px; align-items: end; }
 
@@ -3403,9 +3416,40 @@ body .chat-widget.fab-appear #chat-toggle > svg:not(.chat-ring-label) {
 }
 
 
+#global-bg {
+  filter: none !important;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
 #global-bg::after {
-  content: ""; position: absolute; inset: 0;
-  background: rgba(var(--bg-rgb), 0.78); z-index: 1;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 50% 38%, transparent 0 24%, rgba(4, 6, 4, .24) 78%, rgba(3, 4, 3, .42) 100%),
+    linear-gradient(180deg, rgba(5, 7, 5, .24) 0%, rgba(5, 7, 5, .34) 58%, rgba(4, 5, 4, .46) 100%);
+}
+
+body.has-global-background {
+  background: #0b0d0b;
+}
+
+body.has-global-background::before {
+  background: linear-gradient(180deg, rgba(5, 7, 5, .06), rgba(5, 7, 5, .24));
+}
+
+body.has-global-background::after {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, .24), transparent 18%, transparent 82%, rgba(0, 0, 0, .24)),
+    radial-gradient(circle at 50% 22%, transparent 0 32%, rgba(0, 0, 0, .18) 88%);
+}
+
+body.has-global-background .noise {
+  opacity: .018;
+  mix-blend-mode: soft-light;
 }
 
 .hero-content h1 { color: #ede4d6 !important; text-shadow: 0 4px 24px rgba(0,0,0,0.6); }

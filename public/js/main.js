@@ -1104,13 +1104,21 @@
     const data = state.mainpage;
     if (!data || Object.keys(data).length === 0) return;
 
-    // Глобальный фон
-    if (data.global_bg_url) {
-      const globalBg = document.getElementById('global-bg');
+    // Глобальный фон: натуральные цвета под нейтральным затемнением.
+    const globalBg = document.getElementById('global-bg');
+    if (globalBg && data.global_bg_url) {
+      globalBg.style.backgroundImage = `url('${mainpageMediaUrl(data.global_bg_url)}')`;
+      globalBg.style.backgroundSize = 'cover';
+      globalBg.style.backgroundPosition = 'center center';
+      globalBg.style.backgroundRepeat = 'no-repeat';
+      globalBg.style.filter = 'none';
+      globalBg.style.opacity = '1';
+      document.body.classList.add('has-global-background');
+    } else {
+      document.body.classList.remove('has-global-background');
       if (globalBg) {
-        globalBg.style.backgroundImage = `url('${mainpageMediaUrl(data.global_bg_url)}')`;
-        globalBg.style.filter = 'sepia(0.4) brightness(0.4) contrast(1.1)';
-        globalBg.style.opacity = '0.35';
+        globalBg.style.backgroundImage = 'none';
+        globalBg.style.opacity = '0';
       }
     }
 
@@ -1169,7 +1177,19 @@
       const marqStr = (data.marquee.text + ' · ').repeat(5);
       const marqueeContainer = document.getElementById('marquee-container');
       if (marqueeContainer) {
-        marqueeContainer.innerHTML = `<span>${marqStr}</span><span>${marqStr}</span><span>${marqStr}</span>`;
+        const configuredDuration = Number(data.marquee.duration);
+        const desktopDuration = Number.isFinite(configuredDuration)
+          ? Math.min(120, Math.max(20, configuredDuration))
+          : 55;
+        const mobileDuration = Math.min(160, Math.round(desktopDuration * 1.36));
+        marqueeContainer.style.setProperty('--marquee-duration', desktopDuration + 's');
+        marqueeContainer.style.setProperty('--marquee-mobile-duration', mobileDuration + 's');
+        marqueeContainer.replaceChildren();
+        for (let index = 0; index < 3; index += 1) {
+          const segment = document.createElement('span');
+          segment.textContent = marqStr;
+          marqueeContainer.appendChild(segment);
+        }
       }
     }
 

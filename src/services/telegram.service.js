@@ -1,4 +1,5 @@
 const { config } = require('../config/env');
+const { formatDateRu } = require('../utils/dateFormat');
 
 const TELEGRAM_TIMEOUT_MS = 12000;
 const RETRY_DELAYS_MS = [0, 1000, 3000];
@@ -81,7 +82,7 @@ async function sendBookingNotification(bookingData) {
 🌲 <b>Новое бронирование!</b>
 
 <b>Домик:</b> ${cabinName}
-<b>Даты:</b> ${checkIn} — ${checkOut}
+<b>Даты:</b> ${formatDateRu(checkIn)} — ${formatDateRu(checkOut)}
 <b>Ночей:</b> ${nightsCount}
 <b>Сумма:</b> ${totalPrice} ₽
 

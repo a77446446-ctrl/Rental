@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  const DEFAULT_MARQUEE_DURATION = 55;
+  const normalizeMarqueeDuration = (value) => Math.min(
+    120,
+    Math.max(20, Number(value) || DEFAULT_MARQUEE_DURATION)
+  );
   const saveBtn = document.getElementById('saveMainpageBtn');
   const featuresContainer = document.getElementById('featuresContainer');
   const reviewsContainer = document.getElementById('reviewsContainer');
@@ -10,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     global_bg_url: '',
     logo: { url: '', text: '' },
     hero: { title: '', background_url: '' },
-    marquee: { text: '' },
+    marquee: { text: '', duration: DEFAULT_MARQUEE_DURATION },
     about: { title: '', video_url: '', video_file_url: '', video_autoplay: false, video_start: 0, video_end: 0 },
     features_meta: { label: '', title: '' },
     features: [
@@ -475,6 +480,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       document.getElementById('marqueeText').value = mainpageData.marquee?.text || '';
+      document.getElementById('marqueeDuration').value = normalizeMarqueeDuration(mainpageData.marquee?.duration);
       document.getElementById('featuresLabel').value = mainpageData.features_meta?.label || '';
       document.getElementById('featuresTitle').value = mainpageData.features_meta?.title || '';
       
@@ -585,7 +591,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     mainpageData.hero.background_url = document.getElementById('heroBgUrl').value;
     mainpageData.hero.desc = document.getElementById('heroDesc').value;
 
-    mainpageData.marquee.text = document.getElementById('marqueeText').value;
+    mainpageData.marquee = {
+      ...(mainpageData.marquee || {}),
+      text: document.getElementById('marqueeText').value,
+      duration: normalizeMarqueeDuration(document.getElementById('marqueeDuration').value)
+    };
     mainpageData.features_meta = {
       label: document.getElementById('featuresLabel').value,
       title: document.getElementById('featuresTitle').value

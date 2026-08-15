@@ -11,7 +11,7 @@
   <link rel="manifest" href="/api/manifest.json">
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" href="/api/icon.png">
-  <link rel="stylesheet" href="/css/main.css?v=20260811-2">
+  <link rel="stylesheet" href="/css/main.css?v=20260815-1">
   <style>
     body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
     
@@ -108,7 +108,7 @@
     /* Скелетон загрузки */
     .loading-area { opacity: 0.6; pointer-events: none; }
   </style>
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260814-1">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260815-1">
   <script src="/js/lucide.min.js?v=20260811-2"></script>
 </head>
 <body>
@@ -118,9 +118,8 @@
 
   <header class="admin-header">
     <div class="admin-brand">
-      <div class="brand-mark">E</div>
       <div class="maintenance-control" id="maintenanceControl" aria-busy="true">
-        <span class="maintenance-control-label">Техработы</span>
+        <span class="maintenance-control-label">Технический режим</span>
         <label class="maintenance-switch" title="Включить технические работы">
           <input type="checkbox" id="maintenanceToggle" aria-label="Режим технических работ" disabled>
           <span class="maintenance-switch-track" aria-hidden="true">
@@ -190,7 +189,7 @@
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Общий фон сайта (Глобальный)</h3>
               <i data-lucide="chevron-down" class="accordion-icon"></i>
             </div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Темное фоновое изображение для всего приложения.</div>
+            <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Фоновое изображение в естественных цветах с нейтральным затемнением для читаемости текста.</div>
           </summary>
           <div class="admin-accordion-content" style="padding-top: 16px;">
             <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
@@ -198,8 +197,8 @@
               <input type="file" id="globalBgFile" accept="image/*" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
               <input type="hidden" id="globalBgUrl">
               <div id="globalBgPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px; position: relative;">
-                <div style="position: absolute; inset: 0; background: rgba(var(--bg-rgb), 0.85); border-radius: 8px;"></div>
-                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--gold);">Превью (фон будет затемнен)</div>
+                <div style="position: absolute; inset: 0; background: rgba(5, 7, 5, 0.38); border-radius: 8px;"></div>
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--gold);">Превью с фактическим нейтральным затемнением</div>
               </div>
             </div>
           </div>
@@ -236,6 +235,11 @@
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Бегущая строка</label>
                 <input type="text" id="marqueeText" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+              </div>
+              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+                <label for="marqueeDuration" style="font-size: 13px; color: var(--muted); font-weight: 600;">Скорость бегущей строки</label>
+                <input type="number" id="marqueeDuration" min="20" max="120" step="5" value="55" inputmode="numeric" style="width: 180px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+                <span style="font-size: 12px; color: var(--muted);">Секунд на один круг: больше значение — медленнее. На мобильном скорость дополнительно снижается.</span>
               </div>
             </div>
           </div>
@@ -544,7 +548,7 @@
   <script src="/js/icons.js?v=20260811-2"></script>
   <script src="/js/icon-picker.js?v=20260811-2"></script>
   <script src="/js/admin-mainpage-meta.js?v=20260811-2"></script>
-  <script src="/js/admin-mainpage.js?v=20260811-2"></script>
+  <script src="/js/admin-mainpage.js?v=20260815-1"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
   <script src="/js/admin-mobile.js?v=20260814-1"></script>
 </body>

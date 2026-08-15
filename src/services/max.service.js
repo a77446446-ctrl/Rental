@@ -1,6 +1,7 @@
 const { config } = require('../config/env');
 const crypto = require('crypto');
 const sharp = require('sharp');
+const { formatDateRu } = require('../utils/dateFormat');
 
 const MAX_TIMEOUT_MS = 12000;
 const RETRY_DELAYS_MS = [0, 1000, 3000];
@@ -256,7 +257,7 @@ async function sendBookingNotification(bookingData) {
 🌲 Новое бронирование!
 
 🏡 Домик: ${cabinName}
-📅 Даты: ${checkIn} — ${checkOut}
+📅 Даты: ${formatDateRu(checkIn)} — ${formatDateRu(checkOut)}
 🌙 Ночей: ${nightsCount}
 💰 Сумма: ${totalPrice} ₽
 

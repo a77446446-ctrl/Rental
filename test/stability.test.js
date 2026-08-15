@@ -39,6 +39,7 @@ test('идентификатор записи принимает UUID и ста�
   assert.equal(validateRecordId('a1b2c3d4e5f6g7h'), 'a1b2c3d4e5f6g7h');
   assert.throws(() => validateRecordId('bad-id" || true'), /неверный/);
 });
+
 test('HTML escaping neutralizes stored XSS payloads', () => {
   assert.equal(escapeHtml('<img src=x onerror="alert(1)">'), '&lt;img src=x onerror=&quot;alert(1)&quot;&gt;');
 });
@@ -92,9 +93,21 @@ test('iCal export accepts stable cabin IDs and the admin explains both sync dire
   const cabinsPage = fs.readFileSync(path.join(root, 'public/admin/cabins.html'), 'utf8');
   assert.match(publicRoutes, /getOne\(cabinId/);
   assert.match(publicRoutes, /REFRESH-INTERVAL;VALUE=DURATION:PT30M/);
+  assert.match(publicRoutes, /TRANSP:OPAQUE/);
+  assert.match(publicRoutes, /LAST-MODIFIED/);
   assert.match(cabinsController, /saved\.external_calendars = externalCalendars/);
   assert.match(cabinsPage, /Шаг 1\. Экспорт Eco Gorniy → Avito/);
   assert.match(cabinsPage, /Шаг 2\. Импорт Avito → Eco Gorniy/);
+});
+
+test('действия с бронированием не включают предупреждение о несохранённых настройках', () => {
+  const root = path.join(__dirname, '..');
+  const adminMobile = fs.readFileSync(path.join(root, 'public/js/admin-mobile.js'), 'utf8');
+  const adminBookings = fs.readFileSync(path.join(root, 'public/js/admin-bookings.js'), 'utf8');
+
+  assert.match(adminMobile, /closest\('\[data-dirty-ignore\]'\)/);
+  assert.match(adminBookings, /class="action-select status-select"[^>]*data-dirty-ignore/);
+  assert.match(adminBookings, /if \(window\.clearDirty\) window\.clearDirty\(\)/);
 });
 
 test('storage cleanup accepts PocketBase media paths and rejects unrelated paths', () => {

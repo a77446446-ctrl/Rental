@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td data-label="Действие">
               <div class="booking-actions">
               ${(isCompleted || b.status === 'cancelled') ? `<span style="color:var(--muted); font-size:12px;">${isCompleted ? 'Завершена' : 'Отменена'}</span>` : `
-              <select class="action-select status-select" data-id="${b.id}" style="max-width: 130px;">
+              <select class="action-select status-select" data-id="${b.id}" data-dirty-ignore style="max-width: 130px;">
                 <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>Ожидает</option>
                 <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтвердить</option>
                 <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Отменить</option>
@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
+            if (window.clearDirty) window.clearDirty();
             window.showToast('Статус обновлен', 'success');
             loadBookings();
           } catch (err) {

@@ -766,7 +766,7 @@ router.get('/ical/export/:slug', async (req, res) => {
     try {
       bookings = await pbAdmin.collection('bookings').getFullList({
         filter: `cabin_id="${cabin.id}" && (status="pending" || status="confirmed")`,
-        fields: 'id,check_in_date,check_out_date,status'
+        fields: 'id,check_in_date,check_out_date,status,created,updated'
       });
     } catch (bookingsError) {
       console.error('[ical-export] Ошибка загрузки бронирований:', bookingsError.message);
@@ -788,8 +788,10 @@ router.get('/ical/export/:slug', async (req, res) => {
     // Формируем iCal
     const now = new Date();
     const formatDate = (dateStr) => dateStr.replace(/-/g, '');
-    const formatTimestamp = (d) => {
-      return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const formatTimestamp = (value) => {
+      const parsed = value instanceof Date ? value : new Date(value);
+      const date = Number.isNaN(parsed.getTime()) ? now : parsed;
+      return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     };
 
     const escapeIcalText = (value) => String(value || '')
@@ -820,12 +822,15 @@ router.get('/ical/export/:slug', async (req, res) => {
 
         ical.push('BEGIN:VEVENT');
         ical.push(`UID:${uid}`);
+        const eventTimestamp = booking.updated || booking.created_at || now;
+        ical.push(`DTSTAMP:${formatTimestamp(eventTimestamp)}`);
+        ical.push(`LAST-MODIFIED:${formatTimestamp(eventTimestamp)}`);
         ical.push(`DTSTART;VALUE=DATE:${formatDate(booking.check_in)}`);
         ical.push(`DTEND;VALUE=DATE:${formatDate(booking.check_out)}`);
         ical.push('SUMMARY:Занято');
         ical.push(`DESCRIPTION:Бронирование через eco-gorniy.ru`);
         ical.push(`STATUS:CONFIRMED`);
-        ical.push(`DTSTAMP:${formatTimestamp(now)}`);
+        ical.push('TRANSP:OPAQUE');
         ical.push('END:VEVENT');
       });
     }
@@ -867,6 +872,7 @@ router.get('/ical/export/:slug', async (req, res) => {
         ical.push(`SUMMARY:Закрыто`);
         ical.push(`DESCRIPTION:Даты закрыты администратором`);
         ical.push(`STATUS:CONFIRMED`);
+        ical.push('TRANSP:OPAQUE');
         ical.push(`DTSTAMP:${formatTimestamp(now)}`);
         ical.push('END:VEVENT');
 

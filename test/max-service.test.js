@@ -4,6 +4,44 @@ const sharp = require('sharp');
 const { config } = require('../src/config/env');
 const maxService = require('../src/services/max.service');
 
+test('MAX отправляет даты бронирования в российском формате', async () => {
+  const previousUrl = config.maxApiUrl;
+  const previousToken = config.maxBotToken;
+  const previousChatId = config.maxChatId;
+  const previousFetch = global.fetch;
+  let sentPayload = null;
+
+  config.maxApiUrl = 'https://platform-api2.max.ru';
+  config.maxBotToken = 'test-token';
+  config.maxChatId = '25383544';
+  global.fetch = async (_url, options = {}) => {
+    sentPayload = JSON.parse(options.body);
+    return { ok: true, status: 200 };
+  };
+
+  try {
+    const delivered = await maxService.sendBookingNotification({
+      cabinName: 'Дом-А',
+      checkIn: '2026-08-29',
+      checkOut: '2026-08-30',
+      nightsCount: 1,
+      totalPrice: 10000,
+      guestName: 'Тест',
+      guestPhone: '+70000000000',
+      guestTelegram: '',
+    });
+
+    assert.equal(delivered, true);
+    assert.match(sentPayload.text, /Даты: 29\.08\.2026 — 30\.08\.2026/);
+    assert.doesNotMatch(sentPayload.text, /2026-08-29/);
+  } finally {
+    config.maxApiUrl = previousUrl;
+    config.maxBotToken = previousToken;
+    config.maxChatId = previousChatId;
+    global.fetch = previousFetch;
+  }
+});
+
 test('MAX service validates secret and handles webhook replies', async () => {
   const previousSecret = config.maxWebhookSecret;
   const previousToken = config.maxBotToken;
@@ -99,6 +137,7 @@ test('MAX читает официальный message.body и вложенное
   assert.equal(savedMessages[0].sender, 'admin');
   assert.equal(JSON.parse(savedMessages[0].text).url, 'https://storage.supabase.co/storage/v1/object/public/chat/photo.jpg');
 });
+
 test('MAX converts compact WebP chat photos to supported JPEG attachments', async () => {
   const previousUrl = config.maxApiUrl;
   const previousToken = config.maxBotToken;

@@ -83,14 +83,14 @@
     };
 
     document.addEventListener('input', function(e) {
-      if (e.target.id === 'maintenanceToggle') return;
+      if (e.target.id === 'maintenanceToggle' || e.target.closest('[data-dirty-ignore]')) return;
       if (e.target.tagName !== 'INPUT' || e.target.type !== 'search') { // Игнорируем поиск если есть
         window.markDirty();
       }
     });
 
     document.addEventListener('change', function(e) {
-      if (e.target.id === 'maintenanceToggle') return;
+      if (e.target.id === 'maintenanceToggle' || e.target.closest('[data-dirty-ignore]')) return;
       window.markDirty();
     });
 

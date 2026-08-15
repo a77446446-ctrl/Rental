@@ -44,9 +44,29 @@ test('переключатель техработ доступен в шапке
   const mobileJs = read('public/js/admin-mobile.js');
 
   assert.match(html, /<div class="admin-brand">[\s\S]*id="maintenanceControl"[\s\S]*id="maintenanceToggle"/);
+  assert.match(html, /<span class="maintenance-control-label">Технический режим<\/span>/);
+  assert.doesNotMatch(html, /<div class="brand-mark">E<\/div>/);
   assert.doesNotMatch(js, /sidebarMenu\.insertAdjacentHTML/);
   assert.match(js, /fetch\('\/api\/settings', \{ cache: 'no-store' \}\)/);
   assert.match(js, /toggle\.disabled = true/);
   assert.match(js, /updateToggleUI\(!checked\)/);
   assert.ok((mobileJs.match(/e\.target\.id === 'maintenanceToggle'/g) || []).length >= 2);
+});
+
+test('скорость бегущей строки управляется из админки, а общий фон сохраняет натуральные цвета', () => {
+  const html = read('public/admin/mainpage.html');
+  const adminJs = read('public/js/admin-mainpage.js');
+  const mainJs = read('public/js/main.js');
+  const styles = read('public/css/main.css');
+  const defaults = JSON.parse(read('src/data/mainpage.json'));
+
+  assert.match(html, /id="marqueeDuration" min="20" max="120" step="5" value="55"/);
+  assert.match(adminJs, /normalizeMarqueeDuration/);
+  assert.match(adminJs, /duration: normalizeMarqueeDuration/);
+  assert.match(mainJs, /--marquee-mobile-duration/);
+  assert.match(mainJs, /document\.body\.classList\.add\('has-global-background'\)/);
+  assert.doesNotMatch(mainJs, /sepia\(0\.4\)|brightness\(0\.4\)|opacity = '0\.35'/);
+  assert.match(styles, /animation: marquee var\(--marquee-duration, 55s\)/);
+  assert.match(styles, /body\.has-global-background \.noise[\s\S]*opacity: \.018/);
+  assert.equal(defaults.marquee.duration, 55);
 });

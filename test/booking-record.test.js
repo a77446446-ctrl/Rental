@@ -9,6 +9,7 @@ const {
   toPocketBaseDate,
 } = require('../src/utils/bookingRecord');
 const { normalizePriceRecord } = require('../src/utils/priceRecord');
+const { formatDateRu } = require('../src/utils/dateFormat');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf8');
@@ -27,6 +28,15 @@ test('даты бронирования PocketBase преобразуются в
   assert.equal(booking.created_at, '2026-08-13 12:30:00.000Z');
   assert.equal(toDateOnly('2026-08-23T12:30:00.000Z'), '2026-08-23');
   assert.equal(toPocketBaseDate('2026-08-25'), '2026-08-25 00:00:00.000Z');
+});
+
+test('даты уведомлений форматируются по российскому стандарту без сдвига часового пояса', () => {
+  assert.equal(formatDateRu('2026-08-29'), '29.08.2026');
+  assert.equal(formatDateRu('2026-08-30 00:00:00.000Z'), '30.08.2026');
+  assert.equal(formatDateRu(''), '—');
+
+  const maxService = read('src/services/max.service.js');
+  assert.match(maxService, /formatDateRu\(checkIn\).*formatDateRu\(checkOut\)/);
 });
 
 test('API доступности фильтрует реальные поля дат PocketBase', () => {
