@@ -53,20 +53,34 @@ test('переключатель техработ доступен в шапке
   assert.ok((mobileJs.match(/e\.target\.id === 'maintenanceToggle'/g) || []).length >= 2);
 });
 
-test('скорость бегущей строки управляется из админки, а общий фон сохраняет натуральные цвета', () => {
+test('скорость строки и общее затемнение управляются из админки', () => {
   const html = read('public/admin/mainpage.html');
   const adminJs = read('public/js/admin-mainpage.js');
   const mainJs = read('public/js/main.js');
   const styles = read('public/css/main.css');
+  const controller = read('src/controllers/admin/settings.controller.js');
   const defaults = JSON.parse(read('src/data/mainpage.json'));
 
   assert.match(html, /id="marqueeDuration" min="20" max="120" step="5" value="55"/);
+  assert.match(html, /id="globalBgDimming" min="0" max="85" step="1" value="65"/);
+  assert.match(html, /id="globalBgDimmingValue"/);
   assert.match(adminJs, /normalizeMarqueeDuration/);
   assert.match(adminJs, /duration: normalizeMarqueeDuration/);
+  assert.match(adminJs, /normalizeGlobalBgDimming/);
+  assert.match(adminJs, /updateGlobalBgDimmingPreview/);
   assert.match(mainJs, /--marquee-mobile-duration/);
+  assert.match(mainJs, /--global-bg-tint-center/);
+  assert.match(mainJs, /--global-bg-tint-edge/);
   assert.match(mainJs, /document\.body\.classList\.add\('has-global-background'\)/);
   assert.doesNotMatch(mainJs, /sepia\(0\.4\)|brightness\(0\.4\)|opacity = '0\.35'/);
   assert.match(styles, /animation: marquee var\(--marquee-duration, 55s\)/);
   assert.match(styles, /body\.has-global-background \.noise[\s\S]*opacity: \.018/);
+  assert.match(styles, /body\.has-global-background #global-bg::after/);
+  assert.match(styles, /backdrop-filter: saturate\(\.78\) contrast\(\.94\)/);
+  assert.match(styles, /var\(--global-bg-tint-center, \.65\)/);
+  assert.match(styles, /var\(--global-bg-tint-edge, \.77\)/);
+  assert.doesNotMatch(styles, /@media \\(max-width: 760px\\) \\{\\s*body\\.has-global-background #global-bg::after/);
+  assert.match(controller, /normalizeGlobalBgDimming/);
   assert.equal(defaults.marquee.duration, 55);
+  assert.equal(defaults.global_bg_dimming, 65);
 });

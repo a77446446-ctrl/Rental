@@ -3452,6 +3452,19 @@ body.has-global-background .noise {
   mix-blend-mode: soft-light;
 }
 
+/* Управляемая тонировка на всех размерах экрана. */
+body.has-global-background #global-bg::after {
+  background:
+    radial-gradient(circle at 50% 34%, rgba(6, 9, 7, var(--global-bg-tint-center, .65)) 0 22%, rgba(3, 5, 4, var(--global-bg-tint-edge, .77)) 100%);
+
+  -webkit-backdrop-filter: saturate(.78) contrast(.94);
+  backdrop-filter: saturate(.78) contrast(.94);
+}
+
+body.has-global-background::before {
+  background: transparent;
+}
+
 .hero-content h1 { color: #ede4d6 !important; text-shadow: 0 4px 24px rgba(0,0,0,0.6); }
 .hero-content p { color: rgba(237,228,214,0.85) !important; text-shadow: 0 2px 12px rgba(0,0,0,0.6); }
 .hero-content .kicker { color: var(--gold) !important; text-shadow: 0 2px 12px rgba(0,0,0,0.6); }

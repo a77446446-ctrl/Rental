@@ -4,6 +4,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     120,
     Math.max(20, Number(value) || DEFAULT_MARQUEE_DURATION)
   );
+  const DEFAULT_GLOBAL_BG_DIMMING = 65;
+  const normalizeGlobalBgDimming = (value) => {
+    const parsed = Number(value);
+    return Math.min(85, Math.max(0, Number.isFinite(parsed) ? Math.round(parsed) : DEFAULT_GLOBAL_BG_DIMMING));
+  };
+  const updateGlobalBgDimmingPreview = (value) => {
+    const normalized = normalizeGlobalBgDimming(value);
+    const field = document.getElementById('globalBgDimming');
+    const output = document.getElementById('globalBgDimmingValue');
+    const tint = document.getElementById('globalBgPreviewTint');
+    if (field) field.value = String(normalized);
+    if (output) output.textContent = normalized + '%';
+    if (tint) tint.style.background = `rgba(3, 5, 4, ${(normalized / 100).toFixed(2)})`;
+  };
+
   const saveBtn = document.getElementById('saveMainpageBtn');
   const featuresContainer = document.getElementById('featuresContainer');
   const reviewsContainer = document.getElementById('reviewsContainer');
@@ -13,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let mainpageData = {
     global_bg_url: '',
+    global_bg_dimming: DEFAULT_GLOBAL_BG_DIMMING,
     logo: { url: '', text: '' },
     hero: { title: '', background_url: '' },
     marquee: { text: '', duration: DEFAULT_MARQUEE_DURATION },
@@ -479,6 +495,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('globalBgPreview').style.backgroundImage = `url('${mainpageData.global_bg_url}')`;
       }
 
+      updateGlobalBgDimmingPreview(mainpageData.global_bg_dimming);
+
       document.getElementById('marqueeText').value = mainpageData.marquee?.text || '';
       document.getElementById('marqueeDuration').value = normalizeMarqueeDuration(mainpageData.marquee?.duration);
       document.getElementById('featuresLabel').value = mainpageData.features_meta?.label || '';
@@ -570,6 +588,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Обработчики кнопок загрузки
   document.getElementById('globalBgFile').addEventListener('change', (e) => uploadImage(e.target, 'globalBgUrl', 'globalBgPreview'));
+  document.getElementById('globalBgDimming').addEventListener('input', (e) => updateGlobalBgDimmingPreview(e.target.value));
   document.getElementById('logoFile').addEventListener('change', (e) => uploadImage(e.target, 'logoUrl', 'logoPreview'));
   document.getElementById('heroFile').addEventListener('change', (e) => uploadImage(e.target, 'heroBgUrl', 'heroPreview'));
   document.getElementById('territoryFile').addEventListener('change', (e) => uploadImage(e.target, 'territoryBgUrl', 'territoryPreview'));
@@ -583,6 +602,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Собираем данные
     mainpageData.global_bg_url = document.getElementById('globalBgUrl').value;
+    mainpageData.global_bg_dimming = normalizeGlobalBgDimming(document.getElementById('globalBgDimming').value);
     
     mainpageData.logo.text = document.getElementById('logoText').value;
     mainpageData.logo.url = document.getElementById('logoUrl').value;

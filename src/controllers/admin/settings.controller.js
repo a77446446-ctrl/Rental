@@ -8,6 +8,16 @@ const STORES = {
   cabinTags: ['cabin_tags', 'cabin_tags.json', {}],
 };
 
+const DEFAULT_GLOBAL_BG_DIMMING = 65;
+function normalizeGlobalBgDimming(value, fallback = DEFAULT_GLOBAL_BG_DIMMING) {
+  const parsed = Number(value);
+  const parsedFallback = Number(fallback);
+  const safeValue = Number.isFinite(parsed)
+    ? parsed
+    : (Number.isFinite(parsedFallback) ? parsedFallback : DEFAULT_GLOBAL_BG_DIMMING);
+  return Math.min(85, Math.max(0, Math.round(safeValue)));
+}
+
 async function read(store) {
   return dataStore.get(store[0], store[1], store[2]);
 }
@@ -76,6 +86,7 @@ exports.updateMainpage = async (req, res) => {
     const next = {
       ...previous,
       ...req.body,
+      global_bg_dimming: normalizeGlobalBgDimming(req.body.global_bg_dimming, previous.global_bg_dimming),
       contacts: { ...(previous.contacts || {}), ...(req.body.contacts || {}) },
       features_meta: req.body.features_meta || previous.features_meta || { label: '', title: '' },
       reviews_meta: req.body.reviews_meta || previous.reviews_meta || { label: '', title: '' },

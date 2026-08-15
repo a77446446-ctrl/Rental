@@ -1100,12 +1100,20 @@
     target.classList.add('has-image');
   }
 
+  function normalizeGlobalBgDimming(value) {
+    const parsed = Number(value);
+    return Math.min(85, Math.max(0, Number.isFinite(parsed) ? Math.round(parsed) : 65));
+  }
+
   function applyMainpageSettings() {
     const data = state.mainpage;
     if (!data || Object.keys(data).length === 0) return;
 
     // Глобальный фон: натуральные цвета под нейтральным затемнением.
     const globalBg = document.getElementById('global-bg');
+    const globalDimming = normalizeGlobalBgDimming(data.global_bg_dimming);
+    document.body.style.setProperty('--global-bg-tint-center', (globalDimming / 100).toFixed(2));
+    document.body.style.setProperty('--global-bg-tint-edge', (Math.min(96, globalDimming + 12) / 100).toFixed(2));
     if (globalBg && data.global_bg_url) {
       globalBg.style.backgroundImage = `url('${mainpageMediaUrl(data.global_bg_url)}')`;
       globalBg.style.backgroundSize = 'cover';
