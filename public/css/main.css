@@ -3560,3 +3560,33 @@ body.has-global-background::before {
 .hero-content .btn-ghost { color: #ede4d6 !important; border-color: rgba(237,228,214,0.3) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
 .hero-content .btn-ghost:hover { background: rgba(237,228,214,0.1) !important; color: #fff !important; }
 
+
+/* Управляемая валидация обязательных полей бронирования. */
+.booking-form .input.input-invalid {
+  border-color: #e58b76;
+  box-shadow: 0 0 0 3px rgba(229, 139, 118, .14);
+}
+
+.booking-field-hint {
+  justify-self: start;
+  margin: -8px 0 4px 10px;
+  padding: 5px 9px;
+  border: 1px solid rgba(229, 139, 118, .34);
+  border-radius: 7px;
+  background: rgba(74, 29, 24, .92);
+  color: #ffd9cf;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.2;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .28);
+  animation: booking-field-hint-in .2s ease-out both;
+}
+
+@keyframes booking-field-hint-in {
+  from { opacity: 0; transform: translateY(-6px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-field-hint { animation: none; }
+}

@@ -16,7 +16,9 @@
   <title>Название проекта — аренда домиков для отдыха у озера</title>
 
   <!-- Google Fonts -->
-  <link rel="stylesheet" href="/css/main.css?v=20260816-1">
+  <link rel="stylesheet" href="/css/main.css?v=20260821-1">
+  <link rel="stylesheet" href="/css/mobile-app.css?v=20260821-1">
+  <link rel="stylesheet" href="/css/mobile-layout.css?v=20260821-1">
 
   </head>
 <body class="app-loading-active">
@@ -267,7 +269,7 @@
           <h3>Оформление заявки</h3>
           <p id="checkout-time-info">Заезд с 16:00, выезд до 14:00 (МСК). Выберите услуги — сумма обновится автоматически.</p>
 
-          <form id="checkoutForm" class="booking-form">
+          <form id="checkoutForm" class="booking-form" novalidate>
             <input type="hidden" id="checkoutCabinId">
             <div id="checkoutSelectedInfo" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
               <div style="margin-bottom: 10px; font-size: 0.9em; color: var(--text);">
@@ -289,9 +291,12 @@
             <input class="input" type="tel" id="guestPhone" placeholder="Телефон" required>
             <input class="input" type="text" id="guestTelegram" placeholder="MAX (необязательно)">
 
+            <details class="booking-extras-disclosure" open>
+              <summary><span>Дополнительные услуги</span><small>По желанию</small></summary>
             <div class="extras-grid" id="extras-container">
               <!-- Доп услуги подставляются из API -->
             </div>
+            </details>
 
             <textarea class="input" id="guestComment" placeholder="Комментарий"></textarea>
 
@@ -428,7 +433,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg>
       </button>
     </div>
-    <div class="chat-body" id="chat-body" style="display: none;">
+    <div class="chat-body" id="chat-body" hidden>
       <div class="chat-messages" id="chat-messages">
         <!-- Сообщения -->
       </div>
@@ -474,14 +479,13 @@
     </div>
   </div>
 
-  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript" defer></script>
-  <script src="/js/api.js?v=20260811-2" defer></script>
+  <script src="/js/api.js?v=20260821-1" defer></script>
   <script src="/js/pwa.js?v=20260811-2" defer></script>
-  <script src="/js/chat.js?v=20260816-1" defer></script>
+  <script src="/js/chat.js?v=20260821-1" defer></script>
   <script src="/js/calendar.js?v=20260813-1" defer></script>
-  <script src="/js/mobile-shell.js?v=20260811-2" defer></script>
+  <script src="/js/mobile-shell.js?v=20260821-1" defer></script>
   <script src="/js/admin-entry.js?v=20260813-1" defer></script>
-  <script src="/js/main.js?v=20260816-1" defer></script>
+  <script src="/js/main.js?v=20260821-2" defer></script>
 <script src="/js/lucide.min.js?v=20260811-2"></script>
 </body>
 </html>

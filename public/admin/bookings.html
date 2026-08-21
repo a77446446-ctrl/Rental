@@ -73,6 +73,8 @@
       color: var(--cream); padding: 6px 10px; border-radius: 6px; font-family: inherit;
       font-size: 13px; color-scheme: dark; cursor: pointer;
     }
+    .booking-comment { min-width: 150px; max-width: 280px; color: var(--cream); font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
+    .booking-comment.is-empty { min-width: 0; color: var(--muted); }
     .action-select:focus { outline: none; border-color: var(--gold); }
     .action-select option { background: var(--bg-2); color: var(--cream); }
 
@@ -163,6 +165,7 @@
               <th>ГОСТЬ</th>
               <th>ОБЪЕКТ</th>
               <th>ЗАЕЗД - ВЫЕЗД</th>
+              <th>КОММЕНТАРИЙ</th>
               <th>СУММА</th>
               <th>СТАТУС</th>
               <th>ДЕЙСТВИЯ</th>
@@ -170,7 +173,7 @@
           </thead>
           <tbody id="bookingsTableBody">
             <tr>
-              <td colspan="7" style="text-align: center; color: var(--muted); padding: 32px;">Загрузка...</td>
+              <td colspan="8" style="text-align: center; color: var(--muted); padding: 32px;">Загрузка...</td>
             </tr>
           </tbody>
         </table>
@@ -184,7 +187,7 @@
         </summary>
         <div class="table-container" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
           <table class="admin-table">
-            <thead><tr><th>ID / ДАТА</th><th>ГОСТЬ</th><th>ОБЪЕКТ</th><th>ЗАЕЗД - ВЫЕЗД</th><th>СУММА</th><th>СТАТУС</th><th>ДЕЙСТВИЯ</th></tr></thead>
+            <thead><tr><th>ID / ДАТА</th><th>ГОСТЬ</th><th>ОБЪЕКТ</th><th>ЗАЕЗД - ВЫЕЗД</th><th>КОММЕНТАРИЙ</th><th>СУММА</th><th>СТАТУС</th><th>ДЕЙСТВИЯ</th></tr></thead>
             <tbody id="archivedBookingsTableBody"></tbody>
           </table>
         </div>
@@ -232,7 +235,7 @@
   </div>
 
   <script src="/js/api.js?v=20260811-2"></script>
-  <script src="/js/admin-bookings.js?v=20260811-2"></script>
+  <script src="/js/admin-bookings.js?v=20260821-1"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
   <script src="/js/admin-mobile.js?v=20260811-2"></script>
 </body>

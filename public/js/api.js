@@ -71,12 +71,6 @@
       if (rewrittenSrcset !== srcset) element.setAttribute('srcset', rewrittenSrcset);
     }
 
-    if (element.hasAttribute('style')) {
-      var style = element.getAttribute('style');
-      var rewrittenStyle = rewriteCssMediaUrls(style);
-      if (rewrittenStyle !== style) element.setAttribute('style', rewrittenStyle);
-    }
-
     if (element.tagName === 'LINK' && /(?:^|\s)(?:icon|apple-touch-icon)(?:\s|$)/i.test(element.rel || '')) {
       var href = element.getAttribute('href');
       var rewrittenHref = toProxiedMediaUrl(href);
@@ -88,7 +82,7 @@
     if (!root) return;
     rewriteMediaElement(root);
     if (root.querySelectorAll) {
-      root.querySelectorAll('[src], [srcset], [poster], [style], link[rel]').forEach(rewriteMediaElement);
+      root.querySelectorAll('img[src], source[src], video[src], audio[src], [srcset], [poster], link[rel]').forEach(rewriteMediaElement);
     }
   }
 
@@ -108,7 +102,7 @@
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['src', 'srcset', 'poster', 'style', 'href']
+      attributeFilter: ['src', 'srcset', 'poster', 'href']
     });
   }
 

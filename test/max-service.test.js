@@ -8,12 +8,14 @@ test('MAX отправляет даты бронирования в россий
   const previousUrl = config.maxApiUrl;
   const previousToken = config.maxBotToken;
   const previousChatId = config.maxChatId;
+  const previousBaseUrl = config.baseUrl;
   const previousFetch = global.fetch;
   let sentPayload = null;
 
   config.maxApiUrl = 'https://platform-api2.max.ru';
   config.maxBotToken = 'test-token';
   config.maxChatId = '25383544';
+  config.baseUrl = 'https://eco-gorniy.ru';
   global.fetch = async (_url, options = {}) => {
     sentPayload = JSON.parse(options.body);
     return { ok: true, status: 200 };
@@ -29,15 +31,19 @@ test('MAX отправляет даты бронирования в россий
       guestName: 'Тест',
       guestPhone: '+70000000000',
       guestTelegram: '',
+      comment: 'Нужен поздний заезд',
     });
 
     assert.equal(delivered, true);
     assert.match(sentPayload.text, /Даты: 29\.08\.2026 — 30\.08\.2026/);
     assert.doesNotMatch(sentPayload.text, /2026-08-29/);
+    assert.match(sentPayload.text, /Комментарий: Нужен поздний заезд/);
+    assert.match(sentPayload.text, /Открыть заявку в админке: https:\/\/eco-gorniy\.ru\/admin\/bookings\.html/);
   } finally {
     config.maxApiUrl = previousUrl;
     config.maxBotToken = previousToken;
     config.maxChatId = previousChatId;
+    config.baseUrl = previousBaseUrl;
     global.fetch = previousFetch;
   }
 });

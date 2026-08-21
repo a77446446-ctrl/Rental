@@ -8,13 +8,22 @@
     var closers = document.querySelectorAll('[data-menu-close]');
     var links = document.querySelectorAll('.mobile-drawer-nav a');
     var bottomLinks = document.querySelectorAll('.mobile-bottom-nav a[data-section-link]');
+    var extrasDisclosure = document.querySelector('.booking-extras-disclosure');
+    if (extrasDisclosure && window.innerWidth <= 760) {
+      extrasDisclosure.removeAttribute('open');
+    }
+
 
     function setMenu(open) {
       if (!drawer || !overlay || !toggle) return;
       drawer.classList.toggle('open', open);
+      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+      if ('inert' in drawer) drawer.inert = open === false;
       overlay.classList.toggle('open', open);
+      overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
       document.body.classList.toggle('mobile-menu-open', open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
     }
 
     if (toggle) {
@@ -22,6 +31,9 @@
         setMenu(!(drawer && drawer.classList.contains('open')));
       });
     }
+
+    if (drawer) drawer.setAttribute('aria-hidden', 'true');
+    if (drawer && 'inert' in drawer) drawer.inert = true;
 
     closers.forEach(function (item) {
       item.addEventListener('click', function () {

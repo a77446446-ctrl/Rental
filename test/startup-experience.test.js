@@ -39,13 +39,16 @@ test('offline-состояние не раскрывает пустой инте
   assert.match(main, /Извините, нет подключения к интернету/);
   assert.match(css, /body\.app-loading-active:not\(\.maintenance-mode\) > :not\(\.app-loading\):not\(script\)/);
   assert.match(worker, /pwa-icon\\\/\(\?:192\|512\)/);
-  assert.match(worker, /\/css\/main\.css\?v=20260816-1/);
-  assert.match(worker, /\/js\/main\.js\?v=20260816-1/);
+  assert.match(worker, /\/css\/main\.css\?v=20260821-1/);
+  assert.match(worker, /\/css\/mobile-app\.css\?v=20260821-1/);
+  assert.match(worker, /\/css\/mobile-layout\.css\?v=20260821-1/);
+  assert.match(worker, /\/js\/main\.js\?v=20260821-2/);
 });
 
 test('закрытие чата сразу возвращает компактную кнопку без pop-анимации', () => {
   const chat = read('public/js/chat.js');
 
-  assert.match(chat, /els\.body\.style\.display = 'none';\s*syncToggleIcon\(false\)/);
+  assert.match(chat, /function setChatOpen\(open\)/);
+  assert.match(chat, /els\.body\.hidden = open === false/);
   assert.doesNotMatch(chat, /classList\.add\('fab-appear'\)/);
 });

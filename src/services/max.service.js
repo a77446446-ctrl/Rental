@@ -246,12 +246,17 @@ async function sendBookingNotification(bookingData) {
     guestName,
     guestPhone,
     guestTelegram,
+    comment,
     chatToken
   } = bookingData;
 
   const tokenTag = chatToken
     ? `\n\n💬 Чтобы ответить гостю на сайт, зажмите это сообщение и нажмите «Ответить».\n#token:${chatToken}`
     : '';
+  let commentLine = '';
+  if (comment) {
+    commentLine = '📝 Комментарий: ' + comment;
+  }
 
   const text = `
 🌲 Новое бронирование!
@@ -264,6 +269,7 @@ async function sendBookingNotification(bookingData) {
 👤 Гость: ${guestName}
 📞 Телефон: ${guestPhone}
 💬 Контакт MAX: ${guestTelegram ? guestTelegram : 'не указан'}${tokenTag}
+${commentLine}
   `.trim();
 
   let baseUrlStr = config.baseUrl || 'http://localhost:3000';
@@ -271,11 +277,10 @@ async function sendBookingNotification(bookingData) {
     baseUrlStr = 'https://' + baseUrlStr;
   }
   const adminUrl = new URL('/admin/bookings.html', baseUrlStr).toString();
-  const isLocalAdminUrl = /(^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:|\/|$))/i.test(adminUrl);
 
   const messagePayload = {
     chat_id: config.maxChatId,
-    text: isLocalAdminUrl ? text + '\n\n🔗 Панель админа: ' + adminUrl : text,
+    text: text + '\n\n🔗 Открыть заявку в админке: ' + adminUrl,
   };
 
   return await callMaxApi('sendMessage', messagePayload);

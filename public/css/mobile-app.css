@@ -1,0 +1,194 @@
+/* Стабильные состояния интерактивных панелей. */
+[hidden] { display: none !important; }
+button, a, input, select, textarea, summary { touch-action: manipulation; }
+
+body.chat-open,
+body.mobile-menu-open {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+.booking-extras-disclosure {
+  border: 1px solid rgba(var(--cream-rgb), .1);
+  border-radius: 10px;
+  background: rgba(var(--cream-rgb), .035);
+}
+.booking-extras-disclosure summary {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 13px;
+  color: var(--cream);
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+.booking-extras-disclosure summary::-webkit-details-marker { display: none; }
+.booking-extras-disclosure summary::after {
+  content: "⌄";
+  color: var(--gold);
+  font-size: 18px;
+  transition: transform .18s ease;
+}
+.booking-extras-disclosure[open] summary::after { transform: rotate(180deg); }
+.booking-extras-disclosure summary small {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+.booking-extras-disclosure .extras-grid { padding: 0 12px 12px; }
+
+.mobile-map-link {
+  min-height: 104px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 20px;
+  border: 1px solid rgba(var(--cream-rgb), .13);
+  border-radius: 14px;
+  background: rgba(24, 22, 18, .94);
+  color: var(--cream);
+}
+.mobile-map-link strong {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 25px;
+  font-weight: 600;
+}
+.mobile-map-link span { color: var(--gold); font-size: 13px; }
+
+/* Состояние чата определяется только data-state. */
+html body .chat-widget.chat-widget:not([data-state]) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+html body .chat-widget.chat-widget[data-state="closed"] {
+  position: fixed !important;
+  inset: auto 20px 20px auto !important;
+  width: 82px !important;
+  min-width: 82px !important;
+  max-width: 82px !important;
+  height: 82px !important;
+  min-height: 82px !important;
+  max-height: 82px !important;
+  display: block !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: linear-gradient(145deg, #b89d61, #6f5a32) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .38) !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  backdrop-filter: none !important;
+  pointer-events: auto !important;
+}
+html body .chat-widget.chat-widget[data-state="closed"]::before,
+html body .chat-widget.chat-widget[data-state="closed"]::after {
+  display: none !important;
+  content: none !important;
+}
+html body .chat-widget.chat-widget[data-state="closed"] .chat-header {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+}
+html body .chat-widget.chat-widget[data-state="closed"] .chat-header > span { display: none !important; }
+html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  color: #fffaf0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label {
+  position: absolute !important;
+  inset: 1px !important;
+  width: calc(100% - 2px) !important;
+  height: calc(100% - 2px) !important;
+  animation: eco-chat-ring-orbit 18s linear infinite !important;
+  will-change: transform;
+}
+html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle > svg:not(.chat-ring-label) {
+  width: 25px !important;
+  height: 25px !important;
+  animation: none !important;
+  transform: none !important;
+  fill: currentColor !important;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .35)) !important;
+}
+html body .chat-widget.chat-widget[data-state="open"] {
+  opacity: 1 !important;
+  animation: mobile-panel-enter .22s ease-out both !important;
+  pointer-events: auto !important;
+}
+html body .chat-widget.chat-widget[data-state="open"] .chat-body { display: flex; }
+
+@keyframes mobile-panel-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  html body .chat-widget.chat-widget[data-state="closed"] {
+    inset: auto 13px calc(82px + env(safe-area-inset-bottom)) auto !important;
+    width: 76px !important;
+    min-width: 76px !important;
+    max-width: 76px !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+  }
+  html body .chat-widget.chat-widget[data-state="open"] {
+    position: fixed !important;
+    inset: var(--chat-viewport-top, 0px) 0 auto 0 !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: var(--chat-viewport-height, 100dvh) !important;
+    min-height: 0 !important;
+    max-height: var(--chat-viewport-height, 100dvh) !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    background: #15130f !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    z-index: 100000 !important;
+  }
+  html body .chat-widget.chat-widget[data-state="open"] .chat-header {
+    flex: 0 0 auto;
+    min-height: 58px;
+    padding: max(10px, env(safe-area-inset-top)) 14px 10px !important;
+    background: #171510 !important;
+  }
+  html body .chat-widget.chat-widget[data-state="open"] .chat-body {
+    min-height: 0;
+    height: auto !important;
+    flex: 1 1 auto;
+    background: #11100d !important;
+  }
+  html body .chat-widget.chat-widget[data-state="open"] .chat-form {
+    padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    background: #171510 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label,
+  html body .chat-widget.chat-widget[data-state="open"] { animation: none !important; }
+}

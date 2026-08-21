@@ -33,13 +33,13 @@
 
   /* Обычное обновление страницы всегда возвращает гостя к главному экрану. */
   if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
+    history.scrollRestoration = 'auto';
   }
   if (!window.location.hash) {
-    window.scrollTo(0, 0);
+    // Браузер и PWA сохраняют текущую позицию самостоятельно.
     window.addEventListener('pageshow', function () {
       window.requestAnimationFrame(function () {
-        window.scrollTo(0, 0);
+        // Не сбрасываем позицию после возврата на страницу.
       });
     }, { once: true });
   }
@@ -899,32 +899,70 @@
       });
     }
 
-    // Включаем кнопку отправки только если введены имя и телефон
     const btnSubmit = document.getElementById('submitBookingBtn');
     const guestNameInput = document.getElementById('guestName');
     const guestPhoneInput = document.getElementById('guestPhone');
 
-    function checkFormValidity() {
-      if (btnSubmit && guestNameInput && guestPhoneInput) {
-        if (guestNameInput.value.trim() && guestPhoneInput.value.trim()) {
-          btnSubmit.disabled = false;
-        } else {
-          btnSubmit.disabled = true;
-        }
+    function clearBookingFieldError(input) {
+      if (input == null) return;
+      input.classList.remove('input-invalid');
+      input.removeAttribute('aria-invalid');
+      var hintId = input.getAttribute('aria-describedby');
+      if (hintId) {
+        var hint = document.getElementById(hintId);
+        if (hint) hint.remove();
+        input.removeAttribute('aria-describedby');
       }
     }
 
-    if (guestNameInput) guestNameInput.addEventListener('input', checkFormValidity);
-    if (guestPhoneInput) guestPhoneInput.addEventListener('input', checkFormValidity);
-    
-    // Инициализируем начальное состояние
-    checkFormValidity();
+    function showBookingFieldError(input, message) {
+      if (input == null) return;
+      clearBookingFieldError(input);
+      var hint = document.createElement('span');
+      hint.id = input.id + '-required-hint';
+      hint.className = 'booking-field-hint';
+      hint.setAttribute('role', 'alert');
+      hint.textContent = message;
+      input.classList.add('input-invalid');
+      input.setAttribute('aria-invalid', 'true');
+      input.setAttribute('aria-describedby', hint.id);
+      input.insertAdjacentElement('afterend', hint);
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.setTimeout(function () {
+        try {
+          input.focus({ preventScroll: true });
+        } catch (error) {
+          input.focus();
+        }
+      }, 320);
+    }
+
+    if (guestNameInput) {
+      guestNameInput.addEventListener('input', function () {
+        clearBookingFieldError(guestNameInput);
+      });
+    }
+    if (guestPhoneInput) {
+      guestPhoneInput.addEventListener('input', function () {
+        clearBookingFieldError(guestPhoneInput);
+      });
+    }
+    if (btnSubmit) btnSubmit.disabled = false;
 
     // Обработка отправки формы бронирования
     const checkoutForm = document.getElementById('checkoutForm');
     if (checkoutForm) {
       checkoutForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        if (guestNameInput == null || guestNameInput.value.trim() === '') {
+          showBookingFieldError(guestNameInput, 'Введите имя');
+          return;
+        }
+        if (guestPhoneInput == null || guestPhoneInput.value.trim() === '') {
+          showBookingFieldError(guestPhoneInput, 'Введите телефон');
+          return;
+        }
+
 
         if (!state.currentCalc) {
           window.showToast('Пожалуйста, выберите даты в календаре', 'error');
@@ -961,19 +999,18 @@
         outDate.setDate(outDate.getDate() + 1);
         check_out = outDate.toISOString().split('T')[0];
 
-        var commentField = document.getElementById('guestComment').value;
+        var commentField = document.getElementById('guestComment').value.trim();
         var guestCount = els.checkoutGuests ? els.checkoutGuests.value : 2;
-        var finalComment = `Количество гостей: ${guestCount}` + (commentField ? `\nКомментарий: ${commentField}` : '');
 
         const payload = {
           cabin_id: state.selectedCabinId,
           check_in: check_in,
           check_out: check_out,
-          guest_name: document.getElementById('guestName').value,
-          guest_phone: document.getElementById('guestPhone').value,
-          guest_telegram: document.getElementById('guestTelegram').value,
+          guest_name: guestNameInput.value.trim(),
+          guest_phone: guestPhoneInput.value.trim(),
+          guest_telegram: document.getElementById('guestTelegram').value.trim(),
           guests_count: Number(guestCount) || 2,
-          comment: finalComment,
+          comment: commentField,
           total_price: state.currentCalc ? state.currentCalc.total_price : 0,
           extras: selectedExtras,
           chat_token: localStorage.getItem('eco_chat_token')
@@ -1098,7 +1135,16 @@
       if (featureImages.length > 1) {
         if (window.featuresSlideInterval) clearInterval(window.featuresSlideInterval);
         let currentIdx = 0;
+        let featuresVisible = true;
+        if ('IntersectionObserver' in window) {
+          const featuresObserver = new IntersectionObserver(function(entries) {
+            featuresVisible = entries.some(function(entry) { return entry.isIntersecting; });
+          }, { rootMargin: '160px 0px' });
+          featuresObserver.observe(container);
+        }
+
         window.featuresSlideInterval = setInterval(function() {
+          if (featuresVisible === false || document.hidden) return;
           container.children[currentIdx].style.opacity = '0';
           currentIdx = (currentIdx + 1) % featureImages.length;
           container.children[currentIdx].style.opacity = '1';
@@ -1162,6 +1208,105 @@
   function normalizeGlobalBgDimming(value) {
     const parsed = Number(value);
     return Math.min(85, Math.max(0, Number.isFinite(parsed) ? Math.round(parsed) : 65));
+  }
+
+  var yandexMapsApiPromise = null;
+
+  function loadYandexMapsApi() {
+    if (window.ymaps) return Promise.resolve(window.ymaps);
+    if (yandexMapsApiPromise) return yandexMapsApiPromise;
+
+    yandexMapsApiPromise = new Promise(function(resolve, reject) {
+      var existing = document.getElementById('yandex-maps-api');
+      var script = existing || document.createElement('script');
+      var handleLoad = function() {
+        if (window.ymaps) resolve(window.ymaps);
+        else reject(new Error('API Яндекс.Карт не инициализирован'));
+      };
+      var handleError = function() {
+        reject(new Error('Не удалось загрузить API Яндекс.Карт'));
+      };
+
+      script.addEventListener('load', handleLoad, { once: true });
+      script.addEventListener('error', handleError, { once: true });
+      if (existing) return;
+
+      script.id = 'yandex-maps-api';
+      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
+      script.async = true;
+      document.head.appendChild(script);
+    });
+
+    return yandexMapsApiPromise;
+  }
+
+  function renderContactMap(mapc, mapCode) {
+    var coords = String(mapCode || '').split(',').map(function(value) {
+      return Number(value.trim());
+    });
+    var validCoords = coords.length === 2 && coords.every(Number.isFinite);
+    if (validCoords === false) {
+      mapc.style.display = 'none';
+      return;
+    }
+
+    mapc.style.display = 'block';
+    mapc.replaceChildren();
+
+    if (window.innerWidth <= 760) {
+      var mapLink = document.createElement('a');
+      mapLink.className = 'mobile-map-link';
+      mapLink.href = 'https://yandex.ru/maps/?pt=' + coords[1] + ',' + coords[0] + '&z=14&l=map';
+      mapLink.target = '_blank';
+      mapLink.rel = 'noopener';
+      mapLink.innerHTML = '<strong>Мы на карте</strong><span>Открыть маршрут в Яндекс.Картах</span>';
+      mapc.appendChild(mapLink);
+      mapc.dataset.mapMode = 'link';
+      return;
+    }
+
+    mapc.dataset.mapMode = 'interactive';
+    mapc.textContent = 'Карта загружается…';
+
+    var activateMap = function() {
+      if (mapc.dataset.mapInitialized === 'true') return;
+      mapc.dataset.mapInitialized = 'true';
+      loadYandexMapsApi()
+        .then(function(ymapsApi) {
+          ymapsApi.ready(function() {
+            mapc.replaceChildren();
+            var map = new ymapsApi.Map(mapc, {
+              center: coords,
+              zoom: 14,
+              controls: ['zoomControl', 'fullscreenControl']
+            });
+            var placemark = new ymapsApi.Placemark(coords, {
+              balloonContent: 'Мы здесь!'
+            }, {
+              preset: 'islands#redIcon'
+            });
+            map.geoObjects.add(placemark);
+            map.behaviors.disable('scrollZoom');
+          });
+        })
+        .catch(function(error) {
+          mapc.dataset.mapInitialized = 'false';
+          mapc.textContent = 'Не удалось загрузить карту';
+          console.error('[main] Карта не загрузилась:', error.message);
+        });
+    };
+
+    if ('IntersectionObserver' in window) {
+      var mapObserver = new IntersectionObserver(function(entries, observer) {
+        if (entries.some(function(entry) { return entry.isIntersecting; })) {
+          observer.disconnect();
+          activateMap();
+        }
+      }, { rootMargin: '320px 0px' });
+      mapObserver.observe(mapc);
+    } else {
+      activateMap();
+    }
   }
 
   function applyMainpageSettings() {
@@ -1525,31 +1670,7 @@
 
     const mapc = document.getElementById('contact-map-container');
     if (mapc) {
-      if (contacts.map_code && contacts.map_code.includes(',')) {
-        mapc.style.display = 'block';
-        mapc.innerHTML = '';
-
-        if (typeof ymaps !== 'undefined') {
-          ymaps.ready(() => {
-            const coords = contacts.map_code.split(',').map(Number);
-            const myMap = new ymaps.Map(mapc, {
-              center: coords,
-              zoom: 14,
-              controls: ['zoomControl', 'fullscreenControl']
-            });
-
-            const placemark = new ymaps.Placemark(coords, {
-              balloonContent: 'Мы здесь!'
-            }, {
-              preset: 'islands#redIcon'
-            });
-            myMap.geoObjects.add(placemark);
-            myMap.behaviors.disable('scrollZoom');
-          });
-        }
-      } else {
-        mapc.style.display = 'none';
-      }
+      renderContactMap(mapc, contacts.map_code);
     }
   }
 

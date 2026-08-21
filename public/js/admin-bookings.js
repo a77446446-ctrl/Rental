@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!data.success) throw new Error(data.error);
 
       if (data.data.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--muted); padding:32px;">Нет бронирований</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--muted); padding:32px;">Нет бронирований</td></tr>';
         return;
       }
 
@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const safeGuestPhone = EcoApi.escapeHtml(b.guest_phone);
         const safeTelegram = EcoApi.escapeHtml(String(b.guest_telegram || '').replace('@', ''));
         const safeCabinName = EcoApi.escapeHtml(b.cabins ? b.cabins.name : 'Удаленный объект');
+        const safeComment = EcoApi.escapeHtml(String(b.comment || '')).replace(/\r?\n/g, '<br>');
         
         // Проверяем, прошла ли дата выезда
         const _now = new Date();
@@ -79,6 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <td data-label="Заезд - Выезд" style="white-space:nowrap;">
               ${b.check_in} &rarr; ${b.check_out}
             </td>
+            <td data-label="Комментарий">
+              <div class="booking-comment${safeComment ? '' : ' is-empty'}">${safeComment || '—'}</div>
+            </td>
             <td data-label="Сумма" style="font-weight:600; color:var(--gold);">${EcoApi.formatPrice(b.total_price)}</td>
             <td data-label="Статус">${statusBadge}</td>
             <td data-label="Действие">
@@ -99,10 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       tableBody.innerHTML = activeBookings.length
         ? renderRows(activeBookings)
-        : '<tr><td colspan="7" style="text-align:center; color:var(--muted); padding:32px;">Нет актуальных заявок</td></tr>';
+        : '<tr><td colspan="8" style="text-align:center; color:var(--muted); padding:32px;">Нет актуальных заявок</td></tr>';
       archivedTableBody.innerHTML = archivedBookings.length
         ? renderRows(archivedBookings)
-        : '<tr><td colspan="7" style="text-align:center; color:var(--muted); padding:24px;">Архив пока пуст</td></tr>';
+        : '<tr><td colspan="8" style="text-align:center; color:var(--muted); padding:24px;">Архив пока пуст</td></tr>';
 
       // Статус сначала выбираем, затем явно применяем кнопкой.
       document.querySelectorAll('.status-select').forEach(sel => {
@@ -150,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (err) {
       console.error(err);
-      tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#e57373; padding:32px;">Ошибка загрузки</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#e57373; padding:32px;">Ошибка загрузки</td></tr>';
     }
   }
 

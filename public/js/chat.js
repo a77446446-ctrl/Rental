@@ -9,6 +9,10 @@
   let supabaseClient = null;
   let chatChannel = null;
   let scrollTimer = null;
+  let chatState = 'closed';
+  let viewportFrame = null;
+  let lastViewportHeight = 0;
+  let lastViewportTop = 0;
   let chatRingText = 'Связаться с нами';
 
   const els = {
@@ -32,7 +36,7 @@
   function updateUnreadBadge(count) {
     unreadCount = Math.max(0, count);
     if (!els.badge) return;
-    if (unreadCount > 0 && els.body.style.display === 'none') {
+    if (unreadCount > 0 && isChatOpen() === false) {
       els.badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
       els.badge.style.display = 'block';
     } else {
@@ -99,12 +103,12 @@
     loadHistory();
 
     // 5. Навешивание событий
-    syncToggleIcon(els.body.style.display !== 'none');
+    setChatOpen(false);
     els.header.addEventListener('click', toggleChat);
     if (els.toastBanner) {
       els.toastBanner.addEventListener('click', function() {
-        if (els.body.style.display === 'none') {
-          toggleChat();
+        if (isChatOpen() === false) {
+          setChatOpen(true);
         }
       });
     }
@@ -113,31 +117,12 @@
       els.attachBtn.addEventListener('click', function() { els.fileInput.click(); });
       els.fileInput.addEventListener('change', sendAttachment);
     }
-    // 4.5. Поддержка клавиатуры на мобильных устройствах
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', function() {
-        if (els.widget.classList.contains('is-open') && window.innerWidth <= 760) {
-          var offset = window.innerHeight - window.visualViewport.height;
-          if (offset > 0) {
-            els.widget.style.setProperty('bottom', (offset + 10) + 'px', 'important');
-            els.widget.style.setProperty('max-height', 'calc(' + window.visualViewport.height + 'px - 20px)', 'important');
-          } else {
-            els.widget.style.removeProperty('bottom');
-            els.widget.style.removeProperty('max-height');
-          }
-        } else {
-          els.widget.style.removeProperty('bottom');
-          els.widget.style.removeProperty('max-height');
-        }
-      });
-    }
-
     // 5. Автооткрытие по параметру из URL (после успешной заявки)
     if (params.get('openChat') === 'true') {
       localStorage.setItem('chat_force_open', 'true');
       setTimeout(() => {
-        if (els.body.style.display === 'none') {
-          toggleChat();
+        if (isChatOpen() === false) {
+          setChatOpen(true);
         }
         const url = new URL(window.location);
         url.searchParams.delete('openChat');
@@ -145,29 +130,17 @@
       }, 300);
     } else if (localStorage.getItem('chat_force_open') === 'true') {
       setTimeout(() => {
-        if (els.body.style.display === 'none') {
-          toggleChat();
+        if (isChatOpen() === false) {
+          setChatOpen(true);
         }
       }, 300);
     }
 
     if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        if (document.body.classList.contains('chat-open') && window.innerWidth <= 760) {
-          els.widget.style.height = window.visualViewport.height + 'px';
-          els.widget.style.top = window.visualViewport.offsetTop + 'px';
-        } else {
-          els.widget.style.height = '';
-          els.widget.style.top = '';
-        }
-        scrollToBottom();
-      });
-      window.visualViewport.addEventListener('scroll', () => {
-        if (document.body.classList.contains('chat-open') && window.innerWidth <= 760) {
-          els.widget.style.top = window.visualViewport.offsetTop + 'px';
-        }
-      });
+      window.visualViewport.addEventListener('resize', scheduleViewportSync, { passive: true });
+      window.visualViewport.addEventListener('scroll', scheduleViewportSync, { passive: true });
     }
+    window.addEventListener('resize', scheduleViewportSync, { passive: true });
   }
 
   function syncToggleIcon(isOpen) {
@@ -181,45 +154,67 @@
       els.toggle.innerHTML = ringHtml + '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 6.5h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H10l-5 3v-3.5a2 2 0 0 1-2-2v-5.5a2 2 0 0 1 2-2Z"></path></svg>';
     }
     els.toggle.setAttribute('aria-label', isOpen ? 'Свернуть чат' : 'Открыть чат');
-    els.widget.classList.toggle('is-open', isOpen);
+  }
+
+  function isChatOpen() {
+    return chatState === 'open';
+  }
+
+  function applyViewportSync() {
+    viewportFrame = null;
+    var viewport = window.visualViewport;
+    if (isChatOpen() === false || window.innerWidth > 760 || viewport == null) {
+      lastViewportHeight = 0;
+      lastViewportTop = 0;
+      els.widget.style.removeProperty('--chat-viewport-height');
+      els.widget.style.removeProperty('--chat-viewport-top');
+      return;
+    }
+
+    var nextHeight = Math.round(viewport.height);
+    var nextTop = Math.round(viewport.offsetTop);
+    if (nextHeight !== lastViewportHeight) {
+      lastViewportHeight = nextHeight;
+      els.widget.style.setProperty('--chat-viewport-height', nextHeight + 'px');
+    }
+    if (nextTop !== lastViewportTop) {
+      lastViewportTop = nextTop;
+      els.widget.style.setProperty('--chat-viewport-top', nextTop + 'px');
+    }
+  }
+
+  function scheduleViewportSync() {
+    if (viewportFrame !== null) return;
+    viewportFrame = window.requestAnimationFrame(applyViewportSync);
+  }
+
+  function setChatOpen(open) {
+    var nextState = open ? 'open' : 'closed';
+    if (chatState === nextState && els.widget.dataset.state === nextState) return;
+    chatState = nextState;
+
+    els.body.hidden = open === false;
+    els.body.setAttribute('aria-hidden', open ? 'false' : 'true');
+    els.widget.dataset.state = nextState;
+    els.widget.classList.toggle('is-open', open);
+    els.widget.classList.toggle('is-collapsed', open === false);
+    els.widget.classList.remove('is-closing', 'fab-appear');
+    document.body.classList.toggle('chat-open', open);
+    syncToggleIcon(open);
+
+    if (open) {
+      clearUnread();
+      scheduleViewportSync();
+      scrollToBottom();
+      if (window.innerWidth > 768) els.input.focus();
+    } else {
+      localStorage.removeItem('chat_force_open');
+      applyViewportSync();
+    }
   }
 
   function toggleChat() {
-    const isOpening = els.body.style.display === 'none';
-
-    if (isOpening) {
-      clearUnread();
-      els.widget.classList.remove('is-closing');
-      els.body.style.display = 'flex';
-      requestAnimationFrame(function() {
-        syncToggleIcon(true);
-      });
-    } else {
-      /* Сразу переключаемся в компактную кнопку с подписью. Отдельная
-         pop-анимация здесь создавала на мобильных большое цветное пятно. */
-      els.body.style.display = 'none';
-      syncToggleIcon(false);
-      els.widget.classList.remove('is-closing', 'fab-appear');
-    }
-    
-    document.body.classList.toggle('chat-open', isOpening);
-    
-    if (isOpening && window.visualViewport && window.innerWidth <= 760) {
-      els.widget.style.height = window.visualViewport.height + 'px';
-      els.widget.style.top = window.visualViewport.offsetTop + 'px';
-    } else if (!isOpening) {
-      els.widget.style.height = '';
-      els.widget.style.top = '';
-    }
-    
-    if (!isOpening) {
-      localStorage.removeItem('chat_force_open');
-    } else {
-      scrollToBottom();
-      if (window.innerWidth > 768) {
-        els.input.focus();
-      }
-    }
+    setChatOpen(isChatOpen() === false);
   }
 
   /**
@@ -367,7 +362,7 @@
         // Вычисляем непрочитанные сообщения от админа
         const lastRead = new Date(localStorage.getItem('chat_last_read_time') || 0).getTime();
         const unreadAdminMsgs = json.data.filter(m => m.sender_type === 'admin' && new Date(m.created_at || Date.now()).getTime() > lastRead);
-        if (unreadAdminMsgs.length > 0 && els.body.style.display === 'none') {
+        if (unreadAdminMsgs.length > 0 && isChatOpen() === false) {
           updateUnreadBadge(unreadAdminMsgs.length);
           showAdminReplyNotification();
         }
@@ -402,7 +397,7 @@
             lastKnownCount = els.messages.children.length;
             
             // Если чат закрыт, увеличиваем бейдж и показываем плашку
-            if (els.body.style.display === 'none') {
+            if (isChatOpen() === false) {
               updateUnreadBadge(unreadCount + 1);
               showAdminReplyNotification();
             }
@@ -435,7 +430,7 @@
           lastKnownCount = serverCount;
           
           // Если чат закрыт и есть новые админ-сообщения, показываем уведомления
-          if (newAdminMsgs.length > 0 && els.body.style.display === 'none') {
+          if (newAdminMsgs.length > 0 && isChatOpen() === false) {
             updateUnreadBadge(unreadCount + newAdminMsgs.length);
             showAdminReplyNotification();
           }

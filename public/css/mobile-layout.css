@@ -1,0 +1,171 @@
+/* Компактная мобильная компоновка без тяжёлых постоянных эффектов. */
+@media (max-width: 900px) {
+  html { scroll-padding-top: 82px; overscroll-behavior-y: contain; }
+  body::before, body::after, .noise { display: none !important; }
+  .top-fade {
+    height: 84px !important;
+    background: linear-gradient(to bottom, rgba(var(--bg-rgb), .94), transparent) !important;
+  }
+  .header, .mobile-bottom-nav, .mobile-drawer, .mobile-bottom-nav a.active {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .header {
+    top: 8px !important;
+    width: calc(100% - 16px) !important;
+    min-height: 56px !important;
+    padding: 7px 9px !important;
+    border-radius: 14px !important;
+    background: rgba(17, 16, 13, .96) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .26) !important;
+  }
+  .mobile-drawer {
+    background: #15130f !important;
+    box-shadow: -12px 0 32px rgba(0, 0, 0, .34) !important;
+    transition: transform .2s ease-out !important;
+  }
+  .mobile-drawer-overlay { transition: opacity .18s ease !important; }
+  .mobile-bottom-nav {
+    left: 8px !important;
+    right: 8px !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    min-height: 62px !important;
+    padding: 6px !important;
+    border-radius: 16px !important;
+    background: rgba(17, 16, 13, .97) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .32) !important;
+  }
+  .mobile-bottom-nav a { min-height: 48px !important; border: 0 !important; }
+  .mobile-bottom-nav a.active { background: rgba(var(--cream-rgb), .09) !important; box-shadow: none !important; }
+
+  #houses, #features, #calendar, #territory, .reviews, #contacts {
+    content-visibility: auto;
+    contain-intrinsic-size: 720px;
+  }
+  .page { padding-inline: 10px !important; }
+  .trust-strip { display: none !important; }
+
+  .hero { min-height: 0 !important; padding: 76px 0 22px !important; }
+  .hero-stage {
+    min-height: 0 !important;
+    display: grid !important;
+    gap: 10px !important;
+    padding-bottom: 10px !important;
+    border-radius: 16px !important;
+  }
+  .hero-content {
+    min-height: 430px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 86px 18px 24px !important;
+  }
+  #hero-title {
+    max-width: 11ch;
+    margin-top: 10px !important;
+    font-size: clamp(35px, 10vw, 43px) !important;
+    line-height: .94 !important;
+  }
+  #hero-desc, .intro-copy {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+  }
+  #hero-desc {
+    max-width: 36ch;
+    margin-top: 16px !important;
+    -webkit-line-clamp: 3;
+    color: rgba(255, 250, 240, .82) !important;
+  }
+  .intro-copy { -webkit-line-clamp: 4; }
+  .hero-actions { margin-top: 20px !important; }
+  .hero-actions .btn-ghost { display: none !important; }
+  .hero-booking {
+    position: relative !important;
+    inset: auto !important;
+    width: auto !important;
+    margin: 0 10px !important;
+    padding: 14px !important;
+    border-radius: 13px !important;
+    background: rgba(20, 18, 15, .96) !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  .hero-booking > p { display: none; }
+  .quick-grid { gap: 7px !important; margin-top: 12px !important; }
+  .quick-field { min-height: 62px !important; padding: 9px 10px !important; }
+  .quick-total { padding: 11px !important; }
+
+  .intro {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 40px 8px 22px !important;
+  }
+  .intro h2 { font-size: 32px !important; }
+  .mission { padding: 0 8px 34px !important; }
+  .mission .video-panel { display: none !important; }
+  .stat-list { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 7px !important; }
+  .stat { min-height: 78px !important; padding: 10px 7px !important; text-align: center; }
+  .stat-icon { display: none !important; }
+  .stat b { font-size: 20px !important; }
+  .stat span { font-size: 10px !important; }
+
+  .houses, .feature, .calendar-section, .territory, .reviews, .cta {
+    padding-top: 38px !important;
+    padding-bottom: 38px !important;
+  }
+  .section-heading { margin-bottom: 16px !important; }
+  .section-heading h2, .calendar-section > h2, .reviews > h2 {
+    font-size: 34px !important;
+    line-height: .98 !important;
+  }
+
+  .house-grid, .reviews-grid {
+    display: flex !important;
+    gap: 12px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 2px 12vw 12px 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .house-grid::-webkit-scrollbar, .reviews-grid::-webkit-scrollbar { display: none; }
+  .house-card {
+    flex: 0 0 min(84vw, 340px);
+    min-height: 410px !important;
+    scroll-snap-align: start;
+  }
+  .review { flex: 0 0 min(82vw, 330px); scroll-snap-align: start; }
+
+  .feature { grid-template-columns: 1fr !important; }
+  .feature-panel, .calendar-card, .checkout-card {
+    padding: 16px !important;
+    border-radius: 14px !important;
+    background: rgba(20, 18, 15, .95) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .feature-image { display: none !important; }
+  .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+  .calendar-layout { grid-template-columns: 1fr !important; }
+
+  .territory-stage { min-height: 0 !important; padding: 18px !important; border-radius: 14px !important; }
+  .territory-tags { display: none !important; }
+  .territory-content { padding-top: 0 !important; }
+  .side-card, .side-item { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .side-card { padding: 12px !important; }
+  .side-item { min-height: 0 !important; padding: 12px !important; }
+
+  .cta-card { min-height: 360px !important; padding: 18px !important; border-radius: 14px !important; }
+  #contact-map-container {
+    height: auto !important;
+    min-height: 104px;
+    margin-top: 12px !important;
+    border-radius: 14px !important;
+  }
+  .footer { padding-top: 20px !important; padding-bottom: 96px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-drawer, .mobile-drawer-overlay { transition-duration: .01ms !important; }
+}

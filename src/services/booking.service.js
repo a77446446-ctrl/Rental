@@ -95,6 +95,7 @@ async function createBooking(input) {
     guestName: data.guest_name,
     guestPhone: data.guest_phone,
     guestTelegram: data.guest_telegram,
+    comment: data.comment ? data.comment.replace(/<!--CHAT_TOKEN:.*?-->/gi, '').trim() : '',
     chatToken: chatToken,
   };
 
