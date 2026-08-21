@@ -230,35 +230,43 @@ html body .chat-widget.chat-widget[data-state="open"] .chat-body { display: flex
   html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label,
   html body .chat-widget.chat-widget[data-state="open"] { animation: none !important; }
 }
-/* Надёжная мобильная кнопка чата без зависимости от SVG textPath. */
+
+/* Текст и иконка используют один центр и геометрию самой кнопки. */
+html body .chat-widget.chat-widget[data-state="closed"] {
+  --chat-ring-offset: -34px;
+}
 html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle {
   overflow: visible !important;
   isolation: isolate;
 }
 html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label {
   position: absolute !important;
-  inset: 2px !important;
+  inset: 0 !important;
   z-index: 2 !important;
-  width: auto !important;
-  height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
   display: block !important;
   border-radius: 50% !important;
-  animation: eco-chat-ring-orbit 24s linear infinite !important;
   transform-origin: 50% 50% !important;
+  animation: eco-chat-ring-orbit 24s linear infinite !important;
   will-change: transform;
   pointer-events: none !important;
 }
 html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label > span {
   position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: flex-start !important;
-  padding-top: 1px !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: 10px !important;
+  height: 10px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
   color: #fffaf0 !important;
   font: 750 8px/1 "Manrope", system-ui, sans-serif !important;
+  text-align: center !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
-  transform: rotate(var(--chat-char-angle)) !important;
+  transform: translate(-50%, -50%) rotate(var(--chat-char-angle)) translateY(var(--chat-ring-offset)) !important;
   transform-origin: 50% 50% !important;
 }
 html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-glyph {
@@ -269,7 +277,9 @@ html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-glyph
   width: 28px !important;
   height: 24px !important;
   display: block !important;
-  transform: translate(-50%, -50%) !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  transform-origin: 50% 50% !important;
+  animation: eco-chat-glyph-pulse 2.4s ease-in-out infinite !important;
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .35));
   pointer-events: none !important;
 }
@@ -302,8 +312,18 @@ html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-glyph
   background: transparent !important;
   transform: rotate(38deg) !important;
 }
+@keyframes eco-chat-glyph-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.12); }
+}
+@media (max-width: 760px) {
+  html body .chat-widget.chat-widget[data-state="closed"] {
+    --chat-ring-offset: -31px;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label {
+  html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label,
+  html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-glyph {
     animation: none !important;
   }
 }

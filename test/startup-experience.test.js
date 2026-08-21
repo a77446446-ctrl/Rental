@@ -40,7 +40,7 @@ test('offline-состояние не раскрывает пустой инте
   assert.match(css, /body\.app-loading-active:not\(\.maintenance-mode\) > :not\(\.app-loading\):not\(script\)/);
   assert.match(worker, /pwa-icon\\\/\(\?:192\|512\)/);
   assert.match(worker, /\/css\/main\.css\?v=20260821-1/);
-  assert.match(worker, /\/css\/mobile-app\.css\?v=20260822-1/);
+  assert.match(worker, /\/css\/mobile-app\.css\?v=20260822-2/);
   assert.match(worker, /\/css\/mobile-layout\.css\?v=20260821-4/);
   assert.match(worker, /\/js\/main\.js\?v=20260821-6/);
 });

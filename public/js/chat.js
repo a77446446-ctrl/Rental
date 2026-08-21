@@ -154,13 +154,13 @@
   }
 
   function buildChatRingLabel(value) {
-    var characters = ('• ' + String(value || '').trim() + ' •').split('');
-    if (characters.length <= 4) return '';
+    var text = String(value || '').trim();
+    if (!text) return '';
 
-    var step = Math.min(11, 170 / Math.max(1, characters.length - 1));
-    var start = -step * (characters.length - 1) / 2;
+    var characters = ('• ' + text + ' •').split('');
+    var step = 360 / characters.length;
     return '<span class="chat-ring-label" aria-hidden="true">' + characters.map(function(character, index) {
-      var angle = (start + index * step).toFixed(2);
+      var angle = (index * step).toFixed(2);
       return '<span style="--chat-char-angle:' + angle + 'deg">' + escapeRingText(character) + '</span>';
     }).join('') + '</span>';
   }

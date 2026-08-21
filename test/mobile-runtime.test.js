@@ -103,6 +103,10 @@ test('иконка чата центрирована отдельно от ко�
   assert.ok(css.includes('left: 50% !important'));
   assert.ok(css.includes('transform: translate(-50%, -50%) !important'));
   assert.ok(chat.includes('--chat-char-angle:'));
+  assert.ok(chat.includes('var step = 360 / characters.length'));
+  assert.ok(css.includes('--chat-ring-offset: -31px'));
+  assert.ok(css.includes('translateY(var(--chat-ring-offset))'));
+  assert.ok(css.includes('animation: eco-chat-glyph-pulse 2.4s'));
   assert.ok(!chat.includes('<textPath'));
   assert.ok(css.includes('.chat-glyph::before'));
   assert.ok(css.includes('24s linear infinite'));
