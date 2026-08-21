@@ -149,12 +149,24 @@
     -webkit-backdrop-filter: none !important;
   }
   .checkout-card { scroll-margin-top: 76px; }
+  #checkoutSelectedInfo > div:first-child {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 6px !important;
+    white-space: nowrap;
+  }
+  #checkoutSelectedInfo > div:first-child > span {
+    width: auto !important;
+    flex: 0 0 auto;
+  }
   #checkoutDatesInfo.has-dates {
+    min-width: 0;
     color: var(--gold) !important;
-    font-size: 16px !important;
+    font-size: 13px !important;
     font-weight: 800 !important;
-    line-height: 1.35 !important;
-    letter-spacing: .01em;
+    line-height: 1.25 !important;
+    letter-spacing: 0;
+    white-space: nowrap;
   }
   .feature-image { display: none !important; }
   .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }

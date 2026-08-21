@@ -94,13 +94,20 @@ test('после завершения диапазона мобильный ка
 test('иконка чата центрирована отдельно от кольца с текстом администратора', () => {
   const chat = read('public/js/chat.js');
   const css = read('public/css/mobile-app.css');
+  const layout = read('public/css/mobile-layout.css');
 
   assert.ok(chat.includes('settings.chatWidgetText'));
-  assert.ok(chat.includes('safeRingText'));
+  assert.ok(chat.includes('function buildChatRingLabel(value)'));
   assert.ok(chat.includes('class="chat-glyph"'));
   assert.ok(css.includes('#chat-toggle .chat-glyph'));
   assert.ok(css.includes('left: 50% !important'));
   assert.ok(css.includes('transform: translate(-50%, -50%) !important'));
+  assert.ok(chat.includes('--chat-char-angle:'));
+  assert.ok(!chat.includes('<textPath'));
+  assert.ok(css.includes('.chat-glyph::before'));
+  assert.ok(css.includes('24s linear infinite'));
+  assert.ok(layout.includes('font-size: 13px !important'));
+  assert.ok(layout.includes('white-space: nowrap'));
 });
 test('пустой блок дополнительных услуг скрывается для выбранного дома', () => {
   const main = read('public/js/main.js');
@@ -110,4 +117,19 @@ test('пустой блок дополнительных услуг скрыва
   assert.ok(main.includes("allowedServices.has(String(service.id || '').trim())"));
   assert.ok(main.includes('disclosure.hidden = availableServices.length === 0'));
   assert.ok(!main.includes('Дополнительные услуги пока не добавлены'));
+});
+
+test('цвет и подпись кнопки строго берутся из настроек администратора', () => {
+  const chat = read('public/js/chat.js');
+  const css = read('public/css/mobile-app.css');
+
+  assert.ok(chat.includes("setAttribute('data-chat-color', settings.chatWidgetColor)"));
+  assert.ok(chat.includes("String(settings.chatWidgetText || '').trim().slice(0, 30)"));
+  assert.ok(!chat.includes("slice(0, 48) || 'Связаться с нами'"));
+  ['green', 'blue', 'red', 'yellow'].forEach((color) => {
+    assert.ok(css.includes(`[data-chat-color="${color}"]`));
+  });
+  assert.ok(css.includes('linear-gradient(145deg, var(--chat-fab-light), var(--chat-fab-main) 58%, var(--chat-fab-dark))'));
+  assert.ok(css.includes('--chat-fab-light: #6b8e9e'));
+  assert.ok(css.includes('--chat-fab-main: #3a6a8a'));
 });
