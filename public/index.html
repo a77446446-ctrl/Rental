@@ -16,7 +16,7 @@
   <title>Название проекта — аренда домиков для отдыха у озера</title>
 
   <!-- Google Fonts -->
-  <link rel="stylesheet" href="/css/main.css?v=20260815-2">
+  <link rel="stylesheet" href="/css/main.css?v=20260816-1">
 
   </head>
 <body class="app-loading-active">
@@ -26,14 +26,21 @@
   <div class="top-fade"></div>
 
   <div class="app-loading" id="app-loading" role="status" aria-live="polite">
-    <div class="tree-loader" aria-hidden="true">
-      <canvas id="scene" width="280" height="280" aria-label="Анимация дерева"></canvas>
+    <div class="app-loading-logo-wrap" aria-hidden="true">
+      <img class="app-loading-logo" id="app-loading-logo" src="/api/pwa-icon/512.png" alt="">
     </div>
-    <strong id="app-loading-title">Загружаем данные</strong>
-    <span id="app-loading-text">(Проверяем цены и календарь, подождите)</span>
+    <strong id="app-loading-title">Название проекта</strong>
+    <span class="app-loading-welcome" id="app-loading-welcome">Добро пожаловать</span>
+    <span class="app-loading-status" id="app-loading-text"></span>
     <button type="button" class="btn btn-ghost app-loading-retry" id="app-loading-retry">Повторить загрузку</button>
   </div>
-  <script src="/js/tree-loader.js?v=20260811-2"></script>
+  <script>
+    window.__APP_SPLASH_STARTED_AT = performance.now();
+    try {
+      var _cachedBrandName = localStorage.getItem('eco_splash_brand_name');
+      if (_cachedBrandName) document.getElementById('app-loading-title').textContent = _cachedBrandName;
+    } catch (e) {}
+  </script>
 
   <div class="top-meta">
     <span id="top-meta-hostname"></span>
@@ -470,11 +477,11 @@
   <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript" defer></script>
   <script src="/js/api.js?v=20260811-2" defer></script>
   <script src="/js/pwa.js?v=20260811-2" defer></script>
-  <script src="/js/chat.js?v=20260813-2" defer></script>
+  <script src="/js/chat.js?v=20260816-1" defer></script>
   <script src="/js/calendar.js?v=20260813-1" defer></script>
   <script src="/js/mobile-shell.js?v=20260811-2" defer></script>
   <script src="/js/admin-entry.js?v=20260813-1" defer></script>
-  <script src="/js/main.js?v=20260815-2" defer></script>
+  <script src="/js/main.js?v=20260816-1" defer></script>
 <script src="/js/lucide.min.js?v=20260811-2"></script>
 </body>
 </html>

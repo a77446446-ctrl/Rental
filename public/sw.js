@@ -1,9 +1,18 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v41';
+const CACHE_VERSION = 'eco-gorniy-pwa-v42';
 const STATIC_CACHE = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
   '/icons/icon-192.png',
+  '/css/main.css?v=20260816-1',
+  '/js/api.js?v=20260811-2',
+  '/js/pwa.js?v=20260811-2',
+  '/js/chat.js?v=20260816-1',
+  '/js/calendar.js?v=20260813-1',
+  '/js/mobile-shell.js?v=20260811-2',
+  '/js/admin-entry.js?v=20260813-1',
+  '/js/main.js?v=20260816-1',
+  '/js/lucide.min.js?v=20260811-2',
   '/icons/icon-512.png',
   '/icons/maskable-512.png'
 ];
@@ -32,7 +41,27 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
+  if (url.origin !== self.location.origin) return;
+
+  // Актуальный логотип из админки нужен на автономной заставке PWA.
+  if (/^\/api\/(?:icon\.png|pwa-icon\/(?:192|512)\.png)$/.test(url.pathname)) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' })
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_VERSION).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request).then((cached) => (
+          cached || caches.match(url.pathname.includes('/512.') ? '/icons/icon-512.png' : '/icons/icon-192.png')
+        )))
+    );
+    return;
+  }
+
+  if (url.pathname.startsWith('/api/')) return;
 
   // Навигация — network-first, fallback на кэш
   if (request.mode === 'navigate') {

@@ -8,7 +8,6 @@
   let chatToken = localStorage.getItem('eco_chat_token');
   let supabaseClient = null;
   let chatChannel = null;
-  let chatTransitionTimer = null;
   let scrollTimer = null;
   let chatRingText = 'Связаться с нами';
 
@@ -186,7 +185,6 @@
   }
 
   function toggleChat() {
-    clearTimeout(chatTransitionTimer);
     const isOpening = els.body.style.display === 'none';
 
     if (isOpening) {
@@ -197,18 +195,11 @@
         syncToggleIcon(true);
       });
     } else {
-      /* Мгновенно переключаемся в состояние «кнопка» без промежуточного
-         большого золотого пятна. Сначала скрываем тело чата, чтобы CSS-
-         селектор :has(.chat-body[style*="none"]) активировал стили FAB,
-         затем показываем кнопку с короткой анимацией появления. */
+      /* Сразу переключаемся в компактную кнопку с подписью. Отдельная
+         pop-анимация здесь создавала на мобильных большое цветное пятно. */
       els.body.style.display = 'none';
       syncToggleIcon(false);
-      els.widget.classList.remove('is-closing');
-      /* Короткая анимация появления золотой капли */
-      els.widget.classList.add('fab-appear');
-      chatTransitionTimer = setTimeout(function() {
-        els.widget.classList.remove('fab-appear');
-      }, 320);
+      els.widget.classList.remove('is-closing', 'fab-appear');
     }
     
     document.body.classList.toggle('chat-open', isOpening);

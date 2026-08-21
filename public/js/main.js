@@ -176,14 +176,17 @@
     checkoutGuests: document.getElementById('checkoutGuests')
   };
 
-  var loadIssues = [];
+  var SPLASH_MIN_DURATION_MS = 5000;
+  var STARTUP_REQUEST_TIMEOUT_MS = 5000;
+  var splashStartedAt = Number(window.__APP_SPLASH_STARTED_AT);
+  if (!Number.isFinite(splashStartedAt)) splashStartedAt = performance.now();
 
   function setAppLoading(message, title) {
     var overlay = document.getElementById('app-loading');
     if (!overlay) return;
     var titleEl = document.getElementById('app-loading-title');
     var textEl = document.getElementById('app-loading-text');
-    overlay.classList.remove('is-hidden', 'has-error');
+    overlay.classList.remove('is-hidden', 'has-error', 'is-offline');
     document.body.classList.add('app-loading-active');
     if (titleEl && title) titleEl.textContent = title;
     if (textEl && message) textEl.textContent = message;
@@ -196,16 +199,27 @@
     overlay.classList.add('is-hidden');
   }
 
-  function showAppLoadingError(message) {
+  function showAppLoadingError(message, isOffline) {
     var overlay = document.getElementById('app-loading');
     if (!overlay) return;
     overlay.classList.add('has-error');
+    overlay.classList.toggle('is-offline', Boolean(isOffline));
     overlay.classList.remove('is-hidden');
     document.body.classList.add('app-loading-active');
-    var titleEl = document.getElementById('app-loading-title');
+    var welcomeEl = document.getElementById('app-loading-welcome');
     var textEl = document.getElementById('app-loading-text');
-    if (titleEl) titleEl.textContent = 'База данных не ответила';
-    if (textEl) textEl.textContent = message || 'Проверьте подключение к Supabase и повторите загрузку.';
+    if (welcomeEl) {
+      welcomeEl.textContent = isOffline
+        ? 'Извините, нет подключения к интернету'
+        : 'Сервис временно недоступен';
+    }
+    if (textEl) {
+      textEl.textContent = message || (
+        isOffline
+          ? 'Проверьте соединение и повторите загрузку.'
+          : 'Не удалось получить данные. Повторите попытку немного позже.'
+      );
+    }
     var retryBtn = document.getElementById('app-loading-retry');
     if (retryBtn && !retryBtn.dataset.bound) {
       retryBtn.dataset.bound = '1';
@@ -213,46 +227,86 @@
         window.location.reload();
       });
     }
+    if (!window.__appOnlineRetryBound) {
+      window.__appOnlineRetryBound = true;
+      window.addEventListener('online', function () {
+        window.location.reload();
+      }, { once: true });
+    }
   }
 
-  function fetchJsonWithTimeout(url, timeoutMs) {
+  function fetchRequiredApiData(url, unwrapData) {
     var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
     var timeoutId = controller ? setTimeout(function () {
       controller.abort();
-    }, timeoutMs || 12000) : null;
+    }, STARTUP_REQUEST_TIMEOUT_MS) : null;
 
     var options = { cache: 'no-store' };
-    if (controller) {
-      options.signal = controller.signal;
-    }
+    if (controller) options.signal = controller.signal;
 
     return fetch(url, options)
-      .then(function (res) {
-        return res.ok ? res.json() : {};
+      .then(async function (res) {
+        var json = await res.json().catch(function () { return null; });
+        if (!res.ok || !json || json.success === false) {
+          var error = new Error((json && json.error) || ('HTTP ' + res.status));
+          error.status = res.status;
+          throw error;
+        }
+        if (unwrapData !== false) {
+          if (json.success !== true || !Object.prototype.hasOwnProperty.call(json, 'data')) {
+            throw new Error('Некорректный ответ ' + url);
+          }
+          return json.data;
+        }
+        return json;
       })
       .catch(function (err) {
-        console.error('[main] request failed:', url, err.name === 'AbortError' ? 'request timeout' : err.message);
-        return {};
+        console.error('[main] Обязательный запрос не выполнен:', url, err.name === 'AbortError' ? 'таймаут' : err.message);
+        throw err;
       })
       .finally(function () {
         if (timeoutId) clearTimeout(timeoutId);
       });
   }
 
-  function safeLoad(label, promise, fallback) {
-    return Promise.resolve(promise)
-      .then(function (value) {
-        if (value === null || typeof value === 'undefined') {
-          loadIssues.push(label);
-          return fallback;
-        }
-        return value;
-      })
-      .catch(function (err) {
-        console.error('[main] load failed:', label, err);
-        loadIssues.push(label);
-        return fallback;
-      });
+  function waitForSplashMinimum() {
+    var elapsed = performance.now() - splashStartedAt;
+    var remaining = Math.max(0, SPLASH_MIN_DURATION_MS - elapsed);
+    return new Promise(function (resolve) {
+      window.setTimeout(resolve, remaining);
+    });
+  }
+
+  function updateSplashBrand(mainpage) {
+    var logo = mainpage && mainpage.logo ? mainpage.logo : {};
+    var name = String(logo.text || '').trim();
+    var titleEl = document.getElementById('app-loading-title');
+    var logoEl = document.getElementById('app-loading-logo');
+
+    if (name && titleEl) titleEl.textContent = name;
+    if (name) {
+      try { localStorage.setItem('eco_splash_brand_name', name); } catch (err) {}
+    }
+
+    if (logoEl) {
+      if (!logoEl.dataset.fallbackBound) {
+        logoEl.dataset.fallbackBound = '1';
+        logoEl.addEventListener('error', function () {
+          if (logoEl.dataset.fallbackApplied === '1') return;
+          logoEl.dataset.fallbackApplied = '1';
+          logoEl.src = '/icons/icon-512.png';
+        });
+      }
+      if (logo.url) {
+        logoEl.dataset.fallbackApplied = '0';
+        logoEl.src = window.EcoMedia ? window.EcoMedia.url(logo.url) : logo.url;
+      }
+    }
+  }
+
+  function isConnectionError(error) {
+    return navigator.onLine === false ||
+      Boolean(error && (error.name === 'AbortError' || error.name === 'TypeError'));
   }
 
   // Установка минимальной даты для нативных календарей (чтобы нельзя было выбрать прошедшие дни)
@@ -700,31 +754,29 @@
    */
   async function init() {
     try {
-      setAppLoading('(Проверяем цены и календарь, подождите)', 'Загружаем данные');
+      setAppLoading('', '');
       if (els.calTitle) els.calTitle.textContent = 'Загрузка...';
 
-    // Максимальный дедлайн загрузки: если данные не пришли за 7 секунд — показываем страницу
-    var loadingDeadline = setTimeout(function() {
-      console.warn('[main] Дедлайн загрузки: показываем страницу без полных данных');
-      hideAppLoading();
-    }, 7000);
+    if (navigator.onLine === false) {
+      throw new TypeError('OFFLINE');
+    }
 
-    // Загружаем данные с API параллельно. Каждый запрос имеет запасной результат,
-    // чтобы страница не зависала, если Supabase долго не отвечает.
+    // Страница откроется только после успешных обязательных ответов.
     var results = await Promise.all([
-      safeLoad('домики', EcoApi.getCabins(), []),
-      safeLoad('дополнительные услуги', EcoApi.getExtraServices(), []),
-      safeLoad('настройки', EcoApi.getSettings(), state.settings),
-      safeLoad('наполнение домов', EcoApi.getAmenities(), {}),
-      safeLoad('главный экран', fetchJsonWithTimeout('/api/mainpage', 6000), {}),
-      safeLoad('теги', fetchJsonWithTimeout('/api/tags', 6000), {}),
-      safeLoad('теги домиков', fetchJsonWithTimeout('/api/cabin-tags', 6000), {})
+      fetchRequiredApiData('/api/cabins'),
+      fetchRequiredApiData('/api/extra-services'),
+      fetchRequiredApiData('/api/settings'),
+      fetchRequiredApiData('/api/amenities'),
+      fetchRequiredApiData('/api/mainpage'),
+      fetchRequiredApiData('/api/tags'),
+      fetchRequiredApiData('/api/cabin-tags', false)
     ]);
 
-    clearTimeout(loadingDeadline);
+    updateSplashBrand(results[4]);
 
     if (results[2] && results[2].maintenanceMode) {
       document.getElementById('app-loading-title').textContent = 'Сайт находится на техническом обслуживании';
+      document.body.classList.add('maintenance-mode');
       document.getElementById('app-loading-text').textContent = 'Пожалуйста, зайдите позже.';
       var retryBtn = document.getElementById('app-loading-retry');
       if (retryBtn) retryBtn.style.display = 'none';
@@ -747,8 +799,8 @@
     state.extraServices = Array.isArray(results[1]) ? results[1] : [];
     state.settings = results[2] || state.settings;
     state.amenities = results[3] || {};
-    state.mainpage = results[4].data || {};
-    state.tags = results[5].data || [];
+    state.mainpage = results[4] || {};
+    state.tags = Array.isArray(results[5]) ? results[5] : [];
     state.cabinTags = results[6] || {};
 
     // Восстанавливаем привязки из записи объекта, если историческое хранилище ещё не синхронизировано.
@@ -951,14 +1003,21 @@
       });
     }
 
+      await waitForSplashMinimum();
       hideAppLoading();
       if (state.cabins.length === 0 && window.showToast) {
         window.showToast('В базе данных пока нет активных домиков. Добавьте их в админ-панели.', 'error');
       }
     } catch (err) {
       console.error('[main] Ошибка инициализации:', err);
-      hideAppLoading();
-      if (window.showToast) window.showToast('Не удалось загрузить данные: ' + err.message, 'error');
+      await waitForSplashMinimum();
+      var offline = isConnectionError(err);
+      showAppLoadingError(
+        offline
+          ? 'Проверьте подключение к интернету и повторите загрузку.'
+          : 'Данные пока недоступны. Повторите попытку немного позже.',
+        offline
+      );
     }
   }
 
