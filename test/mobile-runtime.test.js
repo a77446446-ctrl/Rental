@@ -33,14 +33,16 @@ test('мобильная прокрутка не запускает глобал
   assert.match(main, /history\.scrollRestoration = 'auto'/);
 });
 
-test('карта и слайдер не работают постоянно вне видимой области', () => {
+test('карта остаётся встроенной и загружается только рядом с видимой областью', () => {
   const html = read('public/index.html');
   const main = read('public/js/main.js');
 
   assert.doesNotMatch(html, /api-maps\.yandex\.ru/);
   assert.match(main, /function loadYandexMapsApi\(\)/);
   assert.match(main, /rootMargin: '320px 0px'/);
-  assert.match(main, /className = 'mobile-map-link'/);
+  assert.doesNotMatch(main, /className = 'mobile-map-link'/);
+  assert.match(main, /mapc\.dataset\.mapMode = 'interactive'/);
+  assert.match(main, /'routePanelControl'/);
   assert.match(main, /featuresVisible === false \|\| document\.hidden/);
 });
 
@@ -56,4 +58,24 @@ test('мобильная версия использует компактные 
   assert.match(layout, /\.trust-strip \{ display: none/);
   assert.match(layout, /\.house-grid,[\s\S]*scroll-snap-type: x mandatory/);
   assert.match(layout, /\.feature-image \{ display: none/);
+});
+
+test('фотография дома проходит через медиапрокси', () => {
+  const main = read('public/js/main.js');
+
+  assert.equal((main.match(/window\.EcoMedia \? window\.EcoMedia\.url\(mainImg\.url\)/g) || []).length, 2);
+  assert.equal((main.match(/var mainImageUrl = mainImg && mainImg\.url/g) || []).length, 2);
+  assert.match(main, /encodeURI\(String\(mainImageUrl\)\)/);
+  assert.doesNotMatch(main, /--img: url\('\$\{mainImg\.url\}/);
+});
+
+test('мобильные преимущества, карта и стрелка имеют стабильную геометрию', () => {
+  const appCss = read('public/css/mobile-app.css');
+  const layout = read('public/css/mobile-layout.css');
+
+  assert.match(appCss, /summary::after[\s\S]*border-right: 2px solid var\(--gold\)/);
+  assert.match(appCss, /\[open\] summary::after \{ transform: rotate\(225deg\)/);
+  assert.match(layout, /@media \(max-width: 520px\)[\s\S]*\.feature-grid[\s\S]*grid-template-columns: 1fr !important/);
+  assert.match(layout, /-webkit-line-clamp: 2/);
+  assert.match(layout, /#contact-map-container[\s\S]*height: 260px !important/);
 });

@@ -469,7 +469,10 @@
       var mainImg = (cabin.images && cabin.images.length > 0) 
         ? cabin.images.find(img => img.category === 'main') || cabin.images[0] 
         : null;
-      var imageStyle = mainImg && mainImg.url ? `--img: url('${mainImg.url}');` : '';
+      var mainImageUrl = mainImg && mainImg.url
+        ? (window.EcoMedia ? window.EcoMedia.url(mainImg.url) : mainImg.url)
+        : '';
+      var imageStyle = mainImageUrl ? '--img: url(' + encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29') + ');' : '';
 
       var article = document.createElement('article');
       article.className = 'house-card';
@@ -618,7 +621,10 @@
           var mainImg = (cabin.images && cabin.images.length > 0) 
             ? cabin.images.find(img => img.category === 'main') || cabin.images[0] 
             : null;
-          var imageStyle = mainImg && mainImg.url ? `--img: url('${mainImg.url}');` : '';
+          var mainImageUrl = mainImg && mainImg.url
+            ? (window.EcoMedia ? window.EcoMedia.url(mainImg.url) : mainImg.url)
+            : '';
+          var imageStyle = mainImageUrl ? '--img: url(' + encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29') + ');' : '';
 
           var article = document.createElement('article');
           article.className = 'house-card';
@@ -1253,18 +1259,6 @@
     mapc.style.display = 'block';
     mapc.replaceChildren();
 
-    if (window.innerWidth <= 760) {
-      var mapLink = document.createElement('a');
-      mapLink.className = 'mobile-map-link';
-      mapLink.href = 'https://yandex.ru/maps/?pt=' + coords[1] + ',' + coords[0] + '&z=14&l=map';
-      mapLink.target = '_blank';
-      mapLink.rel = 'noopener';
-      mapLink.innerHTML = '<strong>Мы на карте</strong><span>Открыть маршрут в Яндекс.Картах</span>';
-      mapc.appendChild(mapLink);
-      mapc.dataset.mapMode = 'link';
-      return;
-    }
-
     mapc.dataset.mapMode = 'interactive';
     mapc.textContent = 'Карта загружается…';
 
@@ -1278,7 +1272,7 @@
             var map = new ymapsApi.Map(mapc, {
               center: coords,
               zoom: 14,
-              controls: ['zoomControl', 'fullscreenControl']
+              controls: ['zoomControl', 'fullscreenControl', 'routePanelControl']
             });
             var placemark = new ymapsApi.Placemark(coords, {
               balloonContent: 'Мы здесь!'

@@ -28,12 +28,18 @@ body.mobile-menu-open {
 }
 .booking-extras-disclosure summary::-webkit-details-marker { display: none; }
 .booking-extras-disclosure summary::after {
-  content: "⌄";
-  color: var(--gold);
-  font-size: 18px;
+  content: "";
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin: 0 2px 0 1px;
+  border-right: 2px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
+  transform: rotate(45deg);
+  transform-origin: 50% 50%;
   transition: transform .18s ease;
 }
-.booking-extras-disclosure[open] summary::after { transform: rotate(180deg); }
+.booking-extras-disclosure[open] summary::after { transform: rotate(225deg); }
 .booking-extras-disclosure summary small {
   margin-left: auto;
   color: var(--muted);
@@ -42,23 +48,6 @@ body.mobile-menu-open {
 }
 .booking-extras-disclosure .extras-grid { padding: 0 12px 12px; }
 
-.mobile-map-link {
-  min-height: 104px;
-  display: grid;
-  align-content: center;
-  gap: 6px;
-  padding: 20px;
-  border: 1px solid rgba(var(--cream-rgb), .13);
-  border-radius: 14px;
-  background: rgba(24, 22, 18, .94);
-  color: var(--cream);
-}
-.mobile-map-link strong {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 25px;
-  font-weight: 600;
-}
-.mobile-map-link span { color: var(--gold); font-size: 13px; }
 
 /* Состояние чата определяется только data-state. */
 html body .chat-widget.chat-widget:not([data-state]) {
