@@ -42,7 +42,7 @@ test('карта остаётся встроенной и загружается
   assert.match(main, /rootMargin: '320px 0px'/);
   assert.doesNotMatch(main, /className = 'mobile-map-link'/);
   assert.match(main, /mapc\.dataset\.mapMode = 'interactive'/);
-  assert.match(main, /'routePanelControl'/);
+  assert.doesNotMatch(main, /'routePanelControl'/);
   assert.match(main, /featuresVisible === false \|\| document\.hidden/);
 });
 
@@ -78,4 +78,36 @@ test('мобильные преимущества, карта и стрелка 
   assert.match(layout, /@media \(max-width: 520px\)[\s\S]*\.feature-grid[\s\S]*grid-template-columns: 1fr !important/);
   assert.match(layout, /-webkit-line-clamp: 2/);
   assert.match(layout, /#contact-map-container[\s\S]*height: 260px !important/);
+});
+test('после завершения диапазона мобильный календарь плавно переводит к заявке', () => {
+  const main = read('public/js/main.js');
+  const layout = read('public/css/mobile-layout.css');
+
+  assert.ok(main.includes('function scrollToCheckoutAfterDateSelection(checkIn, checkOut)'));
+  assert.ok(main.includes("checkoutCard.scrollIntoView({ behavior: 'smooth', block: 'start' })"));
+  assert.ok(main.includes('scrollToCheckoutAfterDateSelection(checkIn, checkOut)'));
+  assert.ok(main.includes("classList.toggle('has-dates', state.selectedDates.length > 0)"));
+  assert.ok(layout.includes('#checkoutDatesInfo.has-dates'));
+  assert.ok(layout.includes('scroll-margin-top: 76px'));
+});
+
+test('иконка чата центрирована отдельно от кольца с текстом администратора', () => {
+  const chat = read('public/js/chat.js');
+  const css = read('public/css/mobile-app.css');
+
+  assert.ok(chat.includes('settings.chatWidgetText'));
+  assert.ok(chat.includes('safeRingText'));
+  assert.ok(chat.includes('class="chat-glyph"'));
+  assert.ok(css.includes('#chat-toggle .chat-glyph'));
+  assert.ok(css.includes('left: 50% !important'));
+  assert.ok(css.includes('transform: translate(-50%, -50%) !important'));
+});
+test('пустой блок дополнительных услуг скрывается для выбранного дома', () => {
+  const main = read('public/js/main.js');
+
+  assert.ok(main.includes("els.extrasContainer.closest('.booking-extras-disclosure')"));
+  assert.ok(main.includes('state.amenities[state.selectedCabinId]'));
+  assert.ok(main.includes("allowedServices.has(String(service.id || '').trim())"));
+  assert.ok(main.includes('disclosure.hidden = availableServices.length === 0'));
+  assert.ok(!main.includes('Дополнительные услуги пока не добавлены'));
 });

@@ -111,12 +111,30 @@ html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-
   animation: eco-chat-ring-orbit 18s linear infinite !important;
   will-change: transform;
 }
-html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle > svg:not(.chat-ring-label) {
-  width: 25px !important;
-  height: 25px !important;
-  animation: none !important;
-  transform: none !important;
-  fill: currentColor !important;
+html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label text {
+  fill: #fffaf0 !important;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  letter-spacing: 1.15px !important;
+}
+html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-glyph {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  z-index: 2 !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: grid !important;
+  place-items: center !important;
+  transform: translate(-50%, -50%) !important;
+  pointer-events: none !important;
+}
+html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-glyph svg {
+  width: 26px !important;
+  height: 26px !important;
+  display: block !important;
+  fill: #fffaf0 !important;
+  stroke: none !important;
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .35)) !important;
 }
 html body .chat-widget.chat-widget[data-state="open"] {

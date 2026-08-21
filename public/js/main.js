@@ -318,6 +318,24 @@
 
   /* Экземпляр календаря */
   var calendar = null;
+  var lastMobileCheckoutRange = '';
+
+  function scrollToCheckoutAfterDateSelection(checkIn, checkOut) {
+    if (window.innerWidth > 760 || !checkIn || !checkOut) {
+      if (!checkOut) lastMobileCheckoutRange = '';
+      return;
+    }
+
+    var rangeKey = checkIn + ':' + checkOut;
+    if (rangeKey === lastMobileCheckoutRange) return;
+    lastMobileCheckoutRange = rangeKey;
+
+    var checkoutCard = document.querySelector('.checkout-card');
+    if (!checkoutCard) return;
+    window.requestAnimationFrame(function() {
+      checkoutCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 
   /**
    * Обновляет итоговую стоимость в блоке "Оформление заявки", вызывая /api/bookings/calculate
@@ -353,6 +371,7 @@
 
     // Обновляем текст заезда/выезда на странице
     if (els.checkoutDatesInfo) {
+      els.checkoutDatesInfo.classList.toggle('has-dates', state.selectedDates.length > 0);
       if (state.selectedDates.length > 0) {
         var sortedForText = [...state.selectedDates].sort((a,b) => a.date.localeCompare(b.date));
         var inD = sortedForText[0].date;
@@ -724,13 +743,23 @@
     if (!els.extrasContainer) return;
 
     els.extrasContainer.innerHTML = '';
+    var disclosure = els.extrasContainer.closest('.booking-extras-disclosure');
+    var cabinAmenities = Array.isArray(state.amenities[state.selectedCabinId])
+      ? state.amenities[state.selectedCabinId]
+      : [];
+    var allowedServices = new Set(cabinAmenities.map(function(value) {
+      return String(value || '').trim();
+    }).filter(Boolean));
 
     var availableServices = state.extraServices.filter(function(service) {
-      return service.is_active !== false && service.status !== 'Скрыта' && service.status !== 'hidden';
+      var isVisible = service.is_active !== false && service.status !== 'Скрыта' && service.status !== 'hidden';
+      var isAssigned = allowedServices.has(String(service.id || '').trim()) ||
+        allowedServices.has(String(service.name || '').trim());
+      return isVisible && isAssigned;
     });
 
+    if (disclosure) disclosure.hidden = availableServices.length === 0;
     if (availableServices.length === 0) {
-      els.extrasContainer.innerHTML = '<p style="color: var(--muted-2); font-size: 13px;">Дополнительные услуги пока не добавлены</p>';
       return;
     }
 
@@ -856,6 +885,7 @@
           
           if (els.quickCheckIn) els.quickCheckIn.value = checkIn || '';
           if (els.quickCheckOut) els.quickCheckOut.value = checkOut || '';
+          scrollToCheckoutAfterDateSelection(checkIn, checkOut);
         }
       });
     }
@@ -1272,7 +1302,7 @@
             var map = new ymapsApi.Map(mapc, {
               center: coords,
               zoom: 14,
-              controls: ['zoomControl', 'fullscreenControl', 'routePanelControl']
+              controls: ['zoomControl', 'fullscreenControl']
             });
             var placemark = new ymapsApi.Placemark(coords, {
               balloonContent: 'Мы здесь!'

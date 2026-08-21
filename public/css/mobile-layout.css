@@ -148,6 +148,14 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
+  .checkout-card { scroll-margin-top: 76px; }
+  #checkoutDatesInfo.has-dates {
+    color: var(--gold) !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+    letter-spacing: .01em;
+  }
   .feature-image { display: none !important; }
   .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
   .calendar-layout { grid-template-columns: 1fr !important; }
