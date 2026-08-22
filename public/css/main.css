@@ -1613,12 +1613,12 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
     font-size: 15px;
     letter-spacing: 0;
   }
-  .chat-header span {
+  .chat-header > span {
     display: inline-flex;
     align-items: center;
     gap: 9px;
   }
-  .chat-header span::before {
+  .chat-header > span::before {
     content: "";
     width: 9px;
     height: 9px;
@@ -1857,7 +1857,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
     border-radius: 11px;
   }
 
-  .chat-header span::before {
+  .chat-header > span::before {
     width: 7px;
     height: 7px;
     box-shadow: 0 0 0 4px rgba(var(--gold-rgb), .10);
@@ -2016,7 +2016,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
   }
 }
 
-.chat-header span::before {
+.chat-header > span::before {
   animation: contact-dot-pulse 1.8s ease-out infinite;
 }
 
@@ -2024,7 +2024,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chat-header span::before,
+  .chat-header > span::before,
   .chat-widget:has(.chat-body[style*="none"]) {
     animation: none !important;
   }
@@ -2438,7 +2438,7 @@ body .chat-widget:has(.chat-body[style*="none"]) .chat-header {
 }
 
 /* Hide text in FAB */
-body .chat-widget:has(.chat-body[style*="none"]) .chat-header span {
+body .chat-widget:has(.chat-body[style*="none"]) .chat-header > span {
   display: none !important;
 }
 
