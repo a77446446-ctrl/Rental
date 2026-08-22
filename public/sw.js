@@ -1,11 +1,11 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v51';
+const CACHE_VERSION = 'eco-gorniy-pwa-v52';
 const STATIC_CACHE = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
   '/icons/icon-192.png',
   '/css/main.css?v=20260821-1',
-  '/css/mobile-app.css?v=20260822-2',
+  '/css/mobile-app.css?v=20260822-3',
   '/css/mobile-layout.css?v=20260821-4',
   '/js/api.js?v=20260821-1',
   '/js/pwa.js?v=20260811-2',

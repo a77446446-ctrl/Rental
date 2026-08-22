@@ -106,6 +106,8 @@ test('иконка чата центрирована отдельно от ко�
   assert.ok(chat.includes('var step = 360 / characters.length'));
   assert.ok(css.includes('--chat-ring-offset: -31px'));
   assert.ok(css.includes('translateY(var(--chat-ring-offset))'));
+  assert.match(css, /chat-widget\.chat-widget\[data-state="closed"\] \.chat-header \{[\s\S]*?position: absolute !important;[\s\S]*?inset: 0 !important;/);
+  assert.match(css, /chat-widget\.chat-widget\[data-state="closed"\] #chat-toggle \{[\s\S]*?position: absolute !important;[\s\S]*?inset: 0 !important;/);
   assert.ok(css.includes('animation: eco-chat-glyph-pulse 2.4s'));
   assert.ok(!chat.includes('<textPath'));
   assert.ok(css.includes('.chat-glyph::before'));

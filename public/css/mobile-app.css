@@ -231,11 +231,20 @@ html body .chat-widget.chat-widget[data-state="open"] .chat-body { display: flex
   html body .chat-widget.chat-widget[data-state="open"] { animation: none !important; }
 }
 
-/* Текст и иконка используют один центр и геометрию самой кнопки. */
+/* Текст, иконка и цветной круг используют единый центр FAB. */
 html body .chat-widget.chat-widget[data-state="closed"] {
   --chat-ring-offset: -34px;
 }
+html body .chat-widget.chat-widget[data-state="closed"] .chat-header {
+  position: absolute !important;
+  inset: 0 !important;
+  box-sizing: border-box !important;
+}
 html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle {
+  position: absolute !important;
+  inset: 0 !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
   overflow: visible !important;
   isolation: isolate;
 }
