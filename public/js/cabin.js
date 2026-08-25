@@ -157,8 +157,12 @@ function renderCabinDetails(cabin, cabinAmenities, houseItems) {
   const mainImg = (cabin.images && cabin.images.length > 0) 
     ? cabin.images.find(img => img.category === 'main') || cabin.images[0] 
     : null;
-  const heroImageStyle = mainImg && mainImg.url
-    ? `background-image: url('${mainImg.url}');`
+  const mainImageUrl = mainImg && mainImg.url
+    ? (window.EcoMedia ? window.EcoMedia.url(mainImg.url) : mainImg.url)
+    : '';
+  const encodedMainUrl = mainImageUrl ? encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29') : '';
+  const heroImageStyle = encodedMainUrl
+    ? `background-image: url('${encodedMainUrl}');`
     : 'background-image: linear-gradient(180deg, rgba(237,228,214,.08), rgba(18,15,13,.86));';
 
   allImages = cabin.images || [];
@@ -291,9 +295,11 @@ document.getElementById('galleryNextBtn').addEventListener('click', () => {
 
 function renderGalleryImage() {
   const img = allImages[currentImageIndex];
+  const imgUrlRaw = window.EcoMedia ? window.EcoMedia.url(img.url) : img.url;
+  const imgUrl = encodeURI(String(imgUrlRaw)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29');
   galleryModalCount.textContent = `${currentImageIndex + 1} / ${allImages.length}`;
   galleryModalBody.innerHTML = `
-    <div style="position: absolute; inset: 0; background-image: url('${img.url}'); background-size: cover; background-position: center; filter: blur(40px) brightness(0.3); z-index: 1;"></div>
-    <img src="${img.url}" style="max-width: 90%; max-height: 90vh; object-fit: contain; position: relative; z-index: 2; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+    <div style="position: absolute; inset: 0; background-image: url('${imgUrl}'); background-size: cover; background-position: center; filter: blur(40px) brightness(0.3); z-index: 1;"></div>
+    <img src="${imgUrl}" style="max-width: 90%; max-height: 90vh; object-fit: contain; position: relative; z-index: 2; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
   `;
 }
