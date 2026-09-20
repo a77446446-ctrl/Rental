@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const capacityField = document.getElementById('cabinCapacity');
   const priceField = document.getElementById('cabinBasePrice');
   const statusField = document.getElementById('cabinStatus');
+  const allowPetsField = document.getElementById('cabinAllowPets');
   const externalCalendarList = document.getElementById('externalCalendarList');
   const addExternalCalendarBtn = document.getElementById('addExternalCalendarBtn');
   const syncExternalCalendarsBtn = document.getElementById('syncExternalCalendarsBtn');
@@ -175,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
       capacityField.value = c.capacity;
       priceField.value = c.base_price;
       statusField.value = c.status;
+      allowPetsField.checked = c.allow_pets || false;
       currentCabinImages = JSON.parse(JSON.stringify(c.images || []));
       currentExternalCalendars = JSON.parse(JSON.stringify(c.external_calendars || []));
       deleteCabinBtn.style.display = 'block';
@@ -207,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       capacityField.value = 2;
       priceField.value = 5000;
       statusField.value = 'active';
+      allowPetsField.checked = false;
       currentCabinImages = [];
       currentExternalCalendars = [];
       deleteCabinBtn.style.display = 'none';
@@ -474,6 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity: parseInt(capacityField.value),
       base_price: parseInt(priceField.value),
       status: statusField.value,
+      allow_pets: allowPetsField.checked,
       imagesLength: currentCabinImages.length,
       imagesUrls: currentCabinImages.map(img => img.url).join(','),
       amenities: selectedAmenities.join(','),

@@ -442,6 +442,18 @@
       await calendar.setCabin(cabin.id, cabin.name, cabin.base_price);
     }
     
+    var petsContainer = document.getElementById('checkoutPetsContainer');
+    var petsCheckbox = document.getElementById('checkoutWithPets');
+    if (petsContainer && petsCheckbox) {
+      if (cabin && cabin.allow_pets) {
+        petsContainer.style.display = 'flex';
+        petsCheckbox.checked = false;
+      } else {
+        petsContainer.style.display = 'none';
+        petsCheckbox.checked = false;
+      }
+    }
+    
     renderExtraServices();
     updateCheckoutSummary();
   }
@@ -1046,6 +1058,7 @@
           guest_phone: guestPhoneInput.value.trim(),
           guest_telegram: document.getElementById('guestTelegram').value.trim(),
           guests_count: Number(guestCount) || 2,
+          with_pets: document.getElementById('checkoutWithPets') ? document.getElementById('checkoutWithPets').checked : false,
           comment: commentField,
           total_price: state.currentCalc ? state.currentCalc.total_price : 0,
           extras: selectedExtras,

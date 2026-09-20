@@ -75,20 +75,26 @@ async function sendBookingNotification(bookingData) {
     totalPrice,
     guestName,
     guestPhone,
-    guestTelegram
+    guestTelegram,
+    guestsCount,
+    withPets,
+    comment
   } = bookingData;
 
+  const petText = withPets ? ' (+ питомец)' : '';
   const text = `
 🌲 <b>Новое бронирование!</b>
 
 <b>Домик:</b> ${cabinName}
 <b>Даты:</b> ${formatDateRu(checkIn)} — ${formatDateRu(checkOut)}
+<b>Гостей:</b> ${guestsCount}${petText}
 <b>Ночей:</b> ${nightsCount}
 <b>Сумма:</b> ${totalPrice} ₽
 
 <b>Гость:</b> ${guestName}
 <b>Телефон:</b> ${guestPhone}
 <b>Telegram:</b> ${guestTelegram ? '@' + guestTelegram.replace('@', '') : 'не указан'}
+${comment ? '\n<b>Комментарий:</b> ' + String(comment).replace(/</g, '&lt;').replace(/>/g, '&gt;') : ''}
   `.trim();
 
   const adminUrl = new URL('/admin/bookings.html', config.baseUrl).toString();

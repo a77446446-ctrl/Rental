@@ -14,6 +14,7 @@ async function createBooking(input) {
     guest_phone: cleanText(input.guest_phone, { field: 'Телефон', required: true, max: 30 }),
     guest_telegram: cleanText(input.guest_telegram, { field: 'Telegram / МАКС', max: 100 }),
     comment: cleanText(input.comment, { field: 'Комментарий', max: 4000 }),
+    with_pets: Boolean(input.with_pets),
   };
 
   const pricing = await calculateBookingTotal({
@@ -70,6 +71,7 @@ async function createBooking(input) {
     check_in_date: data.check_in + " 00:00:00.000Z",
     check_out_date: data.check_out + " 00:00:00.000Z",
     guests_count: pricing.guestsCount,
+    with_pets: data.with_pets,
     comment: data.comment || null,
     total_price: pricing.totalPrice,
     status: 'pending',
@@ -95,6 +97,8 @@ async function createBooking(input) {
     guestName: data.guest_name,
     guestPhone: data.guest_phone,
     guestTelegram: data.guest_telegram,
+    guestsCount: pricing.guestsCount,
+    withPets: data.with_pets,
     comment: data.comment ? data.comment.replace(/<!--CHAT_TOKEN:.*?-->/gi, '').trim() : '',
     chatToken: chatToken,
   };

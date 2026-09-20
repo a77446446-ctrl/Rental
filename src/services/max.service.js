@@ -246,6 +246,8 @@ async function sendBookingNotification(bookingData) {
     guestName,
     guestPhone,
     guestTelegram,
+    guestsCount,
+    withPets,
     comment,
     chatToken
   } = bookingData;
@@ -257,12 +259,15 @@ async function sendBookingNotification(bookingData) {
   if (comment) {
     commentLine = '📝 Комментарий: ' + comment;
   }
+  
+  const petText = withPets ? ' (+ питомец)' : '';
 
   const text = `
 🌲 Новое бронирование!
 
 🏡 Домик: ${cabinName}
 📅 Даты: ${formatDateRu(checkIn)} — ${formatDateRu(checkOut)}
+👥 Гостей: ${guestsCount}${petText}
 🌙 Ночей: ${nightsCount}
 💰 Сумма: ${totalPrice} ₽
 

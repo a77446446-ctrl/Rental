@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Публичные API-маршруты.
  * Доступны без авторизации. Возвращают данные для фронтенда.
  *
@@ -693,6 +693,7 @@ router.post('/bookings', async (req, res) => {
       guest_telegram,
       comment: finalComment,
       guests_count: normalizedGuestsCount,
+      with_pets: Boolean(req.body.with_pets),
       extras: Array.isArray(extras) ? extras : []
     });
 
@@ -706,7 +707,15 @@ router.post('/bookings', async (req, res) => {
         };
         const fCheckIn = formatD(check_in);
         const fCheckOut = formatD(check_out);
-        const msg = `Ваша заявка на бронирование домика «${cabinData.name}» успешно создана!\n\nДаты: ${fCheckIn} — ${fCheckOut}\nКоличество гостей: ${normalizedGuestsCount}\nИтоговая стоимость: ${booking.total_price} ₽\n\n---\n\nНаш администратор свяжется с вами в ближайшее время для подтверждения.\n\nЕсли в течение 10 минут с вами не связались, попробуйте перезвонить по номеру, указанному в контактах.`;
+        let msg = `Ваша заявка на бронирование домика «${cabinData.name}» успешно создана!\n\nДаты: ${fCheckIn} — ${fCheckOut}\nКоличество гостей: ${normalizedGuestsCount}`;
+        if (req.body.with_pets) {
+          msg += ' (+ питомец)';
+        }
+        msg += `\nИтоговая стоимость: ${booking.total_price} ₽\n`;
+        if (comment) {
+          msg += `\nВаш комментарий:\n${comment}\n`;
+        }
+        msg += `\n---\n\nНаш администратор свяжется с вами в ближайшее время для подтверждения.\n\nЕсли в течение 10 минут с вами не связались, попробуйте перезвонить по номеру, указанному в контактах.`;
         await chatService.saveMessage(chat_token, msg, 'admin');
       } catch (err) {
         console.error('[public.routes] Ошибка отправки сообщения в чат:', err);

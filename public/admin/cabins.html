@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -290,14 +290,28 @@
           <textarea id="cabinDescription" rows="4"></textarea>
         </div>
         
-        <div class="cabin-numbers-grid">
+        <div class="responsive-grid-2">
           <div class="form-group">
-            <label>Вместимость (гостей)</label>
-            <input type="number" id="cabinCapacity" min="1" max="10">
+            <label>Вместимость (чел.)</label>
+            <input type="number" id="cabinCapacity" min="1" max="20" required>
           </div>
           <div class="form-group">
-            <label>Базовая цена (₽)</label>
-            <input type="number" id="cabinBasePrice" min="0" step="500">
+            <label>Базовая цена (₽/сутки)</label>
+            <input type="number" id="cabinBasePrice" min="0" step="100" required>
+          </div>
+          <div class="form-group">
+            <label>Статус на сайте</label>
+            <select id="cabinStatus">
+              <option value="active">Активен (доступен для бронирования)</option>
+              <option value="maintenance">Обслуживание (бронь закрыта)</option>
+              <option value="hidden">Скрыт (не отображается)</option>
+            </select>
+          </div>
+          <div class="form-group" style="justify-content: center;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 24px;">
+              <input type="checkbox" id="cabinAllowPets" style="width: 18px; height: 18px;">
+              Разрешено с питомцами
+            </label>
           </div>
         </div>
         
@@ -336,14 +350,7 @@
           <div class="external-calendar-status" id="externalCalendarStatus">Avito, Суточно, Островок, Яндекс.Путешествия или другой iCal URL.</div>
         </div>
 
-        <div class="form-group">
-          <label>Статус</label>
-          <select id="cabinStatus">
-            <option value="active">Активен (Сдается)</option>
-            <option value="maintenance">Ремонт / Обслуживание</option>
-            <option value="inactive">Скрыт</option>
-          </select>
-        </div>
+
       </div>
       <div class="modal-footer">
         <div>
