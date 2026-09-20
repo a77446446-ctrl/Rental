@@ -161,8 +161,17 @@ async function uploadFileToPB(fileBuffer, mimeType, extension) {
   formData.append('file', blob, filename);
 
   const record = await pbAdmin.collection('media').create(formData);
+  const fullUrl = pbAdmin.files.getUrl(record, record.file);
+  const { config } = require('../config/env');
+  let publicUrl = fullUrl;
+  try {
+    const parsed = new URL(fullUrl);
+    const base = (config.baseUrl || 'http://localhost:3000').replace(/\/$/, '');
+    publicUrl = base + parsed.pathname + parsed.search;
+  } catch (e) {}
+
   return {
-    url: pbAdmin.files.getUrl(record, record.file),
+    url: publicUrl,
     path: record.id // В PocketBase храним ID записи как путь
   };
 }
