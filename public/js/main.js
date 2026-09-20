@@ -1984,4 +1984,41 @@
   // Запуск
   init();
 
+  // Подсказка горизонтального скролла на мобильных устройствах
+  if ('IntersectionObserver' in window && window.innerWidth <= 768) {
+    const scrollHintObserver = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          const grid = entry.target;
+          observer.unobserve(grid);
+          
+          if (grid.scrollLeft > 10) return;
+
+          setTimeout(function() {
+            if (grid.scrollLeft > 10) return;
+            
+            const originalSnap = grid.style.scrollSnapType;
+            grid.style.scrollSnapType = 'none';
+            
+            grid.scrollBy({ left: 60, behavior: 'smooth' });
+            
+            setTimeout(function() {
+              grid.scrollBy({ left: -60, behavior: 'smooth' });
+              
+              setTimeout(function() {
+                grid.style.scrollSnapType = originalSnap;
+              }, 400);
+            }, 400);
+          }, 800);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    const housesGrid = document.getElementById('houses-grid');
+    if (housesGrid) scrollHintObserver.observe(housesGrid);
+    
+    const reviewsGrid = document.getElementById('reviews-grid');
+    if (reviewsGrid) scrollHintObserver.observe(reviewsGrid);
+  }
+
 })();
