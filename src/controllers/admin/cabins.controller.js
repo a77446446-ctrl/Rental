@@ -1,4 +1,4 @@
-﻿const { pbAdmin } = require('../../config/pocketbase');
+const { pbAdmin } = require('../../config/pocketbase');
 const externalCalendarService = require('../../services/externalCalendar.service');
 const storageService = require('../../services/storage.service');
 const cabinMetadataService = require('../../services/cabinMetadata.service');
@@ -85,6 +85,7 @@ exports.saveFull = async (req, res) => {
       base_price: Number.parseInt(body.base_price, 10) || 0,
       capacity: Number.parseInt(body.capacity, 10) || 1,
       is_active: body.status === 'active',
+      allow_pets: body.allow_pets === true,
       images: normalizedImages,
       amenities: selectedAmenities,
       tags: selectedTags
@@ -127,7 +128,7 @@ exports.saveFull = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { name, description, base_price, capacity, status, images, image_url } = req.body;
+    const { name, description, base_price, capacity, status, allow_pets, images, image_url } = req.body;
     
     const ru = 'а б в г д е ё ж з и й к л м н о п р с т у ф х ц ч ш щ ъ ы ь э ю я'.split(' ');
     const en = 'a b v g d e e zh z i y k l m n o p r s t u f h ts ch sh shch  y  e yu ya'.split(' ');
@@ -146,7 +147,7 @@ exports.create = async (req, res) => {
     const is_active = (status === 'active');
 
     const data = await pbAdmin.collection('cabins').create({
-      name, slug, description, base_price, capacity, is_active, images: imagesData
+      name, slug, description, base_price, capacity, is_active, allow_pets: allow_pets === true, images: imagesData
     });
 
     data.images = Array.isArray(data.images) ? data.images : [];
@@ -162,7 +163,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, base_price, capacity, status, images, image_url } = req.body;
+    const { name, description, base_price, capacity, status, allow_pets, images, image_url } = req.body;
 
     let previousCabin;
     try {
@@ -180,7 +181,7 @@ exports.update = async (req, res) => {
     const is_active = (status === 'active');
 
     const data = await pbAdmin.collection('cabins').update(id, {
-      name, description, base_price, capacity, is_active, images: normalizedImages
+      name, description, base_price, capacity, is_active, allow_pets: allow_pets === true, images: normalizedImages
     });
 
     await cleanupRemovedImages(parseStoredImages(previousCabin), normalizedImages);

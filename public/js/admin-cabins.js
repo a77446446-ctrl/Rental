@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Логика управления домиками (Admin Cabins)
  */
 
@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Отслеживание изменений формы для блокировки кнопки "Сохранить"
   let initialFormData = {};
-  const formInputs = [nameField, descField, capacityField, priceField, statusField];
+  const formInputs = [nameField, descField, capacityField, priceField, statusField, allowPetsField];
 
   function getFormData() {
     const selectedAmenities = Array.from(document.querySelectorAll('#cabinAmenitiesGrid input[type="checkbox"]:checked')).map(cb => cb.value);
