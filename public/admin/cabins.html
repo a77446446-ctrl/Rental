@@ -291,12 +291,12 @@
         </div>
         
         <div class="responsive-grid-2">
-          <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div>
+          <div class="form-group" style="display: flex; flex-wrap: wrap; gap: 16px;">
+            <div style="flex: 1 1 130px;">
               <label>Включено гостей (чел.)</label>
               <input type="number" id="cabinBaseGuests" min="1" placeholder="2">
             </div>
-            <div>
+            <div style="flex: 1 1 130px;">
               <label>За доп. гостя (₽/сут)</label>
               <input type="number" id="cabinExtraGuestPrice" min="0" placeholder="1000">
             </div>
@@ -334,12 +334,12 @@
                 <input type="checkbox" id="cabinPetCat" value="cat"> Кошки
               </label>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px;">
               <div>
                 <label style="font-size: 13px; color: var(--muted);">Доплата за питомца (₽)</label>
                 <input type="number" id="cabinPetPrice" min="0" placeholder="0 (бесплатно)">
               </div>
-              <div>
+              <div style="flex: 1 1 130px;">
                 <label style="font-size: 13px; color: var(--muted);">Тип доплаты</label>
                 <select id="cabinPetPriceType">
                   <option value="per_night">За сутки</option>
@@ -352,7 +352,7 @@
         
         <div class="form-group">
           <label>Что есть в объекте</label>
-          <div class="amenities-grid" id="cabinAmenitiesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+          <div class="amenities-grid" id="cabinAmenitiesGrid" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
             <!-- Будут загружены динамически -->
           </div>
         </div>

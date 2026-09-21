@@ -350,21 +350,22 @@
         rentSum += state.selectedDates[i].price;
       }
     } else {
-      var cabin = state.cabins.find(function(c) { return c.id === state.selectedCabinId; });
-      if (cabin) {
-        rentSum = cabin.base_price * 2;
-      }
+      // If no dates selected, price should be 0 or wait for dates
+      rentSum = 0;
     }
 
     var extrasSum = 0;
+    var extrasBreakdown = [];
     if (cabin) {
-      var nights = state.selectedDates.length > 0 ? state.selectedDates.length : 2;
+      var nights = state.selectedDates.length;
       var guests = parseInt(els.checkoutGuests.value) || 2;
       var baseGuests = cabin.base_guests || cabin.capacity || 1;
       var extraGuestPrice = cabin.extra_guest_price || 0;
-      if (guests > baseGuests) {
+      if (nights > 0 && guests > baseGuests && extraGuestPrice > 0) {
         var extraGuests = guests - baseGuests;
-        extrasSum += extraGuests * extraGuestPrice * nights;
+        var guestTotal = extraGuests * extraGuestPrice * nights;
+        extrasSum += guestTotal;
+        extrasBreakdown.push(`${extraGuests} доп. гостя/ей (${nights} ноч.): ${guestTotal} ₽`);
       }
       var withPets = document.getElementById('checkoutWithPets') ? document.getElementById('checkoutWithPets').checked : false;
       if (withPets) {
@@ -372,26 +373,40 @@
         var catChecked = document.getElementById('checkoutPetCat') ? document.getElementById('checkoutPetCat').checked : false;
         if (dogChecked || catChecked) {
           var petPrice = cabin.pet_price || 0;
-          if (cabin.pet_price_type === 'per_stay') {
-            extrasSum += petPrice;
-          } else {
-            extrasSum += petPrice * nights;
+          if (petPrice > 0 && nights > 0) {
+            var totalPetPrice = (cabin.pet_price_type === 'per_stay') ? petPrice : (petPrice * nights);
+            extrasSum += totalPetPrice;
+            extrasBreakdown.push(`Питомцы: ${totalPetPrice} ₽`);
           }
         }
       }
-    }
+      }
     var checkboxes = document.querySelectorAll('.extra-checkbox');
     var selectedExtras = [];
     checkboxes.forEach(function (cb) {
       if (cb.checked) {
-        extrasSum += Number(cb.value);
+        var price = Number(cb.value);
+        extrasSum += price;
         selectedExtras.push(cb.dataset.id);
+        var label = cb.closest('label').querySelector('.extra-title').textContent;
+        extrasBreakdown.push(`${label}: ${price} ₽`);
       }
     });
 
     els.rentTotal.textContent = EcoApi.formatPrice(rentSum);
     els.extrasTotal.textContent = EcoApi.formatPrice(extrasSum);
     els.grandTotal.textContent = EcoApi.formatPrice(rentSum + extrasSum);
+    
+    var breakdownEl = document.getElementById('extras-breakdown');
+    if (breakdownEl) {
+      if (extrasBreakdown.length > 0) {
+        breakdownEl.innerHTML = extrasBreakdown.join('<br>');
+        breakdownEl.style.display = 'block';
+      } else {
+        breakdownEl.style.display = 'none';
+        breakdownEl.innerHTML = '';
+      }
+    }
 
     // Обновляем текст заезда/выезда на странице
     if (els.checkoutDatesInfo) {
@@ -437,18 +452,41 @@
   /**
    * Обновляет "Быстрый подбор"
    */
+  
+  if (els.quickGuests) els.quickGuests.addEventListener('change', updateQuickTotal);
+  if (els.quickHouse) els.quickHouse.addEventListener('change', function() { selectCabin(this.value); });
+  if (els.quickCheckIn) els.quickCheckIn.addEventListener('change', updateQuickTotal);
+  if (els.quickCheckOut) els.quickCheckOut.addEventListener('change', updateQuickTotal);
+
   function updateQuickTotal() {
     var cabinId = els.quickHouse.value;
-    if (!cabinId) {
+    var checkIn = els.quickCheckIn ? els.quickCheckIn.value : null;
+    var checkOut = els.quickCheckOut ? els.quickCheckOut.value : null;
+    
+    if (!cabinId || !checkIn || !checkOut) {
       els.quickTotal.textContent = '—';
       return;
     }
-    var cabin = state.cabins.find(function(c) { return c.id === cabinId; });
+    var cabin = state.cabins.find(function(c) { return c.c_id === cabinId || c.id === cabinId; });
     if (cabin) {
-      // Предварительно за 2 ночи
-      els.quickTotal.textContent = EcoApi.formatPrice(cabin.base_price * 2);
+      // Calculate nights
+      var d1 = new Date(checkIn);
+      var d2 = new Date(checkOut);
+      var nights = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+      if (nights <= 0 || isNaN(nights)) nights = 0;
+      
+      var rentSum = cabin.base_price * nights;
+      // Add extra guests
+      var guests = parseInt(els.quickGuests ? els.quickGuests.value : 2);
+      var baseGuests = cabin.base_guests || cabin.capacity || 1;
+      var extraGuestPrice = cabin.extra_guest_price || 0;
+      if (guests > baseGuests && extraGuestPrice > 0 && nights > 0) {
+        rentSum += (guests - baseGuests) * extraGuestPrice * nights;
+      }
+      
+      els.quickTotal.textContent = nights > 0 ? EcoApi.formatPrice(rentSum) : '—';
     } else {
-      els.quickTotal.textContent = '0 ₽';
+      els.quickTotal.textContent = '—';
     }
   }
 
@@ -493,6 +531,40 @@
     }
     
     renderExtraServices();
+    
+    var petsContainer = document.getElementById('checkoutPetsContainer');
+    var withPetsCb = document.getElementById('checkoutWithPets');
+    var dogLabel = document.getElementById('checkoutPetDogLabel');
+    var catLabel = document.getElementById('checkoutPetCatLabel');
+    var petTypesCont = document.getElementById('checkoutPetTypesContainer');
+    if (petsContainer) {
+      if (cabin.allow_pets) {
+        petsContainer.style.display = 'flex';
+        var allowed = cabin.allowed_pet_types || [];
+        var allowDog = allowed.includes('dog');
+        var allowCat = allowed.includes('cat');
+        
+        // If neither is explicitly allowed in JSON, maybe it's legacy where allow_pets=true meant both?
+        // Let's assume if it's empty, we show both, OR if user selected them, we show what they selected.
+        if (allowed.length === 0) { allowDog = true; allowCat = true; }
+        
+        if(dogLabel) dogLabel.style.display = allowDog ? 'flex' : 'none';
+        if(catLabel) catLabel.style.display = allowCat ? 'flex' : 'none';
+        
+        if (withPetsCb && !withPetsCb.checked && petTypesCont) {
+          petTypesCont.style.display = 'none';
+        }
+      } else {
+        petsContainer.style.display = 'none';
+        if(withPetsCb) withPetsCb.checked = false;
+        if(petTypesCont) petTypesCont.style.display = 'none';
+        var dCb = document.getElementById('checkoutPetDog');
+        var cCb = document.getElementById('checkoutPetCat');
+        if(dCb) dCb.checked = false;
+        if(cCb) cCb.checked = false;
+      }
+    }
+
     updateCheckoutSummary();
   }
 
@@ -1000,6 +1072,28 @@
         input.removeAttribute('aria-describedby');
       }
     }
+
+    const petCheckbox = document.getElementById('checkoutWithPets');
+    if (petCheckbox) {
+      petCheckbox.addEventListener('change', function() {
+        const typesContainer = document.getElementById('checkoutPetTypesContainer');
+        if (typesContainer) {
+          typesContainer.style.display = this.checked ? 'flex' : 'none';
+        }
+        if (!this.checked) {
+          const dog = document.getElementById('checkoutPetDog');
+          const cat = document.getElementById('checkoutPetCat');
+          if(dog) dog.checked = false;
+          if(cat) cat.checked = false;
+        }
+        updateCheckoutSummary();
+      });
+    }
+    const dogCb = document.getElementById('checkoutPetDog');
+    const catCb = document.getElementById('checkoutPetCat');
+    if(dogCb) dogCb.addEventListener('change', updateCheckoutSummary);
+    if(catCb) catCb.addEventListener('change', updateCheckoutSummary);
+
 
     function showBookingFieldError(input, message) {
       if (input == null) return;
