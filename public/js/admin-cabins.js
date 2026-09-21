@@ -190,6 +190,14 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
       priceField.value = c.base_price;
       statusField.value = c.status;
       allowPetsField.checked = c.allow_pets || false;
+      if(petDogField) petDogField.checked = Array.isArray(c.allowed_pet_types) && c.allowed_pet_types.includes('dog');
+      if(petCatField) petCatField.checked = Array.isArray(c.allowed_pet_types) && c.allowed_pet_types.includes('cat');
+      if(petPriceField) petPriceField.value = c.pet_price || '';
+      if(petPriceTypeField) petPriceTypeField.value = c.pet_price_type || 'per_night';
+      if(baseGuestsField) baseGuestsField.value = c.base_guests || c.capacity || '';
+      if(extraGuestPriceField) extraGuestPriceField.value = c.extra_guest_price || '';
+      const petOptions = document.getElementById('admin-pet-options');
+      if(petOptions) petOptions.style.display = c.allow_pets ? 'block' : 'none';
       currentCabinImages = JSON.parse(JSON.stringify(c.images || []));
       currentExternalCalendars = JSON.parse(JSON.stringify(c.external_calendars || []));
       deleteCabinBtn.style.display = 'block';
@@ -479,7 +487,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
 
   // Отслеживание изменений формы для блокировки кнопки "Сохранить"
   let initialFormData = {};
-  const formInputs = [nameField, descField, capacityField, priceField, statusField, allowPetsField];
+  const formInputs = [nameField, descField, capacityField, priceField, statusField, allowPetsField, petDogField, petCatField, petPriceField, petPriceTypeField, baseGuestsField, extraGuestPriceField].filter(Boolean);
 
   function getFormData() {
     const selectedAmenities = Array.from(document.querySelectorAll('#cabinAmenitiesGrid input[type="checkbox"]:checked')).map(cb => cb.value);
@@ -490,7 +498,12 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
       capacity: parseInt(capacityField.value),
       base_price: parseInt(priceField.value),
       status: statusField.value,
-      allow_pets: allowPetsField.checked,
+      allow_pets: allowPetsField ? allowPetsField.checked : false,
+      allowed_pet_types: [petDogField?.checked ? 'dog' : null, petCatField?.checked ? 'cat' : null].filter(Boolean),
+      pet_price: petPriceField ? parseInt(petPriceField.value)||0 : 0,
+      pet_price_type: petPriceTypeField ? petPriceTypeField.value : 'per_night',
+      base_guests: baseGuestsField ? parseInt(baseGuestsField.value)||parseInt(capacityField.value)||1 : 1,
+      extra_guest_price: extraGuestPriceField ? parseInt(extraGuestPriceField.value)||0 : 0,
       imagesLength: currentCabinImages.length,
       imagesUrls: currentCabinImages.map(img => img.url).join(','),
       amenities: selectedAmenities.join(','),
