@@ -1161,6 +1161,25 @@
         if (!state.currentCalc) {
           window.showToast('Пожалуйста, выберите даты в календаре', 'error');
           return;
+
+        const withPetsCb = document.getElementById('checkoutWithPets');
+        if (withPetsCb && withPetsCb.checked) {
+          const dogCb = document.getElementById('checkoutPetDog');
+          const catCb = document.getElementById('checkoutPetCat');
+          const hasDog = dogCb && dogCb.checked;
+          const hasCat = catCb && catCb.checked;
+          
+          if (!hasDog && !hasCat) {
+            window.showToast('Пожалуйста, выберите тип питомца (собаку или кошку)', 'error');
+            const typesContainer = document.getElementById('checkoutPetTypesContainer');
+            if (typesContainer) {
+              typesContainer.style.border = '1px solid red';
+              typesContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              setTimeout(() => typesContainer.style.border = '', 2500);
+            }
+            return;
+          }
+        }
         }
 
         var selectedCabinForSubmit = getSelectedCabin();

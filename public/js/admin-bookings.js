@@ -74,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <strong>${safeGuestName}</strong>
                 <small>${safeGuestPhone}</small>
                 ${b.guest_telegram ? `<small>@${safeTelegram}</small>` : ''}
+                <small style="color:var(--gold); margin-top: 4px;">Гостей: ${b.guests_count || 1}</small>
+                ${b.with_pets ? `<small style="color:var(--gold);">С питомцем (${(b.pet_types || []).map(t => t === 'dog' ? 'собака' : (t === 'cat' ? 'кошка' : t)).join(', ') || 'указано'})</small>` : ''}
               </div>
             </td>
             <td data-label="Объект">${safeCabinName}</td>

@@ -170,7 +170,16 @@
           
           document.getElementById('valName').textContent = payload.guest_name;
           document.getElementById('valPhone').textContent = payload.guest_phone;
-          document.getElementById('valGuests').textContent = payload.guests_count || 'Не указано';
+          let guestsText = payload.guests_count || 'Не указано';
+          if (payload.with_pets) {
+            if (payload.pet_types && payload.pet_types.length > 0) {
+              const types = payload.pet_types.map(t => t === 'dog' ? 'собака' : (t === 'cat' ? 'кошка' : t)).join(', ');
+              guestsText += ` (+ питомцы: ${types})`;
+            } else {
+              guestsText += ' (+ питомец)';
+            }
+          }
+          document.getElementById('valGuests').textContent = guestsText;
           document.getElementById('valCheckIn').textContent = window.EcoApi ? EcoApi.formatDateShort(payload.check_in) : payload.check_in;
           document.getElementById('valCheckOut').textContent = window.EcoApi ? EcoApi.formatDateShort(payload.check_out) : payload.check_out;
           document.getElementById('valPrice').textContent = window.EcoApi ? EcoApi.formatPrice(payload.total_price) : (payload.total_price + ' ₽');

@@ -7,9 +7,16 @@ exports.getAll = async (req, res) => {
       expand: 'cabin_id,guest_id',
       sort: '-created'
     });
+
+    let allCabins = [];
+    try {
+      allCabins = await pbAdmin.collection('cabins').getFullList();
+    } catch(e) {}
+    const cabinsMap = {};
+    allCabins.forEach(c => cabinsMap[c.id] = c);
     
     const mappedData = data.map(normalizeBookingRecord).map(b => {
-      const cabin = b.expand?.cabin_id;
+      const cabin = b.expand?.cabin_id || cabinsMap[b.cabin_id];
       const guest = b.expand?.guest_id;
       return {
         ...b,
