@@ -658,18 +658,21 @@
           await selectCabin(cid);
           if (els.quickGuests) setCheckoutGuests(els.quickGuests.value);
           
-          // Если есть выбранные даты в быстром поиске, установим их
           var quickIn = els.quickCheckIn ? els.quickCheckIn.value : null;
           var quickOut = els.quickCheckOut ? els.quickCheckOut.value : null;
           if (quickIn && quickOut && calendar) {
-             // Используем метод календаря, если он есть
              if (typeof calendar.setSelection === 'function') {
-               calendar.setSelection(quickIn, quickOut);
+             calendar.setSelection(quickIn, quickOut);
              }
           }
-
-          // Скролл к календарю
-          document.querySelector('#calendar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          
+          // Force update summary just in case dates were populated
+          updateCheckoutSummary();
+          
+          var calendarEl = document.querySelector('#calendar');
+          if (calendarEl) {
+            calendarEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         });
       });
     // Обработчик селекта быстрого выбора
@@ -806,12 +809,11 @@
             if (quickIn && quickOut && calendar) {
                if (typeof calendar.setSelection === 'function') {
                  calendar.setSelection(quickIn, quickOut);
-                 setTimeout(function() {
-                    calendar.setSelection(quickIn, quickOut);
-                    updateCheckoutSummary();
-                 }, 300); // safety fallback after availability loads
                }
             }
+            
+            // Force update summary just in case dates were populated
+            updateCheckoutSummary();
             
             var calendarEl = document.querySelector('#calendar');
             if (calendarEl) {
@@ -1067,6 +1069,7 @@
         var next = parseInt(els.checkoutGuests.value, 10) || 2;
         next += btn.dataset.action === 'increase' ? 1 : -1;
         setCheckoutGuests(next);
+        updateCheckoutSummary();
       });
     }
 
