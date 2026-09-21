@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('closeModalBtn');
   const cancelModalBtn = document.getElementById('cancelModalBtn');
   const saveCabinBtn = document.getElementById('saveCabinBtn');
+  if(allowPetsField) {
+    allowPetsField.addEventListener('change', (e) => {
+      const petOptions = document.getElementById('admin-pet-options');
+      if(petOptions) petOptions.style.display = e.target.checked ? 'block' : 'none';
+    });
+  }
 
   // Поля формы
   const cabinIdField = document.getElementById('cabinId');
@@ -17,6 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const priceField = document.getElementById('cabinBasePrice');
   const statusField = document.getElementById('cabinStatus');
   const allowPetsField = document.getElementById('cabinAllowPets');
+const petDogField = document.getElementById('cabinPetDog');
+const petCatField = document.getElementById('cabinPetCat');
+const petPriceField = document.getElementById('cabinPetPrice');
+const petPriceTypeField = document.getElementById('cabinPetPriceType');
+const baseGuestsField = document.getElementById('cabinBaseGuests');
+const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
   const externalCalendarList = document.getElementById('externalCalendarList');
   const addExternalCalendarBtn = document.getElementById('addExternalCalendarBtn');
   const syncExternalCalendarsBtn = document.getElementById('syncExternalCalendarsBtn');

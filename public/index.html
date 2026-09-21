@@ -285,22 +285,22 @@
                   <button type="button" class="guest-stepper-btn" data-action="increase" aria-label="Увеличить количество гостей">+</button>
                 </div>
               </div>
-              </div>
-              <div id="checkoutPetsContainer" style="display: none; flex-direction: column; font-size: 0.9em; color: var(--text); margin-top: 10px; gap: 8px;">
-                <div style="display: flex; align-items: center;">
-                  <span style="color: var(--muted); display: inline-block; width: 60px;">Питомцы:</span> 
-                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" id="checkoutWithPets" style="width: 16px; height: 16px;">
-                    Я с питомцем
+              <div id="checkoutPetsContainer" style="display: none; flex-direction: column; font-size: 0.9em; color: var(--text); margin-top: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="color: var(--muted); width: 65px;">Питомцы:</span> 
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; flex-grow: 1;">
+                    <input type="checkbox" id="checkoutWithPets" style="width: 18px; height: 18px; accent-color: #8B5A2B;">
+                    <span>Я с питомцем</span>
                   </label>
                 </div>
-                <div id="checkoutPetTypesContainer" style="display: none; padding-left: 60px; flex-direction: column; gap: 8px;">
-                  <label id="checkoutPetDogLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" id="checkoutPetDog" value="dog" style="width: 16px; height: 16px;">
+                
+                <div id="checkoutPetTypesContainer" style="display: none; padding-left: 77px; flex-direction: column; gap: 10px; margin-top: 12px;">
+                  <label id="checkoutPetDogLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                    <input type="checkbox" id="checkoutPetDog" value="dog" style="width: 16px; height: 16px; accent-color: #8B5A2B;">
                     Собака
                   </label>
-                  <label id="checkoutPetCatLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" id="checkoutPetCat" value="cat" style="width: 16px; height: 16px;">
+                  <label id="checkoutPetCatLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                    <input type="checkbox" id="checkoutPetCat" value="cat" style="width: 16px; height: 16px; accent-color: #8B5A2B;">
                     Кошка
                   </label>
                 </div>
