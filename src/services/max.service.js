@@ -281,7 +281,7 @@ async function sendBookingNotification(bookingData) {
 📅 Даты: ${formatDateRu(checkIn)} — ${formatDateRu(checkOut)}
 👥 Гостей: ${guestsCount}${petText}
 🌙 Ночей: ${nightsCount}
-💰 Сумма: ${totalPrice} ₽
+💰 Сумма: ${totalPrice} ₽${extrasText}
 
 👤 Гость: ${guestName}
 📞 Телефон: ${guestPhone}
