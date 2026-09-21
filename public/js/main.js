@@ -494,14 +494,19 @@
    * Выбор домика
    */
   async function selectCabin(cabinId) {
-    state.selectedCabinId = cabinId;
+    state.selectedCabinId = cabinId || "";
     els.quickHouse.value = cabinId || "";
     updateQuickTotal();
     setCheckoutGuests(els.checkoutGuests ? els.checkoutGuests.value : (els.quickGuests ? els.quickGuests.value : 2));
     
-    var cabin = state.cabins.find(function(c) { return c.id === cabinId; });
-    if (cabin && calendar) {
-      await calendar.setCabin(cabin.id, cabin.name, cabin.base_price);
+    var cabin = cabinId ? state.cabins.find(function(c) { return c.id === cabinId || c.c_id === cabinId; }) : null;
+    if (calendar) {
+      if (cabin) {
+        await calendar.setCabin(cabin.id, cabin.name, cabin.base_price);
+      } else {
+        // If no cabin, just clear it
+        await calendar.setCabin('', 'Домик не выбран', 0);
+      }
     }
     
     var petsContainer = document.getElementById('checkoutPetsContainer');
@@ -683,8 +688,9 @@
           document.querySelector('#calendar').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 300);
       }
-    } else if (state.cabins.length > 0) {
-      await selectCabin(state.cabins[0].id);
+    } else {
+      // By default do NOT select any cabin!
+      await selectCabin('');
     }
   }
 
@@ -790,9 +796,9 @@
 
         // Обработчики кнопок "Выбрать"
         document.querySelectorAll('.select-cabin-btn').forEach(function(btn) {
-          btn.addEventListener('click', function(e) {
+          btn.addEventListener('click', async function(e) {
             var cid = e.target.getAttribute('data-id');
-            selectCabin(cid);
+            await selectCabin(cid);
             if (els.quickGuests) setCheckoutGuests(els.quickGuests.value);
             
             var quickIn = els.quickCheckIn ? els.quickCheckIn.value : null;
@@ -800,10 +806,17 @@
             if (quickIn && quickOut && calendar) {
                if (typeof calendar.setSelection === 'function') {
                  calendar.setSelection(quickIn, quickOut);
+                 setTimeout(function() {
+                    calendar.setSelection(quickIn, quickOut);
+                    updateCheckoutSummary();
+                 }, 300); // safety fallback after availability loads
                }
             }
-
-            document.querySelector('#calendar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            var calendarEl = document.querySelector('#calendar');
+            if (calendarEl) {
+              calendarEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
           });
         });
       }
