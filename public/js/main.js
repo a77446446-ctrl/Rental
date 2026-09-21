@@ -342,7 +342,7 @@
    */
   async function updateCheckoutSummary() {
     var rentSum = 0;
-    // cabin already found
+    var cabin = state.cabins.find(function(c) { return c.id === state.selectedCabinId || c.c_id === state.selectedCabinId; });
     
     // Считаем аренду (сумма по всем выбранным датам) локально для быстрого отображения
     if (state.selectedDates.length > 0) {
@@ -543,7 +543,7 @@
     var catLabel = document.getElementById('checkoutPetCatLabel');
     var petTypesCont = document.getElementById('checkoutPetTypesContainer');
     if (petsContainer) {
-      if (cabin.allow_pets) {
+      if (cabin && cabin.allow_pets) {
         petsContainer.style.display = 'flex';
         var allowed = cabin.allowed_pet_types || [];
         var allowDog = allowed.includes('dog');
