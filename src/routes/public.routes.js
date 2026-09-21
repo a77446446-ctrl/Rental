@@ -694,6 +694,7 @@ router.post('/bookings', async (req, res) => {
       comment: finalComment,
       guests_count: normalizedGuestsCount,
       with_pets: Boolean(req.body.with_pets),
+      pet_types: Array.isArray(req.body.pet_types) ? req.body.pet_types : [],
       extras: Array.isArray(extras) ? extras : []
     });
 

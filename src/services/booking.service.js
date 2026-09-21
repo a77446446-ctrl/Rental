@@ -101,7 +101,7 @@ async function createBooking(input) {
     guestTelegram: data.guest_telegram,
     guestsCount: pricing.guestsCount,
     withPets: data.with_pets,
-    petTypes: input.petTypes,
+    petTypes: input.pet_types,
     extrasSnapshot: pricing.extrasSnapshot,
     comment: data.comment ? data.comment.replace(/<!--CHAT_TOKEN:.*?-->/gi, '').trim() : '',
     chatToken: chatToken,

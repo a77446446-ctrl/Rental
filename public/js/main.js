@@ -318,11 +318,11 @@
 
   /* Экземпляр календаря */
   var calendar = null;
-  var lastMobileCheckoutRange = '';
+  var lastMobileCheckoutRange =
 
   function scrollToCheckoutAfterDateSelection(checkIn, checkOut) {
     if (window.innerWidth > 760 || !checkIn || !checkOut) {
-      if (!checkOut) lastMobileCheckoutRange = '';
+      if (!checkOut) lastMobileCheckoutRange =
       return;
     }
 
@@ -404,7 +404,7 @@
         breakdownEl.style.display = 'block';
       } else {
         breakdownEl.style.display = 'none';
-        breakdownEl.innerHTML = '';
+        breakdownEl.innerHTML =
       }
     }
 
@@ -579,7 +579,7 @@
   async function renderCabins() {
     if (!els.housesGrid) return;
     
-    els.housesGrid.innerHTML = '';
+    els.housesGrid.innerHTML =
     els.quickHouse.innerHTML = '<option value="">Любой домик</option>';
 
     let cabinsToRender = state.currentTagFilter === 'all'
@@ -617,8 +617,8 @@
         : null;
       var mainImageUrl = mainImg && mainImg.url
         ? (window.EcoMedia ? window.EcoMedia.url(mainImg.url) : mainImg.url)
-        : '';
-      var imageStyle = mainImageUrl ? '--img: url(' + encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29') + ');' : '';
+        :
+      var imageStyle = mainImageUrl ? '--img: url(' + encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/(/g, '%28').replace(/)/g, '%29') + ');' :
 
       var article = document.createElement('article');
       article.className = 'house-card';
@@ -704,7 +704,7 @@
     var checkIn = els.quickCheckIn ? els.quickCheckIn.value : null;
     var checkOut = els.quickCheckOut ? els.quickCheckOut.value : null;
     var guests = els.quickGuests ? parseInt(els.quickGuests.value, 10) : 2;
-    var houseId = els.quickHouse ? els.quickHouse.value : '';
+    var houseId = els.quickHouse ? els.quickHouse.value :
 
     var filteredCabins = state.cabins;
 
@@ -763,7 +763,7 @@
 
     // Перерисовываем сетку
     if (els.housesGrid) {
-      els.housesGrid.innerHTML = '';
+      els.housesGrid.innerHTML =
       if (filteredCabins.length === 0) {
         els.housesGrid.innerHTML = '<p style="grid-column: 1/-1; color: var(--muted);">Нет свободных вариантов.</p>';
       } else {
@@ -773,8 +773,8 @@
             : null;
           var mainImageUrl = mainImg && mainImg.url
             ? (window.EcoMedia ? window.EcoMedia.url(mainImg.url) : mainImg.url)
-            : '';
-          var imageStyle = mainImageUrl ? '--img: url(' + encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29') + ');' : '';
+            :
+          var imageStyle = mainImageUrl ? '--img: url(' + encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/(/g, '%28').replace(/)/g, '%29') + ');' :
 
           var article = document.createElement('article');
           article.className = 'house-card';
@@ -865,9 +865,9 @@
   }
 
   function resetQuickSearch() {
-    if (els.quickCheckIn) els.quickCheckIn.value = '';
-    if (els.quickCheckOut) els.quickCheckOut.value = '';
-    if (els.quickHouse) els.quickHouse.value = '';
+    if (els.quickCheckIn) els.quickCheckIn.value =
+    if (els.quickCheckOut) els.quickCheckOut.value =
+    if (els.quickHouse) els.quickHouse.value =
     if (els.quickGuests) els.quickGuests.value = '2';
     if (els.housesSearchResult) els.housesSearchResult.style.display = 'none';
     renderCabins();
@@ -879,7 +879,7 @@
   function renderExtraServices() {
     if (!els.extrasContainer) return;
 
-    els.extrasContainer.innerHTML = '';
+    els.extrasContainer.innerHTML =
     var disclosure = els.extrasContainer.closest('.booking-extras-disclosure');
     var cabinAmenities = Array.isArray(state.amenities[state.selectedCabinId])
       ? state.amenities[state.selectedCabinId]
@@ -1020,9 +1020,7 @@
           state.selectedDates = selectedDates || [];
           updateCheckoutSummary();
           
-          if (els.quickCheckIn) els.quickCheckIn.value = checkIn || '';
-          if (els.quickCheckOut) els.quickCheckOut.value = checkOut || '';
-          scrollToCheckoutAfterDateSelection(checkIn, checkOut);
+                              scrollToCheckoutAfterDateSelection(checkIn, checkOut);
         }
       });
     }
@@ -1285,12 +1283,12 @@
       fgrid.innerHTML = list.map(function(f, index) {
         const hasIcon = !!f.icon;
         const hasImage = !!f.image_url;
-        let iconHtml = '';
+        let iconHtml =
         
         if (hasIcon) {
           iconHtml = '<div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--gold); box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i data-lucide="' + mainpageEscapeHtml(f.icon) + '"></i></div>';
         } else if (hasImage) {
-          iconHtml = '<div style="background-image:url(\'' + mainpageEscapeHtml(mainpageMediaUrl(f.image_url)) + '\');background-size:cover;background-position:center;border-radius:50%;width:48px;height:48px;margin-bottom:16px;"></div>';
+          iconHtml = '<div style="background-image:url('' + mainpageEscapeHtml(mainpageMediaUrl(f.image_url)) + '');background-size:cover;background-position:center;border-radius:50%;width:48px;height:48px;margin-bottom:16px;"></div>';
         } else {
           iconHtml = '<div>' + (index + 1) + '</div>';
         }
@@ -1309,7 +1307,7 @@
 
     const featureImages = realFeatures.map(function(f) { return mainpageMediaUrl(f.image_url); }).filter(Boolean);
     if (container) {
-      container.innerHTML = '';
+      container.innerHTML =
       if (!featureImages.length) {
         container.style.backgroundImage = 'none';
         container.innerHTML = '<div style="height:100%;min-height:260px;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted);border:1px dashed var(--line);border-radius:12px;background:rgba(237,228,214,.025);">Здесь будет главное фото или слайдшоу из изображений преимуществ.</div>';
@@ -1375,7 +1373,7 @@
     }
 
     var fallbackText = String(label || 'ECO Gorniy')
-      .split(/[\s-]+/)
+      .split(/[s-]+/)
       .filter(Boolean)
       .map(function (part) { return part.charAt(0); })
       .join('')
@@ -1565,7 +1563,7 @@
           heroDescEl.textContent = 'Здесь администратор заполняет описание главного экрана: формат отдыха, главные преимущества и атмосферу места.';
         } else {
           let prefixText = (data.logo && data.logo.text) ? data.logo.text : 'Название из админки';
-          suffixText = suffixText.replace(/^[—\-\s]+/, '');
+          suffixText = suffixText.replace(/^[—-s]+/, '');
           heroDescEl.textContent = `${prefixText} — ${suffixText}`;
         }
       }
@@ -1602,7 +1600,7 @@
           aboutDescEl.textContent = 'Здесь администратор заполняет текст о месте: что находится рядом, какой формат отдыха, чем территория отличается от обычной базы.';
         } else {
           let prefixText = (data.logo && data.logo.text) ? data.logo.text : 'Название из админки';
-          suffixText = suffixText.replace(/^[—\-\s]+/, '');
+          suffixText = suffixText.replace(/^[—-s]+/, '');
           aboutDescEl.textContent = `${prefixText} — ${suffixText}`;
         }
       }
@@ -1622,8 +1620,8 @@
         if (!data.about.video_file_url && !data.about.video_url) {
           // Если видео вообще нет, не показываем старую демо-картинку из верстки.
           videoPanel.style.backgroundImage = 'none';
-          videoPanel.style.backgroundSize = '';
-          videoPanel.style.backgroundPosition = '';
+          videoPanel.style.backgroundSize =
+          videoPanel.style.backgroundPosition =
           if (playBtn) playBtn.style.display = 'none';
         } else {
           videoPanel.style.backgroundImage = 'none';
@@ -1661,7 +1659,7 @@
               }, { once: true });
               vid.addEventListener('error', function () {
                 videoPanel.classList.add('media-load-error');
-                if (playBtn) playBtn.style.display = '';
+                if (playBtn) playBtn.style.display =
               }, { once: true });
               
               // Темный фильтр поверх видео
@@ -1690,17 +1688,17 @@
               vid.play().catch(function () {
                 // На устройствах со строгой политикой autoplay оставляем кадр
                 // видео и кнопку для ручного открытия ролика.
-                if (playBtn) playBtn.style.display = '';
+                if (playBtn) playBtn.style.display =
               });
             } else if (data.about.video_url) {
               let vUrl = data.about.video_url;
               const iframeMatch = vUrl.match(/src=["'](.*?)["']/);
               if (iframeMatch && iframeMatch[1]) vUrl = iframeMatch[1];
 
-              const ytMatch = vUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+              const ytMatch = vUrl.match(/^.*(youtu.be/|v/|u/w/|embed/|watch?v=|&v=)([^#&?]*).*/);
               const ytId = (ytMatch && ytMatch[2].length === 11) ? ytMatch[2] : null;
               
-              const vkMatch = vUrl.match(/(?:vkvideo\.ru|vk\.com)\/video([-0-9]+)_([0-9]+)/);
+              const vkMatch = vUrl.match(/(?:vkvideo.ru|vk.com)/video([-0-9]+)_([0-9]+)/);
               
               let finalUrl = vUrl;
               if (ytId) {
@@ -1737,7 +1735,7 @@
               videoPanel.appendChild(overlay);
             }
           } else {
-            if (playBtn) playBtn.style.display = '';
+            if (playBtn) playBtn.style.display =
           }
         }
       }
@@ -1795,11 +1793,11 @@
     if (footerContactLinks) {
       const getHref = (type, val) => {
         if (!val) return '#';
-        if (type === 'phone') return 'tel:' + val.replace(/[^\d+]/g, '');
+        if (type === 'phone') return 'tel:' + val.replace(/[^d+]/g, '');
         if (type === 'email') return 'mailto:' + val;
         if (type === 'whatsapp') {
           if (val.startsWith('http')) return val;
-          return 'https://wa.me/' + val.replace(/[^\d]/g, '');
+          return 'https://wa.me/' + val.replace(/[^d]/g, '');
         }
         if (type === 'telegram') {
           if (val.startsWith('http')) return val;
@@ -1897,7 +1895,7 @@
   function setSplitLeadWords(id, value, fallbackValue, leadCount) {
     const title = document.getElementById(id);
     if (!title) return;
-    const words = String(value || fallbackValue || '').trim().split(/\s+/).filter(Boolean);
+    const words = String(value || fallbackValue || '').trim().split(/s+/).filter(Boolean);
     title.replaceChildren();
     if (!words.length) return;
     const splitAt = Math.min(Math.max(Number(leadCount) || 1, 1), words.length);
@@ -1986,7 +1984,7 @@
   const videoModalBody = document.getElementById('videoModalBody');
 
   function getYoutubeId(url) {
-    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    var regExp = /^.*(youtu.be/|v/|u/w/|embed/|watch?v=|&v=)([^#&?]*).*/;
     var match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   }
@@ -2059,9 +2057,9 @@
 
     closeVideoBtn.addEventListener('click', () => {
       videoModal.classList.remove('open');
-      videoIframe.src = '';
+      videoIframe.src =
       const vid = document.getElementById('modalVideoFile');
-      if (vid) { vid.pause(); vid.src = ''; }
+      if (vid) { vid.pause(); vid.src = }
     });
   }
 
@@ -2109,7 +2107,7 @@
   });
 
   function renderGalleryImages(filterCategory) {
-    galleryModalBody.innerHTML = '';
+    galleryModalBody.innerHTML =
     const imagesToRender = filterCategory === 'all' 
       ? currentGalleryImages 
       : currentGalleryImages.filter(img => img.category === filterCategory);
