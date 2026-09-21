@@ -342,6 +342,7 @@
    */
   async function updateCheckoutSummary() {
     var rentSum = 0;
+    // cabin already found
     
     // Считаем аренду (сумма по всем выбранным датам) локально для быстрого отображения
     if (state.selectedDates.length > 0) {
@@ -356,6 +357,29 @@
     }
 
     var extrasSum = 0;
+    if (cabin) {
+      var nights = state.selectedDates.length > 0 ? state.selectedDates.length : 2;
+      var guests = parseInt(els.checkoutGuests.value) || 2;
+      var baseGuests = cabin.base_guests || cabin.capacity || 1;
+      var extraGuestPrice = cabin.extra_guest_price || 0;
+      if (guests > baseGuests) {
+        var extraGuests = guests - baseGuests;
+        extrasSum += extraGuests * extraGuestPrice * nights;
+      }
+      var withPets = document.getElementById('checkoutWithPets') ? document.getElementById('checkoutWithPets').checked : false;
+      if (withPets) {
+        var dogChecked = document.getElementById('checkoutPetDog') ? document.getElementById('checkoutPetDog').checked : false;
+        var catChecked = document.getElementById('checkoutPetCat') ? document.getElementById('checkoutPetCat').checked : false;
+        if (dogChecked || catChecked) {
+          var petPrice = cabin.pet_price || 0;
+          if (cabin.pet_price_type === 'per_stay') {
+            extrasSum += petPrice;
+          } else {
+            extrasSum += petPrice * nights;
+          }
+        }
+      }
+    }
     var checkboxes = document.querySelectorAll('.extra-checkbox');
     var selectedExtras = [];
     checkboxes.forEach(function (cb) {
@@ -447,9 +471,23 @@
     if (petsContainer && petsCheckbox) {
       if (cabin && cabin.allow_pets) {
         petsContainer.style.display = 'flex';
+        const petTypesContainer = document.getElementById('checkoutPetTypesContainer');
+        const petDogLabel = document.getElementById('checkoutPetDogLabel');
+        const petCatLabel = document.getElementById('checkoutPetCatLabel');
+        if(petTypesContainer) {
+          petTypesContainer.style.display = 'none';
+          document.getElementById('checkoutPetDog').checked = false;
+          document.getElementById('checkoutPetCat').checked = false;
+          if(cabin.allowed_pet_types && cabin.allowed_pet_types.length > 0) {
+            petDogLabel.style.display = cabin.allowed_pet_types.includes('dog') ? 'flex' : 'none';
+            petCatLabel.style.display = cabin.allowed_pet_types.includes('cat') ? 'flex' : 'none';
+          }
+        }
         petsCheckbox.checked = false;
       } else {
         petsContainer.style.display = 'none';
+        const petTypesContainer = document.getElementById('checkoutPetTypesContainer');
+        if(petTypesContainer) petTypesContainer.style.display = 'none';
         petsCheckbox.checked = false;
       }
     }
@@ -1059,6 +1097,7 @@
           guest_telegram: document.getElementById('guestTelegram').value.trim(),
           guests_count: Number(guestCount) || 2,
           with_pets: document.getElementById('checkoutWithPets') ? document.getElementById('checkoutWithPets').checked : false,
+          pet_types: [document.getElementById('checkoutPetDog')?.checked ? 'dog' : null, document.getElementById('checkoutPetCat')?.checked ? 'cat' : null].filter(Boolean),
           comment: commentField,
           total_price: state.currentCalc ? state.currentCalc.total_price : 0,
           extras: selectedExtras,

@@ -86,6 +86,11 @@ exports.saveFull = async (req, res) => {
       capacity: Number.parseInt(body.capacity, 10) || 1,
       is_active: body.status === 'active',
       allow_pets: body.allow_pets === true,
+      allowed_pet_types: body.allowed_pet_types || [],
+      pet_price: Number.parseInt(body.pet_price, 10) || 0,
+      pet_price_type: body.pet_price_type || 'per_night',
+      base_guests: Number.parseInt(body.base_guests, 10) || Number.parseInt(body.capacity, 10) || 1,
+      extra_guest_price: Number.parseInt(body.extra_guest_price, 10) || 0,
       images: normalizedImages,
       amenities: selectedAmenities,
       tags: selectedTags
@@ -126,29 +131,36 @@ exports.saveFull = async (req, res) => {
   }
 };
 
-exports.create = async (req, res) => {
-  try {
-    const { name, description, base_price, capacity, status, allow_pets, images, image_url } = req.body;
-    
-    const ru = 'а б в г д е ё ж з и й к л м н о п р с т у ф х ц ч ш щ ъ ы ь э ю я'.split(' ');
-    const en = 'a b v g d e e zh z i y k l m n o p r s t u f h ts ch sh shch  y  e yu ya'.split(' ');
-    let slugStr = (name || 'house').toLowerCase();
-    for (let i = 0; i < ru.length; i++) {
-      slugStr = slugStr.split(ru[i]).join(en[i]);
-    }
-    const slug = slugStr.replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
-
-    let imagesData = [];
-    if (images && Array.isArray(images)) {
-      imagesData = normalizeImages(images);
-    } else if (image_url) {
-      imagesData = normalizeImages([{ url: image_url, category: 'main' }]);
-    }
-    const is_active = (status === 'active');
-
-    const data = await pbAdmin.collection('cabins').create({
-      name, slug, description, base_price, capacity, is_active, allow_pets: allow_pets === true, images: imagesData
-    });
+  exports.create = async (req, res) => {
+    try {
+      const { name, description, base_price, capacity, status, allow_pets, allowed_pet_types, pet_price, pet_price_type, base_guests, extra_guest_price, images, image_url } = req.body;
+      
+      const ru = 'а б в г д е ё ж з и й к л м н о п р с т у ф х ц ч ш щ ъ ы ь э ю я'.split(' ');
+      const en = 'a b v g d e e zh z i y k l m n o p r s t u f h ts ch sh shch  y  e yu ya'.split(' ');
+      let slugStr = (name || 'house').toLowerCase();
+      for (let i = 0; i < ru.length; i++) {
+        slugStr = slugStr.split(ru[i]).join(en[i]);
+      }
+      const slug = slugStr.replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
+  
+      let imagesData = [];
+      if (images && Array.isArray(images)) {
+        imagesData = normalizeImages(images);
+      } else if (image_url) {
+        imagesData = normalizeImages([{ url: image_url, category: 'main' }]);
+      }
+      const is_active = (status === 'active');
+  
+      const data = await pbAdmin.collection('cabins').create({
+        name, slug, description, base_price, capacity, is_active, 
+        allow_pets: allow_pets === true, 
+        allowed_pet_types: allowed_pet_types || [], 
+        pet_price: parseInt(pet_price) || 0, 
+        pet_price_type: pet_price_type || 'per_night', 
+        base_guests: parseInt(base_guests) || parseInt(capacity) || 1, 
+        extra_guest_price: parseInt(extra_guest_price) || 0, 
+        images: imagesData
+      });
 
     data.images = Array.isArray(data.images) ? data.images : [];
     data.image_url = data.images.length > 0 ? data.images[0].url : '';
@@ -163,7 +175,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, base_price, capacity, status, allow_pets, images, image_url } = req.body;
+    const { name, description, base_price, capacity, status, allow_pets, allowed_pet_types, pet_price, pet_price_type, base_guests, extra_guest_price, images, image_url } = req.body;
 
     let previousCabin;
     try {
@@ -181,7 +193,14 @@ exports.update = async (req, res) => {
     const is_active = (status === 'active');
 
     const data = await pbAdmin.collection('cabins').update(id, {
-      name, description, base_price, capacity, is_active, allow_pets: allow_pets === true, images: normalizedImages
+      name, description, base_price, capacity, is_active, 
+      allow_pets: allow_pets === true,
+      allowed_pet_types: allowed_pet_types || [], 
+      pet_price: parseInt(pet_price) || 0, 
+      pet_price_type: pet_price_type || 'per_night', 
+      base_guests: parseInt(base_guests) || parseInt(capacity) || 1, 
+      extra_guest_price: parseInt(extra_guest_price) || 0, 
+      images: normalizedImages
     });
 
     await cleanupRemovedImages(parseStoredImages(previousCabin), normalizedImages);

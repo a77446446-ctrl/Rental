@@ -13,7 +13,7 @@ function dateStrings(checkIn, nights) {
   return result;
 }
 
-async function calculateBookingTotal({ cabinId, checkIn, checkOut, guestsCount, extraIds = [] }) {
+async function calculateBookingTotal({ cabinId, checkIn, checkOut, guestsCount, extraIds = [], withPets = false, petTypes = [] }) {
   if (!pbAdmin) throw new Error('Сервис базы данных временно недоступен');
   validateRecordId(cabinId, 'Домик');
   const { nights } = validateStay(checkIn, checkOut);
@@ -54,20 +54,59 @@ async function calculateBookingTotal({ cabinId, checkIn, checkOut, guestsCount, 
 
   const allServices = await dataStore.get('extra_services', 'extra_services.json', []);
   const uniqueIds = [...new Set((Array.isArray(extraIds) ? extraIds : []).map(String))];
+  
   const extrasSnapshot = [];
 
   for (const id of uniqueIds) {
     const service = allServices.find((item) => String(item.id) === id && item.is_active !== false);
     if (!service) throw new Error('Одна из выбранных услуг больше недоступна. Обновите страницу.');
     const price = Math.max(0, Math.round(Number(service.price) || 0));
-    // Сохраняем исторически действующее поведение интерфейса: каждая выбранная
-    // услуга добавляется один раз. price_type фиксируется для будущего перехода.
     extrasSnapshot.push({
       id: String(service.id),
       name: String(service.name || ''),
       price,
       price_type: service.price_type || 'per_booking',
     });
+  }
+
+  // Доплата за дополнительных гостей
+  const baseGuests = Number(cabin.base_guests) || Number(cabin.capacity) || 1;
+  const extraGuestPrice = Number(cabin.extra_guest_price) || 0;
+  if (normalizedGuests > baseGuests && extraGuestPrice > 0) {
+    const extraGuests = normalizedGuests - baseGuests;
+    const extraGuestsTotal = extraGuests * extraGuestPrice * nights;
+    extrasSnapshot.push({
+      id: 'extra_guests',
+      name: `Доплата за ${extraGuests} доп. гостя/ей (${nights} ноч.)`,
+      price: extraGuestsTotal,
+      price_type: 'extra_guests'
+    });
+  }
+
+  // Доплата за питомцев
+  if (withPets && cabin.allow_pets) {
+    // В запросе могут передаваться petTypes
+    const validPetTypes = Array.isArray(petTypes) ? petTypes : [];
+    const hasValidPet = validPetTypes.some(pt => cabin.allowed_pet_types && cabin.allowed_pet_types.includes(pt)) || (validPetTypes.length === 0 && cabin.allow_pets);
+    
+    if (hasValidPet) {
+      const petPrice = Number(cabin.pet_price) || 0;
+      if (petPrice > 0) {
+        const petPriceType = cabin.pet_price_type || 'per_night';
+        const totalPetPrice = petPriceType === 'per_stay' ? petPrice : petPrice * nights;
+        const petTypeNames = [];
+        if (validPetTypes.includes('dog')) petTypeNames.push('Собака');
+        if (validPetTypes.includes('cat')) petTypeNames.push('Кошка');
+        
+        const petNameStr = petTypeNames.length > 0 ? petTypeNames.join(', ') : 'Питомец';
+        extrasSnapshot.push({
+          id: 'pet_fee',
+          name: `Доплата за питомца (${petNameStr})`,
+          price: totalPetPrice,
+          price_type: 'pet_fee'
+        });
+      }
+    }
   }
 
   const extrasPrice = extrasSnapshot.reduce((sum, item) => sum + item.price, 0);

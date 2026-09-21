@@ -22,7 +22,7 @@ async function createBooking(input) {
     checkIn: data.check_in,
     checkOut: data.check_out,
     guestsCount: data.guests_count,
-    extraIds: data.extras,
+    extraIds: data.extras,\n    withPets: Boolean(input.with_pets),\n    petTypes: Array.isArray(input.pet_types) ? input.pet_types : [],
   });
 
   await externalCalendarService.assertNoExternalOverlap(data.cabin_id, data.check_in, data.check_out);
@@ -98,7 +98,7 @@ async function createBooking(input) {
     guestPhone: data.guest_phone,
     guestTelegram: data.guest_telegram,
     guestsCount: pricing.guestsCount,
-    withPets: data.with_pets,
+    withPets: data.with_pets,\n    petTypes: input.petTypes,\n    extrasSnapshot: pricing.extrasSnapshot,
     comment: data.comment ? data.comment.replace(/<!--CHAT_TOKEN:.*?-->/gi, '').trim() : '',
     chatToken: chatToken,
   };

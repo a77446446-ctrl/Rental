@@ -81,7 +81,19 @@ async function sendBookingNotification(bookingData) {
     comment
   } = bookingData;
 
-  const petText = withPets ? ' (+ питомец)' : '';
+  let petText = '';
+  if (withPets) {
+    if (Array.isArray(petTypes) && petTypes.length > 0) {
+      const typeNames = petTypes.map(t => t === 'dog' ? 'собака' : (t === 'cat' ? 'кошка' : t));
+      petText = ' (+ питомцы: ' + typeNames.join(', ') + ')';
+    } else {
+      petText = ' (+ питомец)';
+    }
+  }
+  let extrasText = '';
+  if (Array.isArray(extrasSnapshot) && extrasSnapshot.length > 0) {
+    extrasText = '\n<b>Доплаты:</b>\n' + extrasSnapshot.map(e => `- ${e.name}: ${e.price} ₽`).join('\n');
+  }
   const text = `
 🌲 <b>Новое бронирование!</b>
 
@@ -89,7 +101,7 @@ async function sendBookingNotification(bookingData) {
 <b>Даты:</b> ${formatDateRu(checkIn)} — ${formatDateRu(checkOut)}
 <b>Гостей:</b> ${guestsCount}${petText}
 <b>Ночей:</b> ${nightsCount}
-<b>Сумма:</b> ${totalPrice} ₽
+<b>Сумма:</b> ${totalPrice} ₽${extrasText}
 
 <b>Гость:</b> ${guestName}
 <b>Телефон:</b> ${guestPhone}

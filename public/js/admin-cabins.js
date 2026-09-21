@@ -488,7 +488,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function checkChanges() {
     const current = getFormData();
-    const isChanged = Object.keys(current).some(key => current[key] !== initialFormData[key]);
+    const isChanged = Object.keys(current).some(key => {
+        if (Array.isArray(current[key])) return JSON.stringify(current[key]) !== JSON.stringify(initialFormData[key] || []);
+        return current[key] !== initialFormData[key];
+      });
     
     window.hasUnsavedChanges = isChanged;
     
