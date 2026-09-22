@@ -166,8 +166,7 @@ async function uploadFileToPB(fileBuffer, mimeType, extension) {
   let publicUrl = fullUrl;
   try {
     const parsed = new URL(fullUrl);
-    const base = (config.baseUrl || 'http://localhost:3000').replace(/\/$/, '');
-    publicUrl = base + parsed.pathname + parsed.search;
+    publicUrl = parsed.pathname + parsed.search;
   } catch (e) {}
 
   return {

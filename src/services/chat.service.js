@@ -207,14 +207,19 @@ ${escapeTelegramHtml(attachmentLabel(attachment))}: ${escapeTelegramHtml(attachm
 
   try {
     let success = false;
+    let absoluteUrl = attachment.url;
+    if (absoluteUrl && absoluteUrl.startsWith('/api/files/')) {
+      absoluteUrl = new URL(absoluteUrl, config.pocketbaseUrl || 'http://77.91.112.64:8090').href;
+    }
+    
     if (attachment.mediaType === 'image') {
-      success = await callTelegram('sendPhoto', { ...common, photo: attachment.url });
+      success = await callTelegram('sendPhoto', { ...common, photo: absoluteUrl });
     } else if (attachment.mediaType === 'video') {
-      success = await callTelegram('sendVideo', { ...common, video: attachment.url });
+      success = await callTelegram('sendVideo', { ...common, video: absoluteUrl });
     } else if (attachment.mediaType === 'audio') {
-      success = await callTelegram('sendAudio', { ...common, audio: attachment.url });
+      success = await callTelegram('sendAudio', { ...common, audio: absoluteUrl });
     } else {
-      success = await callTelegram('sendDocument', { ...common, document: attachment.url });
+      success = await callTelegram('sendDocument', { ...common, document: absoluteUrl });
     }
 
     if (!success) {

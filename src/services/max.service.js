@@ -423,7 +423,13 @@ async function uploadAttachmentToMax(attachment) {
   const mediaType = ['image', 'video', 'audio'].includes(attachment.mediaType)
     ? attachment.mediaType
     : 'file';
-  const sourceUrl = new URL(String(attachment.url || ''), config.baseUrl || 'http://localhost:3000');
+  let rawUrl = String(attachment.url || '');
+  let sourceUrl;
+  if (rawUrl.startsWith('/api/files/')) {
+    sourceUrl = new URL(rawUrl, config.pocketbaseUrl || 'http://127.0.0.1:8090');
+  } else {
+    sourceUrl = new URL(rawUrl, config.baseUrl || 'http://127.0.0.1:3000');
+  }
   const sourceResponse = await fetch(sourceUrl, { signal: getAbortSignal() });
   if (!sourceResponse.ok) {
     throw new Error(`Не удалось получить вложение для MAX: HTTP ${sourceResponse.status}`);
