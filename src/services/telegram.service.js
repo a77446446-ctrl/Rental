@@ -78,6 +78,8 @@ async function sendBookingNotification(bookingData) {
     guestTelegram,
     guestsCount,
     withPets,
+    petTypes,
+    extrasSnapshot,
     comment
   } = bookingData;
 
