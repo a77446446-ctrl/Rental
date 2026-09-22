@@ -162,7 +162,6 @@ async function uploadFileToPB(fileBuffer, mimeType, extension) {
 
   const record = await pbAdmin.collection('media').create(formData);
   const fullUrl = pbAdmin.files.getUrl(record, record.file);
-  const { config } = require('../config/env');
   let publicUrl = fullUrl;
   try {
     const parsed = new URL(fullUrl);
