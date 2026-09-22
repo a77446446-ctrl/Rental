@@ -196,6 +196,19 @@
   EcoCalendar.prototype.handleDayClick = function (dateStr) {
     if (this.availabilityLoading || this.availabilityError) return;
 
+    if (!this.cabinId) {
+      if (window.showToast) {
+        window.showToast('Пожалуйста, выберите дом', 'error');
+      } else {
+        alert('Пожалуйста, выберите дом');
+      }
+      var cabinsSection = document.getElementById('cabins');
+      if (cabinsSection) {
+        cabinsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+
     var dayData = this.availabilityMap[dateStr];
     var canUseAsCheckout = Boolean(
       this.checkIn &&

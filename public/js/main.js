@@ -1172,12 +1172,18 @@
           const hasCat = catCb && catCb.checked;
           
           if (!hasDog && !hasCat) {
-            window.showToast('Пожалуйста, выберите тип питомца (собаку или кошку)', 'error');
+            alert('Пожалуйста, выберите тип питомца (собаку или кошку). Это обязательно для бронирования.');
             const typesContainer = document.getElementById('checkoutPetTypesContainer');
             if (typesContainer) {
-              typesContainer.style.border = '1px solid red';
+              typesContainer.style.border = '2px solid red';
+              typesContainer.style.padding = '8px';
+              typesContainer.style.backgroundColor = 'rgba(255, 0, 0, 0.05)';
               typesContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              setTimeout(() => typesContainer.style.border = '', 2500);
+              setTimeout(() => {
+                typesContainer.style.border = '';
+                typesContainer.style.padding = '';
+                typesContainer.style.backgroundColor = '';
+              }, 4000);
             }
             return;
           }
