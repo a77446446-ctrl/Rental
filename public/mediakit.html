@@ -2,259 +2,243 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>EcoSystem — Media Kit (Генератор Постеров)</title>
+  <title>EcoSystem — Интерактивная презентация</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #120f0d;
-      --bg-2: #18130f;
+      --bg-2: #1a1512;
       --gold: #bba46f;
       --gold-light: #d9c38b;
       --cream: #ede4d6;
-      --moss: #5f6749;
     }
     body {
       margin: 0; padding: 0; background: var(--bg); color: var(--cream);
       font-family: 'Manrope', sans-serif;
-      background-image: radial-gradient(circle at 50% 0%, rgba(187, 164, 111, 0.1) 0%, transparent 50%);
+      background-image: radial-gradient(circle at 50% 0%, rgba(187, 164, 111, 0.08) 0%, transparent 60%);
+      overflow-x: hidden;
     }
     
     .nav-header {
-      padding: 20px 40px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 20px 40px; background: rgba(18, 15, 13, 0.8); border-bottom: 1px solid rgba(255,255,255,0.05);
       display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
     }
-    .nav-header h1 { margin: 0; font-family: 'Cormorant Garamond', serif; color: var(--gold); }
-    .instruction { font-size: 14px; color: rgba(255,255,255,0.6); max-width: 600px; }
+    .nav-header h1 { margin: 0; font-family: 'Cormorant Garamond', serif; color: var(--gold); font-size: 28px; }
+    .instruction { font-size: 15px; color: var(--cream); max-width: 600px; line-height: 1.4; }
 
-    /* Постер-контейнеры (16:9, 3:4, 9:16) */
-    .poster-wrapper {
-      margin: 60px auto;
-      background: #151210;
-      border: 1px solid rgba(187, 164, 111, 0.2);
-      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    /* Секции презентации */
+    .section {
+      padding: 80px 40px;
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       position: relative;
-      overflow: hidden;
+      border-bottom: 1px solid rgba(187, 164, 111, 0.1);
+    }
+    .section:nth-child(even) { background: var(--bg-2); }
+    
+    .sec-header { text-align: center; max-width: 800px; margin-bottom: 60px; z-index: 10; }
+    .sec-title { font-family: 'Cormorant Garamond', serif; font-size: 48px; color: var(--gold); margin: 0 0 20px 0; line-height: 1.1; }
+    .sec-desc { font-size: 18px; color: #a8a096; line-height: 1.6; }
+
+    /* Устройства */
+    .devices-row {
+      display: flex; gap: 60px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; max-width: 1400px;
     }
     
-    .poster-title { text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--gold); margin-bottom: 10px; margin-top: 80px; }
-    
-    /* Декоративные элементы фона постеров */
-    .poster-bg-glow {
-      position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(187, 164, 111, 0.15) 0%, transparent 70%);
-      top: -200px; right: -200px; border-radius: 50%; pointer-events: none;
-    }
-    .poster-bg-glow-2 {
-      position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(95, 103, 73, 0.2) 0%, transparent 70%);
-      bottom: -100px; left: -100px; border-radius: 50%; pointer-events: none;
-    }
+    .device-group { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .device-label { font-size: 16px; font-weight: 600; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; background: rgba(187, 164, 111, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(187, 164, 111, 0.2); }
 
-    /* Форматы */
-    .format-16-9 { width: 1280px; height: 720px; }
-    .format-4-3 { width: 1024px; height: 768px; }
-    .format-9-16 { width: 450px; height: 800px; }
-
-    /* Типографика внутри постеров */
-    .p-title {
-      font-family: 'Cormorant Garamond', serif; font-size: 56px; color: var(--gold);
-      margin: 0; text-align: center; text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      line-height: 1.1;
-    }
-    .p-subtitle {
-      font-size: 22px; color: var(--cream); text-align: center; margin-top: 16px; font-weight: 400;
-      letter-spacing: 1px;
-    }
-
-    /* Мокапы устройств */
+    /* Мокап MacBook */
     .mockup-mac {
-      width: 760px; height: 475px;
-      background: #000;
-      border-radius: 12px 12px 0 0;
-      border: 16px solid #1a1a1a;
-      border-bottom: 24px solid #222;
-      position: relative;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+      width: 800px; height: 500px; background: #000; border-radius: 12px 12px 0 0;
+      border: 16px solid #1a1a1a; border-bottom: 24px solid #222; position: relative;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.7); flex-shrink: 0;
     }
     .mockup-mac::after {
       content: ''; position: absolute; bottom: -24px; left: -60px; right: -60px;
-      height: 12px; background: linear-gradient(to bottom, #333, #111);
-      border-radius: 0 0 12px 12px;
+      height: 12px; background: linear-gradient(to bottom, #333, #111); border-radius: 0 0 12px 12px;
     }
-    .mockup-mac::before { /* Камера */
+    .mockup-mac::before {
       content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
       width: 6px; height: 6px; background: #000; border-radius: 50%; border: 1px solid #333;
     }
     .mockup-mac iframe { width: 100%; height: 100%; border: none; background: var(--bg); }
 
+    /* Мокап iPhone */
     .mockup-iphone {
-      width: 300px; height: 620px;
-      background: #000;
-      border-radius: 40px;
-      border: 12px solid #222;
-      position: relative;
-      box-shadow: -20px 30px 60px rgba(0,0,0,0.8), inset 0 0 0 2px #444;
+      width: 320px; height: 660px; background: #000; border-radius: 40px;
+      border: 12px solid #222; position: relative;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 2px #444; flex-shrink: 0;
     }
-    .mockup-iphone::before { /* Челка/Островок */
+    .mockup-iphone::before {
       content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
       width: 90px; height: 25px; background: #000; border-radius: 20px; z-index: 10;
     }
     .mockup-iphone iframe { width: 100%; height: 100%; border: none; border-radius: 28px; background: var(--bg); }
 
-    /* Композиции */
-    .scene-hero {
-      position: absolute; top: 160px; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: flex-end; justify-content: center; width: 100%;
-    }
-    .scene-hero .mockup-iphone {
-      position: absolute; right: 100px; bottom: -40px; z-index: 5;
-    }
+    /* Телеграм Фейк */
+    .tg-mock { border-radius: 28px; height: 100%; background: #0f172a; overflow: hidden; display: flex; flex-direction: column; font-family: -apple-system, sans-serif; }
+    .tg-header { background: #1e293b; padding: 15px; text-align: center; font-weight: 600; font-size: 16px; border-bottom: 1px solid #334155; padding-top: 35px; }
+    .tg-body { padding: 15px; flex-grow: 1; background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%230f172a"/><circle cx="50" cy="50" r="40" fill="none" stroke="%231e293b" stroke-width="2"/></svg>'); background-size: 100px; display: flex; flex-direction: column; gap: 10px; }
+    .tg-msg { background: #166534; padding: 12px 15px; border-radius: 16px; border-bottom-right-radius: 4px; max-width: 85%; align-self: flex-end; font-size: 14px; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .tg-msg span { display: block; color: #86efac; font-size: 12px; margin-bottom: 4px; font-weight: 600;}
 
-    .scene-mobile {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100%; padding-top: 40px;
-    }
-    .scene-mobile .mockup-iphone { transform: scale(0.9); }
-
-    .scene-chat {
-      display: flex; align-items: center; justify-content: center; gap: 60px;
-      height: 100%; padding-top: 20px;
-    }
-    .scene-chat .mockup-iphone { transform: scale(0.85); margin-top: -20px;}
-    .scene-chat-arrows { color: var(--gold); font-size: 48px; font-weight: bold; }
-
-    .features-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
-      padding: 0 80px; margin-top: 60px;
-    }
-    .feature-card {
-      background: rgba(255,255,255,0.03); border: 1px solid rgba(187, 164, 111, 0.2);
-      border-radius: 16px; padding: 30px; text-align: center;
-      backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
+    /* Сетка фич */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1200px; }
+    .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(187, 164, 111, 0.15); border-radius: 16px; padding: 30px; text-align: center; transition: transform 0.3s; }
+    .feature-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.04); border-color: rgba(187, 164, 111, 0.4); }
     .feature-card svg { width: 48px; height: 48px; stroke: var(--gold); margin-bottom: 20px; }
-    .feature-card h3 { font-size: 20px; margin: 0; color: var(--cream); font-weight: 600; }
+    .feature-card h3 { font-size: 20px; margin: 0 0 10px 0; color: var(--cream); font-weight: 600; }
+    .feature-card p { font-size: 14px; color: #a8a096; margin: 0; line-height: 1.5; }
 
-    .watermark { position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.3); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
-
-    /* Отключение скроллбаров внутри iframe для красоты (через JS) */
+    @media (max-width: 1200px) {
+      .mockup-mac { width: 100%; max-width: 800px; height: 45vw; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 800px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .devices-row { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
 
   <div class="nav-header">
-    <h1>EcoSystem Media Kit</h1>
+    <h1>EcoSystem</h1>
     <div class="instruction">
-      <strong>Инструкция:</strong> 
-      1. Эта страница подгружает <b>ваш реальный сайт</b> прямо в макеты ноутбуков и телефонов.<br>
-      2. Прокрутите вниз, дождитесь загрузки ваших страниц внутри экранов.<br>
-      3. Сделайте скриншот каждого блока (используйте Ножницы, Win+Shift+S или встроенную функцию скриншота в браузере). Это будут идеальные рекламные постеры с ВАШИМ дизайном!
+      <strong>Добро пожаловать в интерактивное демо!</strong><br>
+      Здесь вы можете вживую протестировать интерфейсы платформы.<br>Внутри экранов загружены реальные, кликабельные страницы.
     </div>
   </div>
 
-  <div class="poster-title">Постер 1: Главный (Формат 16:9, для ПК)</div>
-  <div class="poster-wrapper format-16-9" id="poster1">
-    <div class="poster-bg-glow"></div>
-    <div class="poster-bg-glow-2"></div>
-    
-    <div style="padding-top: 60px;">
-      <h2 class="p-title">EcoSystem</h2>
-      <div class="p-subtitle">Премиальная платформа управления базой отдыха.<br>Безупречный сервис. Полный контроль.</div>
+  <!-- Секция 1: Главная (ПК + Мобайл) -->
+  <div class="section">
+    <div class="sec-header">
+      <h2 class="sec-title">Управляйте бизнесом.<br>Принимайте гостей.</h2>
+      <p class="sec-desc">Комплексное решение для автоматизации аренды баз отдыха, глэмпингов, коттеджей, <b>а также посуточной аренды квартир и коммерческих помещений.</b><br>Всё работает синхронно и без задержек.</p>
     </div>
 
-    <div class="scene-hero">
-      <div class="mockup-mac">
-        <!-- В ноутбуке показываем админку (управление бронированиями) -->
-        <iframe src="/admin/bookings.html"></iframe>
+    <div class="devices-row">
+      <!-- Ноутбук: Панель администратора -->
+      <div class="device-group">
+        <div class="device-label">🖥️ Взгляд администратора</div>
+        <div class="mockup-mac">
+          <iframe src="/admin/bookings.html"></iframe>
+        </div>
       </div>
-      <div class="mockup-iphone">
-        <!-- В телефоне показываем главную страницу сайта -->
-        <iframe src="/"></iframe>
+
+      <!-- Телефон: Сайт для клиента -->
+      <div class="device-group">
+        <div class="device-label">📱 Взгляд клиента</div>
+        <div class="mockup-iphone">
+          <iframe src="/"></iframe>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- Секция 2: Чат интеграция -->
+  <div class="section">
+    <div class="sec-header">
+      <h2 class="sec-title">Все каналы связи в одном окне</h2>
+      <p class="sec-desc">Гость пишет с сайта, вы отвечаете из панели администратора, а уведомления дублируются вам прямо в карман через Telegram или МАКС. Общайтесь там, где вам удобно!</p>
+    </div>
 
-  <div class="poster-title">Постер 2: Преимущества (Формат 16:9)</div>
-  <div class="poster-wrapper format-16-9">
-    <div class="poster-bg-glow" style="left: -100px; right: auto; top: -100px;"></div>
-    
-    <div style="padding-top: 80px;">
-      <h2 class="p-title">Всё для вашего бизнеса</h2>
-      <div class="p-subtitle">Полная автоматизация и контроль 24/7</div>
+    <div class="devices-row">
+      
+      <!-- Гость на сайте -->
+      <div class="device-group">
+        <div class="device-label">👤 Сайт (Виджет гостя)</div>
+        <div class="mockup-iphone">
+          <iframe src="/?openChat=true"></iframe>
+        </div>
+      </div>
+
+      <!-- Админ в панели -->
+      <div class="device-group">
+        <div class="device-label">👑 Админ-панель</div>
+        <div class="mockup-iphone">
+          <iframe src="/admin/chats.html"></iframe>
+        </div>
+      </div>
+
+      <!-- Telegram -->
+      <div class="device-group">
+        <div class="device-label">✈️ Telegram / МАКС</div>
+        <div class="mockup-iphone">
+          <div class="tg-mock">
+            <div class="tg-header">EcoSystem Bot</div>
+            <div class="tg-body">
+              <div class="tg-msg">
+                <span>Новое сообщение с сайта</span>
+                Здравствуйте! Подскажите, есть ли свободные даты на эти выходные?
+              </div>
+              <div class="tg-msg" style="background: #334155; align-self: flex-start; max-width: 80%;">
+                <span>Вы ответили</span>
+                Да, остался один домик у озера. Бронируем?
+              </div>
+              <div class="tg-msg">
+                <span>Новое сообщение с сайта</span>
+                Отлично, сейчас оформлю заявку на сайте!
+              </div>
+              <div class="tg-msg" style="background: #0f766e; margin-top: 10px;">
+                <span>🎉 НОВОЕ БРОНИРОВАНИЕ</span>
+                Дом №3 у озера<br>Даты: 15.08 - 17.08 (2 ночи)<br>Сумма: 18 000 руб.<br>Контакты: +7 999 123-45-67
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Секция 3: Особенности -->
+  <div class="section">
+    <div class="sec-header">
+      <h2 class="sec-title">Всё включено</h2>
+      <p class="sec-desc">Технологии топовых агрегаторов теперь работают на ваш личный бренд.</p>
     </div>
 
     <div class="features-grid">
       <div class="feature-card">
         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
         <h3>Умный календарь</h3>
-      </div>
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
-        <h3>Онлайн-чат 24/7</h3>
-      </div>
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
-        <h3>Аналитика и CRM</h3>
+        <p>Гибкие цены по дням недели, акции, надбавки за питомцев и блокировка дат в 2 клика.</p>
       </div>
       <div class="feature-card">
         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
         <h3>Синхронизация iCal</h3>
+        <p>Автоматический обмен занятостью с Авито, Суточно, Циан и Островок. Забудьте про овербукинг.</p>
       </div>
       <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
-        <h3>Интеграция с ботами</h3>
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+        <h3>Встроенная CRM</h3>
+        <p>Аналитика доходов, база данных постоянных гостей с расчетом LTV и возможностью оставлять заметки.</p>
       </div>
       <div class="feature-card">
         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.813-3.814a3.182 3.182 0 0 0-4.497-4.497l-3.814 3.814a15.996 15.996 0 0 0-4.648 4.764m4.496-4.496a15.085 15.085 0 0 0-4.892 2.785m-4.766 4.765a15.08 15.08 0 0 0 2.786-4.892" /></svg>
         <h3>Мощная CMS</h3>
+        <p>Меняйте тексты, фото, отзывы и настройки главной страницы сайта без помощи программиста.</p>
       </div>
-    </div>
-  </div>
-
-
-  <div class="poster-title">Постер 3: Вертикальный (Формат 9:16, для Stories/Reels)</div>
-  <div class="poster-wrapper format-9-16">
-    <div class="poster-bg-glow" style="width: 400px; height: 400px; top: -100px;"></div>
-    
-    <div class="scene-mobile">
-      <h2 class="p-title" style="font-size: 42px; margin-bottom: 20px;">EcoSystem</h2>
-      <div class="mockup-iphone">
-        <!-- В телефоне показываем календарь -->
-        <iframe src="/#calendar"></iframe>
+      <div class="feature-card">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+        <h3>PWA Мобильное приложение</h3>
+        <p>Гости и администратор могут установить сайт как полноценное приложение на iOS и Android.</p>
       </div>
-      <div class="p-subtitle" style="font-weight: 600; font-size: 20px; margin-top: 20px;">Готовый бизнес<br>за 1 день</div>
-    </div>
-  </div>
-
-  <div class="poster-title">Постер 4: Интеграция чатов (Формат 16:9)</div>
-  <div class="poster-wrapper format-16-9">
-    <div class="poster-bg-glow" style="left: -100px; right: auto; top: -100px;"></div>
-    
-    <div style="padding-top: 50px;">
-      <h2 class="p-title">Все каналы в одном окне</h2>
-      <div class="p-subtitle">Связка: Ваш сайт ↔ Админка ↔ Telegram ↔ МАКС</div>
-    </div>
-
-    <div class="scene-chat">
-      <div class="mockup-iphone">
-        <!-- Чат на сайте -->
-        <iframe src="/?openChat=true"></iframe>
-      </div>
-      
-      <div class="scene-chat-arrows">
-        ⟷
-      </div>
-
-      <div class="mockup-iphone">
-        <!-- Админ панель с чатами -->
-        <iframe src="/admin/chats.html"></iframe>
+      <div class="feature-card">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z" /></svg>
+        <h3>3 Темы оформления</h3>
+        <p>Выбирайте дизайн сайта под свой стиль: Темный Люкс, Светлый или Строгий серый.</p>
       </div>
     </div>
   </div>
 
   <script>
-    // Если нужно, скрываем скроллбары внутри iframe для идеальных скриншотов
     window.onload = () => {
       setTimeout(() => {
         document.querySelectorAll('iframe').forEach(iframe => {
@@ -265,9 +249,7 @@
                 body { -ms-overflow-style: none; scrollbar-width: none; }
               `;
               iframe.contentDocument.head.appendChild(style);
-            } catch(e) {
-              console.log('CORS или iframe еще не загружен');
-            }
+            } catch(e) {}
         });
       }, 2000);
     };
