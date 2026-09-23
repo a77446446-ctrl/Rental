@@ -11,7 +11,7 @@
   <link rel="manifest" href="/api/manifest.json">
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" href="/api/icon.png">
-  <link rel="stylesheet" href="/css/main.css?v=20260923-3">
+  <link rel="stylesheet" href="/css/main.css?v=20260923-4">
   <style>
     body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
     
@@ -49,7 +49,7 @@
     
     .admin-table {
       width: 100%; border-collapse: collapse; text-align: left;
-      background: rgba(237, 228, 214, 0.02); border-radius: 12px; overflow: hidden;
+      background: rgba(var(--cream-rgb), 0.02); border-radius: 12px; overflow: hidden;
       border: 1px solid var(--line);
     }
     .admin-table th, .admin-table td {
@@ -61,7 +61,7 @@
       text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
     }
     .admin-table tr:last-child td { border-bottom: none; }
-    .admin-table tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
+    .admin-table tbody tr:hover { background: rgba(var(--cream-rgb), 0.04); }
     
     .cabin-img {
       width: 60px; height: 40px; border-radius: 4px; object-fit: cover;
@@ -102,7 +102,7 @@
       outline: none; border-color: var(--gold);
     }
     .form-group select {
-      color-scheme: dark; /* Применяет тёмную тему к нативному списку */
+      color-scheme: inherit; /* Применяет тёмную тему к нативному списку */
     }
     .form-group select option {
       background: var(--bg-2);
@@ -115,7 +115,7 @@
     
     /* Photo Gallery */
     .gallery-section {
-      background: rgba(237, 228, 214, 0.03); border: 1px solid var(--line);
+      background: rgba(var(--cream-rgb), 0.03); border: 1px solid var(--line);
       border-radius: 8px; padding: 16px; margin-bottom: 20px;
     }
     .gallery-title { font-size: 14px; font-weight: 600; color: var(--gold); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
@@ -124,7 +124,7 @@
     }
     .gallery-item {
       position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 6px; overflow: hidden;
-      border: 1px solid var(--line); background: var(--bg-1);
+      border: 1px solid var(--line); background: var(--bg);
     }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .gallery-item .remove-btn {
@@ -148,7 +148,7 @@
     .external-calendar-row {
       display: grid; grid-template-columns: 150px 1fr auto auto; gap: 8px; align-items: center;
       padding: 10px; border: 1px solid var(--line); border-radius: 8px;
-      background: rgba(237, 228, 214, 0.03);
+      background: rgba(var(--cream-rgb), 0.03);
     }
     .external-calendar-row input {
       background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line);
@@ -162,7 +162,7 @@
       .admin-table td div { font-size: 14px; }
     }
   </style>
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-2">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-4">
   <script src="/js/lucide.min.js?v=20260811-2"></script>
 </head>
 <body>
@@ -323,7 +323,7 @@
             </label>
           </div>
 
-          <div id="admin-pet-options" style="display: none; padding: 12px; margin-bottom: 16px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+          <div id="admin-pet-options" style="display: none; padding: 12px; margin-bottom: 16px; border-radius: 8px; background: rgba(var(--cream-rgb), 0.03); border: 1px solid rgba(255,255,255,0.05);">
             <div style="margin-bottom: 8px; font-size: 13px; color: var(--muted);">Разрешённые виды:</div>
             <div style="display: flex; gap: 16px; margin-bottom: 12px;">
               <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
@@ -367,7 +367,7 @@
           <label style="color: var(--gold);">Шаг 1. Экспорт Eco Gorniy → Avito, Циан и другие площадки</label>
           <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте зелёную ссылку и вставьте её на площадке в поле «Добавить / импортировать календарь». После нажатия «Добавить» поле Avito может очиститься — убедитесь, что календарь появился в списке подключённых. Новые брони передаются в ленту сразу, но Avito обновляет импортированный календарь по собственному расписанию, поэтому дата может закрыться не мгновенно.</div>
           <div style="display: flex; gap: 8px;">
-            <input type="text" id="cabinExportLink" readonly style="flex: 1; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.3); color: #8bc48b; border: 1px solid rgba(237, 228, 214, 0.1); padding: 8px; border-radius: 4px;">
+            <input type="text" id="cabinExportLink" readonly style="flex: 1; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.3); color: #8bc48b; border: 1px solid rgba(var(--cream-rgb), 0.1); padding: 8px; border-radius: 4px;">
             <button type="button" class="btn btn-ghost" id="copyExportLinkBtn" style="padding: 0 12px;">Копировать</button>
           </div>
         </div>
@@ -397,7 +397,7 @@
     </div>
   </div>
 
-  <script src="/js/api.js?v=20260811-2"></script>
+  <script src="/js/api.js?v=20260923-4"></script>
   <script src="/js/admin-cabins.js?v=20260814-2"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
   <script src="/js/admin-mobile.js?v=20260811-2"></script>

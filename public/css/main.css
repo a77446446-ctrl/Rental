@@ -57,35 +57,74 @@ body.theme-light::before, body.theme-light::after {
   display: none !important;
 }
 
-body.theme-light-green {
-  --bg: #f4f9f4;
-  --bg-rgb: 244, 249, 244;
-  --bg-2: #ffffff;
-  --bg-2-rgb: 255, 255, 255;
-  --bg-3: #eaf2ea;
-  --panel: rgba(255, 255, 255, 0.92);
-  --panel-rgb: 255, 255, 255;
-  --panel-soft: rgba(244, 249, 244, 0.8);
-  --cream: #1a2e1e;
-  --cream-rgb: 26, 46, 30;
-  --cream-2: #2a402e;
-  --muted: rgba(26, 46, 30, 0.55);
-  --muted-2: rgba(26, 46, 30, 0.35);
-  --line: rgba(26, 46, 30, 0.1);
-  --line-2: rgba(26, 46, 30, 0.15);
-  --moss: #3a5c3a;
-  --moss-rgb: 58, 92, 58;
-  --moss-2: #4a7a4a;
-  --gold: #5b8a5b;
-  --gold-rgb: 91, 138, 91;
-  --wood: #4a6a4a;
-  color-scheme: light;
-  background: var(--bg);
+/* Light theme: force all form controls to light color-scheme */
+body.theme-light select,
+body.theme-light input[type="date"],
+body.theme-light input[type="month"],
+body.theme-light input[type="time"] {
+  color-scheme: light !important;
 }
 
-body.theme-light-green::before, body.theme-light-green::after {
+/* Light theme: admin panel card/table backgrounds */
+body.theme-light .admin-table,
+body.theme-light .table-container,
+body.theme-light .metric-card,
+body.theme-light .panel,
+body.theme-light .analytics-guest-detail,
+body.theme-light .bookings-counter,
+body.theme-light .booking-archive,
+body.theme-light .gallery-section,
+body.theme-light .external-calendar-row,
+body.theme-light .settings-card {
+  background: rgba(var(--cream-rgb), 0.03) !important;
+}
+
+body.theme-light .admin-table tbody tr:hover {
+  background: rgba(var(--cream-rgb), 0.06) !important;
+}
+
+body.theme-light .admin-table th {
+  background: rgba(var(--cream-rgb), 0.05) !important;
+}
+
+body.theme-light .bar-track {
+  background: rgba(var(--cream-rgb), 0.08) !important;
+}
+
+/* Light theme: form inputs */
+body.theme-light .form-group input,
+body.theme-light .form-group textarea,
+body.theme-light .form-group select,
+body.theme-light .action-select {
+  background: rgba(var(--cream-rgb), 0.04) !important;
+  color: var(--cream) !important;
+  border-color: var(--line) !important;
+}
+
+/* Light theme: icon picker */
+body.theme-light .icon-grid-item {
+  background: rgba(var(--cream-rgb), 0.04);
+}
+body.theme-light .icon-grid-item:hover {
+  background: rgba(var(--cream-rgb), 0.08);
+}
+
+/* Light theme: modal overlay */
+body.theme-light .modal-overlay {
+  background: rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Light theme: modal box-shadow (softer) */
+body.theme-light .modal {
+  box-shadow: 0 24px 80px rgba(0,0,0,0.15) !important;
+}
+
+/* Light theme: noise overlay off */
+body.theme-light .noise {
   display: none !important;
 }
+
+
 
 body.theme-dark-grey {
   --bg: #121212;

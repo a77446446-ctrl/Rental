@@ -15,7 +15,7 @@
   justify-content: center;
   gap: 8px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(var(--cream-rgb), 0.05);
   border: 1px solid var(--line);
   border-radius: 8px;
   cursor: pointer;
@@ -23,7 +23,7 @@
   color: var(--cream);
 }
 .icon-grid-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(var(--cream-rgb), 0.1);
   border-color: var(--gold);
   color: var(--gold);
 }

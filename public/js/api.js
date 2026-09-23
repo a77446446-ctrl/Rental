@@ -473,7 +473,10 @@
   document.addEventListener('DOMContentLoaded', function() {
     EcoApi.getSettings().then(function(settings) {
       if (settings && settings.siteTheme) {
-        document.body.classList.add(settings.siteTheme);
+        document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey');
+        if (settings.siteTheme !== 'theme-dark') {
+          document.body.classList.add(settings.siteTheme);
+        }
         try { localStorage.setItem('siteTheme', settings.siteTheme); } catch(e) {}
       }
     }).catch(function() {});

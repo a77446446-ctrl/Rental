@@ -11,7 +11,7 @@
   <link rel="manifest" href="/api/manifest.json">
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" href="/api/icon.png">
-  <link rel="stylesheet" href="/css/main.css?v=20260923-3">
+  <link rel="stylesheet" href="/css/main.css?v=20260923-4">
   <style>
     body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
     
@@ -49,7 +49,7 @@
     
     .admin-table {
       width: 100%; border-collapse: collapse; text-align: left;
-      background: rgba(237, 228, 214, 0.02); border-radius: 12px; overflow: hidden;
+      background: rgba(var(--cream-rgb), 0.02); border-radius: 12px; overflow: hidden;
       border: 1px solid var(--line);
     }
     .admin-table th, .admin-table td {
@@ -61,7 +61,7 @@
       text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;
     }
     .admin-table tr:last-child td { border-bottom: none; }
-    .admin-table tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
+    .admin-table tbody tr:hover { background: rgba(var(--cream-rgb), 0.04); }
     
     /* Modal styles */
     .modal-overlay {
@@ -97,7 +97,7 @@
       outline: none; border-color: var(--gold);
     }
     .form-group select {
-      color-scheme: dark;
+      color-scheme: inherit;
     }
     .form-group select option {
       background: var(--bg-2);
@@ -112,8 +112,8 @@
       margin-bottom: 48px;
     }
   </style>
-  <link rel="stylesheet" href="/css/admin.css?v=20260811-2">
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-2">
+  <link rel="stylesheet" href="/css/admin.css?v=20260923-4">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-4">
   <script src="/js/lucide.min.js?v=20260811-2"></script>
 </head>
 <body>
@@ -254,7 +254,7 @@
     </div>
   </div>
 
-  <script src="/js/api.js?v=20260811-2"></script>
+  <script src="/js/api.js?v=20260923-4"></script>
   <script src="/js/icons.js?v=20260811-2"></script>
   <script src="/js/icon-picker.js?v=20260811-2"></script>
   <script src="/js/admin-settings.js?v=20260811-2"></script>

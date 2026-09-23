@@ -11,7 +11,7 @@
   <link rel="manifest" href="/api/manifest.json">
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" href="/api/icon.png">
-  <link rel="stylesheet" href="/css/main.css?v=20260923-3">
+  <link rel="stylesheet" href="/css/main.css?v=20260923-4">
   <style>
     body { padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
     
@@ -48,7 +48,7 @@
     .admin-content-header h2 { font-size: 42px; margin: 0; text-transform: none; letter-spacing: 0; }
     
     .table-container {
-      background: rgba(237, 228, 214, 0.02);
+      background: rgba(var(--cream-rgb), 0.02);
       border: 1px solid var(--line);
       border-radius: 12px;
       overflow: hidden;
@@ -58,7 +58,7 @@
     th, td { padding: 16px; border-bottom: 1px solid var(--line); font-size: 14px; }
     th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
     tr:last-child td { border-bottom: none; }
-    tbody tr:hover { background: rgba(237, 228, 214, 0.04); }
+    tbody tr:hover { background: rgba(var(--cream-rgb), 0.04); }
 
     .status-badge {
       display: inline-block; padding: 4px 8px; border-radius: 6px;
@@ -71,7 +71,7 @@
     .action-select {
       background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line);
       color: var(--cream); padding: 6px 10px; border-radius: 6px; font-family: inherit;
-      font-size: 13px; color-scheme: dark; cursor: pointer;
+      font-size: 13px; color-scheme: inherit; cursor: pointer;
     }
     .booking-comment { min-width: 150px; max-width: 280px; color: var(--cream); font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
     .booking-comment.is-empty { min-width: 0; color: var(--muted); }
@@ -83,12 +83,12 @@
     .booking-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
     .admin-table th, .admin-table td { vertical-align: middle; }
     .bookings-summary { display: flex; gap: 10px; flex-wrap: wrap; margin: -14px 0 18px; }
-    .bookings-counter { display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 12px; background: rgba(237, 228, 214, .025); }
+    .bookings-counter { display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 12px; background: rgba(var(--cream-rgb), .025); }
     .bookings-counter strong { color: var(--cream); font-size: 13px; }
     .bookings-section { margin-bottom: 18px; }
     .bookings-section-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 2px 10px; color: var(--cream); }
     .bookings-section-head h3 { margin: 0; font-size: 17px; text-transform: none; letter-spacing: 0; }
-    .booking-archive { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: rgba(237, 228, 214, .015); }
+    .booking-archive { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: rgba(var(--cream-rgb), .015); }
     .booking-archive > summary { list-style: none; cursor: pointer; padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--cream); }
     .booking-archive > summary::-webkit-details-marker { display: none; }
     .booking-archive > summary::after { content: "⌄"; color: var(--gold); font-size: 20px; transition: transform .2s ease; }
@@ -106,7 +106,7 @@
       .booking-archive .table-container { padding: 10px; }
     }
   </style>
-  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-2">
+  <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-4">
   <script defer src="/js/lucide.min.js"></script>
 </head>
 <body>
@@ -213,11 +213,11 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div>
             <label>Заезд</label>
-            <input type="date" id="editCheckIn" style="width:100%; background: rgba(var(--cream-rgb), 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px; color-scheme:dark;">
+            <input type="date" id="editCheckIn" style="width:100%; background: rgba(var(--cream-rgb), 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px; ">
           </div>
           <div>
             <label>Выезд</label>
-            <input type="date" id="editCheckOut" style="width:100%; background: rgba(var(--cream-rgb), 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px; color-scheme:dark;">
+            <input type="date" id="editCheckOut" style="width:100%; background: rgba(var(--cream-rgb), 0.05); border:1px solid var(--line); color:var(--cream); padding:10px; border-radius:8px; ">
           </div>
         </div>
         
@@ -234,7 +234,7 @@
     </div>
   </div>
 
-  <script src="/js/api.js?v=20260811-2"></script>
+  <script src="/js/api.js?v=20260923-4"></script>
   <script src="/js/admin-bookings.js?v=20260821-1"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
   <script src="/js/admin-mobile.js?v=20260811-2"></script>
