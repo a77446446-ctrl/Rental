@@ -1580,7 +1580,7 @@
       setSplitLeadWords('hero-title', data.hero.title, 'Заголовок главного экрана', 2);
       if (data.hero.background_url) {
         const heroSection = document.getElementById('hero-section');
-        heroSection.style.backgroundImage = `linear-gradient(rgba(18, 15, 13, 0.45), rgba(18, 15, 13, 0.75)), url('${mainpageMediaUrl(data.hero.background_url)}')`;
+        heroSection.style.backgroundImage = `linear-gradient(rgba(var(--bg-rgb), 0.45), rgba(var(--bg-rgb), 0.75)), url('${mainpageMediaUrl(data.hero.background_url)}')`;
         heroSection.style.backgroundSize = 'cover';
         heroSection.style.backgroundPosition = 'center';
         heroSection.style.backgroundRepeat = 'no-repeat';
@@ -1780,7 +1780,7 @@
     // Территория
     applyTerritoryText(data.territory);
     if (data.territory && data.territory.background_url) {
-      document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,.66) 55%, rgba(0,0,0,.9) 100%), url('${mainpageMediaUrl(data.territory.background_url)}')`;
+      document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(var(--bg-rgb),.44) 0%, rgba(var(--bg-rgb),.76) 55%, rgba(var(--bg-rgb),.95) 100%), url('${mainpageMediaUrl(data.territory.background_url)}')`;
       document.getElementById('territory-stage').style.backgroundSize = 'cover';
       document.getElementById('territory-stage').style.backgroundPosition = 'center';
     }
@@ -1878,7 +1878,7 @@
     if (contacts.background_url) {
       const ctaCard = document.getElementById('contact-bg-card');
       if (ctaCard) {
-        ctaCard.style.backgroundImage = "linear-gradient(180deg, rgba(18,15,13,.18), rgba(18,15,13,.86)), url('" + mainpageMediaUrl(contacts.background_url) + "')";
+        ctaCard.style.backgroundImage = "linear-gradient(180deg, rgba(var(--bg-rgb),.18), rgba(var(--bg-rgb),.86)), url('" + mainpageMediaUrl(contacts.background_url) + "')";
       }
     }
 

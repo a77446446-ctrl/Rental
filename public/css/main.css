@@ -28,6 +28,7 @@
 }
 
 body.theme-light {
+  background: var(--bg) !important;
   --bg: #f9f9f9;
   --bg-rgb: 249, 249, 249;
   --bg-2: #ffffff;
@@ -127,14 +128,14 @@ body.theme-light .noise {
 
 
 body.theme-dark-grey {
-  --bg: #121212;
-  --bg-rgb: 18, 18, 18;
-  --bg-2: #1e1e1e;
-  --bg-2-rgb: 30, 30, 30;
-  --bg-3: #2a2a2a;
-  --panel: rgba(30, 30, 30, 0.85);
-  --panel-rgb: 30, 30, 30;
-  --panel-soft: rgba(40, 40, 40, 0.6);
+  --bg: #1e1e1e;
+  --bg-rgb: 30, 30, 30;
+  --bg-2: #252525;
+  --bg-2-rgb: 37, 37, 37;
+  --bg-3: #2c2c2c;
+  --panel: rgba(45, 45, 45, 0.85);
+  --panel-rgb: 45, 45, 45;
+  --panel-soft: rgba(55, 55, 55, 0.6);
   --cream: #f0f0f0;
   --cream-rgb: 240, 240, 240;
   --cream-2: #cccccc;

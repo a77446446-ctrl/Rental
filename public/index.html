@@ -16,7 +16,7 @@
   <title>Название проекта — аренда домиков для отдыха у озера</title>
 
   <!-- Google Fonts -->
-  <link rel="stylesheet" href="/css/main.css?v=20260923-4">
+  <link rel="stylesheet" href="/css/main.css?v=20260923-5">
   <link rel="stylesheet" href="/css/mobile-app.css?v=20260822-3">
   <link rel="stylesheet" href="/css/mobile-layout.css?v=20260821-4">
 
@@ -209,7 +209,7 @@
         </div>
       </div>
 
-      <div id="houses-search-result" style="display: none; padding: 20px; background: rgba(237, 228, 214, 0.05); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 20px;">
+      <div id="houses-search-result" style="display: none; padding: 20px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 20px;">
         <h3 style="margin-bottom: 8px; font-size: 20px;">Результаты поиска</h3>
         <p id="houses-search-text" style="color: var(--muted);"></p>
         <button type="button" class="btn btn-ghost" id="btnResetSearch" style="margin-top: 12px; border: 1px solid var(--line);">Сбросить поиск</button>
@@ -255,11 +255,11 @@
           <div id="calendarGrid" class="dates"></div>
 
           <div class="legend">
-            <span><i style="background:rgba(95,103,73,.62)"></i> Выбрано</span>
+            <span><i style="background:rgba(var(--moss-rgb),.62)"></i> Выбрано</span>
             <span><i class="legend-promo" aria-hidden="true"></i> Акция</span>
-            <span><i style="background:rgba(237,228,214,.18)"></i> Занято</span>
+            <span><i style="background:rgba(var(--cream-rgb),.18)"></i> Занято</span>
           </div>
-          <div id="promo-info-container" style="display: none; margin-top: 15px; padding: 12px; background: rgba(187, 164, 111, 0.08); border: 1px dashed rgba(187, 164, 111, 0.3); border-radius: 8px; font-size: 13px; color: var(--gold); text-align: left;">
+          <div id="promo-info-container" style="display: none; margin-top: 15px; padding: 12px; background: rgba(var(--gold-rgb), 0.08); border: 1px dashed rgba(var(--gold-rgb), 0.3); border-radius: 8px; font-size: 13px; color: var(--gold); text-align: left;">
             <strong style="display: block; margin-bottom: 4px;">Акция:</strong>
             <span id="promo-info-text"></span>
           </div>
@@ -271,7 +271,7 @@
 
           <form id="checkoutForm" class="booking-form" novalidate>
             <input type="hidden" id="checkoutCabinId">
-            <div id="checkoutSelectedInfo" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+            <div id="checkoutSelectedInfo" style="margin-bottom: 20px; padding: 15px; background: rgba(var(--cream-rgb),0.06); border-radius: 8px; border: 1px solid rgba(var(--cream-rgb),0.1);">
               <div style="margin-bottom: 10px; font-size: 0.9em; color: var(--text);">
                 <span style="color: var(--muted); display: inline-block; width: 60px;">Даты:</span> 
                 <b id="checkoutDatesInfo">Не выбраны</b>
@@ -285,21 +285,21 @@
                   <button type="button" class="guest-stepper-btn" data-action="increase" aria-label="Увеличить количество гостей">+</button>
                 </div>
               </div>
-              <div id="checkoutPetsContainer" style="display: none; flex-direction: column; font-size: 0.9em; color: var(--text); margin-top: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+              <div id="checkoutPetsContainer" style="display: none; flex-direction: column; font-size: 0.9em; color: var(--text); margin-top: 15px; background: rgba(var(--cream-rgb),0.06); border: 1px solid rgba(var(--cream-rgb),0.1); padding: 12px; border-radius: 8px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <span style="color: var(--muted); width: 65px;">Питомцы:</span> 
-                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; flex-grow: 1;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; padding: 4px 8px; background: rgba(var(--cream-rgb),0.1); border-radius: 6px; flex-grow: 1;">
                     <input type="checkbox" id="checkoutWithPets" style="width: 18px; height: 18px; accent-color: #8B5A2B;">
                     <span>Я с питомцем</span>
                   </label>
                 </div>
                 
                 <div id="checkoutPetTypesContainer" style="display: none; padding-left: 77px; flex-direction: column; gap: 10px; margin-top: 12px;">
-                  <label id="checkoutPetDogLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                  <label id="checkoutPetDogLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; background: rgba(var(--cream-rgb),0.04); border-radius: 6px; border: 1px solid rgba(var(--cream-rgb),0.1);">
                     <input type="checkbox" id="checkoutPetDog" value="dog" style="width: 16px; height: 16px; accent-color: #8B5A2B;">
                     Собака
                   </label>
-                  <label id="checkoutPetCatLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                  <label id="checkoutPetCatLabel" style="display: none; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; background: rgba(var(--cream-rgb),0.04); border-radius: 6px; border: 1px solid rgba(var(--cream-rgb),0.1);">
                     <input type="checkbox" id="checkoutPetCat" value="cat" style="width: 16px; height: 16px; accent-color: #8B5A2B;">
                     Кошка
                   </label>
@@ -500,7 +500,7 @@
     </div>
   </div>
 
-  <script src="/js/api.js?v=20260923-4" defer></script>
+  <script src="/js/api.js?v=20260923-5" defer></script>
   <script src="/js/pwa.js?v=20260811-2" defer></script>
   <script src="/js/chat.js?v=20260822-2" defer></script>
   <script src="/js/calendar.js?v=20260813-1" defer></script>
