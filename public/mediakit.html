@@ -56,28 +56,35 @@
 
     /* Мокап Планшета (iPad Pro стиль) */
     .mockup-ipad {
-      width: 760px; height: 520px; background: #000; border-radius: 28px;
-      border: 14px solid #1a1a1a; position: relative;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 2px #444;
+      width: 760px; height: 520px; background: #000; border-radius: 36px;
+      border: 10px solid #1a1a1a; position: relative;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px #555, inset 0 0 0 8px #000, 0 0 0 2px #333;
       flex-shrink: 0;
     }
     .mockup-ipad::before { /* Камера слева по центру (ландшафт) */
-      content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
-      width: 4px; height: 4px; background: #000; border-radius: 50%; border: 1px solid #333;
+      content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
+      width: 6px; height: 6px; background: #111; border-radius: 50%; border: 1px solid #333; z-index: 10;
     }
-    .mockup-ipad iframe { width: 100%; height: 100%; border: none; border-radius: 14px; background: var(--bg); }
+    .mockup-ipad::after { /* Кнопки громкости */
+      content: ''; position: absolute; top: 40px; right: -12px; width: 2px; height: 50px; background: #333; border-radius: 0 4px 4px 0; box-shadow: 0 60px 0 #333; z-index: 10;
+    }
+    .mockup-ipad iframe { width: 100%; height: 100%; border: none; border-radius: 22px; background: var(--bg); position: relative; z-index: 1; }
 
     /* Мокап iPhone */
     .mockup-iphone {
-      width: 320px; height: 660px; background: #000; border-radius: 40px;
-      border: 12px solid #222; position: relative;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 2px #444; flex-shrink: 0;
+      width: 320px; height: 660px; background: #000; border-radius: 46px;
+      border: 12px solid #111; position: relative;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px #555, inset 0 0 0 8px #000, 0 0 0 2px #333; flex-shrink: 0;
     }
-    .mockup-iphone::before {
-      content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-      width: 90px; height: 25px; background: #000; border-radius: 20px; z-index: 10;
+    .mockup-iphone::before { /* Челка */
+      content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 28px; background: #000; border-radius: 20px; z-index: 10;
+      box-shadow: inset 0 0 0 1px #222;
     }
-    .mockup-iphone iframe { width: 100%; height: 100%; border: none; border-radius: 28px; background: var(--bg); }
+    .mockup-iphone::after { /* Кнопки */
+      content: ''; position: absolute; top: 120px; left: -14px; width: 2px; height: 40px; background: #333; border-radius: 4px 0 0 4px; box-shadow: 0 60px 0 #333, 334px 40px 0 #333; z-index: 10;
+    }
+    .mockup-iphone iframe { width: 100%; height: 100%; border: none; border-radius: 30px; background: var(--bg); position: relative; z-index: 1; }
 
     /* Телеграм Фейк */
     .tg-mock { border-radius: 28px; height: 100%; background: #0f172a; overflow: hidden; display: flex; flex-direction: column; font-family: -apple-system, sans-serif; }
@@ -146,7 +153,7 @@
     <div class="devices-row">
       <!-- Планшет (Слева) -->
       <div class="device-group">
-        <div class="device-label">🖥️ Панель администратора</div>
+        <div class="device-label">ПАНЕЛЬ АДМИНИСТРАТОРА</div>
         <div class="mockup-ipad">
           <iframe src="/admin/bookings.html"></iframe>
         </div>
@@ -154,7 +161,7 @@
 
       <!-- Телефон (Справа) -->
       <div class="device-group">
-        <div class="device-label">📱 Сайт для клиента</div>
+        <div class="device-label">САЙТ ДЛЯ КЛИЕНТА</div>
         <div class="mockup-iphone">
           <iframe src="/"></iframe>
         </div>
@@ -172,7 +179,7 @@
     <div class="devices-row">
       <!-- Гость на сайте -->
       <div class="device-group">
-        <div class="device-label">👤 Виджет на сайте</div>
+        <div class="device-label">ВИДЖЕТ НА САЙТЕ</div>
         <div class="mockup-iphone">
           <iframe src="/?openChat=true"></iframe>
         </div>
@@ -180,7 +187,7 @@
 
       <!-- Админ в панели -->
       <div class="device-group">
-        <div class="device-label">👑 Админ-панель</div>
+        <div class="device-label">АДМИН-ПАНЕЛЬ</div>
         <div class="mockup-iphone">
           <iframe src="/admin/chats.html"></iframe>
         </div>
@@ -188,7 +195,7 @@
 
       <!-- Telegram -->
       <div class="device-group">
-        <div class="device-label">✈️ Мессенджеры</div>
+        <div class="device-label">МЕССЕНДЖЕРЫ</div>
         <div class="mockup-iphone">
           <div class="tg-mock">
             <div class="tg-header">EcoSystem Bot</div>
