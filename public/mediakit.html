@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>EcoSystem — Интерактивная презентация</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/api/icon.png">
+  <link rel="apple-touch-icon" href="/api/icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -334,17 +336,70 @@
         }
       });
 
-      // Убираем скроллбары в iframe
+      // Убираем скроллбары в iframe и добавляем drag-to-scroll
       setTimeout(() => {
         document.querySelectorAll('iframe').forEach(iframe => {
             try {
-              const style = document.createElement('style');
+              const doc = iframe.contentDocument || iframe.contentWindow.document;
+              
+              // Hide scrollbars
+              const style = doc.createElement('style');
               style.textContent = `
-                ::-webkit-scrollbar { width: 0px !important; background: transparent !important; }
-                body { -ms-overflow-style: none; scrollbar-width: none; }
+                ::-webkit-scrollbar { width: 0px !important; height: 0px !important; background: transparent !important; }
+                * { -ms-overflow-style: none; scrollbar-width: none; }
               `;
-              iframe.contentDocument.head.appendChild(style);
-            } catch(e) {}
+              doc.head.appendChild(style);
+
+              // Add Drag-to-scroll logic for horizontal scrolling elements
+              let isDown = false;
+              let startX;
+              let scrollLeft;
+              let activeContainer = null;
+
+              doc.addEventListener('mousedown', (e) => {
+                // Find closest scrollable container
+                let target = e.target;
+                while (target && target !== doc.body) {
+                  const overflowX = iframe.contentWindow.getComputedStyle(target).overflowX;
+                  if ((overflowX === 'auto' || overflowX === 'scroll') && target.scrollWidth > target.clientWidth) {
+                    activeContainer = target;
+                    isDown = true;
+                    startX = e.pageX - activeContainer.offsetLeft;
+                    scrollLeft = activeContainer.scrollLeft;
+                    activeContainer.style.cursor = 'grabbing';
+                    activeContainer.style.scrollBehavior = 'auto'; // disable smooth scroll while dragging
+                    break;
+                  }
+                  target = target.parentElement;
+                }
+              });
+
+              doc.addEventListener('mouseleave', () => {
+                if (!isDown) return;
+                isDown = false;
+                if (activeContainer) activeContainer.style.cursor = 'default';
+              });
+
+              doc.addEventListener('mouseup', () => {
+                if (!isDown) return;
+                isDown = false;
+                if (activeContainer) {
+                  activeContainer.style.cursor = 'default';
+                  activeContainer.style.scrollBehavior = 'smooth';
+                }
+              });
+
+              doc.addEventListener('mousemove', (e) => {
+                if (!isDown || !activeContainer) return;
+                e.preventDefault();
+                const x = e.pageX - activeContainer.offsetLeft;
+                const walk = (x - startX) * 2; // scroll-fast multiplier
+                activeContainer.scrollLeft = scrollLeft - walk;
+              });
+
+            } catch(e) {
+              console.error('Iframe drag-to-scroll error:', e);
+            }
         });
       }, 2000);
     });
