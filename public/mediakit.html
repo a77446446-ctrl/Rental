@@ -94,7 +94,7 @@
     .tg-mock { background: #1c242d; overflow: hidden; display: flex; flex-direction: column; font-family: -apple-system, sans-serif; }
     .tg-header { background: #1c242d; padding: 15px; display: flex; align-items: center; gap: 10px; font-size: 16px; border-bottom: 1px solid #2a3541; padding-top: 45px; }
     .tg-header-back { color: #6ab2f2; font-size: 24px; line-height: 1; cursor: pointer; }
-    .tg-header-avatar { width: 36px; height: 36px; background: #2b5278; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
+    .tg-header-avatar { width: 44px; height: 44px; font-size: 22px; background: #2b5278; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
     .tg-header-info { flex: 1; }
     .tg-header-title { color: #fff; font-weight: 600; font-size: 15px; }
     .tg-header-status { color: #7f91a4; font-size: 12px; }
@@ -107,6 +107,7 @@
     .tg-input { height: 50px; background: #1c242d; border-top: 1px solid #2a3541; display: flex; align-items: center; padding: 0 15px; gap: 15px; color: #7f91a4; padding-bottom: 15px; }
     .tg-input svg { width: 24px; height: 24px; stroke: #7f91a4; stroke-width: 1.5; fill: none; }
 
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1200px; }
     .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(187, 164, 111, 0.15); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; z-index: 5; }
     .feature-card:hover { transform: translateY(-5px); background: rgba(187, 164, 111, 0.05); border-color: rgba(187, 164, 111, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
     .feature-card svg { width: 48px; height: 48px; stroke: var(--gold); margin-bottom: 20px; transition: transform 0.3s ease; pointer-events: none; }
@@ -214,7 +215,7 @@
   <div class="section">
     <div class="sec-header" style="margin-bottom: 40px;">
       <h2 class="sec-title">Все каналы связи в одном окне</h2>
-      <p class="sec-desc">Гость пишет с сайта, вы отвечаете из панели администратора, а уведомления дублируются вам прямо в карман через Telegram или МАКС. Общайтесь там, где вам удобно!</p>
+      <p class="sec-desc">Гость пишет с сайта, вы отвечаете из панели администратора, а уведомления дублируются вам прямо в карман через МАКС-бота или Telegram. Общайтесь там, где вам удобно!</p>
     </div>
 
         <div class="devices-row" style="justify-content: center; gap: 40px; align-items: center;">
@@ -226,18 +227,35 @@
         </div>
       </div>
 
-      <div class="mockup-arrows">
-        <svg viewBox="0 0 40 30" fill="none">
-          <path d="M5 10 L35 10 M30 5 L35 10 L30 15" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <svg viewBox="0 0 40 30" fill="none">
-          <path d="M35 20 L5 20 M10 15 L5 20 L10 25" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
+              <div class="mockup-arrows">
+          <svg viewBox="0 0 40 30" fill="none">
+            <path d="M5 10 L35 10 M30 5 L35 10 L30 15" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg viewBox="0 0 40 30" fill="none">
+            <path d="M35 20 L5 20 M10 15 L5 20 L10 25" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- АДМИН-ПАНЕЛЬ -->
+        <div class="device-group">
+          <div class="device-label">АДМИН-ПАНЕЛЬ</div>
+          <div class="mockup-iphone">
+            <iframe src="/admin/chats.html"></iframe>
+          </div>
+        </div>
+
+        <div class="mockup-arrows">
+          <svg viewBox="0 0 40 30" fill="none">
+            <path d="M5 10 L35 10 M30 5 L35 10 L30 15" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg viewBox="0 0 40 30" fill="none">
+            <path d="M35 20 L5 20 M10 15 L5 20 L10 25" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
 
       <!-- Telegram -->
       <div class="device-group">
-        <div class="device-label">TELEGRAM БОТ</div>
+        <div class="device-label">МАКС БОТ / TELEGRAM БОТ</div>
         <div class="mockup-iphone">
           <div class="tg-mock">
             <div class="tg-header">
@@ -247,7 +265,7 @@
                 <div class="tg-header-title">Админ Бронирования</div>
                 <div class="tg-header-status">bot</div>
               </div>
-              <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+              
             </div>
             <div class="tg-body">
               <div class="tg-date">Today</div>
