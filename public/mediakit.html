@@ -122,6 +122,27 @@
     .modal-text ul { padding-left: 20px; margin-top: 15px; }
     .modal-text li { margin-bottom: 10px; }
 
+    /* Подсказки для админки */
+    .demo-tooltip {
+      position: absolute; left: -340px; top: 120px; width: 300px;
+      background: rgba(26, 21, 18, 0.9); border: 1px solid var(--gold);
+      border-radius: 16px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      opacity: 0; transform: translateX(20px); transition: all 0.4s ease;
+      display: flex; gap: 15px; z-index: 20; backdrop-filter: blur(10px);
+      text-align: left;
+    }
+    .demo-tooltip.visible { opacity: 1; transform: translateX(0); }
+    .tooltip-icon { font-size: 24px; flex-shrink: 0; line-height: 1.2; }
+    .tooltip-content h4 { margin: 0 0 8px 0; color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.1; }
+    .tooltip-content p { margin: 0; font-size: 14px; color: #ccc; line-height: 1.5; }
+
+    @media (max-width: 1480px) {
+      .demo-tooltip {
+        position: relative; left: 0; top: 0; width: 100%; max-width: 760px;
+        margin-top: 20px;
+      }
+    }
+
     @media (max-width: 1200px) {
       .mockup-ipad { width: 100%; max-width: 760px; height: 55vw; }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
@@ -152,10 +173,18 @@
     <!-- Плоская композиция -->
     <div class="devices-row">
       <!-- Планшет (Слева) -->
-      <div class="device-group">
+      <div class="device-group" style="position: relative;">
         <div class="device-label">ПАНЕЛЬ АДМИНИСТРАТОРА</div>
         <div class="mockup-ipad">
-          <iframe src="/admin/bookings.html"></iframe>
+          <iframe id="adminDemoIframe" src="/admin/bookings.html"></iframe>
+        </div>
+        
+        <div class="demo-tooltip" id="adminTooltip">
+          <div class="tooltip-icon">💡</div>
+          <div class="tooltip-content">
+            <h4 id="ttTitle">Бронирования</h4>
+            <p id="ttText">Шахматка бронирований. Наглядный календарь со статусами всех заездов. Здесь вы можете создавать новые брони, менять даты перетаскиванием и следить за оплатами.</p>
+          </div>
         </div>
       </div>
 
@@ -309,6 +338,62 @@
 
     // Привязываем события через JS, чтобы обойти блокировку инлайн-скриптов (CSP)
     document.addEventListener('DOMContentLoaded', () => {
+
+      // Интерактивные подсказки для админки
+      const adminIframe = document.getElementById('adminDemoIframe');
+      const tooltip = document.getElementById('adminTooltip');
+      const ttTitle = document.getElementById('ttTitle');
+      const ttText = document.getElementById('ttText');
+
+      const adminTips = {
+        '/admin/bookings.html': {
+          title: "Бронирования (Шахматка)",
+          text: "Наглядный календарь со статусами всех заездов. Вы можете создавать новые брони, менять даты простым перетаскиванием (drag-and-drop) и следить за оплатами."
+        },
+        '/admin/chats.html': {
+          title: "Встроенный мессенджер",
+          text: "Сюда поступают сообщения от гостей с сайта. Вы можете отправлять фотографии, обмениваться файлами и напрямую консультировать клиентов. Уведомления дублируются вам в Telegram или МАКС."
+        },
+        '/admin/cabins.html': {
+          title: "Управление объектами",
+          text: "Здесь вы создаете и настраиваете свои дома или квартиры. Загрузите красивые фотографии, укажите вместимость и опишите удобства — новые объекты моментально появятся на сайте."
+        },
+        '/admin/prices.html': {
+          title: "Гибкая настройка цен",
+          text: "Установите базовую стоимость, доплаты за дополнительных гостей и животных. Создавайте особые правила для выходных дней и праздников в пару кликов."
+        },
+        '/admin/crm.html': {
+          title: "CRM и База Клиентов",
+          text: "Каждый гость автоматически сохраняется в единую базу. Вы видите историю их заездов, общую сумму (LTV) и можете оставлять полезные личные заметки о предпочтениях."
+        },
+        '/admin/analytics.html': {
+          title: "Бизнес Аналитика",
+          text: "Наглядные графики вашей выручки по месяцам, процент загрузки каждого объекта и статистика по среднему чеку для принятия верных бизнес-решений."
+        },
+        '/admin/settings.html': {
+          title: "Настройки (CMS)",
+          text: "Управляйте контентом сайта без программистов. Меняйте название базы, логотип, правила проживания и контактные данные легко и быстро."
+        }
+      };
+
+      if (adminIframe && tooltip) {
+        adminIframe.addEventListener('load', () => {
+          try {
+            const path = adminIframe.contentWindow.location.pathname;
+            const data = adminTips[path];
+            if (data) {
+              ttTitle.innerText = data.title;
+              ttText.innerText = data.text;
+              tooltip.classList.add('visible');
+            } else {
+              ttTitle.innerText = "Панель управления";
+              ttText.innerText = "Изучайте интерфейс администратора. Переходите по разделам в меню слева.";
+              tooltip.classList.add('visible');
+            }
+          } catch(e) {}
+        });
+        setTimeout(() => tooltip.classList.add('visible'), 1000);
+      }
       
       const modal = document.getElementById('featureModal');
       const closeBtn = document.getElementById('modalCloseBtn');
