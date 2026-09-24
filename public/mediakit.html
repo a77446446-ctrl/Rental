@@ -44,41 +44,105 @@
     .sec-title { font-family: 'Cormorant Garamond', serif; font-size: 48px; color: var(--gold); margin: 0 0 20px 0; line-height: 1.1; }
     .sec-desc { font-size: 18px; color: #a8a096; line-height: 1.6; }
 
-    /* Устройства */
-    .devices-row {
-      display: flex; gap: 60px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; max-width: 1400px;
+    /* Композиция Главная (перекрытие устройств как на картинке) */
+    .hero-composition {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 20px;
     }
-    
-    .device-group { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-    .device-label { font-size: 16px; font-weight: 600; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; background: rgba(187, 164, 111, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(187, 164, 111, 0.2); }
 
-    /* Мокап MacBook */
-    .mockup-mac {
+    /* Мокап MacBook (3D реалистичный) */
+    .macbook-wrapper {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 30px; /* отступ снизу */
+      z-index: 1;
+    }
+    .macbook-screen {
       width: 800px; height: 500px; background: #000; border-radius: 12px 12px 0 0;
-      border: 16px solid #1a1a1a; border-bottom: 24px solid #222; position: relative;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.7); flex-shrink: 0;
+      border: 14px solid #111; border-bottom: 24px solid #111; position: relative;
+      z-index: 2;
     }
-    .mockup-mac::after {
-      content: ''; position: absolute; bottom: -24px; left: -60px; right: -60px;
-      height: 12px; background: linear-gradient(to bottom, #333, #111); border-radius: 0 0 12px 12px;
+    .macbook-screen::before { /* камера */
+      content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 4px; background: #222; border-radius: 50%; border: 1px solid #000;
     }
-    .mockup-mac::before {
-      content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-      width: 6px; height: 6px; background: #000; border-radius: 50%; border: 1px solid #333;
+    .macbook-screen::after { /* логотип MacBook Pro */
+      content: 'MacBook Pro'; position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.3); font-size: 8px; font-weight: bold; letter-spacing: 1px; font-family: sans-serif;
     }
-    .mockup-mac iframe { width: 100%; height: 100%; border: none; background: var(--bg); }
+    .macbook-screen iframe { width: 100%; height: 100%; border: none; background: var(--bg); }
+    
+    .macbook-base {
+      width: 860px; height: 260px;
+      background: linear-gradient(to bottom, #5a5c60, #2a2b2e); /* Space gray metallic */
+      border-radius: 0 0 24px 24px;
+      transform: perspective(800px) rotateX(70deg);
+      transform-origin: top center;
+      margin-top: -10px; z-index: 1;
+      position: relative;
+      box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+      border-top: 1px solid #777; /* Блик на грани */
+    }
+    /* Торец ноутбука (передняя грань) */
+    .macbook-base::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 8px;
+      background: linear-gradient(to right, #2a2b2e, #4a4c50, #2a2b2e);
+      border-radius: 0 0 24px 24px;
+    }
+    /* Тачпад */
+    .macbook-trackpad {
+      position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
+      width: 140px; height: 75px; background: #4a4b4e; border-radius: 6px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.1);
+    }
+    /* Углубление под клавиатуру */
+    .macbook-keyboard-well {
+      position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+      width: 660px; height: 110px; background: #3a3b3e; border-radius: 8px;
+      box-shadow: inset 0 3px 10px rgba(0,0,0,0.6);
+      display: flex; justify-content: center; align-items: center; padding: 4px;
+    }
+    /* Сама клавиатура (сетка клавиш) */
+    .macbook-keyboard {
+      width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(90deg, #111 2px, transparent 2px),
+        linear-gradient(#111 2px, transparent 2px);
+      background-size: 20px 20px;
+      background-color: #222; /* Цвет клавиш */
+      border-radius: 4px;
+    }
 
-    /* Мокап iPhone */
+    /* Мокап iPhone (перекрывает ноутбук справа) */
+    .hero-phone-wrapper {
+      position: absolute;
+      right: 0; /* Сдвигаем на правый край ноутбука */
+      bottom: 0px; /* Стоит на уровне стола */
+      z-index: 10;
+    }
+
     .mockup-iphone {
-      width: 320px; height: 660px; background: #000; border-radius: 40px;
-      border: 12px solid #222; position: relative;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 2px #444; flex-shrink: 0;
+      width: 280px; height: 580px; background: #000; border-radius: 40px;
+      border: 10px solid #1a1a1a; position: relative;
+      box-shadow: -20px 30px 60px rgba(0,0,0,0.8), inset 0 0 0 2px #333;
     }
     .mockup-iphone::before {
       content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-      width: 90px; height: 25px; background: #000; border-radius: 20px; z-index: 10;
+      width: 80px; height: 22px; background: #000; border-radius: 20px; z-index: 10;
     }
     .mockup-iphone iframe { width: 100%; height: 100%; border: none; border-radius: 28px; background: var(--bg); }
+
+    /* Для других секций (ряд устройств) */
+    .devices-row {
+      display: flex; gap: 40px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; max-width: 1400px;
+    }
+    .device-group { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .device-label { font-size: 14px; font-weight: 600; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; background: rgba(187, 164, 111, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(187, 164, 111, 0.2); }
 
     /* Телеграм Фейк */
     .tg-mock { border-radius: 28px; height: 100%; background: #0f172a; overflow: hidden; display: flex; flex-direction: column; font-family: -apple-system, sans-serif; }
@@ -89,19 +153,44 @@
 
     /* Сетка фич */
     .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1200px; }
-    .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(187, 164, 111, 0.15); border-radius: 16px; padding: 30px; text-align: center; transition: transform 0.3s; }
-    .feature-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.04); border-color: rgba(187, 164, 111, 0.4); }
-    .feature-card svg { width: 48px; height: 48px; stroke: var(--gold); margin-bottom: 20px; }
+    .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(187, 164, 111, 0.15); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; }
+    .feature-card:hover { transform: translateY(-5px); background: rgba(187, 164, 111, 0.05); border-color: rgba(187, 164, 111, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .feature-card svg { width: 48px; height: 48px; stroke: var(--gold); margin-bottom: 20px; transition: transform 0.3s ease; }
+    .feature-card:hover svg { transform: scale(1.1); }
     .feature-card h3 { font-size: 20px; margin: 0 0 10px 0; color: var(--cream); font-weight: 600; }
-    .feature-card p { font-size: 14px; color: #a8a096; margin: 0; line-height: 1.5; }
+    .feature-card p { font-size: 14px; color: var(--gold-light); margin: 0; line-height: 1.5; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Модальное окно для фич */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+      z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content {
+      background: var(--bg-2); border: 1px solid var(--gold); border-radius: 20px; padding: 40px;
+      max-width: 600px; width: 90%; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+      transform: translateY(20px); transition: transform 0.3s ease;
+    }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--cream); font-size: 30px; cursor: pointer; transition: color 0.2s; }
+    .modal-close:hover { color: var(--gold); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--gold); margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+    .modal-title svg { width: 32px; height: 32px; stroke: var(--gold); }
+    .modal-text { font-size: 16px; color: #ccc; line-height: 1.6; }
+    .modal-text ul { padding-left: 20px; margin-top: 15px; }
+    .modal-text li { margin-bottom: 10px; }
 
     @media (max-width: 1200px) {
-      .mockup-mac { width: 100%; max-width: 800px; height: 45vw; }
+      .macbook-screen { width: 100%; max-width: 800px; height: 45vw; }
+      .macbook-base { width: 110%; }
+      .hero-phone-wrapper { right: -20px; }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 800px) {
       .features-grid { grid-template-columns: 1fr; }
-      .devices-row { flex-direction: column; }
+      .hero-composition { flex-direction: column; align-items: center; }
+      .hero-phone-wrapper { position: relative; right: 0; margin-top: -100px; }
+      .devices-row { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
@@ -116,43 +205,51 @@
   </div>
 
   <!-- Секция 1: Главная (ПК + Мобайл) -->
-  <div class="section">
+  <div class="section" style="padding-bottom: 120px;">
     <div class="sec-header">
       <h2 class="sec-title">Управляйте бизнесом.<br>Принимайте гостей.</h2>
       <p class="sec-desc">Комплексное решение для автоматизации аренды баз отдыха, глэмпингов, коттеджей, <b>а также посуточной аренды квартир и коммерческих помещений.</b><br>Всё работает синхронно и без задержек.</p>
     </div>
 
-    <div class="devices-row">
-      <!-- Ноутбук: Панель администратора -->
-      <div class="device-group">
-        <div class="device-label">🖥️ Взгляд администратора</div>
-        <div class="mockup-mac">
+    <!-- Композиция как на рекламном постере -->
+    <div class="hero-composition">
+      
+      <!-- Ноутбук -->
+      <div class="macbook-wrapper">
+        <div class="device-label" style="margin-bottom: 20px;">🖥️ Панель администратора</div>
+        <div class="macbook-screen">
           <iframe src="/admin/bookings.html"></iframe>
+        </div>
+        <div class="macbook-base">
+          <div class="macbook-keyboard-well">
+            <div class="macbook-keyboard"></div>
+          </div>
+          <div class="macbook-trackpad"></div>
         </div>
       </div>
 
-      <!-- Телефон: Сайт для клиента -->
-      <div class="device-group">
-        <div class="device-label">📱 Взгляд клиента</div>
+      <!-- Телефон перекрывает ноутбук -->
+      <div class="hero-phone-wrapper">
+        <div class="device-label" style="margin-bottom: 20px; text-align: center;">📱 Сайт для клиента</div>
         <div class="mockup-iphone">
           <iframe src="/"></iframe>
         </div>
       </div>
+
     </div>
   </div>
 
   <!-- Секция 2: Чат интеграция -->
   <div class="section">
-    <div class="sec-header">
+    <div class="sec-header" style="margin-bottom: 40px;">
       <h2 class="sec-title">Все каналы связи в одном окне</h2>
       <p class="sec-desc">Гость пишет с сайта, вы отвечаете из панели администратора, а уведомления дублируются вам прямо в карман через Telegram или МАКС. Общайтесь там, где вам удобно!</p>
     </div>
 
     <div class="devices-row">
-      
       <!-- Гость на сайте -->
       <div class="device-group">
-        <div class="device-label">👤 Сайт (Виджет гостя)</div>
+        <div class="device-label">👤 Виджет на сайте</div>
         <div class="mockup-iphone">
           <iframe src="/?openChat=true"></iframe>
         </div>
@@ -168,7 +265,7 @@
 
       <!-- Telegram -->
       <div class="device-group">
-        <div class="device-label">✈️ Telegram / МАКС</div>
+        <div class="device-label">✈️ Мессенджеры</div>
         <div class="mockup-iphone">
           <div class="tg-mock">
             <div class="tg-header">EcoSystem Bot</div>
@@ -193,7 +290,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -201,44 +297,100 @@
   <div class="section">
     <div class="sec-header">
       <h2 class="sec-title">Всё включено</h2>
-      <p class="sec-desc">Технологии топовых агрегаторов теперь работают на ваш личный бренд.</p>
+      <p class="sec-desc">Технологии топовых агрегаторов теперь работают на ваш личный бренд.<br><b style="color:var(--gold)">Нажмите на любую карточку, чтобы узнать подробности.</b></p>
     </div>
 
     <div class="features-grid">
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+      <div class="feature-card" onclick="openModal('calendar')">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-calendar"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
         <h3>Умный календарь</h3>
-        <p>Гибкие цены по дням недели, акции, надбавки за питомцев и блокировка дат в 2 клика.</p>
+        <p>Подробнее →</p>
       </div>
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+      <div class="feature-card" onclick="openModal('ical')">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-ical"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
         <h3>Синхронизация iCal</h3>
-        <p>Автоматический обмен занятостью с Авито, Суточно, Циан и Островок. Забудьте про овербукинг.</p>
+        <p>Подробнее →</p>
       </div>
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+      <div class="feature-card" onclick="openModal('crm')">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-crm"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
         <h3>Встроенная CRM</h3>
-        <p>Аналитика доходов, база данных постоянных гостей с расчетом LTV и возможностью оставлять заметки.</p>
+        <p>Подробнее →</p>
       </div>
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.813-3.814a3.182 3.182 0 0 0-4.497-4.497l-3.814 3.814a15.996 15.996 0 0 0-4.648 4.764m4.496-4.496a15.085 15.085 0 0 0-4.892 2.785m-4.766 4.765a15.08 15.08 0 0 0 2.786-4.892" /></svg>
-        <h3>Мощная CMS</h3>
-        <p>Меняйте тексты, фото, отзывы и настройки главной страницы сайта без помощи программиста.</p>
+      <div class="feature-card" onclick="openModal('chat')">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-chat"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
+        <h3>Онлайн-чат 24/7</h3>
+        <p>Подробнее →</p>
       </div>
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
-        <h3>PWA Мобильное приложение</h3>
-        <p>Гости и администратор могут установить сайт как полноценное приложение на iOS и Android.</p>
+      <div class="feature-card" onclick="openModal('bots')">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-bots"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+        <h3>Интеграция с ботами</h3>
+        <p>Подробнее →</p>
       </div>
-      <div class="feature-card">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z" /></svg>
-        <h3>3 Темы оформления</h3>
-        <p>Выбирайте дизайн сайта под свой стиль: Темный Люкс, Светлый или Строгий серый.</p>
+      <div class="feature-card" onclick="openModal('cms')">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-cms"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.813-3.814a3.182 3.182 0 0 0-4.497-4.497l-3.814 3.814a15.996 15.996 0 0 0-4.648 4.764m4.496-4.496a15.085 15.085 0 0 0-4.892 2.785m-4.766 4.765a15.08 15.08 0 0 0 2.786-4.892" /></svg>
+        <h3>Мощная CMS и PWA</h3>
+        <p>Подробнее →</p>
       </div>
     </div>
   </div>
 
+  <!-- Модальное окно -->
+  <div class="modal-overlay" id="featureModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal(event)">×</button>
+      <h3 class="modal-title" id="modalTitle"><svg id="modalIcon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"></svg> <span id="modalTitleText">Заголовок</span></h3>
+      <div class="modal-text" id="modalText">Текст</div>
+    </div>
+  </div>
+
   <script>
+    const featureData = {
+      calendar: {
+        title: "Умный календарь",
+        icon: "icon-calendar",
+        text: "<p>Интерактивная сетка занятости всех объектов. Гибкая настройка цен в зависимости от дня недели, сезона или праздников.</p><ul><li>Возможность задавать промо-акции и скидки (звездочки на датах)</li><li>Полная или частичная блокировка дат под ремонт или личное использование</li><li>Автоматический расчет стоимости проживания с животными (за ночь или за период)</li><li>Настройка и учет дополнительных услуг (баня, купель и т.д.)</li></ul>"
+      },
+      ical: {
+        title: "Синхронизация iCal",
+        icon: "icon-ical",
+        text: "<p>Двусторонний автоматический обмен данными с популярными площадками: Авито, Суточно.ру, Островок, Циан, Яндекс.Путешествия.</p><ul><li>Синхронизация происходит автоматически, полностью исключая риск двойного бронирования (овербукинг).</li><li>Поддерживается до 10 внешних календарей на каждый отдельный объект (домик/квартиру).</li><li>Ручная синхронизация одной кнопкой при необходимости.</li><li>Удобный экспорт ссылки на ваш календарь для сторонних сервисов.</li></ul>"
+      },
+      crm: {
+        title: "Встроенная CRM и Аналитика",
+        icon: "icon-crm",
+        text: "<p>Наглядная панель с ключевыми показателями бизнеса: выручка, количество бронирований, средний чек, процент загрузки.</p><ul><li>Встроенная база данных гостей автоматически сохраняет историю заездов.</li><li>Автоматический расчет LTV (Lifetime Value — сколько денег принес клиент за все время).</li><li>Администратор может оставлять личные персональные заметки по каждому гостю (предпочтения, предупреждения).</li></ul>"
+      },
+      chat: {
+        title: "Онлайн-чат 24/7",
+        icon: "icon-chat",
+        text: "<p>Удобный встроенный виджет на сайте, позволяющий гостям задать вопрос перед бронированием.</p><ul><li>Поддерживает отправку любых файлов: фото, видео, голосовые сообщения и документы.</li><li>Все диалоги ведутся в едином окне панели администратора, не требуя установки сторонних тяжелых сервисов.</li><li>Гость получает ответы мгновенно без перезагрузки страницы (используется Long Polling / WebSockets).</li></ul>"
+      },
+      bots: {
+        title: "Интеграция с ботами",
+        icon: "icon-bots",
+        text: "<p>Вы можете привязать свой Telegram или корпоративный МАКС аккаунт к системе.</p><ul><li>Как только гость отправляет сообщение на сайте или оформляет бронирование — уведомление со всеми данными мгновенно приходит вам в мессенджер.</li><li>Вы можете ответить прямо из мессенджера (используя встроенную функцию Ответить / Reply).</li><li>Ваш ответ автоматически перешлется гостю обратно в виджет чата на сайте!</li></ul>"
+      },
+      cms: {
+        title: "Мощная CMS и PWA",
+        icon: "icon-cms",
+        text: "<p>Управляйте контентом сайта без программистов: меняйте фото, тексты, логотипы, отзывы и контакты.</p><ul><li>Платформа поддерживает 3 встроенные темы оформления (Темный Люкс, Светлая, Строгий серый), которые переключаются в 1 клик.</li><li>Сайт работает как современное PWA-приложение — гости могут установить его на главный экран телефона как обычное приложение (иконка появится на экране телефона).</li><li>Поддержка офлайн-режима и сверхбыстрой загрузки за счет кэширования.</li></ul>"
+      }
+    };
+
+    function openModal(featureId) {
+      const data = featureData[featureId];
+      if (!data) return;
+      document.getElementById('modalTitleText').innerHTML = data.title;
+      document.getElementById('modalIcon').innerHTML = document.getElementById(data.icon).innerHTML;
+      document.getElementById('modalText').innerHTML = data.text;
+      document.getElementById('featureModal').classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById('featureModal').classList.remove('active');
+    }
+
     window.onload = () => {
       setTimeout(() => {
         document.querySelectorAll('iframe').forEach(iframe => {
