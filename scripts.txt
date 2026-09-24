@@ -1,0 +1,194 @@
+<script>
+    const featureData = {
+      calendar: {
+        title: "Умный календарь",
+        icon: "icon-calendar",
+        text: "<p>Интерактивная сетка занятости всех объектов. Гибкая настройка цен в зависимости от дня недели, сезона или праздников.</p><ul><li>Возможность задавать промо-акции и скидки (звездочки на датах)</li><li>Полная или частичная блокировка дат под ремонт или личное использование</li><li>Автоматический расчет стоимости проживания с животными (за ночь или за период)</li><li>Настройка и учет дополнительных услуг (баня, купель и т.д.)</li></ul>"
+      },
+      ical: {
+        title: "Синхронизация iCal",
+        icon: "icon-ical",
+        text: "<p>Двусторонний автоматический обмен данными с популярными площадками: Авито, Суточно.ру, Островок, Циан, Яндекс.Путешествия.</p><ul><li>Синхронизация происходит автоматически, полностью исключая риск двойного бронирования (овербукинг).</li><li>Поддерживается до 10 внешних календарей на каждый отдельный объект (домик/квартиру).</li><li>Ручная синхронизация одной кнопкой при необходимости.</li><li>Удобный экспорт ссылки на ваш календарь для сторонних сервисов.</li></ul>"
+      },
+      crm: {
+        title: "Встроенная CRM и Аналитика",
+        icon: "icon-crm",
+        text: "<p>Наглядная панель с ключевыми показателями бизнеса: выручка, количество бронирований, средний чек, процент загрузки.</p><ul><li>Встроенная база данных гостей автоматически сохраняет историю заездов.</li><li>Автоматический расчет LTV (Lifetime Value — сколько денег принес клиент за все время).</li><li>Администратор может оставлять личные персональные заметки по каждому гостю (предпочтения, предупреждения).</li></ul>"
+      },
+      chat: {
+        title: "Онлайн-чат 24/7",
+        icon: "icon-chat",
+        text: "<p>Удобный встроенный виджет на сайте, позволяющий гостям задать вопрос перед бронированием.</p><ul><li>Поддерживает отправку любых файлов: фото, видео, голосовые сообщения и документы.</li><li>Все диалоги ведутся в едином окне панели администратора, не требуя установки сторонних тяжелых сервисов.</li><li>Гость получает ответы мгновенно без перезагрузки страницы (используется Long Polling / WebSockets).</li></ul>"
+      },
+      bots: {
+        title: "Интеграция с ботами",
+        icon: "icon-bots",
+        text: "<p>Вы можете привязать свой Telegram или корпоративный МАКС аккаунт к системе.</p><ul><li>Как только гость отправляет сообщение на сайте или оформляет бронирование — уведомление со всеми данными мгновенно приходит вам в мессенджер.</li><li>Вы можете ответить прямо из мессенджера (используя встроенную функцию Ответить / Reply).</li><li>Ваш ответ автоматически перешлется гостю обратно в виджет чата на сайте!</li></ul>"
+      },
+      cms: {
+        title: "Мощная CMS и PWA",
+        icon: "icon-cms",
+        text: "<p>Управляйте контентом сайта без программистов: меняйте фото, тексты, логотипы, отзывы и контакты.</p><ul><li>Платформа поддерживает 3 встроенные темы оформления (Темный Люкс, Светлая, Строгий серый), которые переключаются в 1 клик.</li><li>Сайт работает как современное PWA-приложение — гости могут установить его на главный экран телефона как обычное приложение (иконка появится на экране телефона).</li><li>Поддержка офлайн-режима и сверхбыстрой загрузки за счет кэширования.</li></ul>"
+      }
+    };
+
+    // Привязываем события через JS, чтобы обойти блокировку инлайн-скриптов (CSP)
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // Интерактивные подсказки для админки
+      const adminIframe = document.getElementById('adminDemoIframe');
+      const tooltip = document.getElementById('adminTooltip');
+      const ttTitle = document.getElementById('ttTitle');
+      const ttText = document.getElementById('ttText');
+
+      const adminTips = {
+        '/admin/bookings.html': {
+          title: "Бронирования (Шахматка)",
+          text: "Наглядный календарь со статусами всех заездов. Вы можете создавать новые брони, менять даты простым перетаскиванием (drag-and-drop) и следить за оплатами."
+        },
+        '/admin/chats.html': {
+          title: "Встроенный мессенджер",
+          text: "Сюда поступают сообщения от гостей с сайта. Вы можете отправлять фотографии, обмениваться файлами и напрямую консультировать клиентов. Уведомления дублируются вам в Telegram или МАКС."
+        },
+        '/admin/cabins.html': {
+          title: "Управление объектами",
+          text: "Здесь вы создаете и настраиваете свои дома или квартиры. Загрузите красивые фотографии, укажите вместимость и опишите удобства — новые объекты моментально появятся на сайте."
+        },
+        '/admin/prices.html': {
+          title: "Гибкая настройка цен",
+          text: "Установите базовую стоимость, доплаты за дополнительных гостей и животных. Создавайте особые правила для выходных дней и праздников в пару кликов."
+        },
+        '/admin/crm.html': {
+          title: "CRM и База Клиентов",
+          text: "Каждый гость автоматически сохраняется в единую базу. Вы видите историю их заездов, общую сумму (LTV) и можете оставлять полезные личные заметки о предпочтениях."
+        },
+        '/admin/analytics.html': {
+          title: "Бизнес Аналитика",
+          text: "Наглядные графики вашей выручки по месяцам, процент загрузки каждого объекта и статистика по среднему чеку для принятия верных бизнес-решений."
+        },
+        '/admin/settings.html': {
+          title: "Настройки (CMS)",
+          text: "Управляйте контентом сайта без программистов. Меняйте название базы, логотип, правила проживания и контактные данные легко и быстро."
+        }
+      };
+
+      if (adminIframe && tooltip) {
+        adminIframe.addEventListener('load', () => {
+          try {
+            const path = adminIframe.contentWindow.location.pathname;
+            const data = adminTips[path];
+            if (data) {
+              ttTitle.innerText = data.title;
+              ttText.innerText = data.text;
+              tooltip.classList.add('visible');
+            } else {
+              ttTitle.innerText = "Панель управления";
+              ttText.innerText = "Изучайте интерфейс администратора. Переходите по разделам в меню слева.";
+              tooltip.classList.add('visible');
+            }
+          } catch(e) {}
+        });
+        setTimeout(() => tooltip.classList.add('visible'), 1000);
+      }
+      
+      const modal = document.getElementById('featureModal');
+      const closeBtn = document.getElementById('modalCloseBtn');
+      
+      // Открытие модалки
+      document.querySelectorAll('.feature-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          e.preventDefault();
+          const featureId = this.getAttribute('data-feature');
+          const data = featureData[featureId];
+          if (data) {
+            document.getElementById('modalTitleSpan').innerHTML = data.title;
+            const iconHTML = document.getElementById(data.icon);
+            if (iconHTML) {
+               document.getElementById('modalIcon').innerHTML = iconHTML.innerHTML;
+            }
+            document.getElementById('modalText').innerHTML = data.text;
+            modal.classList.add('active');
+          }
+        });
+      });
+
+      // Закрытие модалки
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        modal.classList.remove('active');
+      });
+      
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+
+      // Убираем скроллбары в iframe и добавляем drag-to-scroll
+      setTimeout(() => {
+        document.querySelectorAll('iframe').forEach(iframe => {
+            try {
+              const doc = iframe.contentDocument || iframe.contentWindow.document;
+              
+              // Hide scrollbars
+              const style = doc.createElement('style');
+              style.textContent = `
+                ::-webkit-scrollbar { width: 0px !important; height: 0px !important; background: transparent !important; }
+                * { -ms-overflow-style: none; scrollbar-width: none; }
+              `;
+              doc.head.appendChild(style);
+
+              // Add Drag-to-scroll logic for horizontal scrolling elements
+              let isDown = false;
+              let startX;
+              let scrollLeft;
+              let activeContainer = null;
+
+              doc.addEventListener('mousedown', (e) => {
+                // Find closest scrollable container
+                let target = e.target;
+                while (target && target !== doc.body) {
+                  const overflowX = iframe.contentWindow.getComputedStyle(target).overflowX;
+                  if ((overflowX === 'auto' || overflowX === 'scroll') && target.scrollWidth > target.clientWidth) {
+                    activeContainer = target;
+                    isDown = true;
+                    startX = e.pageX - activeContainer.offsetLeft;
+                    scrollLeft = activeContainer.scrollLeft;
+                    activeContainer.style.cursor = 'grabbing';
+                    activeContainer.style.scrollBehavior = 'auto'; // disable smooth scroll while dragging
+                    break;
+                  }
+                  target = target.parentElement;
+                }
+              });
+
+              doc.addEventListener('mouseleave', () => {
+                if (!isDown) return;
+                isDown = false;
+                if (activeContainer) activeContainer.style.cursor = 'default';
+              });
+
+              doc.addEventListener('mouseup', () => {
+                if (!isDown) return;
+                isDown = false;
+                if (activeContainer) {
+                  activeContainer.style.cursor = 'default';
+                  activeContainer.style.scrollBehavior = 'smooth';
+                }
+              });
+
+              doc.addEventListener('mousemove', (e) => {
+                if (!isDown || !activeContainer) return;
+                e.preventDefault();
+                const x = e.pageX - activeContainer.offsetLeft;
+                const walk = (x - startX) * 2; // scroll-fast multiplier
+                activeContainer.scrollLeft = scrollLeft - walk;
+              });
+
+            } catch(e) {
+              console.error('Iframe drag-to-scroll error:', e);
+            }
+        });
+      }, 2000);
+    });
+  </script>

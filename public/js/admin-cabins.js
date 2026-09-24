@@ -255,7 +255,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
     initialFormData = getFormData();
     checkChanges();
 
-    editModal.classList.add('open');
+    editModal.classList.add('open'); document.body.style.overflow = 'hidden';
   }
 
   addCabinBtn.addEventListener('click', () => openEditModal(null));
@@ -479,7 +479,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
   function closeModal() {
     cleanupPendingUploads();
     if (window.clearDirty) window.clearDirty();
-    editModal.classList.remove('open');
+    editModal.classList.remove('open'); document.body.style.overflow = '';
   }
 
   closeModalBtn.addEventListener('click', closeModal);
