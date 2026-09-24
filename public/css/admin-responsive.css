@@ -219,7 +219,7 @@
   body.admin-mobile-ready .modal-overlay.active { align-items: end; padding: 0 !important; }
   body.admin-mobile-ready .modal,
   body.admin-mobile-ready .modal-content {
-    width: 100% !important; max-width: 100% !important; max-height: 100dvh;
+    width: 100%; max-width: 100% !important; max-height: 100dvh;
     margin: 0; border-radius: 16px 16px 0 0 !important; overflow: hidden;
     display: flex; flex-direction: column;
   }
@@ -345,7 +345,7 @@ select option { background-color: var(--bg-1, #1e1e1e); color: var(--cream, #f1e
   body.admin-mobile-ready .settings-section .admin-table td .mobile-complex-label { flex: 0 0 32%; font-size: 10px; }
 
   /* Fix for cabins form grid overflow */
-  body.admin-mobile-ready .modal-body div[style*="display: grid"],
+  body.admin-mobile-ready .modal-body div[style*="display: grid"]:not(.tags-grid),
   body.admin-mobile-ready .admin-content div[style*="display: grid"]:not(.admin-layout):not(.gallery-grid):not(.cabin-numbers-grid):not(.calendar-grid):not(.metrics-grid) {
     grid-template-columns: 1fr !important;
   }
@@ -357,11 +357,10 @@ select option { background-color: var(--bg-1, #1e1e1e); color: var(--cream, #f1e
     overflow: hidden !important;
   }
 
-  body.admin-mobile-ready .modal-body .form-group input,
+  body.admin-mobile-ready .modal-body .form-group input:not([type="checkbox"]):not([type="radio"]),
   body.admin-mobile-ready .modal-body .form-group textarea,
   body.admin-mobile-ready .modal-body .form-group select {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%; max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
@@ -370,3 +369,7 @@ select option { background-color: var(--bg-1, #1e1e1e); color: var(--cream, #f1e
     gap: 8px !important;
   }
 }
+
+
+/* Fix for Avito export link flex container */
+#copyExportLinkBtn { flex: 0 0 auto !important; width: auto !important; }
