@@ -142,3 +142,16 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(modal, { attributes: true, attributeFilter: ['class', 'style'] });
   });
 });
+
+
+// Lock demo iframe
+if (window !== window.top) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    
+    document.querySelectorAll('a[href="/"]').forEach(link => {
+      link.style.display = 'none';
+    });
+  });
+}
