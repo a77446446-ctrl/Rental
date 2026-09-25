@@ -2,80 +2,58 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>EcoSystem — Интерактивная презентация</title>
+  <title>App Presentation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="/api/icon.png">
-  <link rel="apple-touch-icon" href="/api/icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #120f0d;
-      --bg-2: #1a1512;
-      --gold: #bba46f;
-      --gold-light: #d9c38b;
-      --cream: #ede4d6;
+      --bg: #050505;
+      --bg-2: #121212;
+      --accent: #ffffff;
+      --accent-muted: rgba(255, 255, 255, 0.1);
+      --text: #f0f0f0;
+      --muted: #888888;
+      --line: #222222;
     }
     body {
-      margin: 0; padding: 0; background: var(--bg); color: var(--cream);
-      font-family: 'Manrope', sans-serif;
-      background-image: radial-gradient(circle at 50% 0%, rgba(187, 164, 111, 0.08) 0%, transparent 60%);
+      margin: 0; padding: 0; background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
       overflow-x: hidden;
     }
+    * { box-sizing: border-box; }
     
-    .nav-header {
-      padding: 20px 40px; background: rgba(18, 15, 13, 0.8); border-bottom: 1px solid rgba(255,255,255,0.05);
-      display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
-    }
-    .nav-header h1 { margin: 0; font-family: 'Cormorant Garamond', serif; color: var(--gold); font-size: 28px; }
-    .instruction { font-size: 15px; color: var(--cream); max-width: 600px; line-height: 1.4; }
-
-    /* Секции презентации */
-    .section {
-      padding: 80px 40px;
-      min-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      border-bottom: 1px solid rgba(187, 164, 111, 0.1);
-    }
-    .section:nth-child(even) { background: var(--bg-2); }
+    .container { max-width: 1300px; margin: 0 auto; padding: 40px 20px; }
     
-    .sec-header { text-align: center; max-width: 800px; margin-bottom: 60px; z-index: 10; }
-    .sec-title { font-family: 'Cormorant Garamond', serif; font-size: 48px; color: var(--gold); margin: 0 0 20px 0; line-height: 1.1; }
-    .sec-desc { font-size: 18px; color: #a8a096; line-height: 1.6; }
+    /* Hero */
+    .hero { text-align: center; margin-bottom: 60px; margin-top: 40px; }
+    .hero-title { 
+      font-size: clamp(32px, 5vw, 56px); font-weight: 800; margin: 0 0 20px; 
+      letter-spacing: -0.03em; line-height: 1.1; 
+      background: linear-gradient(180deg, #fff, #999);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle { 
+      font-size: clamp(16px, 2vw, 20px); color: var(--muted); max-width: 600px; 
+      margin: 0 auto; line-height: 1.5; font-weight: 400;
+    }
 
-    /* Устройства (Плоский дизайн Планшет + Телефон) */
+    /* Devices */
     .devices-row {
-      display: flex; gap: 40px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; max-width: 1400px;
+      display: flex; gap: 40px; justify-content: center; align-items: stretch;
+      flex-wrap: wrap; margin-bottom: 80px; position: relative;
+    }
+    .device-group { display: flex; flex-direction: column; align-items: center; gap: 16px; position: relative; }
+    .device-label {
+      font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted); padding: 6px 14px; border-radius: 20px;
+      border: 1px solid var(--line); background: var(--bg-2);
     }
     
-    .device-group { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-    .device-label { font-size: 14px; font-weight: 600; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; background: rgba(187, 164, 111, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(187, 164, 111, 0.2); }
-
-    /* Мокап Планшета (iPad Pro стиль) */
-    .mockup-ipad {
-      width: 760px; height: 520px; background: #000; border-radius: 36px;
-      border: 10px solid #1a1a1a; position: relative;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px #555, inset 0 0 0 8px #000, 0 0 0 2px #333;
-      flex-shrink: 0;
-    }
-    .mockup-ipad::before { /* Камера слева по центру (ландшафт) */
-      content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
-      width: 6px; height: 6px; background: #111; border-radius: 50%; border: 1px solid #333; z-index: 10;
-    }
-    .mockup-ipad::after { /* Кнопки громкости */
-      content: ''; position: absolute; top: 40px; right: -12px; width: 2px; height: 50px; background: #333; border-radius: 0 4px 4px 0; box-shadow: 0 60px 0 #333; z-index: 10;
-    }
-    .mockup-ipad iframe { width: 100%; height: 100%; border: none; border-radius: 22px; background: var(--bg); position: relative; z-index: 1; }
-
-    /* Мокап iPhone */
-
     .mockup-iphone {
       width: 320px; height: 660px; background: #000; border-radius: 50px;
-      border: 12px solid #0a0a0a; position: relative;
-      box-shadow: 0 0 0 2px #444, 0 0 0 4px #7a7a7a, 0 0 0 5px #222, 0 40px 80px rgba(0,0,0,0.8); flex-shrink: 0;
+      border: 12px solid #111; position: relative;
+      box-shadow: 0 0 0 1px #333, 0 40px 80px rgba(0,0,0,0.8); flex-shrink: 0;
     }
     .mockup-iphone::before { /* Front Camera */
       content: ''; position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
@@ -83,350 +61,248 @@
       box-shadow: inset 0 0 2px #000, 0 0 0 1.5px rgba(255,255,255,0.07);
     }
     .mockup-iphone::after { /* Side buttons */
-      content: ''; position: absolute; top: 120px; left: -14px; width: 4px; height: 35px; background: #555; border-radius: 4px 0 0 4px; box-shadow: 0 55px 0 #555, 334px 40px 0 #555; z-index: 10;
+      content: ''; position: absolute; top: 120px; left: -14px; width: 4px; height: 35px; background: #333; border-radius: 4px 0 0 4px; box-shadow: 0 55px 0 #333, 334px 40px 0 #333; z-index: 10;
     }
-    .mockup-iphone iframe, .mockup-iphone .tg-mock { border-radius: 38px; width: 100%; height: 100%; border: none; background: var(--bg); position: relative; z-index: 1; }
+    .mockup-iphone iframe, .mockup-iphone .tg-mock { 
+      border-radius: 38px; width: 100%; height: 100%; border: none; background: var(--bg-2); position: relative; z-index: 1; 
+    }
 
-    .mockup-arrows { display: flex; flex-direction: column; gap: 40px; align-items: center; justify-content: center; opacity: 0.8;}
-    .mockup-arrows svg { stroke: var(--gold); stroke-width: 1.5; width: 80px; height: 40px; }
+    .mockup-arrows { display: flex; flex-direction: column; gap: 40px; align-items: center; justify-content: center; opacity: 0.5;}
+    .mockup-arrows svg { stroke: var(--muted); stroke-width: 1.5; width: 80px; height: 40px; }
 
     /* TG Mock */
-    .tg-mock { background: #1c242d; overflow: hidden; display: flex; flex-direction: column; font-family: -apple-system, sans-serif; }
-    .tg-header { background: #1c242d; padding: 15px; display: flex; align-items: center; gap: 10px; font-size: 16px; border-bottom: 1px solid #2a3541; padding-top: 45px; }
-    .tg-header-back { color: #6ab2f2; font-size: 24px; line-height: 1; cursor: pointer; }
-    .tg-header-avatar { width: 44px; height: 44px; font-size: 22px; background: #2b5278; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
+    .tg-mock { background: #0f0f0f; overflow: hidden; display: flex; flex-direction: column; font-family: -apple-system, sans-serif; }
+    .tg-header { background: #1a1a1a; padding: 15px; display: flex; align-items: center; gap: 10px; font-size: 16px; border-bottom: 1px solid #222; padding-top: 45px; }
+    .tg-header-back { color: #2563eb; font-size: 24px; line-height: 1; cursor: pointer; }
+    .tg-header-avatar { width: 44px; height: 44px; font-size: 22px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
     .tg-header-info { flex: 1; }
     .tg-header-title { color: #fff; font-weight: 600; font-size: 15px; }
-    .tg-header-status { color: #7f91a4; font-size: 12px; }
-    .tg-body { padding: 15px; flex-grow: 1; background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%230f172a"/><circle cx="50" cy="50" r="40" fill="none" stroke="%231e293b" stroke-width="2"/></svg>'); background-size: 100px; display: flex; flex-direction: column; gap: 15px; position: relative; }
-    .tg-date { align-self: center; background: rgba(0,0,0,0.3); color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 500; }
-    .tg-msg { background: #212d3b; padding: 10px 14px 10px; border-radius: 16px; border-bottom-left-radius: 4px; max-width: 85%; align-self: flex-start; font-size: 15px; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.2); color: #fff; position: relative; padding-bottom: 24px; }
-    .tg-msg-title { display: block; color: #6ab2f2; font-size: 14px; margin-bottom: 4px; font-weight: 600;}
-    .tg-msg-time { position: absolute; bottom: 6px; right: 10px; font-size: 11px; color: #7f91a4; }
-    .tg-msg-footer { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
-    .tg-input { height: 50px; background: #1c242d; border-top: 1px solid #2a3541; display: flex; align-items: center; padding: 0 15px; gap: 15px; color: #7f91a4; padding-bottom: 15px; }
-    .tg-input svg { width: 24px; height: 24px; stroke: #7f91a4; stroke-width: 1.5; fill: none; }
+    .tg-header-status { color: #888; font-size: 12px; }
+    .tg-body { padding: 15px; flex-grow: 1; background: #0a0a0a; display: flex; flex-direction: column; gap: 15px; position: relative; }
+    .tg-date { align-self: center; background: rgba(255,255,255,0.1); color: #ccc; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 500; }
+    .tg-msg { background: #1f1f1f; padding: 10px 14px 10px; border-radius: 16px; border-bottom-left-radius: 4px; max-width: 85%; align-self: flex-start; font-size: 15px; line-height: 1.4; color: #eee; position: relative; padding-bottom: 24px; border: 1px solid #333; }
+    .tg-msg-title { display: block; color: #2563eb; font-size: 14px; margin-bottom: 4px; font-weight: 600;}
+    .tg-msg-time { position: absolute; bottom: 6px; right: 10px; font-size: 11px; color: #888; }
 
-        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1200px; }
-    .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(187, 164, 111, 0.15); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; z-index: 5; }
-    .feature-card:hover { transform: translateY(-5px); background: rgba(187, 164, 111, 0.05); border-color: rgba(187, 164, 111, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-    .feature-card svg { width: 48px; height: 48px; stroke: var(--gold); margin-bottom: 20px; transition: transform 0.3s ease; pointer-events: none; }
-    .feature-card:hover svg { transform: scale(1.1); }
-    .feature-card h3 { font-size: 20px; margin: 0 0 10px 0; color: var(--cream); font-weight: 600; pointer-events: none; }
-    .feature-card p { font-size: 14px; color: var(--gold-light); margin: 0; line-height: 1.5; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; pointer-events: none; }
-
-    /* Модальное окно для фич */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-      z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+    /* Admin Tooltip Overlay */
+    .admin-tooltip {
+      position: absolute; top: 120px; right: -280px; width: 280px;
+      background: rgba(20,20,20,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--accent-muted); border-radius: 16px; padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      opacity: 0; transform: translateX(-20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 50; pointer-events: none;
     }
-    .modal-overlay.active { display: flex; opacity: 1; }
+    .admin-tooltip.visible { opacity: 1; transform: translateX(0); }
+    .admin-tooltip::before {
+      content: ''; position: absolute; top: 30px; left: -8px;
+      width: 16px; height: 16px; background: rgba(20,20,20,0.8); backdrop-filter: blur(20px);
+      border-left: 1px solid var(--accent-muted); border-bottom: 1px solid var(--accent-muted);
+      transform: rotate(45deg);
+    }
+    .tt-title { font-size: 15px; font-weight: 600; color: var(--accent); margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+    .tt-title svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 2; }
+    .tt-text { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
+
+    /* Features Grid */
+    .section { margin: 100px 0; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;
+    }
+    .feature-card {
+      background: var(--bg-2); border: 1px solid var(--line); border-radius: 20px;
+      padding: 30px; cursor: pointer; transition: all 0.2s ease;
+      display: flex; flex-direction: column; align-items: flex-start;
+    }
+    .feature-card:hover { border-color: var(--muted); transform: translateY(-2px); }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px; background: var(--accent-muted);
+      color: var(--accent); display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+    }
+    .feature-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; }
+    .feature-card h3 { margin: 0 0 10px; font-size: 18px; font-weight: 600; }
+    .feature-card p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+    /* Modal */
+    .modal {
+      position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .modal.active { opacity: 1; pointer-events: all; }
     .modal-content {
-      background: var(--bg-2); border: 1px solid var(--gold); border-radius: 20px; padding: 40px;
-      max-width: 600px; width: 90%; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-      transform: translateY(20px); transition: transform 0.3s ease;
+      background: var(--bg-2); border: 1px solid var(--line); border-radius: 24px;
+      width: 100%; max-width: 500px; padding: 40px; position: relative;
+      transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .modal-overlay.active .modal-content { transform: translateY(0); }
-    .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--cream); font-size: 30px; cursor: pointer; transition: color 0.2s; padding: 10px; }
-    .modal-close:hover { color: var(--gold); }
-    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--gold); margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-    .modal-title svg { width: 32px; height: 32px; stroke: var(--gold); }
-    .modal-text { font-size: 16px; color: #ccc; line-height: 1.6; }
-    .modal-text ul { padding-left: 20px; margin-top: 15px; }
-    .modal-text li { margin-bottom: 10px; }
-
-    /* Подсказки для админки */
-    .demo-tooltip {
-      position: absolute; left: -340px; top: 120px; width: 300px;
-      background: rgba(26, 21, 18, 0.9); border: 1px solid var(--gold);
-      border-radius: 16px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-      opacity: 0; transform: translateX(20px); transition: all 0.4s ease;
-      display: flex; gap: 15px; z-index: 20; backdrop-filter: blur(10px);
-      text-align: left;
+    .modal.active .modal-content { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px; width: 32px; height: 32px;
+      border-radius: 50%; background: var(--line); border: none; color: var(--text);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
-    .demo-tooltip.visible { opacity: 1; transform: translateX(0); }
-    .tooltip-icon { font-size: 24px; flex-shrink: 0; line-height: 1.2; }
-    .tooltip-content h4 { margin: 0 0 8px 0; color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.1; }
-    .tooltip-content p { margin: 0; font-size: 14px; color: #ccc; line-height: 1.5; }
-
-    @media (max-width: 1480px) {
-      .demo-tooltip {
-        position: relative; left: 0; top: 0; width: 100%; max-width: 760px;
-        margin-top: 20px;
-      }
-    }
+    .modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .modal-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--accent-muted); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+    .modal-icon svg { width: 24px; height: 24px; stroke: currentColor; }
+    .modal-title { font-size: 20px; font-weight: 600; margin: 0; }
+    .modal-body { font-size: 15px; color: var(--muted); line-height: 1.6; }
+    .modal-body p { margin: 0 0 16px; }
+    .modal-body ul { margin: 0 0 16px; padding-left: 20px; }
+    .modal-body li { margin-bottom: 8px; }
 
     @media (max-width: 1200px) {
-      .mockup-ipad { width: 100%; max-width: 760px; height: 55vw; }
-      .features-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 800px) {
-      .features-grid { grid-template-columns: 1fr; }
-      .devices-row { flex-direction: column; align-items: center; }
+      .admin-tooltip { position: static; width: 100%; margin-top: 20px; transform: none !important; opacity: 1; }
+      .admin-tooltip::before { display: none; }
+      .mockup-arrows { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <div class="nav-header">
-    <h1>EcoSystem</h1>
-    <div class="instruction">
-      <strong>Добро пожаловать в интерактивное демо!</strong><br>
-      Здесь вы можете вживую протестировать интерфейсы платформы.<br>Внутри экранов загружены реальные, кликабельные страницы.
-    </div>
-  </div>
-
-  <!-- Секция 1: Главная (Планшет + Мобайл) -->
-  <div class="section">
-    <div class="sec-header">
-      <h2 class="sec-title">Управляйте бизнесом.<br>Принимайте гостей.</h2>
-      <p class="sec-desc">Комплексное решение для автоматизации аренды баз отдыха, глэмпингов, коттеджей, <b>а также посуточной аренды квартир и коммерческих помещений.</b><br>Всё работает синхронно и без задержек.</p>
+  <div class="container">
+    <div class="hero">
+      <h1 class="hero-title" id="dynHeroTitle">Загрузка презентации...</h1>
+      <p class="hero-subtitle" id="dynHeroDesc"></p>
     </div>
 
-    <!-- Плоская композиция -->
     <div class="devices-row">
-      <!-- Планшет (Слева) -->
-      <div class="device-group" style="position: relative;">
-        <div class="device-label">ПАНЕЛЬ АДМИНИСТРАТОРА</div>
-        <div class="mockup-ipad">
-          <iframe id="adminDemoIframe" src="/admin/bookings.html"></iframe>
-        </div>
-        
-        <div class="demo-tooltip" id="adminTooltip">
-          <div class="tooltip-icon">💡</div>
-          <div class="tooltip-content">
-            <h4 id="ttTitle">Бронирования</h4>
-            <p id="ttText">Шахматка бронирований. Наглядный календарь со статусами всех заездов. Здесь вы можете создавать новые брони, менять даты перетаскиванием и следить за оплатами.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Телефон (Справа) -->
+      <!-- Frontend -->
       <div class="device-group">
-        <div class="device-label">САЙТ ДЛЯ КЛИЕНТА</div>
+        <div class="device-label">Сайт Клиента</div>
         <div class="mockup-iphone">
           <iframe src="/"></iframe>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Секция 2: Чат интеграция -->
-  <div class="section">
-    <div class="sec-header" style="margin-bottom: 40px;">
-      <h2 class="sec-title">Все каналы связи в одном окне</h2>
-      <p class="sec-desc">Гость пишет с сайта, вы отвечаете из панели администратора, а уведомления дублируются вам прямо в карман через МАКС-бота или Telegram. Общайтесь там, где вам удобно!</p>
-    </div>
+      <div class="mockup-arrows">
+        <svg viewBox="0 0 40 30" fill="none">
+          <path d="M5 10 L35 10 M30 5 L35 10 L30 15" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg viewBox="0 0 40 30" fill="none">
+          <path d="M35 20 L5 20 M10 15 L5 20 L10 25" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
 
-        <div class="devices-row" style="justify-content: center; gap: 40px; align-items: center;">
-      <!-- Чат на сайте -->
+      <!-- Admin Panel -->
       <div class="device-group">
-        <div class="device-label">ВЕБ-ЧАТ НА САЙТЕ</div>
+        <div class="device-label">Панель Управления</div>
         <div class="mockup-iphone">
-          <iframe src="/?openChat=true"></iframe>
+          <iframe src="/admin/chats.html?demoMode=1" id="adminIframe"></iframe>
+          <div class="admin-tooltip" id="adminTooltip">
+            <h4 class="tt-title">
+              <svg viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span id="ttTitle">Загрузка...</span>
+            </h4>
+            <p class="tt-text" id="ttText">Ожидание данных приложения...</p>
+          </div>
         </div>
       </div>
 
-              <div class="mockup-arrows">
-          <svg viewBox="0 0 40 30" fill="none">
-            <path d="M5 10 L35 10 M30 5 L35 10 L30 15" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg viewBox="0 0 40 30" fill="none">
-            <path d="M35 20 L5 20 M10 15 L5 20 L10 25" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
-        <!-- АДМИН-ПАНЕЛЬ -->
-        <div class="device-group">
-          <div class="device-label">АДМИН-ПАНЕЛЬ</div>
-          <div class="mockup-iphone">
-            <iframe src="/admin/chats.html"></iframe>
-          </div>
-        </div>
-
-        <div class="mockup-arrows">
-          <svg viewBox="0 0 40 30" fill="none">
-            <path d="M5 10 L35 10 M30 5 L35 10 L30 15" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg viewBox="0 0 40 30" fill="none">
-            <path d="M35 20 L5 20 M10 15 L5 20 L10 25" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+      <div class="mockup-arrows">
+        <svg viewBox="0 0 40 30" fill="none">
+          <path d="M5 10 L35 10 M30 5 L35 10 L30 15" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg viewBox="0 0 40 30" fill="none">
+          <path d="M35 20 L5 20 M10 15 L5 20 L10 25" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
 
       <!-- Telegram -->
       <div class="device-group">
-        <div class="device-label">МАКС БОТ / TELEGRAM БОТ</div>
+        <div class="device-label">Telegram Бот</div>
         <div class="mockup-iphone">
           <div class="tg-mock">
             <div class="tg-header">
               <div class="tg-header-back">‹</div>
-              <div class="tg-header-avatar">🤖</div>
+              <div class="tg-header-avatar">Бот</div>
               <div class="tg-header-info">
-                <div class="tg-header-title">Админ Бронирования</div>
+                <div class="tg-header-title">Виртуальный Ассистент</div>
                 <div class="tg-header-status">bot</div>
               </div>
-              
             </div>
             <div class="tg-body">
-              <div class="tg-date">Today</div>
-              
+              <div class="tg-date">Сегодня</div>
               <div class="tg-msg">
-                <span class="tg-msg-title">Админ Бронирования</span>
-                Новое бронирование!<br>Домик №3<br><br>Домик №3<br><br>
-                📅 Даты:<br>15 - 18 мая (3 ночи)<br><br>
-                👤 Гости:<br>Иван Иванов,<br><a href="#" style="color:#6ab2f2;text-decoration:none;">+7 (900) 123-45-67</a><br><br>
-                ✅ Оплачено
-                <div class="tg-msg-time">15:33</div>
+                <span class="tg-msg-title">Виртуальный Ассистент</span>
+                Здравствуйте! Я готов помочь вашим клиентам.<br><br>
+                Они могут задавать мне вопросы, проверять наличие и оставлять заявки напрямую в Telegram.
+                <div class="tg-msg-time">12:00</div>
               </div>
-
-            </div>
-            <div class="tg-input">
-              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <div style="flex:1; font-size: 15px;">Message</div>
-              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" /></svg>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Features -->
+    <div class="section">
+      <div class="features-grid" id="dynFeaturesGrid">
+        <!-- Injected via JS -->
       </div>
     </div>
   </div>
 
-  <!-- Секция 3: Особенности -->
-  <div class="section">
-    <div class="sec-header">
-      <h2 class="sec-title">Всё включено</h2>
-      <p class="sec-desc">Технологии топовых агрегаторов теперь работают на ваш личный бренд.<br><b style="color:var(--gold)">Нажмите на любую карточку, чтобы узнать подробности.</b></p>
-    </div>
-
-    <div class="features-grid">
-      <div class="feature-card" data-feature="calendar">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-calendar"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
-        <h3>Умный календарь</h3>
-        <p>Подробнее →</p>
-      </div>
-      <div class="feature-card" data-feature="ical">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-ical"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
-        <h3>Синхронизация iCal</h3>
-        <p>Подробнее →</p>
-      </div>
-      <div class="feature-card" data-feature="crm">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-crm"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
-        <h3>Встроенная CRM</h3>
-        <p>Подробнее →</p>
-      </div>
-      <div class="feature-card" data-feature="chat">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-chat"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
-        <h3>Онлайн-чат 24/7</h3>
-        <p>Подробнее →</p>
-      </div>
-      <div class="feature-card" data-feature="bots">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-bots"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
-        <h3>Интеграция с ботами</h3>
-        <p>Подробнее →</p>
-      </div>
-      <div class="feature-card" data-feature="cms">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" id="icon-cms"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.813-3.814a3.182 3.182 0 0 0-4.497-4.497l-3.814 3.814a15.996 15.996 0 0 0-4.648 4.764m4.496-4.496a15.085 15.085 0 0 0-4.892 2.785m-4.766 4.765a15.08 15.08 0 0 0 2.786-4.892" /></svg>
-        <h3>Мощная CMS и PWA</h3>
-        <p>Подробнее →</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Модальное окно -->
-  <div class="modal-overlay" id="featureModal">
+  <!-- Modal -->
+  <div class="modal" id="featureModal">
     <div class="modal-content">
-      <button class="modal-close" id="modalCloseBtn">×</button>
-      <h3 class="modal-title" id="modalTitleText"><svg id="modalIcon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"></svg> <span id="modalTitleSpan">Заголовок</span></h3>
-      <div class="modal-text" id="modalText">Текст</div>
+      <button class="modal-close" id="modalCloseBtn">✕</button>
+      <div class="modal-header">
+        <div class="modal-icon" id="modalIcon"></div>
+        <h3 class="modal-title" id="modalTitleSpan"></h3>
+      </div>
+      <div class="modal-body" id="modalText"></div>
     </div>
   </div>
 
   <script>
-    const featureData = {
-      calendar: {
-        title: "Умный календарь",
-        icon: "icon-calendar",
-        text: "<p>Интерактивная сетка занятости всех объектов. Гибкая настройка цен в зависимости от дня недели, сезона или праздников.</p><ul><li>Возможность задавать промо-акции и скидки (звездочки на датах)</li><li>Полная или частичная блокировка дат под ремонт или личное использование</li><li>Автоматический расчет стоимости проживания с животными (за ночь или за период)</li><li>Настройка и учет дополнительных услуг (баня, купель и т.д.)</li></ul>"
-      },
-      ical: {
-        title: "Синхронизация iCal",
-        icon: "icon-ical",
-        text: "<p>Двусторонний автоматический обмен данными с популярными площадками: Авито, Суточно.ру, Островок, Циан, Яндекс.Путешествия.</p><ul><li>Синхронизация происходит автоматически, полностью исключая риск двойного бронирования (овербукинг).</li><li>Поддерживается до 10 внешних календарей на каждый отдельный объект (домик/квартиру).</li><li>Ручная синхронизация одной кнопкой при необходимости.</li><li>Удобный экспорт ссылки на ваш календарь для сторонних сервисов.</li></ul>"
-      },
-      crm: {
-        title: "Встроенная CRM и Аналитика",
-        icon: "icon-crm",
-        text: "<p>Наглядная панель с ключевыми показателями бизнеса: выручка, количество бронирований, средний чек, процент загрузки.</p><ul><li>Встроенная база данных гостей автоматически сохраняет историю заездов.</li><li>Автоматический расчет LTV (Lifetime Value — сколько денег принес клиент за все время).</li><li>Администратор может оставлять личные персональные заметки по каждому гостю (предпочтения, предупреждения).</li></ul>"
-      },
-      chat: {
-        title: "Онлайн-чат 24/7",
-        icon: "icon-chat",
-        text: "<p>Удобный встроенный виджет на сайте, позволяющий гостям задать вопрос перед бронированием.</p><ul><li>Поддерживает отправку любых файлов: фото, видео, голосовые сообщения и документы.</li><li>Все диалоги ведутся в едином окне панели администратора, не требуя установки сторонних тяжелых сервисов.</li><li>Гость получает ответы мгновенно без перезагрузки страницы (используется Long Polling / WebSockets).</li></ul>"
-      },
-      bots: {
-        title: "Интеграция с ботами",
-        icon: "icon-bots",
-        text: "<p>Вы можете привязать свой Telegram или корпоративный МАКС аккаунт к системе.</p><ul><li>Как только гость отправляет сообщение на сайте или оформляет бронирование — уведомление со всеми данными мгновенно приходит вам в мессенджер.</li><li>Вы можете ответить прямо из мессенджера (используя встроенную функцию Ответить / Reply).</li><li>Ваш ответ автоматически перешлется гостю обратно в виджет чата на сайте!</li></ul>"
-      },
-      cms: {
-        title: "Мощная CMS и PWA",
-        icon: "icon-cms",
-        text: "<p>Управляйте контентом сайта без программистов: меняйте фото, тексты, логотипы, отзывы и контакты.</p><ul><li>Платформа поддерживает 3 встроенные темы оформления (Темный Люкс, Светлая, Строгий серый), которые переключаются в 1 клик.</li><li>Сайт работает как современное PWA-приложение — гости могут установить его на главный экран телефона как обычное приложение (иконка появится на экране телефона).</li><li>Поддержка офлайн-режима и сверхбыстрой загрузки за счет кэширования.</li></ul>"
-      }
-    };
-
-    // Привязываем события через JS, чтобы обойти блокировку инлайн-скриптов (CSP)
     document.addEventListener('DOMContentLoaded', () => {
+      
+      let featureModalData = {};
+      let adminTips = {};
 
-      // Интерактивные подсказки для админки
-      const adminIframe = document.getElementById('adminDemoIframe');
+      // 1. Fetch Demo Data
+      fetch('/demo-data.json')
+        .then(res => {
+            if (!res.ok) throw new Error('No demo-data.json');
+            return res.json();
+        })
+        .then(data => {
+            // Populate Hero
+            if(data.heroTitle) document.getElementById('dynHeroTitle').innerHTML = data.heroTitle;
+            if(data.heroDesc) document.getElementById('dynHeroDesc').innerHTML = data.heroDesc;
+
+            // Populate Features
+            if(data.features && Array.isArray(data.features)) {
+                const grid = document.getElementById('dynFeaturesGrid');
+                grid.innerHTML = data.features.map(f => `
+                  <div class="feature-card" data-feature="${f.id}">
+                    <div class="feature-icon">${f.iconSvg}</div>
+                    <h3>${f.title}</h3>
+                    <p>${f.desc}</p>
+                  </div>
+                `).join('');
+                
+                // Re-bind clicks
+                bindFeatureClicks();
+            }
+
+            // Save Modals and Tips
+            if(data.featureModalData) featureModalData = data.featureModalData;
+            if(data.adminTips) adminTips = data.adminTips;
+        })
+        .catch(err => {
+            console.error('Demo Data load failed:', err);
+            document.getElementById('dynHeroTitle').innerText = 'Презентация Проекта';
+            document.getElementById('dynHeroDesc').innerText = 'Для корректного отображения создайте файл demo-data.json в корне проекта.';
+        });
+
+      // 2. Iframe Tooltip Logic
+      const adminIframe = document.getElementById('adminIframe');
       const tooltip = document.getElementById('adminTooltip');
       const ttTitle = document.getElementById('ttTitle');
       const ttText = document.getElementById('ttText');
 
-      const adminTips = {
-        '/admin/bookings.html': {
-          title: "Бронирования (Шахматка)",
-          text: "Информация о том, кто забронировал, на какие даты и время. Администратор может подтвердить или отменить бронирование, а также отслеживать статусы всех заездов."
-        },
-        '/admin/chats.html': {
-          title: "Встроенный мессенджер",
-          text: "Сюда поступают сообщения от гостей с сайта. Вы можете отправлять фотографии, обмениваться файлами и напрямую консультировать клиентов. Уведомления дублируются вам в Telegram или МАКС."
-        },
-        '/admin/cabins.html': {
-          title: "Управление объектами",
-          text: "Здесь вы создаете и настраиваете свои дома или квартиры. Загрузите красивые фотографии, укажите вместимость и опишите удобства — новые объекты моментально появятся на сайте."
-        },
-        '/admin/prices.html': {
-          title: "Гибкая настройка цен",
-          text: "Установите базовую стоимость, доплаты за дополнительных гостей и животных. Создавайте особые правила для выходных дней и праздников в пару кликов."
-        },
-        '/admin/crm.html': {
-          title: "CRM и База Клиентов",
-          text: "Каждый гость автоматически сохраняется в единую базу. Вы видите историю их заездов, общую сумму (LTV) и можете оставлять полезные личные заметки о предпочтениях."
-        },
-        '/admin/analytics.html': {
-          title: "Бизнес Аналитика",
-          text: "Наглядные графики вашей выручки по месяцам, процент загрузки каждого объекта и статистика по среднему чеку для принятия верных бизнес-решений."
-        },
-        '/admin/settings.html': {
-          title: "Настройки (CMS)",
-          text: "Управляйте контентом сайта без программистов. Меняйте название базы, логотип, правила проживания и контактные данные легко и быстро."
-        },
-        '/admin/mainpage.html': {
-          title: "Главный экран",
-          text: "Огромное количество настроек: полностью выбираются картинки, видео и тексты. Администратор может самостоятельно настроить любой вид и любую надпись, полностью управляя контентом сайта."
-        },
-        '/admin/chatwidget.html': {
-          title: "Виджет чата и Темы",
-          text: "Здесь меняется кнопка чата: можно ее подписывать, задавать любой цвет. Также здесь можно переключить тему самого приложения на светлую или темную."
-        }
-      };
-
-      if (adminIframe && tooltip) {
+      if (adminIframe) {
         adminIframe.addEventListener('load', () => {
           try {
             const path = adminIframe.contentWindow.location.pathname;
@@ -442,110 +318,64 @@
             }
           } catch(e) {}
         });
-        setTimeout(() => tooltip.classList.add('visible'), 1000);
+        setTimeout(() => tooltip.classList.add('visible'), 1500);
       }
-      
+
+      // 3. Modal Logic
       const modal = document.getElementById('featureModal');
-      const closeBtn = document.getElementById('modalCloseBtn');
-      
-      // Открытие модалки
-      document.querySelectorAll('.feature-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-          e.preventDefault();
-          const featureId = this.getAttribute('data-feature');
-          const data = featureData[featureId];
-          if (data) {
-            document.getElementById('modalTitleSpan').innerHTML = data.title;
-            const iconHTML = document.getElementById(data.icon);
-            if (iconHTML) {
-               document.getElementById('modalIcon').innerHTML = iconHTML.innerHTML;
+      document.getElementById('modalCloseBtn').addEventListener('click', () => modal.classList.remove('active'));
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+
+      function bindFeatureClicks() {
+        document.querySelectorAll('.feature-card').forEach(card => {
+          card.addEventListener('click', function() {
+            const id = this.getAttribute('data-feature');
+            const data = featureModalData[id];
+            if (data) {
+              document.getElementById('modalTitleSpan').innerHTML = data.title;
+              document.getElementById('modalText').innerHTML = data.text;
+              document.getElementById('modalIcon').innerHTML = this.querySelector('.feature-icon').innerHTML;
+              modal.classList.add('active');
             }
-            document.getElementById('modalText').innerHTML = data.text;
-            modal.classList.add('active');
-          }
+          });
         });
-      });
+      }
 
-      // Закрытие модалки
-      closeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        modal.classList.remove('active');
-      });
-      
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('active');
-        }
-      });
-
-      // Убираем скроллбары в iframe и добавляем drag-to-scroll
+      // 4. Hide scrollbars and add drag-to-scroll
       setTimeout(() => {
         document.querySelectorAll('iframe').forEach(iframe => {
             try {
               const doc = iframe.contentDocument || iframe.contentWindow.document;
-              
-              // Hide scrollbars
               const style = doc.createElement('style');
-              style.textContent = `
-                ::-webkit-scrollbar { width: 0px !important; height: 0px !important; background: transparent !important; }
-                * { -ms-overflow-style: none; scrollbar-width: none; }
-              `;
+              style.textContent = `::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; } * { scrollbar-width: none; }`;
               doc.head.appendChild(style);
 
-              // Add Drag-to-scroll logic for horizontal scrolling elements
-              let isDown = false;
-              let startX;
-              let scrollLeft;
-              let activeContainer = null;
-
+              let isDown = false, startX, scrollLeft, activeContainer = null;
               doc.addEventListener('mousedown', (e) => {
-                // Find closest scrollable container
                 let target = e.target;
                 while (target && target !== doc.body) {
-                  const overflowX = iframe.contentWindow.getComputedStyle(target).overflowX;
-                  if ((overflowX === 'auto' || overflowX === 'scroll') && target.scrollWidth > target.clientWidth) {
-                    activeContainer = target;
-                    isDown = true;
-                    startX = e.pageX - activeContainer.offsetLeft;
-                    scrollLeft = activeContainer.scrollLeft;
-                    activeContainer.style.cursor = 'grabbing';
-                    activeContainer.style.scrollBehavior = 'auto'; // disable smooth scroll while dragging
+                  const ox = iframe.contentWindow.getComputedStyle(target).overflowX;
+                  if ((ox === 'auto' || ox === 'scroll') && target.scrollWidth > target.clientWidth) {
+                    activeContainer = target; isDown = true;
+                    startX = e.pageX - activeContainer.offsetLeft; scrollLeft = activeContainer.scrollLeft;
+                    activeContainer.style.cursor = 'grabbing'; activeContainer.style.scrollBehavior = 'auto';
                     break;
                   }
                   target = target.parentElement;
                 }
               });
-
-              doc.addEventListener('mouseleave', () => {
-                if (!isDown) return;
-                isDown = false;
-                if (activeContainer) activeContainer.style.cursor = 'default';
-              });
-
-              doc.addEventListener('mouseup', () => {
-                if (!isDown) return;
-                isDown = false;
-                if (activeContainer) {
-                  activeContainer.style.cursor = 'default';
-                  activeContainer.style.scrollBehavior = 'smooth';
-                }
-              });
-
+              doc.addEventListener('mouseleave', () => { isDown = false; if (activeContainer) activeContainer.style.cursor = 'default'; });
+              doc.addEventListener('mouseup', () => { isDown = false; if (activeContainer) { activeContainer.style.cursor = 'default'; activeContainer.style.scrollBehavior = 'smooth'; } });
               doc.addEventListener('mousemove', (e) => {
                 if (!isDown || !activeContainer) return;
                 e.preventDefault();
                 const x = e.pageX - activeContainer.offsetLeft;
-                const walk = (x - startX) * 2; // scroll-fast multiplier
-                activeContainer.scrollLeft = scrollLeft - walk;
+                activeContainer.scrollLeft = scrollLeft - (x - startX) * 2;
               });
-
-            } catch(e) {
-              console.error('Iframe drag-to-scroll error:', e);
-            }
+            } catch(e) {}
         });
       }, 2000);
     });
   </script>
-
 </body>
 </html>
