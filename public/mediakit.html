@@ -55,12 +55,14 @@
     .device-label { font-size: 14px; font-weight: 600; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; background: rgba(187, 164, 111, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(187, 164, 111, 0.2); }
 
     /* Мокап Планшета (iPad Pro стиль) */
+    
     .mockup-ipad {
-      width: 760px; height: 520px; background: #000; border-radius: 36px;
-      border: 10px solid #1a1a1a; position: relative;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px #555, inset 0 0 0 8px #000, 0 0 0 2px #333;
+      width: 940px; height: 560px; background: #000; border-radius: 36px;
+      border: 14px solid #111; position: relative;
+      box-shadow: 0 0 0 2px #e0e0e0, 0 0 0 4px #b0b0b0, 0 0 0 5px #888888, 0 40px 80px rgba(0,0,0,0.6);
       flex-shrink: 0;
     }
+
     .mockup-ipad::before { /* Камера слева по центру (ландшафт) */
       content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
       width: 6px; height: 6px; background: #111; border-radius: 50%; border: 1px solid #333; z-index: 10;
@@ -132,14 +134,29 @@
     .modal-text li { margin-bottom: 10px; }
 
     /* Подсказки для админки */
+    
     .demo-tooltip {
       position: absolute; left: -340px; top: 120px; width: 300px;
       background: rgba(26, 21, 18, 0.9); border: 1px solid var(--gold);
-      border-radius: 16px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      border-radius: 16px; border-bottom-right-radius: 0; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
       opacity: 0; transform: translateX(20px); transition: all 0.4s ease;
       display: flex; gap: 15px; z-index: 20; backdrop-filter: blur(10px);
       text-align: left;
     }
+    .demo-tooltip::after {
+      content: ''; position: absolute; right: -15px; bottom: -1px;
+      border-width: 15px 0 0 15px;
+      border-style: solid;
+      border-color: transparent transparent transparent var(--gold);
+    }
+    .demo-tooltip::before {
+      content: ''; position: absolute; right: -13px; bottom: 0px;
+      border-width: 14px 0 0 14px;
+      border-style: solid;
+      border-color: transparent transparent transparent rgba(26, 21, 18, 0.9);
+      z-index: 1;
+    }
+
     .demo-tooltip.visible { opacity: 1; transform: translateX(0); }
     .tooltip-icon { font-size: 24px; flex-shrink: 0; line-height: 1.2; }
     .tooltip-content h4 { margin: 0 0 8px 0; color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.1; }
@@ -160,7 +177,24 @@
       .features-grid { grid-template-columns: 1fr; }
       .devices-row { flex-direction: column; align-items: center; }
     }
-  </style>
+  
+    .phones-row {
+      display: flex; gap: 40px; justify-content: center; align-items: center; width: 100%;
+      margin-top: 40px; flex-wrap: nowrap;
+    }
+    @media (max-width: 1400px) {
+      .phones-row { zoom: 0.8; }
+    }
+    @media (max-width: 1100px) {
+      .phones-row { zoom: 0.6; }
+    }
+    @media (max-width: 800px) {
+      .phones-row { zoom: 0.45; }
+    }
+    @media (max-width: 600px) {
+      .phones-row { zoom: 0.35; }
+    }
+</style>
 </head>
 <body>
 
@@ -218,6 +252,8 @@
       <!-- Чат на сайте -->
       <div class="device-group">
         <div class="device-label">ВЕБ-ЧАТ НА САЙТЕ</div>
+    </div>
+    <div class="phones-row">
         <div class="mockup-iphone">
           <iframe src="/?openChat=true"></iframe>
         </div>
@@ -388,6 +424,15 @@
             if(data.heroDesc) {
                 const p = document.querySelector('.sec-desc');
                 if (p) p.innerHTML = data.heroDesc;
+            }
+            
+            // Apply colors
+            if(data.theme) {
+                if(data.theme.bg) document.documentElement.style.setProperty('--bg', data.theme.bg);
+                if(data.theme.bg2) document.documentElement.style.setProperty('--bg-2', data.theme.bg2);
+                if(data.theme.gold) document.documentElement.style.setProperty('--gold', data.theme.gold);
+                if(data.theme.goldLight) document.documentElement.style.setProperty('--gold-light', data.theme.goldLight);
+                if(data.theme.cream) document.documentElement.style.setProperty('--cream', data.theme.cream);
             }
             if(data.featureModalData) featureData = data.featureModalData;
             if(data.adminTips) adminTips = data.adminTips;
