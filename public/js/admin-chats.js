@@ -339,7 +339,9 @@ document.addEventListener('DOMContentLoaded', () => {
       conversations = json.data || [];
       renderConversationList();
 
-      if (!selectedToken && conversations.length > 0 && !isMobileChat()) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const forceOpen = urlParams.get('demoMode') === '1' || !isMobileChat();
+      if (!selectedToken && conversations.length > 0 && forceOpen) {
         await selectConversation(conversations[0].token);
       }
     } catch (err) {
