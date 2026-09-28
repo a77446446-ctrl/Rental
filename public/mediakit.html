@@ -67,9 +67,11 @@
       content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
       width: 6px; height: 6px; background: #111; border-radius: 50%; border: 1px solid #333; z-index: 10;
     }
+    
     .mockup-ipad::after { /* Кнопки громкости */
-      content: ''; position: absolute; top: 40px; right: -12px; width: 2px; height: 50px; background: #333; border-radius: 0 4px 4px 0; box-shadow: 0 60px 0 #333; z-index: 10;
+      content: ''; position: absolute; top: 40px; right: -16px; width: 2px; height: 50px; background: #333; border-radius: 0 4px 4px 0; box-shadow: 0 60px 0 #333; z-index: 10;
     }
+
     .mockup-ipad iframe { width: 100%; height: 100%; border: none; border-radius: 22px; background: var(--bg); position: relative; z-index: 1; }
 
     /* Мокап iPhone */
@@ -80,9 +82,11 @@
       box-shadow: 0 0 0 2px #444, 0 0 0 4px #7a7a7a, 0 0 0 5px #222, 0 40px 80px rgba(0,0,0,0.8); flex-shrink: 0;
     }
     .mockup-iphone::before { content: ""; position: absolute; top: 16px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; background: #050505; border-radius: 50%; z-index: 10; box-shadow: inset 0 0 2px #000, 0 0 0 1.5px rgba(255,255,255,0.07); }
+    
     .mockup-iphone::after { /* Side buttons */
-      content: ''; position: absolute; top: 120px; left: -14px; width: 4px; height: 35px; background: #555; border-radius: 4px 0 0 4px; box-shadow: 0 55px 0 #555, 334px 40px 0 #555; z-index: 10;
+      content: ''; position: absolute; top: 120px; left: -16px; width: 4px; height: 35px; background: #555; border-radius: 4px 0 0 4px; box-shadow: 0 55px 0 #555, 348px 40px 0 #555; z-index: 10;
     }
+
     .mockup-iphone iframe, .mockup-iphone .tg-mock { border-radius: 38px; width: 100%; height: 100%; border: none; background: var(--bg); position: relative; z-index: 1; }
 
     .mockup-arrows { display: flex; flex-direction: column; gap: 40px; align-items: center; justify-content: center; opacity: 0.8;}
@@ -178,21 +182,30 @@
       .devices-row { flex-direction: column; align-items: center; }
     }
   
-    .phones-row {
-      display: flex; gap: 40px; justify-content: center; align-items: center; width: 100%;
-      margin-top: 40px; flex-wrap: nowrap;
+    @media (max-width: 1450px) {
+      #top-devices { zoom: 0.8; }
     }
-    @media (max-width: 1400px) {
-      .phones-row { zoom: 0.8; }
+    @media (max-width: 1200px) {
+      #top-devices { zoom: 0.7; }
     }
-    @media (max-width: 1100px) {
-      .phones-row { zoom: 0.6; }
-    }
-    @media (max-width: 800px) {
-      .phones-row { zoom: 0.45; }
+    @media (max-width: 900px) {
+      #top-devices { zoom: 0.5; }
     }
     @media (max-width: 600px) {
-      .phones-row { zoom: 0.35; }
+      #top-devices { zoom: 0.35; }
+    }
+
+    @media (max-width: 1300px) {
+      #chat-devices { zoom: 0.8; }
+    }
+    @media (max-width: 1100px) {
+      #chat-devices { zoom: 0.6; }
+    }
+    @media (max-width: 800px) {
+      #chat-devices { zoom: 0.45; }
+    }
+    @media (max-width: 600px) {
+      #chat-devices { zoom: 0.35; }
     }
 </style>
 </head>
@@ -214,7 +227,7 @@
     </div>
 
     <!-- Плоская композиция -->
-    <div class="devices-row">
+    <div class="devices-row" id="top-devices">
       <!-- Планшет (Слева) -->
       <div class="device-group" style="position: relative;">
         <div class="device-label">ПАНЕЛЬ АДМИНИСТРАТОРА</div>
@@ -248,12 +261,10 @@
       <p class="sec-desc">Гость пишет с сайта, вы отвечаете из панели администратора, а уведомления дублируются вам прямо в карман через МАКС-бота или Telegram. Общайтесь там, где вам удобно!</p>
     </div>
 
-        <div class="devices-row" style="justify-content: center; gap: 40px; align-items: center;">
+        <div class="devices-row" id="chat-devices" style="justify-content: center; gap: 40px; align-items: center; flex-wrap: nowrap;">
       <!-- Чат на сайте -->
       <div class="device-group">
         <div class="device-label">ВЕБ-ЧАТ НА САЙТЕ</div>
-    </div>
-    <div class="phones-row">
         <div class="mockup-iphone">
           <iframe src="/?openChat=true"></iframe>
         </div>
