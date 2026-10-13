@@ -1,305 +1,796 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const mainpagePromise = loadCabinMainpage();
-  mainpagePromise.then(applyCabinBrand).catch(() => {});
+/**
+ * Cabin Details Page Logic (cabin.js)
+ * Implements the approved design composition, dynamic data binding,
+ * categorized amenities, and responsive lightbox gallery.
+ */
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const cabinId = urlParams.get('id');
+(function () {
+  'use strict';
 
-  if (!cabinId) {
-    document.getElementById('cabinContent').innerHTML = '<div style="text-align: center; padding: 100px 0;">Домик не найден. <a href="/" style="color: var(--gold);">На главную</a></div>';
-    return;
-  }
+  let currentCabin = null;
+  let galleryItems = []; // Array of all images available for the lightbox
+  let currentLightboxIndex = 0;
+  let lastFocusedElement = null;
 
-  try {
-    // Получаем список домиков (EcoApi.get возвращает массив данных напрямую)
-    const cabins = await EcoApi.get('/api/cabins');
-    const mainpage = await mainpagePromise;
-    applyCabinBrand(mainpage);
-    if (!cabins) throw new Error('Ошибка загрузки данных');
-    
-    const cabin = cabins.find(c => c.id == cabinId);
-    if (!cabin) {
-      document.getElementById('cabinContent').innerHTML = '<div style="text-align: center; padding: 100px 0;">Домик не найден. <a href="/" style="color: var(--gold);">На главную</a></div>';
+  // Default photo captions for interior & exterior matching the approved sample
+  const DEFAULT_INTERIOR_CAPTIONS = [
+    'Вид с террасы',
+    'Гостиная и обеденная зона',
+    'Кухня',
+    'Душевая',
+    'Спальня',
+    'Зона отдыха',
+    'Интерьер дома',
+    'Уютная спальня'
+  ];
+
+  const DEFAULT_EXTERIOR_CAPTIONS = [
+    'Терраса дома',
+    'Дом среди берёз',
+    'Вход в дом',
+    'Двор и прогулочные дорожки',
+    'Территория у дома',
+    'Вечернее освещение',
+    'Дорожка к дому',
+    'Вечер во дворе',
+    'Зона отдыха на территории',
+    'Тропинка среди деревьев',
+    'Природа вокруг'
+  ];
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    try { sessionStorage.setItem('eco_splash_seen', '1'); } catch (e) {}
+    initMobileNav();
+    initLightboxEvents();
+
+    const mainpagePromise = loadMainpageSettings();
+    mainpagePromise.then(applyBrandAndContacts).catch(() => {});
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const cabinId = urlParams.get('id') || urlParams.get('slug');
+
+    const contentEl = document.getElementById('cabinContent');
+    if (!cabinId) {
+      if (contentEl) {
+        contentEl.innerHTML = '<div style="text-align: center; padding: 140px 0; color: #CCC4B6;">Объект не найден. <a href="/" style="color: #C5AA67; text-decoration: underline; margin-left: 8px;">На главную</a></div>';
+      }
       return;
     }
 
-    // Получаем список удобств (привязанных к домикам)
-    let amenitiesMap = {};
     try {
-      amenitiesMap = await EcoApi.getAmenities();
-    } catch (e) {
-      console.warn('Не удалось загрузить удобства', e);
+      const [cabins, mainpage, amenitiesMap, houseItems, cabinAddonsMap] = await Promise.all([
+        EcoApi.get('/api/cabins').catch(() => []),
+        mainpagePromise,
+        EcoApi.getAmenities().catch(() => ({})),
+        fetchHouseItems().catch(() => []),
+        fetch('/api/cabin-addons').then(r => r.json()).then(j => j.data || {}).catch(() => ({}))
+      ]);
+
+      if (!cabins || !cabins.length) {
+        throw new Error('Не удалось загрузить данные об объектах');
+      }
+
+      currentCabin = cabins.find(c => c.id === cabinId || c.slug === cabinId || String(c.id) === String(cabinId));
+      if (!currentCabin) {
+        if (contentEl) {
+          contentEl.innerHTML = '<div style="text-align: center; padding: 140px 0; color: #CCC4B6;">Объект не найден. <a href="/" style="color: #C5AA67; text-decoration: underline; margin-left: 8px;">На главную</a></div>';
+        }
+        return;
+      }
+
+      if (!currentCabin.addons && cabinAddonsMap && cabinAddonsMap[currentCabin.id]) {
+        currentCabin.addons = cabinAddonsMap[currentCabin.id];
+      }
+
+      document.title = `${currentCabin.name} — аренда на сутки | ${getBrandName(mainpage)}`;
+      applyBrandAndContacts(mainpage);
+
+      const cabin = currentCabin;
+      const cabinAmenities = amenitiesMap[cabinId]
+        || (Array.isArray(cabin.amenities) ? cabin.amenities : []);
+
+      renderCabinPage(currentCabin, cabinAmenities, houseItems, mainpage);
+
+    } catch (err) {
+      console.error('[cabin.js] Ошибка при инициализации страницы:', err);
+      if (contentEl) {
+        contentEl.innerHTML = '<div style="text-align: center; padding: 140px 0; color: #ff8c8c;">Не удалось загрузить данные об объекте. Попробуйте обновить страницу.</div>';
+      }
     }
-    const cabinAmenities = amenitiesMap[cabinId]
-      || (Array.isArray(cabin.amenities) ? cabin.amenities : []);
-    
-    let houseItems = [];
-    try {
-      const hiRes = await fetch('/api/house-items');
-      const hiJson = await hiRes.json();
-      if (hiJson && hiJson.data) houseItems = hiJson.data;
-    } catch (e) {
-      console.warn('Не удалось загрузить house items', e);
-    }
-    
-    document.title = cabin.name + ' | ' + getBrandName(mainpage);
-    renderCabinDetails(cabin, cabinAmenities, houseItems);
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById('cabinContent').innerHTML = '<div style="text-align: center; padding: 100px 0; color: #ff9898;">Ошибка при загрузке данных.</div>';
-  }
-});
-
-let allImages = [];
-let currentImageIndex = 0;
-
-async function loadCabinMainpage() {
-  try {
-    const res = await fetch('/api/mainpage', { cache: 'no-store' });
-    const json = await res.json();
-    return json && json.data ? json.data : {};
-  } catch (e) {
-    console.warn('Не удалось загрузить настройки главной страницы', e);
-    return {};
-  }
-}
-
-function getBrandName(mainpage) { return (mainpage && mainpage.logo && mainpage.logo.text) ? mainpage.logo.text : 'EcoGorniy'; }
-
-function normalizePhone(phone) { return String(phone || '').replace(/[^0-9+]/g, ''); }
-
-function onlyDigits(value) { return String(value || '').replace(/\D/g, ''); }
-
-function escapeHtml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#039;'); }
-
-function setLogo(markEl, logo, brandName) {
-  if (!markEl) return;
-  const logoUrl = logo && logo.url ? String(logo.url).trim() : '';
-  const logoText = logo && logo.text ? String(logo.text).trim() : '';
-  if (logoUrl) {
-    markEl.innerHTML = '<img src="' + escapeHtml(logoUrl) + '" alt="" loading="eager">';
-    markEl.classList.add('has-image-logo');
-    markEl.style.background = 'none';
-    markEl.style.border = 'none';
-    markEl.style.borderRadius = '0';
-  } else {
-    markEl.classList.remove('has-image-logo');
-    markEl.textContent = (logoText || brandName || 'EG').slice(0, 2);
-    markEl.style.background = '';
-    markEl.style.border = '';
-    markEl.style.borderRadius = '';
-  }
-}
-
-function contactHref(type, value) { 
-  if (!value) return ''; 
-  const raw = String(value).trim(); 
-  if (/^https?:\/\//i.test(raw)) return raw; 
-  if (type === 'phone') return 'tel:' + normalizePhone(raw); 
-  if (type === 'email') return 'mailto:' + raw; 
-  if (type === 'whatsapp') return 'https://wa.me/' + onlyDigits(raw); 
-  if (type === 'telegram' || type === 'max') return 'https://t.me/' + raw.replace(/^@/, ''); 
-  return 'https://' + raw; 
-}
-
-function applyCabinBrand(mainpage) {
-  const brandName = getBrandName(mainpage);
-  const logo = mainpage.logo || {};
-  const contacts = mainpage.contacts || {};
-
-  ['cabin-logo-text', 'cabin-footer-brand-name'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = brandName;
   });
 
-  const footerTitle = document.getElementById('cabin-footer-title');
-  if (footerTitle) {
-    let sloganText = 'Бронирование и аренда';
-    if (contacts && typeof contacts.footer_slogan === 'string') {
-      sloganText = contacts.footer_slogan;
-    }
-    if (!sloganText.trim()) {
-      footerTitle.innerHTML = '<span style="display:inline-block; border-bottom:1px solid var(--gold); min-width:200px; height:1em;"></span>';
-    } else {
-      footerTitle.innerHTML = `<span style="display:inline-block; border-bottom:1px solid var(--gold); padding-bottom:4px;">${escapeHtml(sloganText)}</span>`;
+  /* -------------------------------------------------------------------------
+     Brand & Settings Helpers
+     ------------------------------------------------------------------------- */
+  async function loadMainpageSettings() {
+    try {
+      const res = await fetch('/api/mainpage', { cache: 'no-store' });
+      const json = await res.json();
+      return json && json.data ? json.data : {};
+    } catch {
+      return {};
     }
   }
 
-  setLogo(document.getElementById('cabin-logo-img'), logo, brandName);
-  setLogo(document.getElementById('cabin-footer-brand-mark'), logo, brandName);
+  async function fetchHouseItems() {
+    try {
+      const res = await fetch('/api/house-items');
+      const json = await res.json();
+      return json && json.data ? json.data : [];
+    } catch {
+      return [];
+    }
+  }
 
-  const links = [];
-  const addLink = (icon, label, href) => links.push({ icon, label, href });
+  function getBrandName(mainpage) {
+    return (mainpage && mainpage.logo && mainpage.logo.text) ? mainpage.logo.text : 'Eco-Gorniy';
+  }
 
-  if (contacts.phone) addLink('phone', contacts.phone, contactHref('phone', contacts.phone));
-  if (contacts.max) addLink('message-square', 'МАКС', contactHref('max', contacts.max));
-  if (contacts.telegram || contacts.telegram_url) addLink('send', 'Telegram', contactHref('telegram', contacts.telegram_url || contacts.telegram));
-  if (contacts.whatsapp || contacts.whatsapp_url) addLink('message-circle', 'WhatsApp', contactHref('whatsapp', contacts.whatsapp_url || contacts.whatsapp));
-  if (contacts.vk) addLink('hash', 'ВКонтакте', contactHref('vk', contacts.vk));
-  if (contacts.ok) addLink('smile', 'Одноклассники', contactHref('ok', contacts.ok));
-  if (contacts.email) addLink('mail', contacts.email, contactHref('email', contacts.email));
+  function normalizePhone(phone) {
+    return String(phone || '').replace(/[^0-9+]/g, '');
+  }
 
-  const linksEl = document.getElementById('cabin-contact-links');
-  if (linksEl) {
-    linksEl.innerHTML = links.map(link => 
-      `<a href="${escapeHtml(link.href)}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="${link.icon}" style="width:16px; height:16px; stroke-width:2.5;"></i>${escapeHtml(link.label)}</a>`
-    ).join('');
-    const renderLucide = () => {
-      if (window.lucide) window.lucide.createIcons();
-      else setTimeout(renderLucide, 200);
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function resolveMediaUrl(url) {
+    if (!url) return '';
+    return window.EcoMedia ? window.EcoMedia.url(url) : url;
+  }
+
+  function applyBrandAndContacts(mainpage) {
+    const brandName = getBrandName(mainpage);
+    const logo = (mainpage && mainpage.logo) || {};
+    const contacts = (mainpage && mainpage.contacts) || {};
+
+    const logoTextEl = document.getElementById('cabin-logo-text');
+    if (logoTextEl) logoTextEl.textContent = brandName;
+
+    const logoImgEl = document.getElementById('cabin-logo-img');
+    if (logoImgEl) {
+      if (logo.url) {
+        const proxied = resolveMediaUrl(logo.url);
+        logoImgEl.innerHTML = `<img src="${escapeHtml(proxied)}" alt="${escapeHtml(brandName)}">`;
+        logoImgEl.style.background = 'none';
+        logoImgEl.style.border = 'none';
+      } else {
+        logoImgEl.textContent = (logo.text || brandName || 'EG').slice(0, 2).toUpperCase();
+      }
+    }
+
+    if (contacts.slogan) {
+      const sloganEl = document.getElementById('cabin-logo-slogan');
+      if (sloganEl) sloganEl.textContent = contacts.slogan;
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     Mobile Navigation Toggle & Smooth Anchor Scroll
+     ------------------------------------------------------------------------- */
+  function initMobileNav() {
+    const menuBtn = document.getElementById('cabinMenuBtn');
+    const nav = document.getElementById('cabinNav');
+
+    if (menuBtn && nav) {
+      menuBtn.addEventListener('click', () => {
+        nav.classList.toggle('mobile-open');
+      });
+
+      nav.querySelectorAll('.cabin-nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          nav.classList.remove('mobile-open');
+          const href = link.getAttribute('href');
+          if (href && href.startsWith('#')) {
+            const target = document.querySelector(href);
+            if (target) {
+              e.preventDefault();
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        });
+      });
+    }
+
+    // Scrollspy to highlight active link
+    window.addEventListener('scroll', () => {
+      const sections = ['about', 'amenities', 'interior', 'exterior', 'pricing'];
+      const scrollPos = window.scrollY + 160;
+
+      sections.forEach(id => {
+        const section = document.getElementById(id);
+        const link = document.querySelector(`.cabin-nav-link[href="#${id}"]`);
+        if (section && link) {
+          const top = section.offsetTop;
+          const height = section.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        }
+      });
+    }, { passive: true });
+  }
+
+  /* -------------------------------------------------------------------------
+     Amenity Grouping
+     ------------------------------------------------------------------------- */
+  function categorizeAmenities(cabin, cabinAmenities, houseItems) {
+    const activeHouseItems = (houseItems || []).filter(item => item.is_active !== false);
+
+    // If custom categories are configured in addons, use them directly
+    const customCats = cabin?.addons?.categories;
+    if (Array.isArray(customCats) && customCats.length > 0) {
+      const result = customCats.map(cat => {
+        const items = (cat.items || []).map(name => {
+          const meta = activeHouseItems.find(h => h.name === name) || {};
+          let icon = meta.icon || 'check';
+          if (icon === 'check' || !icon) {
+            const lower = name.toLowerCase();
+            if (/кровать/i.test(lower)) icon = 'bed-double';
+            else if (/диван/i.test(lower)) icon = 'sofa';
+            else if (/террас|веранд/i.test(lower)) icon = 'home';
+            else if (/саун|бан|парн/i.test(lower)) icon = 'flame';
+            else if (/душ|ванн/i.test(lower)) icon = 'shower-head';
+            else if (/посуд/i.test(lower)) icon = 'coffee';
+            else if (/фен/i.test(lower)) icon = 'wind';
+            else if (/wifi|wi-fi/i.test(lower)) icon = 'wifi';
+            else if (/кухн|плит|чайник/i.test(lower)) icon = 'utensils';
+          }
+          return { name, icon };
+        });
+        let catIcon = cat.icon;
+        if (!catIcon) {
+          const catTitleLower = (cat.name || '').toLowerCase();
+          if (/отдых|спальн|зал/i.test(catTitleLower)) catIcon = 'sofa';
+          else if (/тепл|забот|бан|саун/i.test(catTitleLower)) catIcon = 'flame';
+          else if (/быт|кухн/i.test(catTitleLower)) catIcon = 'utensils';
+          else if (/пляж|вод/i.test(catTitleLower)) catIcon = 'waves';
+          else catIcon = 'sparkles';
+        }
+        return {
+          id: cat.id || 'cat_' + Math.random().toString(36).slice(2, 6),
+          title: cat.name || 'Удобства',
+          icon: catIcon,
+          items
+        };
+      }).filter(grp => grp.items.length > 0);
+
+      if (result.length > 0) return result;
+    }
+
+    // Group definition with default icons
+    const groups = {
+      lounge: {
+        id: 'lounge',
+        title: 'Зона отдыха',
+        icon: 'bed',
+        items: []
+      },
+      care: {
+        id: 'care',
+        title: 'Тепло и забота',
+        icon: 'flame',
+        items: []
+      },
+      comfort: {
+        id: 'comfort',
+        title: 'Бытовые удобства',
+        icon: 'utensils',
+        items: []
+      }
     };
-    renderLucide();
+
+    // Filter valid amenities for this cabin
+    const validNames = (cabinAmenities || []).filter(name => {
+      if (!name) return false;
+      const found = activeHouseItems.find(h => h.name === name);
+      return !found || found.is_active !== false;
+    });
+
+    validNames.forEach(name => {
+      const meta = activeHouseItems.find(h => h.name === name) || {};
+      const lower = name.toLowerCase();
+
+      // Determine appropriate Lucide icon
+      let icon = meta.icon || 'check';
+      if (icon === 'check' || !icon) {
+        if (/кровать/i.test(lower)) icon = 'bed-double';
+        else if (/диван/i.test(lower)) icon = 'sofa';
+        else if (/террас|веранд/i.test(lower)) icon = 'home';
+        else if (/саун|бан|парн/i.test(lower)) icon = 'flame';
+        else if (/душ|ванн/i.test(lower)) icon = 'shower-head';
+        else if (/посуд/i.test(lower)) icon = 'coffee';
+        else if (/фен/i.test(lower)) icon = 'wind';
+        else if (/wifi|wi-fi/i.test(lower)) icon = 'wifi';
+        else if (/кухн|плит|чайник/i.test(lower)) icon = 'utensils';
+      }
+
+      const itemObj = { name, icon };
+
+      // Check if item has explicit category from admin
+      if (meta.category) {
+        const catLower = meta.category.toLowerCase();
+        if (catLower.includes('отдых') || catLower.includes('спальн') || catLower.includes('зона')) {
+          groups.lounge.items.push(itemObj);
+          return;
+        } else if (catLower.includes('тепл') || catLower.includes('забот') || catLower.includes('бан') || catLower.includes('саун')) {
+          groups.care.items.push(itemObj);
+          return;
+        } else if (catLower.includes('быт') || catLower.includes('удобств') || catLower.includes('кухн')) {
+          groups.comfort.items.push(itemObj);
+          return;
+        }
+      }
+
+      // Smart semantic fallback
+      if (/кровать|диван|террас|кресл|зона|балкон|шезлонг|спальн|беседк/i.test(lower)) {
+        groups.lounge.items.push(itemObj);
+      } else if (/саун|бан|душ|ванн|хаммам|полотенц|халат|чан|тепл/i.test(lower)) {
+        groups.care.items.push(itemObj);
+      } else {
+        groups.comfort.items.push(itemObj);
+      }
+    });
+
+    return [groups.lounge, groups.care, groups.comfort];
   }
-}
 
-function renderCabinDetails(cabin, cabinAmenities, houseItems) {
-  const mainImg = (cabin.images && cabin.images.length > 0) 
-    ? cabin.images.find(img => img.category === 'main') || cabin.images[0] 
-    : null;
-  const mainImageUrl = mainImg && mainImg.url
-    ? (window.EcoMedia ? window.EcoMedia.url(mainImg.url) : mainImg.url)
-    : '';
-  const encodedMainUrl = mainImageUrl ? encodeURI(String(mainImageUrl)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29') : '';
-  const heroImageStyle = encodedMainUrl
-    ? `background-image: url('${encodedMainUrl}');`
-    : 'background-image: linear-gradient(180deg, rgba(237,228,214,.08), rgba(18,15,13,.86));';
+  /* -------------------------------------------------------------------------
+     Main Page Rendering
+     ------------------------------------------------------------------------- */
+  function renderCabinPage(cabin, cabinAmenities, houseItems, mainpage) {
+    const contentEl = document.getElementById('cabinContent');
+    if (!contentEl) return;
 
-  allImages = cabin.images || [];
+    const rawImages = Array.isArray(cabin.images) ? cabin.images : [];
+    
+    // Find main image
+    const mainImgObj = rawImages.find(img => img.category === 'main') || rawImages[0] || null;
+    const mainImageUrl = mainImgObj && mainImgObj.url ? resolveMediaUrl(mainImgObj.url) : '';
 
-  const interiorImages = allImages.filter(img => img.category === 'interior');
-  const exteriorImages = allImages.filter(img => img.category === 'exterior');
+    // Split interior and exterior
+    const interiorList = rawImages.filter(img => img.category === 'interior');
+    const exteriorList = rawImages.filter(img => img.category === 'exterior');
 
-  let html = `
-    <div class="cabin-hero">
-      <div class="cabin-hero-bg" style="${heroImageStyle}"></div>
-      <div class="cabin-hero-overlay"></div>
-      <div class="cabin-hero-content">
-        <h1>${cabin.name}</h1>
-        <div class="cabin-meta">
-          <span class="chip">до ${cabin.capacity} гостей</span>
-          <span class="chip">от ${EcoApi.formatPrice(cabin.base_price)} / сутки</span>
-        </div>
-      </div>
-    </div>
+    // Pick "About" image: first exterior or terrace photo, or fallback to main
+    const aboutImgObj = exteriorList[0] || mainImgObj || {};
+    const aboutImageUrl = aboutImgObj.url ? resolveMediaUrl(aboutImgObj.url) : mainImageUrl;
 
-    <div class="section">
-      <div class="cabin-details-grid">
-        <div class="cabin-main-col">
-          <div class="cabin-description">
-            <h2 style="color: var(--gold); margin-bottom: 24px; font-size: 32px;">О месте</h2>
-            <p>${cabin.description || 'Описание отсутствует.'}</p>
+    // Categorized amenities
+    const amenityGroups = categorizeAmenities(cabin, cabinAmenities, houseItems);
+
+    // Global image registry for Lightbox
+    galleryItems = [];
+
+    // Contacts
+    const contacts = (mainpage && mainpage.contacts) || {};
+    const phoneDisplay = contacts.phone || '+7 (991) 242-19-70';
+    const phoneHref = 'tel:' + normalizePhone(phoneDisplay);
+    const emailDisplay = contacts.email || 'ecogorniy@gmail.com';
+    const emailHref = 'mailto:' + emailDisplay;
+
+    // Booking URL (preserves original site booking calendar workflow)
+    const bookingUrl = `/?cabin=${encodeURIComponent(cabin.id)}#calendar`;
+
+    const addons = cabin.addons || {};
+
+    // Hero texts
+    const heroTitleHtml = addons.hero_title
+      ? escapeHtml(addons.hero_title).replace(/\n/g, '<br>')
+      : escapeHtml(cabin.name || 'Объект размещения');
+    const heroSubtitle = addons.hero_subtitle || cabin.description || '';
+    const heroBtnText = addons.hero_btn || 'ЗАБРОНИРОВАТЬ';
+
+    // 3 Highlights (render only if configured or fallback to capacity)
+    const highlightCards = [];
+    if (addons.highlight_1?.title) {
+      highlightCards.push({ title: addons.highlight_1.title, sub: addons.highlight_1.sub || '', icon: addons.highlight_1.icon || 'users' });
+    }
+    if (addons.highlight_2?.title) {
+      highlightCards.push({ title: addons.highlight_2.title, sub: addons.highlight_2.sub || '', icon: addons.highlight_2.icon || 'sparkles' });
+    }
+    if (addons.highlight_3?.title) {
+      highlightCards.push({ title: addons.highlight_3.title, sub: addons.highlight_3.sub || '', icon: addons.highlight_3.icon || 'home' });
+    }
+    if (highlightCards.length === 0 && cabin.capacity) {
+      highlightCards.push({ title: `До ${cabin.capacity} гостей`, sub: 'ВМЕСТИМОСТЬ', icon: 'users' });
+    }
+
+    // About section
+    const aboutTitleHtml = addons.about_title
+      ? escapeHtml(addons.about_title).replace(/\n/g, '<br>')
+      : 'О месте';
+    const aboutDescription = addons.about_desc || cabin.description || '';
+    const badgeIcon = addons.badge_icon || 'map-pin';
+    const badgeText = addons.badge_text || '';
+
+    let html = '';
+
+    /* 1. Hero Section */
+    html += `
+      <section class="cabin-hero" id="hero">
+        <div class="cabin-hero-grid">
+          <div class="cabin-hero-left">
+            <div class="cabin-hero-kicker">— ${escapeHtml(cabin.name.toUpperCase())} · АРЕНДА</div>
+            <h1 class="cabin-hero-title">
+              ${heroTitleHtml}
+            </h1>
+            ${heroSubtitle ? `<p class="cabin-hero-desc">${escapeHtml(heroSubtitle)}</p>` : ''}
+            <div class="cabin-hero-actions">
+              <a href="${bookingUrl}" class="cabin-btn-gold">
+                <span>${escapeHtml(heroBtnText)}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="cabin-hero-right">
+            <div class="cabin-hero-photo-wrap">
+              ${mainImageUrl ? `<img class="cabin-hero-photo" src="${escapeHtml(mainImageUrl)}" alt="${escapeHtml(cabin.name)}">` : ''}
+            </div>
           </div>
         </div>
-        
-        <div class="cabin-sidebar-col">
-          <div class="amenities-section">
-            <h3>Что есть в домике</h3>
-            <div class="amenities-list">
-              ${(() => {
-                const validAmenities = (cabinAmenities || []).filter(am => {
-                  const hi = (houseItems || []).find(h => h.name === am);
-                  return hi && hi.is_active !== false;
-                });
-                if (validAmenities.length === 0) {
-                  return '<div style="color: var(--muted); font-size: 15px;">Информация скоро появится...</div>';
-                }
-                return validAmenities.map(am => {
-                  const hi = (houseItems || []).find(h => h.name === am);
-                  const iconSvg = (hi && hi.icon) 
-                    ? `<i data-lucide="${hi.icon}" style="width: 18px; height: 18px; color: var(--gold);"></i>`
-                    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--gold);"><path d="M20 6L9 17l-5-5"></path></svg>`;
-                  return `
-                    <div class="amenity-item">
-                      ${iconSvg}
-                      ${am}
+      </section>
+    `;
+
+    /* 2. Key Highlights Row */
+    if (highlightCards.length > 0) {
+      html += `
+        <section class="cabin-highlights">
+          ${highlightCards.map((hl, idx) => `
+            ${idx > 0 ? '<div class="cabin-highlight-divider"></div>' : ''}
+            <div class="cabin-highlight-item">
+              <div class="cabin-highlight-icon">
+                <i data-lucide="${escapeHtml(hl.icon)}"></i>
+              </div>
+              <div class="cabin-highlight-text">
+                <div class="cabin-highlight-title">${escapeHtml(hl.title)}</div>
+                ${hl.sub ? `<div class="cabin-highlight-sub">${escapeHtml(hl.sub)}</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </section>
+      `;
+    }
+
+    /* 3. Section "О месте" */
+    html += `
+      <section class="cabin-section cabin-about" id="about">
+        <div class="cabin-about-grid">
+          <div class="cabin-about-photo-wrap">
+            ${aboutImageUrl ? `<img class="cabin-about-photo" src="${escapeHtml(aboutImageUrl)}" alt="${escapeHtml(cabin.name)}">` : ''}
+          </div>
+          <div class="cabin-about-content">
+            <div class="cabin-section-kicker">— ОПИСАНИЕ</div>
+            <h2 class="cabin-about-title">
+              ${aboutTitleHtml}
+            </h2>
+            ${aboutDescription ? `<p class="cabin-about-desc">${escapeHtml(aboutDescription)}</p>` : ''}
+            ${badgeText ? `
+            <div class="cabin-about-feature">
+              <i data-lucide="${escapeHtml(badgeIcon)}" class="cabin-about-pin-icon"></i>
+              <span>${escapeHtml(badgeText)}</span>
+            </div>` : ''}
+          </div>
+        </div>
+      </section>
+    `;
+
+    /* 4. Section "Что есть в домике" */
+    html += `
+      <section class="cabin-section cabin-amenities" id="amenities">
+        <div class="cabin-section-header">
+          <h2 class="cabin-section-heading">Что есть в домике</h2>
+          <div class="cabin-section-subheading">КОМФОРТ В КАЖДОЙ ДЕТАЛИ</div>
+        </div>
+        <div class="cabin-section-divider"></div>
+        <div class="cabin-amenities-groups">
+          ${amenityGroups.map(group => `
+            <div class="cabin-amenity-group">
+              <div class="cabin-amenity-group-head">
+                <div class="cabin-amenity-group-icon">
+                  <i data-lucide="${group.icon}"></i>
+                </div>
+                <div class="cabin-amenity-group-title">${escapeHtml(group.title)}</div>
+              </div>
+              <div class="cabin-amenity-items">
+                ${group.items.length > 0 ? group.items.map(it => `
+                  <div class="cabin-amenity-item">
+                    <i data-lucide="${escapeHtml(it.icon)}"></i>
+                    <span>${escapeHtml(it.name)}</span>
+                  </div>
+                `).join('') : '<div style="color: var(--cp-text-muted); font-size: 14px;">Уточняется...</div>'}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </section>
+    `;
+
+    /* 5. Section "Интерьер" */
+    if (interiorList.length > 0) {
+      const interiorStartIndex = galleryItems.length;
+      interiorList.forEach((img, idx) => {
+        const caption = img.title || DEFAULT_INTERIOR_CAPTIONS[idx] || `Интерьер ${idx + 1}`;
+        galleryItems.push({
+          url: resolveMediaUrl(img.url),
+          caption
+        });
+      });
+
+      html += `
+        <section class="cabin-section cabin-gallery-sec" id="interior">
+          <div class="cabin-section-header">
+            <h2 class="cabin-section-heading">Интерьер</h2>
+            <div class="cabin-section-subheading">${interiorList.length} ${pluralizePhotos(interiorList.length)}</div>
+          </div>
+          <div class="cabin-section-divider"></div>
+          <div class="cabin-photo-grid">
+            ${interiorList.map((img, idx) => {
+              const globalIdx = interiorStartIndex + idx;
+              const caption = galleryItems[globalIdx].caption;
+              const imgUrl = galleryItems[globalIdx].url;
+              return `
+                <div class="cabin-photo-card" data-gallery-index="${globalIdx}" tabindex="0" role="button" aria-label="Открыть фото: ${escapeHtml(caption)}">
+                  <img src="${escapeHtml(imgUrl)}" loading="lazy" alt="${escapeHtml(caption)}">
+                  <div class="cabin-photo-card-footer">
+                    <div class="cabin-photo-card-title">${escapeHtml(caption)}</div>
+                    <div class="cabin-photo-card-expand">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                      </svg>
                     </div>
-                  `;
-                }).join('');
-              })()}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    /* 6. Section "Экстерьер и территория" */
+    if (exteriorList.length > 0) {
+      const exteriorStartIndex = galleryItems.length;
+      exteriorList.forEach((img, idx) => {
+        const caption = img.title || DEFAULT_EXTERIOR_CAPTIONS[idx] || `Территория ${idx + 1}`;
+        galleryItems.push({
+          url: resolveMediaUrl(img.url),
+          caption
+        });
+      });
+
+      html += `
+        <section class="cabin-section cabin-gallery-sec" id="exterior">
+          <div class="cabin-section-header">
+            <h2 class="cabin-section-heading">Экстерьер и территория</h2>
+            <div class="cabin-section-subheading">${exteriorList.length} ${pluralizePhotos(exteriorList.length)}</div>
+          </div>
+          <div class="cabin-section-divider"></div>
+          <div class="cabin-photo-grid">
+            ${exteriorList.map((img, idx) => {
+              const globalIdx = exteriorStartIndex + idx;
+              const caption = galleryItems[globalIdx].caption;
+              const imgUrl = galleryItems[globalIdx].url;
+              return `
+                <div class="cabin-photo-card" data-gallery-index="${globalIdx}" tabindex="0" role="button" aria-label="Открыть фото: ${escapeHtml(caption)}">
+                  <img src="${escapeHtml(imgUrl)}" loading="lazy" alt="${escapeHtml(caption)}">
+                  <div class="cabin-photo-card-footer">
+                    <div class="cabin-photo-card-title">${escapeHtml(caption)}</div>
+                    <div class="cabin-photo-card-expand">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    /* 7. Section "Стоимость и действие" */
+    html += `
+      <section class="cabin-pricing-section" id="pricing">
+        <div class="cabin-pricing-card">
+          <div class="cabin-pricing-left">
+            <div class="cabin-pricing-rate">
+              <span class="cabin-rate-prefix">от</span>
+              <span class="cabin-rate-amount">${EcoApi.formatPrice(cabin.base_price)}</span>
+              <span class="cabin-rate-suffix">/ сутки</span>
+            </div>
+            <div class="cabin-pricing-contacts">
+              <a href="${phoneHref}" class="cabin-contact-item">
+                <i data-lucide="phone"></i>
+                <span>${escapeHtml(phoneDisplay)}</span>
+              </a>
+              <a href="${emailHref}" class="cabin-contact-item">
+                <i data-lucide="mail"></i>
+                <span>${escapeHtml(emailDisplay)}</span>
+              </a>
             </div>
           </div>
+          <div class="cabin-pricing-right">
+            <a href="${bookingUrl}" class="cabin-btn-gold cabin-btn-lg">
+              <span>ВЫБРАТЬ ДАТЫ</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </a>
+          </div>
         </div>
-      </div>
+      </section>
+    `;
 
-      ${interiorImages.length > 0 ? `
-      <div class="photo-section">
-        <h2>Интерьер</h2>
-        <div class="photo-grid">
-          ${interiorImages.map((img, idx) => `
-            <div class="gallery-modal-item gallery-thumb" onclick="openFullscreenGallery(${allImages.indexOf(img)})">
-              <img src="${img.url}" loading="lazy" alt="Интерьер">
-            </div>
-          `).join('')}
-        </div>
-      </div>
-      ` : ''}
+    contentEl.innerHTML = html;
 
-      ${exteriorImages.length > 0 ? `
-      <div class="photo-section">
-        <h2>Экстерьер и территория</h2>
-        <div class="photo-grid">
-          ${exteriorImages.map((img, idx) => `
-            <div class="gallery-modal-item gallery-thumb" onclick="openFullscreenGallery(${allImages.indexOf(img)})">
-              <img src="${img.url}" loading="lazy" alt="Экстерьер">
-            </div>
-          `).join('')}
-        </div>
-      </div>
-      ` : ''}
-    </div>
+    // Attach card click handlers for Lightbox
+    contentEl.querySelectorAll('.cabin-photo-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const idx = parseInt(card.getAttribute('data-gallery-index'), 10);
+        openLightbox(idx, card);
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const idx = parseInt(card.getAttribute('data-gallery-index'), 10);
+          openLightbox(idx, card);
+        }
+      });
+    });
 
-    <div class="floating-booking">
-      <div class="price">
-        <span style="font-size: 14px; font-weight: normal; color: var(--muted);">от</span> ${EcoApi.formatPrice(cabin.base_price)} <span>/ сутки</span>
-      </div>
-      <a href="/?cabin=${cabin.id}#calendar" style="display: inline-flex; align-items: center; gap: 8px; color: var(--gold); font-weight: 600; font-size: 15px; text-decoration: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(90deg);"><path d="M18 11V6a2 2 0 0 0-4 0v4"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V3a2 2 0 0 0-4 0v9"/><path d="M6 14v-2a2 2 0 0 0-4 0v5.5C2 21.5 6 22 12 22s9-3 9-8V9a2 2 0 0 0-4 0v4"/></svg>
-        <span style="border-bottom: 1px solid var(--gold); padding-bottom: 2px;">Выбрать даты</span>
-      </a>
-    </div>
-  `;
-
-  document.getElementById('cabinContent').innerHTML = html;
-  
-  if (window.lucide) {
-    setTimeout(() => { if (window.lucide) window.lucide.createIcons({ root: document.getElementById('cabinContent'), nameAttr: 'data-lucide' }); }, 100);
+    // Render Lucide icons
+    if (window.lucide) {
+      setTimeout(() => {
+        window.lucide.createIcons({ root: contentEl, nameAttr: 'data-lucide' });
+      }, 50);
+    }
   }
-}
 
-// Полноэкранная галерея
-const galleryModal = document.getElementById('galleryModal');
-const galleryModalBody = document.getElementById('galleryModalBody');
-const galleryModalCount = document.getElementById('galleryModalCount');
+  function pluralizePhotos(count) {
+    const lastTwo = count % 100;
+    const lastOne = count % 10;
+    if (lastTwo >= 11 && lastTwo <= 19) return 'ФОТОГРАФИЙ';
+    if (lastOne === 1) return 'ФОТОГРАФИЯ';
+    if (lastOne >= 2 && lastOne <= 4) return 'ФОТОГРАФИИ';
+    return 'ФОТОГРАФИЙ';
+  }
 
-window.openFullscreenGallery = function(index) {
-  if (!allImages || allImages.length === 0) return;
-  currentImageIndex = index;
-  renderGalleryImage();
-  galleryModal.classList.add('open');
-};
+  /* -------------------------------------------------------------------------
+     Lightbox (Modal Photo Gallery)
+     ------------------------------------------------------------------------- */
+  function initLightboxEvents() {
+    const modal = document.getElementById('cabinLightbox');
+    const closeBtn = document.getElementById('lightboxCloseBtn');
+    const prevBtn = document.getElementById('lightboxPrevBtn');
+    const nextBtn = document.getElementById('lightboxNextBtn');
 
-document.getElementById('closeGalleryBtn').addEventListener('click', () => {
-  galleryModal.classList.remove('open');
-});
+    if (!modal) return;
 
-document.getElementById('galleryPrevBtn').addEventListener('click', () => {
-  currentImageIndex = (currentImageIndex - 1 + allImages.length) % allImages.length;
-  renderGalleryImage();
-});
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    if (prevBtn) prevBtn.addEventListener('click', showPrevLightboxPhoto);
+    if (nextBtn) nextBtn.addEventListener('click', showNextLightboxPhoto);
 
-document.getElementById('galleryNextBtn').addEventListener('click', () => {
-  currentImageIndex = (currentImageIndex + 1) % allImages.length;
-  renderGalleryImage();
-});
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal || e.target.id === 'lightboxBlurBg') {
+        closeLightbox();
+      }
+    });
 
-function renderGalleryImage() {
-  const img = allImages[currentImageIndex];
-  const imgUrlRaw = window.EcoMedia ? window.EcoMedia.url(img.url) : img.url;
-  const imgUrl = encodeURI(String(imgUrlRaw)).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29');
-  galleryModalCount.textContent = `${currentImageIndex + 1} / ${allImages.length}`;
-  galleryModalBody.innerHTML = `
-    <div style="position: absolute; inset: 0; background-image: url('${imgUrl}'); background-size: cover; background-position: center; filter: blur(40px) brightness(0.3); z-index: 1;"></div>
-    <img src="${imgUrl}" style="max-width: 90%; max-height: 90vh; object-fit: contain; position: relative; z-index: 2; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-  `;
-}
+    // Keyboard controls
+    window.addEventListener('keydown', (e) => {
+      if (!modal.classList.contains('is-active')) return;
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeLightbox();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        showPrevLightboxPhoto();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        showNextLightboxPhoto();
+      }
+    });
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    modal.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    modal.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const diff = touchEndX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          showPrevLightboxPhoto();
+        } else {
+          showNextLightboxPhoto();
+        }
+      }
+    }
+  }
+
+  function openLightbox(index, triggerElement) {
+    if (!galleryItems || !galleryItems.length) return;
+    lastFocusedElement = triggerElement || document.activeElement;
+
+    currentLightboxIndex = (index >= 0 && index < galleryItems.length) ? index : 0;
+    updateLightboxContent();
+
+    const modal = document.getElementById('cabinLightbox');
+    if (modal) {
+      modal.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+      const closeBtn = document.getElementById('lightboxCloseBtn');
+      if (closeBtn) closeBtn.focus();
+    }
+  }
+
+  function closeLightbox() {
+    const modal = document.getElementById('cabinLightbox');
+    if (modal) {
+      modal.classList.remove('is-active');
+      document.body.style.overflow = '';
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      }
+    }
+  }
+
+  function showPrevLightboxPhoto() {
+    if (!galleryItems.length) return;
+    currentLightboxIndex = (currentLightboxIndex - 1 + galleryItems.length) % galleryItems.length;
+    updateLightboxContent();
+  }
+
+  function showNextLightboxPhoto() {
+    if (!galleryItems.length) return;
+    currentLightboxIndex = (currentLightboxIndex + 1) % galleryItems.length;
+    updateLightboxContent();
+  }
+
+  function updateLightboxContent() {
+    if (!galleryItems.length) return;
+    const item = galleryItems[currentLightboxIndex];
+
+    const imgEl = document.getElementById('lightboxImg');
+    const captionEl = document.getElementById('lightboxCaption');
+    const counterEl = document.getElementById('lightboxCounter');
+    const blurBgEl = document.getElementById('lightboxBlurBg');
+
+    if (imgEl) {
+      imgEl.src = item.url;
+      imgEl.alt = item.caption || 'Фотография';
+    }
+    if (captionEl) captionEl.textContent = item.caption || '';
+    if (counterEl) counterEl.textContent = `${currentLightboxIndex + 1} / ${galleryItems.length}`;
+    if (blurBgEl) blurBgEl.style.backgroundImage = `url("${item.url}")`;
+  }
+
+})();

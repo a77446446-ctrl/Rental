@@ -1,0 +1,67 @@
+# ==============================================================================
+# 🌲 EcoGorniy Cabin Rental — Docker Compose Configuration
+# ==============================================================================
+# Готовый стек для развертывания на любом VPS или в панели Coolify.
+# Поднимает одновременно базу данных PocketBase и Node.js приложение.
+#
+# Запуск:
+# docker compose up -d
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. PocketBase — База данных SQLite + Хранилище файлов + Admin UI
+  # ----------------------------------------------------------------------------
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:latest
+    container_name: ecogorniy_pocketbase
+    restart: unless-stopped
+    command:
+      - /pocketbase
+      - serve
+      - --http=0.0.0.0:8090
+      - --dir=/pb_data
+    volumes:
+      # Постоянное хранилище базы данных и загруженных файлов
+      - ./pb_data:/pb_data
+    ports:
+      # Внутренний/внешний порт PocketBase
+      - "8090:8090"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - ecogorniy_network
+
+  # ----------------------------------------------------------------------------
+  # 2. Cabin Rental App — Основное Node.js Express приложение
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecogorniy_app
+    restart: unless-stopped
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Внутри docker-сети обращаемся к контейнеру pocketbase по имени сервиса:
+      - POCKETBASE_URL=http://pocketbase:8090
+    ports:
+      # Порт веб-сайта для проксирования через Nginx, Traefik или Caddy
+      - "3000:3000"
+    networks:
+      - ecogorniy_network
+
+networks:
+  ecogorniy_network:
+    driver: bridge

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <!-- TEST MARKER -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Название проекта — уютные домики для отдыха у озера. Актуальные цены, свободные даты и онлайн-бронирование.">
@@ -22,7 +23,7 @@
 
   </head>
 <body class="app-loading-active">
-  <script>try{var _t=localStorage.getItem('siteTheme');if(_t)document.body.classList.add(_t);}catch(e){}</script>
+  <script>try{var _t=localStorage.getItem('siteTheme');if(_t)document.body.classList.add(_t);var _s=window.location.search||'';var _h=window.location.hash||'';if(_s.indexOf('cabin=')!==-1||_h.indexOf('calendar')!==-1||sessionStorage.getItem('eco_splash_seen')==='1'){document.body.classList.remove('app-loading-active');window.__SKIP_SPLASH__=true;}}catch(e){}</script>
   <div id="global-bg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -6; background-size: cover; background-position: center; opacity: 0; transition: opacity 1s ease;"></div>
   <div class="noise"></div>
   <div class="top-fade"></div>
@@ -40,7 +41,7 @@
     window.__APP_SPLASH_STARTED_AT = performance.now();
     try {
       var _cachedBrandName = localStorage.getItem('eco_splash_brand_name');
-      if (_cachedBrandName) document.getElementById('app-loading-title').textContent = _cachedBrandName;
+      if (window.__SKIP_SPLASH__) { var _l = document.getElementById('app-loading'); if (_l) { _l.classList.add('is-hidden'); _l.style.display = 'none'; } } else if (_cachedBrandName) document.getElementById('app-loading-title').textContent = _cachedBrandName;
     } catch (e) {}
   </script>
 

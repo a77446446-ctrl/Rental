@@ -1,0 +1,481 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 640" width="100%" height="100%">
+  <defs>
+    <!-- Фоновый градиент холста (элегантный глубокий графит/сланец) -->
+    <linearGradient id="canvasBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#0f1523"/>
+    </linearGradient>
+
+    <!-- Фон основных карточек (мягкий тёмно-серый сланец) -->
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141c2c"/>
+      <stop offset="100%" stop-color="#101725"/>
+    </linearGradient>
+
+    <!-- Фон внутренних модулей -->
+    <linearGradient id="moduleBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#192336"/>
+      <stop offset="100%" stop-color="#131b2a"/>
+    </linearGradient>
+
+    <!-- Техническая сетка -->
+    <pattern id="dotGrid" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="0.75" fill="#334155" opacity="0.35"/>
+    </pattern>
+
+    <!-- Маркеры стрелок связей -->
+    <marker id="arrSky" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrEmerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrIndigo" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#818cf8"/>
+    </marker>
+
+    <!-- Мягкая тень карточек -->
+    <filter id="softShadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <style>
+    .font-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; font-weight: 700; fill: #f8fafc; }
+    .font-subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; font-weight: 400; fill: #94a3b8; font-size: 12px; }
+    .card-head { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; font-weight: 600; fill: #f1f5f9; font-size: 13px; }
+    .card-sub { font-family: Consolas, "Courier New", monospace; font-size: 9.5px; fill: #64748b; }
+    .text-item { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; font-size: 11px; fill: #94a3b8; }
+    .text-strong { font-weight: 600; fill: #e2e8f0; }
+    .badge-label { font-family: Consolas, "Courier New", monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.04em; }
+  </style>
+
+  <!-- Заливка холста -->
+  <rect width="1140" height="640" rx="14" fill="url(#canvasBg)" stroke="#222f44" stroke-width="1"/>
+  <rect width="1140" height="640" rx="14" fill="url(#dotGrid)"/>
+
+  <!-- ================= ВЕРХНЯЯ ПАНЕЛЬ ================= -->
+  <g transform="translate(35, 20)">
+    <!-- Иконка заголовка (Blueprint architecture) -->
+    <rect x="0" y="4" width="34" height="34" rx="7" fill="#141c2c" stroke="#2b3a52" stroke-width="1"/>
+    <svg viewBox="0 0 24 24" x="7" y="11" width="20" height="20" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="18" height="18" x="3" y="3" rx="2"/>
+      <path d="M3 9h18M9 21V9"/>
+    </svg>
+
+    <text x="46" y="23" class="font-title" font-size="18.5">Архитектура платформы Universal Rental Platform</text>
+    <text x="46" y="40" class="font-subtitle">Схема взаимодействия: Клиентские устройства • Сервер VPS (Docker) • База PocketBase • Внешние интеграции</text>
+
+    <!-- Статусные бейджи справа -->
+    <g transform="translate(830, 8)">
+      <rect x="0" y="0" width="105" height="24" rx="4" fill="#121a28" stroke="#2b3b55" stroke-width="1"/>
+      <circle cx="10" cy="12" r="3.5" fill="#38bdf8"/>
+      <text x="20" y="16" class="badge-label" fill="#cbd5e1">PRODUCTION</text>
+
+      <rect x="114" y="0" width="112" height="24" rx="4" fill="#121a28" stroke="#2b3b55" stroke-width="1"/>
+      <circle cx="124" cy="12" r="3.5" fill="#34d399"/>
+      <text x="134" y="16" class="badge-label" fill="#cbd5e1">DOCKER COMPOSE</text>
+    </g>
+  </g>
+
+  <!-- Линия-разделитель -->
+  <line x1="35" y1="74" x2="1105" y2="74" stroke="#222f44" stroke-width="1"/>
+
+  <!-- ================= КОЛОНКА 1: КЛИЕНТЫ (СЛЕВА) ================= -->
+  <g transform="translate(35, 92)">
+    <!-- Контейнер -->
+    <rect width="220" height="520" rx="10" fill="#0d1422" stroke="#26354b" stroke-width="1"/>
+    
+    <!-- Шапка колонки -->
+    <rect x="1" y="1" width="218" height="34" rx="9" fill="#131c2c"/>
+    <circle cx="16" cy="18" r="3.5" fill="#38bdf8"/>
+    <text x="28" y="22" class="font-title" font-size="11" letter-spacing="0.05em" fill="#e2e8f0">КЛИЕНТСКИЙ УРОВЕНЬ</text>
+
+    <!-- КАРТОЧКА 1.1: ГОСТЬ САЙТА -->
+    <g transform="translate(14, 48)" filter="url(#softShadow)">
+      <rect width="192" height="206" rx="8" fill="url(#cardBg)" stroke="#2b3a52" stroke-width="1"/>
+      
+      <!-- Иконка + Заголовок -->
+      <g transform="translate(12, 12)">
+        <rect x="0" y="0" width="32" height="32" rx="6" fill="#172236" stroke="#2c3e5a" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="7" y="7" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+          <path d="M12 18h.01"/>
+        </svg>
+        <text x="40" y="15" class="card-head">Гость сайта</text>
+        <text x="40" y="28" class="card-sub">PWA • Браузер / Смартфон</text>
+      </g>
+
+      <line x1="12" y1="52" x2="180" y2="52" stroke="#222f44" stroke-width="1"/>
+
+      <!-- Список возможностей гостя -->
+      <g transform="translate(14, 68)" class="text-item">
+        <circle cx="4" cy="5" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="8">Каталог недвижимости</text>
+
+        <circle cx="4" cy="26" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="29">Интерактивный расчет дат</text>
+
+        <circle cx="4" cy="47" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="50">Доплата за гостей и питомцев</text>
+
+        <circle cx="4" cy="68" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="71">Заказ доп. услуг (баня/чан)</text>
+
+        <circle cx="4" cy="89" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="92">Живой онлайн-чат с админом</text>
+
+        <circle cx="4" cy="110" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="113">Мгновенная заявка на бронь</text>
+      </g>
+    </g>
+
+    <!-- КАРТОЧКА 1.2: АДМИНИСТРАТОР -->
+    <g transform="translate(14, 268)" filter="url(#softShadow)">
+      <rect width="192" height="236" rx="8" fill="url(#cardBg)" stroke="#2b3a52" stroke-width="1"/>
+      
+      <!-- Иконка + Заголовок -->
+      <g transform="translate(12, 12)">
+        <rect x="0" y="0" width="32" height="32" rx="6" fill="#1b1e36" stroke="#353b64" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="7" y="7" width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="18" x="3" y="3" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        <text x="40" y="15" class="card-head">Панель управления</text>
+        <text x="40" y="28" class="card-sub">/admin • Защищенный вход</text>
+      </g>
+
+      <line x1="12" y1="52" x2="180" y2="52" stroke="#222f44" stroke-width="1"/>
+
+      <!-- Список функций администратора -->
+      <g transform="translate(14, 68)" class="text-item">
+        <circle cx="4" cy="5" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="8">Интерактивная шахматка</text>
+
+        <circle cx="4" cy="26" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="29">Управление объектами</text>
+
+        <circle cx="4" cy="47" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="50">Календарь цен и тарифов</text>
+
+        <circle cx="4" cy="68" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="71">Конструктор сайта (CMS)</text>
+
+        <circle cx="4" cy="89" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="92">CRM база гостей и заказов</text>
+
+        <circle cx="4" cy="110" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="113">Диалоги онлайн-чата</text>
+      </g>
+
+      <!-- Бейдж секретной пасхалки -->
+      <g transform="translate(12, 196)">
+        <rect width="168" height="28" rx="5" fill="#181e28" stroke="#374151" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="8" y="7" width="14" height="14" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2m0 16v2m10-10h-2M4 12H2"/>
+        </svg>
+        <text x="28" y="18" font-family="sans-serif" font-size="9.5" fill="#fbbf24" font-weight="600">Секретный вход: 6 кликов лого</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ================= КОЛОНКА 2: VPS СЕРВЕР COOLIFY / DOCKER (ЦЕНТР) ================= -->
+  <g transform="translate(325, 92)">
+    <!-- Контейнер сервера -->
+    <rect width="490" height="520" rx="10" fill="#0d1422" stroke="#2d3d57" stroke-width="1.2"/>
+    
+    <!-- Шапка сервера -->
+    <rect x="1" y="1" width="488" height="34" rx="9" fill="#152033"/>
+    <svg viewBox="0 0 24 24" x="14" y="9" width="16" height="16" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round">
+      <rect width="20" height="8" x="2" y="2" rx="2"/>
+      <rect width="20" height="8" x="2" y="14" rx="2"/>
+      <line x1="6" x2="6.01" y1="6" y2="6"/>
+      <line x1="6" x2="6.01" y1="18" y2="18"/>
+    </svg>
+    <text x="38" y="22" class="font-title" font-size="11.5" letter-spacing="0.04em" fill="#34d399">ВАШ VPS СЕРВЕР (COOLIFY / DOCKER COMPOSE)</text>
+    <text x="408" y="22" class="badge-label" fill="#94a3b8">UI :8000</text>
+
+    <!-- ПОД-БЛОК 2.1: REVERSE PROXY (TRAEFIK) -->
+    <g transform="translate(18, 48)" filter="url(#softShadow)">
+      <rect width="454" height="66" rx="7" fill="url(#moduleBg)" stroke="#2b3b55" stroke-width="1"/>
+      
+      <g transform="translate(14, 14)">
+        <rect x="0" y="0" width="36" height="36" rx="6" fill="#162338" stroke="#2c3e5a" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="9" y="9" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </g>
+      
+      <!-- Текст названия с запасом места -->
+      <text x="60" y="28" class="card-head" font-size="12.5">Reverse Proxy (Traefik) + Авто-SSL Let's Encrypt</text>
+      <text x="60" y="46" class="text-item" font-size="10.5">Маршрутизация входящего HTTPS трафика на Express (:3000) и PocketBase (:8090)</text>
+      
+      <!-- Бейдж SSL (без наезда на текст) -->
+      <rect x="382" y="14" width="58" height="22" rx="4" fill="#13232a" stroke="#059669" stroke-width="0.8"/>
+      <text x="411" y="29" text-anchor="middle" class="badge-label" fill="#34d399">SSL 2048</text>
+    </g>
+
+    <!-- Линия-коннектор Traefik -> Express -->
+    <line x1="245" y1="114" x2="245" y2="128" stroke="#334155" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+    <!-- ПОД-БЛОК 2.2: EXPRESS APPLICATION -->
+    <g transform="translate(18, 128)" filter="url(#softShadow)">
+      <rect width="454" height="206" rx="8" fill="url(#cardBg)" stroke="#22363d" stroke-width="1.2"/>
+      
+      <!-- Шапка Express -->
+      <g transform="translate(14, 12)">
+        <rect x="0" y="0" width="32" height="32" rx="6" fill="#132625" stroke="#1d483e" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="7" y="7" width="18" height="18" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 3-8 4.5v9L12 21l8-4.5v-9L12 3z"/>
+          <path d="m12 12 8-4.5M12 12v9M12 12 4 7.5"/>
+        </svg>
+        <text x="40" y="15" class="card-head">Node.js Express Сервер (Контейнер: app)</text>
+        <text x="40" y="27" class="card-sub">Внутренний порт: 3000 • Точка входа: src/server.js</text>
+      </g>
+
+      <line x1="14" y1="52" x2="440" y2="52" stroke="#202c3e" stroke-width="1"/>
+
+      <!-- 4 аккуратных модуля Express -->
+      <g transform="translate(14, 62)">
+        <!-- Модуль 1: REST API -->
+        <g transform="translate(0, 0)">
+          <rect width="206" height="58" rx="6" fill="url(#moduleBg)" stroke="#26354b" stroke-width="1"/>
+          <rect x="10" y="13" width="30" height="30" rx="5" fill="#141f32"/>
+          <svg viewBox="0 0 24 24" x="16" y="19" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          <text x="48" y="27" class="text-strong" font-size="11.5">Публичный REST API</text>
+          <text x="48" y="42" class="card-sub" font-size="9">/api/cabins, /api/bookings</text>
+        </g>
+
+        <!-- Модуль 2: Онлайн-Чат -->
+        <g transform="translate(220, 0)">
+          <rect width="206" height="58" rx="6" fill="url(#moduleBg)" stroke="#26354b" stroke-width="1"/>
+          <rect x="10" y="13" width="30" height="30" rx="5" fill="#1c1c34"/>
+          <svg viewBox="0 0 24 24" x="16" y="19" width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round">
+            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+          </svg>
+          <text x="48" y="27" class="text-strong" font-size="11.5">Модуль Онлайн-Чата</text>
+          <text x="48" y="42" class="card-sub" font-size="9">Realtime, медиа, МАКС релей</text>
+        </g>
+
+        <!-- Модуль 3: Синхронизатор iCal -->
+        <g transform="translate(0, 68)">
+          <rect width="206" height="58" rx="6" fill="url(#moduleBg)" stroke="#26354b" stroke-width="1"/>
+          <rect x="10" y="13" width="30" height="30" rx="5" fill="#122422"/>
+          <svg viewBox="0 0 24 24" x="16" y="19" width="18" height="18" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+            <path d="M16 21h5v-5"/>
+          </svg>
+          <text x="48" y="27" class="text-strong" font-size="11.5">Синхронизатор iCal</text>
+          <text x="48" y="42" class="card-sub" font-size="9">Фоновый cron каждые 30 мин</text>
+        </g>
+
+        <!-- Модуль 4: Sharp WebP -->
+        <g transform="translate(220, 68)">
+          <rect width="206" height="58" rx="6" fill="url(#moduleBg)" stroke="#26354b" stroke-width="1"/>
+          <rect x="10" y="13" width="30" height="30" rx="5" fill="#252119"/>
+          <svg viewBox="0 0 24 24" x="16" y="19" width="18" height="18" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+            <circle cx="9" cy="9" r="2"/>
+            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+          </svg>
+          <text x="48" y="27" class="text-strong" font-size="11.5">Sharp Оптимизация</text>
+          <text x="48" y="42" class="card-sub" font-size="9">Сжатие фото в WebP</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Линия-коннектор Express -> PocketBase с бейджем протокола -->
+    <line x1="245" y1="334" x2="245" y2="350" stroke="#334155" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <g transform="translate(180, 335)">
+      <rect width="130" height="16" rx="3" fill="#0d1422" stroke="#253549" stroke-width="0.8"/>
+      <text x="65" y="12" text-anchor="middle" class="card-sub" fill="#38bdf8" font-size="8.5">http://pocketbase:8090</text>
+    </g>
+
+    <!-- ПОД-БЛОК 2.3: POCKETBASE -->
+    <g transform="translate(18, 350)" filter="url(#softShadow)">
+      <rect width="454" height="152" rx="8" fill="url(#cardBg)" stroke="#1e3448" stroke-width="1.2"/>
+      
+      <!-- Шапка PocketBase -->
+      <g transform="translate(14, 12)">
+        <rect x="0" y="0" width="32" height="32" rx="6" fill="#132236" stroke="#1f3d64" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="7" y="7" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>
+        </svg>
+        <text x="40" y="15" class="card-head">PocketBase (Контейнер: pocketbase)</text>
+        <text x="40" y="27" class="card-sub">Внутренний порт: 8090 • Админка: http://IP:8090/_/</text>
+      </g>
+
+      <line x1="14" y1="52" x2="440" y2="52" stroke="#202c3e" stroke-width="1"/>
+
+      <!-- 2 хранилища PocketBase -->
+      <g transform="translate(14, 62)">
+        <!-- Хранилище 1: SQLite -->
+        <g transform="translate(0, 0)">
+          <rect width="206" height="74" rx="6" fill="url(#moduleBg)" stroke="#26354b" stroke-width="1"/>
+          <rect x="10" y="12" width="28" height="28" rx="5" fill="#141f32"/>
+          <svg viewBox="0 0 24 24" x="15" y="17" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="1.8">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          </svg>
+          <text x="46" y="25" class="text-strong" font-size="11">База данных SQLite</text>
+          <text x="46" y="38" class="card-sub" font-size="9">9 системных коллекций</text>
+          <rect x="10" y="48" width="186" height="18" rx="3" fill="#0f1725"/>
+          <text x="16" y="61" class="badge-label" fill="#34d399">Том: ./pb_data (на диске VPS)</text>
+        </g>
+
+        <!-- Хранилище 2: Медиа -->
+        <g transform="translate(220, 0)">
+          <rect width="206" height="74" rx="6" fill="url(#moduleBg)" stroke="#26354b" stroke-width="1"/>
+          <rect x="10" y="12" width="28" height="28" rx="5" fill="#252119"/>
+          <svg viewBox="0 0 24 24" x="15" y="17" width="18" height="18" fill="none" stroke="#fbbf24" stroke-width="1.8">
+            <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+          </svg>
+          <text x="46" y="25" class="text-strong" font-size="11">Хранилище Медиа</text>
+          <text x="46" y="38" class="card-sub" font-size="9">Загруженные фото и видео</text>
+          <rect x="10" y="48" width="186" height="18" rx="3" fill="#0f1725"/>
+          <text x="16" y="61" class="badge-label" fill="#34d399">Том: ./pb_data/storage</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ================= КОЛОНКА 3: ВНЕШНИЕ ИНТЕГРАЦИИ (СПРАВА) ================= -->
+  <g transform="translate(885, 92)">
+    <!-- Контейнер -->
+    <rect width="220" height="520" rx="10" fill="#0d1422" stroke="#26354b" stroke-width="1"/>
+    
+    <!-- Шапка колонки -->
+    <rect x="1" y="1" width="218" height="34" rx="9" fill="#131c2c"/>
+    <circle cx="16" cy="18" r="3.5" fill="#818cf8"/>
+    <text x="28" y="22" class="font-title" font-size="11" letter-spacing="0.05em" fill="#e2e8f0">ВНЕШНИЕ ИНТЕГРАЦИИ</text>
+
+    <!-- ИНТЕГРАЦИЯ 3.1: МАКС МЕССЕНДЖЕР -->
+    <g transform="translate(14, 48)" filter="url(#softShadow)">
+      <rect width="192" height="114" rx="8" fill="url(#cardBg)" stroke="#2b3a52" stroke-width="1"/>
+      
+      <g transform="translate(12, 12)">
+        <rect x="0" y="0" width="30" height="30" rx="6" fill="#141f32" stroke="#263750" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="6" y="6" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <text x="38" y="14" class="card-head">МАКС Мессенджер</text>
+        <text x="38" y="26" class="card-sub">max.ru Bot API</text>
+      </g>
+
+      <line x1="12" y1="50" x2="180" y2="50" stroke="#202c3e" stroke-width="1"/>
+
+      <g transform="translate(14, 66)" class="text-item">
+        <circle cx="4" cy="5" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="8">Мгновенный чат с сайта</text>
+
+        <circle cx="4" cy="24" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="27">Сообщения на телефон админа</text>
+
+        <circle cx="4" cy="43" r="1.8" fill="#38bdf8"/>
+        <text x="12" y="46">Двусторонний живой ответ</text>
+      </g>
+    </g>
+
+    <!-- ИНТЕГРАЦИЯ 3.2: TELEGRAM BOT -->
+    <g transform="translate(14, 174)" filter="url(#softShadow)">
+      <rect width="192" height="136" rx="8" fill="url(#cardBg)" stroke="#2b3a52" stroke-width="1"/>
+      
+      <g transform="translate(12, 12)">
+        <rect x="0" y="0" width="30" height="30" rx="6" fill="#1a1c34" stroke="#31365e" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="6" y="6" width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m22 2-7 20-4-9-9-4Z"/>
+          <path d="M22 2 11 13"/>
+        </svg>
+        <text x="38" y="14" class="card-head">Telegram Бот</text>
+        <text x="38" y="26" class="card-sub">@BotFather Webhook</text>
+      </g>
+
+      <line x1="12" y1="50" x2="180" y2="50" stroke="#202c3e" stroke-width="1"/>
+
+      <g transform="translate(14, 66)" class="text-item">
+        <circle cx="4" cy="5" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="8">Уведомления о бронях</text>
+
+        <circle cx="4" cy="24" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="27">Cloudflare Worker Relay</text>
+
+        <circle cx="4" cy="43" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="46" fill="#38bdf8">Обход блокировок в РФ</text>
+
+        <circle cx="4" cy="62" r="1.8" fill="#a78bfa"/>
+        <text x="12" y="65">Поддержка групп и админов</text>
+      </g>
+    </g>
+
+    <!-- ИНТЕГРАЦИЯ 3.3: АВИТО / СУТОЧНО / ICAL -->
+    <g transform="translate(14, 322)" filter="url(#softShadow)">
+      <rect width="192" height="180" rx="8" fill="url(#cardBg)" stroke="#22363d" stroke-width="1"/>
+      
+      <g transform="translate(12, 12)">
+        <rect x="0" y="0" width="30" height="30" rx="6" fill="#122524" stroke="#1d483e" stroke-width="1"/>
+        <svg viewBox="0 0 24 24" x="6" y="6" width="18" height="18" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round">
+          <path d="M8 2v4M16 2v4M3 10h18"/>
+          <rect width="18" height="18" x="3" y="4" rx="2"/>
+          <path d="m9 16 2 2 4-4"/>
+        </svg>
+        <text x="38" y="14" class="card-head">Авито / Суточно.ру</text>
+        <text x="38" y="26" class="card-sub">Двусторонний iCal</text>
+      </g>
+
+      <line x1="12" y1="50" x2="180" y2="50" stroke="#202c3e" stroke-width="1"/>
+
+      <g transform="translate(14, 66)">
+        <text x="0" y="8" class="text-strong" font-size="10.5" fill="#34d399">1. Экспорт в Авито:</text>
+        <text x="0" y="22" class="card-sub" font-size="9">/api/ical/export/{slug}.ics</text>
+        <text x="0" y="34" class="text-item" font-size="9.5">➔ даты закрываются в Авито</text>
+
+        <text x="0" y="56" class="text-strong" font-size="10.5" fill="#38bdf8">2. Импорт из Авито:</text>
+        <text x="0" y="70" class="card-sub" font-size="9">iCal ссылка в админке</text>
+        <text x="0" y="82" class="text-item" font-size="9.5">➔ даты блокируются на сайте</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ================= СТРЕЛКИ МАРШРУТОВ ДАННЫХ (БЕЗ ПЕРЕКРЫТИЙ) ================= -->
+  
+  <!-- 1. Клиенты -> Traefik (HTTPS: 443) -->
+  <!-- Выходит из правой грани Гостя (x=240, y=210) и входит в левую грань Traefik (x=343, y=175) -->
+  <path d="M 241 210 L 285 210 L 285 175 L 340 175" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arrSky)"/>
+  <!-- Бейдж HTTPS по центру чистого зазора -->
+  <g transform="translate(255, 150)">
+    <rect width="66" height="18" rx="3.5" fill="#0d1624" stroke="#253a56" stroke-width="0.8"/>
+    <text x="33" y="12" text-anchor="middle" class="badge-label" fill="#38bdf8">HTTPS: 443</text>
+  </g>
+
+  <!-- 2. Express -> МАКС Мессенджер -->
+  <!-- Выходит из Express (x=797, y=230) и входит в МАКС (x=899, y=190) -->
+  <path d="M 797 220 L 845 220 L 845 190 L 896 190" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arrSky)"/>
+  <!-- Бейдж REST API в чистом зазоре -->
+  <g transform="translate(820, 168)">
+    <rect width="52" height="16" rx="3" fill="#0d1624" stroke="#253a56" stroke-width="0.8"/>
+    <text x="26" y="11.5" text-anchor="middle" class="badge-label" fill="#38bdf8">REST API</text>
+  </g>
+
+  <!-- 3. Express -> Telegram -->
+  <!-- Выходит из Express (x=797, y=250) и входит в Telegram (x=899, y=290) -->
+  <path d="M 797 250 L 845 250 L 845 290 L 896 290" fill="none" stroke="#818cf8" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arrIndigo)"/>
+
+  <!-- 4. Express <-> Авито iCal -->
+  <!-- Выходит из Express (x=797, y=275) и входит в Авито (x=899, y=440) -->
+  <path d="M 797 275 L 855 275 L 855 440 L 896 440" fill="none" stroke="#34d399" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arrEmerald)"/>
+  <!-- Бейдж iCAL SYNC в чистом зазоре -->
+  <g transform="translate(822, 350)">
+    <rect width="62" height="16" rx="3" fill="#0c1a1e" stroke="#1c3e38" stroke-width="0.8"/>
+    <text x="31" y="11.5" text-anchor="middle" class="badge-label" fill="#34d399">iCAL SYNC</text>
+  </g>
+
+</svg>

@@ -43,6 +43,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
   let globalTags = [];
   let globalCabinTags = {};
   let currentExternalCalendars = [];
+  let currentCustomCategories = [];
 
   // Загрузка списка домиков
   async function loadCabins() {
@@ -68,16 +69,36 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
 
         // Рендерим чекбоксы наполнения домика (только активные)
         const grid = document.getElementById('cabinAmenitiesGrid');
-        grid.innerHTML = globalExtraServices
-          .filter(item => item.is_active !== false)
-          .map(item => `
-            <label style="display: flex; align-items: center; gap: 6px;">
-              <input type="checkbox" value="${escapeAttr(item.name)}">
-              ${item.icon ? `<i data-lucide="${escapeAttr(item.icon)}" style="width: 16px; height: 16px; color: var(--gold);"></i>` : ''}
-              ${escapeAttr(item.name)}
-            </label>
-          `)
-          .join('');
+        const activeItems = globalExtraServices.filter(item => item.is_active !== false);
+        const grouped = {};
+        activeItems.forEach(item => {
+          let cat = item.category;
+          if (!cat) {
+            const lower = item.name.toLowerCase();
+            if (/кровать|диван|террас|кресл|зона/i.test(lower)) cat = 'Зона отдыха';
+            else if (/саун|бан|душ|ванн/i.test(lower)) cat = 'Тепло и забота';
+            else cat = 'Бытовые удобства';
+          }
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push(item);
+        });
+
+        grid.innerHTML = Object.keys(grouped).map(catName => `
+          <div style="width: 100%; margin-top: 6px; margin-bottom: 4px;">
+            <div style="color: var(--gold); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px;">
+              ${escapeAttr(catName)}
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${grouped[catName].map(item => `
+                <label style="display: flex; align-items: center; gap: 6px; background: rgba(var(--cream-rgb), 0.04); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); font-size: 13px;">
+                  <input type="checkbox" value="${escapeAttr(item.name)}">
+                  ${item.icon ? `<i data-lucide="${escapeAttr(item.icon)}" style="width: 16px; height: 16px; color: var(--gold);"></i>` : ''}
+                  ${escapeAttr(item.name)}
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
           
         if (window.lucide) {
           setTimeout(() => window.lucide.createIcons({ root: grid }), 0);
@@ -176,8 +197,323 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
     });
   }
 
+  // Переключение вкладок модального окна
+  const modalTabsNav = document.getElementById('modalTabsNav');
+  if (modalTabsNav) {
+    modalTabsNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.modal-tab-btn');
+      if (!btn) return;
+      const targetTab = btn.dataset.tab;
+      document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const pane = document.getElementById(targetTab);
+      if (pane) pane.classList.add('active');
+    });
+  }
+
+  function resetModalTabs() {
+    document.querySelectorAll('.modal-tab-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+    document.querySelectorAll('.tab-pane').forEach((p, i) => p.classList.toggle('active', i === 0));
+  }
+
+  function syncFlatAmenitiesGrid() {
+    const allSelected = new Set();
+    currentCustomCategories.forEach(cat => {
+      (cat.items || []).forEach(name => allSelected.add(name));
+    });
+    const grid = document.getElementById('cabinAmenitiesGrid');
+    if (!grid) return;
+    grid.innerHTML = Array.from(allSelected).map(name => `
+      <input type="checkbox" value="${escapeAttr(name)}" checked style="display:none;">
+    `).join('');
+  }
+
+  function renderCustomCategories() {
+    const container = document.getElementById('customCategoriesContainer');
+    if (!container) return;
+
+    const activeHouseItems = (globalExtraServices || []).filter(item => item.is_active !== false);
+
+    if (currentCustomCategories.length === 0) {
+      container.innerHTML = '<div style="color:var(--muted); font-size:13px; padding:12px; border:1px dashed var(--line); border-radius:8px; text-align:center;">Категории ещё не созданы. Нажмите «+ Добавить категорию» выше.</div>';
+      syncFlatAmenitiesGrid();
+      return;
+    }
+
+    container.innerHTML = currentCustomCategories.map((cat, catIndex) => {
+      const currentIcon = cat.icon || 'sparkles';
+      return `
+        <div class="custom-cat-card" data-cat-index="${catIndex}" style="background: rgba(var(--cream-rgb), 0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px;">
+          <div style="display: flex; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap;">
+            
+            <!-- Нарисованная иконка категории (превью) -->
+            <div>
+              <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Иконка</label>
+              <div class="cat-icon-preview" data-cat-index="${catIndex}" style="width: 38px; height: 38px; border-radius: 8px; background: rgba(197, 170, 103, 0.15); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); flex-shrink: 0; box-sizing: border-box;">
+                <i data-lucide="${escapeAttr(currentIcon)}" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+
+            <!-- Выбор иконки категории -->
+            <div style="flex: 0 1 220px; min-width: 170px;">
+              <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Иконка категории:</label>
+              <select class="cat-icon-select" data-cat-index="${catIndex}" style="height: 38px; padding: 0 10px; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); font-size: 12px; width: 100%; box-sizing: border-box;">
+                ${POPULAR_HIGHLIGHT_ICONS.map(ic => `
+                  <option value="${ic.id}" ${currentIcon === ic.id ? 'selected' : ''}>${ic.label} (${ic.id})</option>
+                `).join('')}
+              </select>
+            </div>
+
+            <!-- Название категории -->
+            <div style="flex: 1 1 240px; min-width: 200px;">
+              <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Название категории:</label>
+              <input type="text" class="custom-cat-name-input" value="${escapeAttr(cat.name || '')}" placeholder="Пример: Зона отдыха / Тепло и забота / Бытовые удобства" style="height: 38px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 0 12px; border-radius: 8px; font-size: 13px; width: 100%; box-sizing: border-box;">
+            </div>
+
+            <!-- Кнопка удаления категории -->
+            <div>
+              <button type="button" class="btn btn-ghost delete-cat-btn" style="height: 38px; padding: 0 14px; font-size: 12px; border-color: #8b3c3c; color: #ff8c8c; border-radius: 8px; white-space: nowrap;">Удалить категорию</button>
+            </div>
+          </div>
+
+          <div style="font-size: 11px; color: var(--muted); margin-bottom: 8px;">Отметьте удобства, входящие в эту категорию:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${activeHouseItems.map(item => {
+              const checked = Array.isArray(cat.items) && cat.items.includes(item.name);
+              return `
+                <label style="display: flex; align-items: center; gap: 6px; background: rgba(var(--cream-rgb), 0.03); padding: 6px 12px; border-radius: 8px; border: 1px solid ${checked ? 'var(--gold)' : 'var(--line)'}; font-size: 13px; cursor: pointer; transition: all 0.15s ease;">
+                  <input type="checkbox" class="cat-item-checkbox" value="${escapeAttr(item.name)}" ${checked ? 'checked' : ''} style="accent-color: var(--gold);">
+                  ${item.icon ? `<i data-lucide="${escapeAttr(item.icon)}" style="width: 15px; height: 15px; color: var(--gold);"></i>` : ''}
+                  <span style="color: ${checked ? 'var(--cream)' : 'var(--muted)'};">${escapeAttr(item.name)}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    if (window.lucide) {
+      window.lucide.createIcons({ root: container, nameAttr: 'data-lucide' });
+    }
+
+    container.querySelectorAll('.cat-icon-select').forEach((sel) => {
+      sel.addEventListener('change', (e) => {
+        const idx = parseInt(e.target.dataset.catIndex, 10);
+        if (currentCustomCategories[idx]) {
+          currentCustomCategories[idx].icon = e.target.value;
+          const preview = container.querySelector(`.cat-icon-preview[data-cat-index="${idx}"]`);
+          if (preview) {
+            preview.innerHTML = `<i data-lucide="${escapeAttr(e.target.value)}" style="width: 20px; height: 20px;"></i>`;
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+              window.lucide.createIcons({ root: preview });
+            }
+          }
+          checkChanges();
+        }
+      });
+    });
+
+    container.querySelectorAll('.custom-cat-name-input').forEach((input) => {
+      input.addEventListener('input', (e) => {
+        const card = e.target.closest('.custom-cat-card');
+        const idx = parseInt(card.dataset.catIndex, 10);
+        if (currentCustomCategories[idx]) {
+          currentCustomCategories[idx].name = e.target.value.trim();
+          checkChanges();
+        }
+      });
+    });
+
+    container.querySelectorAll('.delete-cat-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.custom-cat-card');
+        const idx = parseInt(card.dataset.catIndex, 10);
+        currentCustomCategories.splice(idx, 1);
+        renderCustomCategories();
+        checkChanges();
+      });
+    });
+
+    container.querySelectorAll('.cat-item-checkbox').forEach((cb) => {
+      cb.addEventListener('change', (e) => {
+        const card = e.target.closest('.custom-cat-card');
+        const idx = parseInt(card.dataset.catIndex, 10);
+        const itemName = e.target.value;
+        if (!currentCustomCategories[idx].items) currentCustomCategories[idx].items = [];
+        if (e.target.checked) {
+          if (!currentCustomCategories[idx].items.includes(itemName)) {
+            currentCustomCategories[idx].items.push(itemName);
+          }
+        } else {
+          currentCustomCategories[idx].items = currentCustomCategories[idx].items.filter(name => name !== itemName);
+        }
+        syncFlatAmenitiesGrid();
+        renderCustomCategories();
+        checkChanges();
+      });
+    });
+
+    syncFlatAmenitiesGrid();
+  }
+
+  const addCustomCategoryBtn = document.getElementById('addCustomCategoryBtn');
+  if (addCustomCategoryBtn) {
+    addCustomCategoryBtn.addEventListener('click', () => {
+      currentCustomCategories.push({
+        id: 'cat_' + Date.now().toString(36),
+        name: '',
+        icon: 'sparkles',
+        items: []
+      });
+      renderCustomCategories();
+      checkChanges();
+    });
+  }
+
+  function initializeCustomCategoriesForCabin(cabin) {
+    const addons = cabin.addons || {};
+
+    if (Array.isArray(addons.categories) && addons.categories.length > 0) {
+      currentCustomCategories = JSON.parse(JSON.stringify(addons.categories)).map(cat => ({
+        id: cat.id || 'cat_' + Date.now().toString(36),
+        name: cat.name || '',
+        icon: cat.icon || 'sparkles',
+        items: Array.isArray(cat.items) ? cat.items : []
+      }));
+    } else {
+      currentCustomCategories = [];
+    }
+
+    renderCustomCategories();
+  }
+
+  const POPULAR_HIGHLIGHT_ICONS = [
+    { id: 'users', label: 'Гости / Вместимость' },
+    { id: 'flame', label: 'Сауна / Баня / Огонь' },
+    { id: 'home', label: 'Дом / Беседка' },
+    { id: 'waves', label: 'Вода / Озеро / Бассейн' },
+    { id: 'bed-double', label: 'Кровать' },
+    { id: 'sofa', label: 'Диван / Зона отдыха' },
+    { id: 'bath', label: 'Ванна / Джакузи' },
+    { id: 'shower-head', label: 'Душ' },
+    { id: 'sparkles', label: 'Комфорт / Уют' },
+    { id: 'trees', label: 'Лес / Природа' },
+    { id: 'mountain', label: 'Горы / Панорама' },
+    { id: 'utensils', label: 'Кухня / BBQ' },
+    { id: 'coffee', label: 'Кофе / Чай' },
+    { id: 'wifi', label: 'Wi-Fi' },
+    { id: 'tv', label: 'Телевизор' },
+    { id: 'sun', label: 'Солнце / Терраса' },
+    { id: 'footprints', label: 'Пешие прогулки / Тропа' },
+    { id: 'map-pin', label: 'Метка / Локация' },
+    { id: 'compass', label: 'Центр / Ориентир' },
+    { id: 'heart', label: 'Романтика / Любимое' },
+    { id: 'star', label: 'Премиум' },
+    { id: 'snowflake', label: 'Кондиционер' },
+    { id: 'wind', label: 'Свежий воздух' }
+  ];
+
+  function updateIconPreview(selectEl) {
+    if (!selectEl) return;
+    const previewId = selectEl.dataset.preview;
+    const previewEl = document.getElementById(previewId);
+    if (!previewEl) return;
+    const iconName = selectEl.value || 'star';
+    previewEl.innerHTML = `<i data-lucide="${escapeAttr(iconName)}" style="width: 18px; height: 18px; color: var(--gold);"></i>`;
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons({ root: previewEl });
+    }
+  }
+
+  function setupIconSelect(selectId, defaultIcon) {
+    const el = document.getElementById(selectId);
+    if (!el) return;
+    if (el.options.length === 0) {
+      el.innerHTML = POPULAR_HIGHLIGHT_ICONS.map(item => 
+        `<option value="${item.id}">${item.label} (${item.id})</option>`
+      ).join('');
+    }
+    if (defaultIcon) el.value = defaultIcon;
+    updateIconPreview(el);
+  }
+
+  // Навешиваем слушатели на все селекторы иконок
+  document.querySelectorAll('.icon-select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      updateIconPreview(sel);
+      checkChanges();
+    });
+  });
+
+  function populateAddonFields(addons = {}, cabin = {}) {
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val || '';
+    };
+
+    // Обновляем надзаголовок первого экрана (кикер)
+    const kickerEl = document.getElementById('heroKickerPreview');
+    if (kickerEl) {
+      kickerEl.textContent = `— ${(cabin.name || 'ОБЪЕКТ').toUpperCase()} · АРЕНДА`;
+    }
+
+    setVal('addonHeroTitle', addons.hero_title);
+    setVal('addonHeroSubtitle', addons.hero_subtitle);
+    setVal('addonHeroBtn', addons.hero_btn);
+
+    setVal('addonAboutTitle', addons.about_title);
+    setVal('addonAboutDesc', addons.about_desc);
+    
+    setupIconSelect('addonBadgeIcon', addons.badge_icon || 'map-pin');
+    setVal('addonBadgeText', addons.badge_text);
+
+    setupIconSelect('addonHighlight1Icon', addons.highlight_1?.icon || 'users');
+    setVal('addonHighlight1Title', addons.highlight_1?.title);
+    setVal('addonHighlight1Sub', addons.highlight_1?.sub);
+
+    setupIconSelect('addonHighlight2Icon', addons.highlight_2?.icon || 'flame');
+    setVal('addonHighlight2Title', addons.highlight_2?.title);
+    setVal('addonHighlight2Sub', addons.highlight_2?.sub);
+
+    setupIconSelect('addonHighlight3Icon', addons.highlight_3?.icon || 'home');
+    setVal('addonHighlight3Title', addons.highlight_3?.title);
+    setVal('addonHighlight3Sub', addons.highlight_3?.sub);
+  }
+
+  function collectAddonData() {
+    const getVal = (id) => document.getElementById(id)?.value?.trim() || '';
+    return {
+      hero_title: getVal('addonHeroTitle'),
+      hero_subtitle: getVal('addonHeroSubtitle'),
+      hero_btn: getVal('addonHeroBtn'),
+      about_title: getVal('addonAboutTitle'),
+      about_desc: getVal('addonAboutDesc'),
+      badge_icon: document.getElementById('addonBadgeIcon')?.value || 'map-pin',
+      badge_text: getVal('addonBadgeText'),
+      highlight_1: {
+        title: getVal('addonHighlight1Title'),
+        sub: getVal('addonHighlight1Sub'),
+        icon: document.getElementById('addonHighlight1Icon')?.value || 'users'
+      },
+      highlight_2: {
+        title: getVal('addonHighlight2Title'),
+        sub: getVal('addonHighlight2Sub'),
+        icon: document.getElementById('addonHighlight2Icon')?.value || 'flame'
+      },
+      highlight_3: {
+        title: getVal('addonHighlight3Title'),
+        sub: getVal('addonHighlight3Sub'),
+        icon: document.getElementById('addonHighlight3Icon')?.value || 'home'
+      },
+      categories: currentCustomCategories
+    };
+  }
+
   // Открытие модалки (для нового или существующего)
   function openEditModal(id = null) {
+    resetModalTabs();
     if (id) {
       const c = currentCabins.find(cabin => cabin.id === id);
       if (!c) return;
@@ -214,6 +550,10 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
         cb.checked = cabinTags.includes(cb.value);
       });
 
+      // Инициализируем категории и тексты дополнений
+      initializeCustomCategoriesForCabin(c);
+      populateAddonFields(c.addons || {}, c);
+
       // Формируем ссылку на iCal
       const exportLink = `${window.location.origin}/api/ical/export/${c.slug || c.id}.ics`;
       const exportLinkBox = document.getElementById('cabinExportLink');
@@ -248,6 +588,9 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
       document.querySelectorAll('#cabinTagsGrid input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
       });
+
+      initializeCustomCategoriesForCabin({ id: 'new', amenities: [], addons: null });
+      populateAddonFields({}, { name: 'НОВЫЙ ОБЪЕКТ' });
     }
 
     renderGallery();
@@ -377,7 +720,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
             : 'Еще не синхронизирован';
 
         return           '<div class="external-calendar-row" data-index="' + index + '">' +
-            '<input type="text" class="external-source-name" placeholder="Avito" value="' + escapeAttr(source.source_name || '') + '">' +
+            '<input type="text" class="external-source-name" placeholder="Например: Островок / Авито / Суточно" value="' + escapeAttr(source.source_name || '') + '">' +
             '<input type="url" class="external-ical-url" placeholder="https://.../calendar.ics" value="' + escapeAttr(source.ical_url || '') + '">' +
             '<label><input type="checkbox" class="external-is-active" ' + (source.is_active === false ? '' : 'checked') + '> Активен</label>' +
             '<button type="button" class="btn btn-ghost external-remove-btn" style="min-height:34px; padding:0 10px;">Удалить</button>' +
@@ -399,7 +742,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
     const activeCount = currentExternalCalendars.filter(src => src.is_active !== false && src.ical_url).length;
     externalCalendarStatus.textContent = activeCount
       ? 'Активных iCal-источников: ' + activeCount
-      : 'Avito, Суточно, Островок, Яндекс.Путешествия или другой iCal URL.';
+      : 'Поддерживаются любые сервисы с iCal: Авито, Островок, Суточно.ру, Яндекс.Путешествия, Циан и др.';
     externalCalendarStatus.style.color = 'var(--muted)';
   }
 
@@ -489,9 +832,23 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
   let initialFormData = {};
   const formInputs = [nameField, descField, capacityField, priceField, statusField, allowPetsField, petDogField, petCatField, petPriceField, petPriceTypeField, baseGuestsField, extraGuestPriceField].filter(Boolean);
 
+  const addonInputIds = [
+    'addonHeroTitle', 'addonHeroSubtitle', 'addonHeroBtn',
+    'addonAboutTitle', 'addonAboutDesc', 'addonBadgeIcon', 'addonBadgeText',
+    'addonHighlight1Icon', 'addonHighlight1Title', 'addonHighlight1Sub',
+    'addonHighlight2Icon', 'addonHighlight2Title', 'addonHighlight2Sub',
+    'addonHighlight3Icon', 'addonHighlight3Title', 'addonHighlight3Sub'
+  ];
+  addonInputIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) formInputs.push(el);
+  });
+
   function getFormData() {
+    syncFlatAmenitiesGrid();
     const selectedAmenities = Array.from(document.querySelectorAll('#cabinAmenitiesGrid input[type="checkbox"]:checked')).map(cb => cb.value);
     const selectedTags = Array.from(document.querySelectorAll('#cabinTagsGrid input[type="checkbox"]:checked')).map(cb => cb.value);
+    const addonData = collectAddonData();
     return {
       name: nameField.value,
       description: descField.value,
@@ -508,6 +865,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
       imagesUrls: currentCabinImages.map(img => img.url).join(','),
       amenities: selectedAmenities.join(','),
       tags: selectedTags.join(','),
+      addons: JSON.stringify(addonData),
       externalCalendars: JSON.stringify(collectExternalCalendarsFromDom().map(src => ({ id: src.id || null, source_name: src.source_name, ical_url: src.ical_url, is_active: src.is_active })))
     };
   }
@@ -567,7 +925,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
   if (addExternalCalendarBtn) {
     addExternalCalendarBtn.addEventListener('click', () => {
       currentExternalCalendars = collectExternalCalendarsFromDom();
-      currentExternalCalendars.push({ source_name: 'Avito', ical_url: '', is_active: true });
+      currentExternalCalendars.push({ source_name: '', ical_url: '', is_active: true });
       renderExternalCalendars();
       checkChanges();
     });
@@ -673,6 +1031,7 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
     payload.selectedAmenities = payload.amenities ? payload.amenities.split(',') : [];
     payload.selectedTags = payload.tags ? payload.tags.split(',') : [];
     payload.externalCalendars = collectExternalCalendarsFromDom();
+    payload.addons = collectAddonData();
 
     const originalText = saveCabinBtn.textContent;
     saveCabinBtn.textContent = 'Сохранение...';
@@ -700,6 +1059,8 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
       currentExternalCalendars = data.data.external_calendars || payload.externalCalendars;
       globalAmenities[savedCabinId] = payload.selectedAmenities;
       globalCabinTags[savedCabinId] = payload.selectedTags;
+      const foundCabin = currentCabins.find(c => c.id === savedCabinId);
+      if (foundCabin) foundCabin.addons = payload.addons;
 
       saveCabinBtn.textContent = 'Сохранено ✓';
       saveCabinBtn.disabled = true;

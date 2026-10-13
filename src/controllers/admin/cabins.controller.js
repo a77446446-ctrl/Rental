@@ -2,6 +2,7 @@ const { pbAdmin } = require('../../config/pocketbase');
 const externalCalendarService = require('../../services/externalCalendar.service');
 const storageService = require('../../services/storage.service');
 const cabinMetadataService = require('../../services/cabinMetadata.service');
+const dataStore = require('../../services/dataStore.service');
 
 const IMAGE_CATEGORIES = new Set(['main', 'interior', 'exterior']);
 
@@ -41,6 +42,7 @@ exports.getAll = async (req, res) => {
     });
 
     const sourcesByCabin = await externalCalendarService.getSourcesForCabins((data || []).map(c => c.id));
+    const cabinAddonsMap = await dataStore.get('cabin_addons', 'cabin_addons.json', {});
     
     const mappedData = data.map(c => {
       const imagesArray = Array.isArray(c.images) ? c.images : [];
@@ -49,7 +51,8 @@ exports.getAll = async (req, res) => {
         image_url: imagesArray.length > 0 ? imagesArray[0].url : '',
         images: imagesArray,
         status: c.is_active ? 'active' : 'hidden',
-        external_calendars: sourcesByCabin[c.id] || []
+        external_calendars: sourcesByCabin[c.id] || [],
+        addons: cabinAddonsMap[c.id] || null
       };
     });
     
@@ -117,6 +120,16 @@ exports.saveFull = async (req, res) => {
       selectedTags
     );
 
+    let savedAddons = null;
+    if (body.addons && typeof body.addons === 'object') {
+      await dataStore.update('cabin_addons', 'cabin_addons.json', {}, (current) => {
+        const next = current && typeof current === 'object' ? current : {};
+        next[saved.id] = body.addons;
+        return next;
+      });
+      savedAddons = body.addons;
+    }
+
     await cleanupRemovedImages(previousImages, normalizedImages);
     saved.images = normalizedImages;
     saved.image_url = normalizedImages[0] ? normalizedImages[0].url : '';
@@ -124,6 +137,7 @@ exports.saveFull = async (req, res) => {
     saved.amenities = metadata.amenities;
     saved.tags = metadata.tags;
     saved.external_calendars = externalCalendars;
+    saved.addons = savedAddons;
     res.json({ success: true, data: saved });
   } catch (err) {
     console.error('[cabins.controller] POST /cabins/save-full error:', err);

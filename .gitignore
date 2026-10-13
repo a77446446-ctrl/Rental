@@ -7,3 +7,13 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 Thumbs.db
+pb_data/
+*.tmp
+script*.js
+script_*.js
+test_server.js
+read.py
+mediakit_*.html
+*.pdf
+scripts/*.py
+script*.py

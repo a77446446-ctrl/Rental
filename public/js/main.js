@@ -176,7 +176,10 @@
     checkoutGuests: document.getElementById('checkoutGuests')
   };
 
-  var SPLASH_MIN_DURATION_MS = 5000;
+  var isNavigatingDirectToCalendar = (window.location.search.indexOf('cabin=') !== -1) || (window.location.hash.indexOf('calendar') !== -1);
+  var splashAlreadySeen = false;
+  try { splashAlreadySeen = sessionStorage.getItem('eco_splash_seen') === '1'; } catch (e) {}
+  var SPLASH_MIN_DURATION_MS = (window.__SKIP_SPLASH__ || isNavigatingDirectToCalendar || splashAlreadySeen) ? 0 : 5000;
   var STARTUP_REQUEST_TIMEOUT_MS = 5000;
   var splashStartedAt = Number(window.__APP_SPLASH_STARTED_AT);
   if (!Number.isFinite(splashStartedAt)) splashStartedAt = performance.now();
@@ -195,6 +198,7 @@
   function hideAppLoading() {
     var overlay = document.getElementById('app-loading');
     document.body.classList.remove('app-loading-active');
+    try { sessionStorage.setItem('eco_splash_seen', '1'); } catch (e) {}
     if (!overlay) return;
     overlay.classList.add('is-hidden');
   }
@@ -1268,6 +1272,16 @@
 
       await waitForSplashMinimum();
       hideAppLoading();
+      var directParams = new URLSearchParams(window.location.search);
+      var directCabin = directParams.get('cabin');
+      if (window.location.hash === '#calendar' || directCabin) {
+        requestAnimationFrame(function () {
+          setTimeout(function () {
+            var calEl = document.querySelector('#calendar');
+            if (calEl) calEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 80);
+        });
+      }
       if (state.cabins.length === 0 && window.showToast) {
         window.showToast('В базе данных пока нет активных домиков. Добавьте их в админ-панели.', 'error');
       }

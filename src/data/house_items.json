@@ -1,58 +1,66 @@
 [
   {
-    "id": "hair-dryer",
-    "name": "Фен",
-    "is_active": true,
-    "sort_order": 1,
-    "icon": "wind"
-  },
-  {
-    "id": "shower",
-    "name": "Душевая",
-    "is_active": true,
-    "sort_order": 2,
-    "icon": "shower-head"
-  },
-  {
-    "id": "dishes",
-    "name": "Посуда",
-    "is_active": true,
-    "sort_order": 4,
-    "icon": "coffee"
-  },
-  {
     "id": "double-bed",
     "name": "Двуспальная кровать",
+    "category": "Зона отдыха",
     "is_active": true,
-    "sort_order": 5,
+    "sort_order": 1,
     "icon": "bed-double"
-  },
-  {
-    "id": "sauna",
-    "name": "Сауна",
-    "is_active": true,
-    "sort_order": 7,
-    "icon": "flame"
   },
   {
     "id": "terrace",
     "name": "Терраса",
+    "category": "Зона отдыха",
     "is_active": true,
-    "sort_order": 8,
+    "sort_order": 2,
     "icon": "home"
   },
   {
     "id": "1783852951087",
     "name": "Двухспальный диван",
+    "category": "Зона отдыха",
     "is_active": true,
-    "sort_order": 9,
+    "sort_order": 3,
     "icon": "sofa"
+  },
+  {
+    "id": "sauna",
+    "name": "Сауна",
+    "category": "Тепло и забота",
+    "is_active": true,
+    "sort_order": 4,
+    "icon": "flame"
+  },
+  {
+    "id": "shower",
+    "name": "Душевая",
+    "category": "Тепло и забота",
+    "is_active": true,
+    "sort_order": 5,
+    "icon": "shower-head"
+  },
+  {
+    "id": "dishes",
+    "name": "Посуда",
+    "category": "Бытовые удобства",
+    "is_active": true,
+    "sort_order": 6,
+    "icon": "coffee"
+  },
+  {
+    "id": "hair-dryer",
+    "name": "Фен",
+    "category": "Бытовые удобства",
+    "is_active": true,
+    "sort_order": 7,
+    "icon": "wind"
   },
   {
     "id": "1783865574563",
     "name": "WiFi",
+    "category": "Бытовые удобства",
     "is_active": true,
-    "sort_order": 9,
+    "sort_order": 8,
     "icon": "wifi"
   }
 ]

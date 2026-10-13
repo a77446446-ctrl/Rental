@@ -177,8 +177,13 @@ router.get('/cabins', async (req, res) => {
       });
     }
 
+    const cabinAddonsMap = await dataStore.get('cabin_addons', 'cabin_addons.json', {});
     const mappedData = (data || [])
-      .map(mapCabinForPublic);
+      .map(c => {
+        const item = mapCabinForPublic(c);
+        item.addons = cabinAddonsMap[item.id] || null;
+        return item;
+      });
 
     return res.status(200).json({
       success: true,
@@ -191,6 +196,19 @@ router.get('/cabins', async (req, res) => {
       success: false,
       error: 'Внутренняя ошибка сервера',
     });
+  }
+});
+
+/* ─────────────────────────────────────────────
+   GET /api/cabin-addons
+   Возвращает настройки страниц и дополнений домиков
+   ───────────────────────────────────────────── */
+router.get('/cabin-addons', async (_req, res) => {
+  try {
+    const addons = await dataStore.get('cabin_addons', 'cabin_addons.json', {});
+    return res.json({ success: true, data: addons });
+  } catch (err) {
+    return res.json({ success: true, data: {} });
   }
 });
 
@@ -228,9 +246,13 @@ router.get('/cabins/:slug', async (req, res) => {
       });
     }
 
+    const cabinAddonsMap = await dataStore.get('cabin_addons', 'cabin_addons.json', {});
+    const mapped = mapCabinForPublic(data);
+    mapped.addons = cabinAddonsMap[mapped.id] || null;
+
     return res.status(200).json({
       success: true,
-      data: mapCabinForPublic(data),
+      data: mapped,
     });
   } catch (err) {
     console.error('[public.routes] Исключение в GET /api/cabins/:slug:', err.message);

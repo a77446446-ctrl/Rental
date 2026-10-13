@@ -78,19 +78,40 @@
     
     .modal {
       background: var(--bg-2); border: 1px solid var(--line);
-      border-radius: 16px; width: 100%; max-width: 600px;
+      border-radius: 16px; width: 100%; max-width: 860px;
       overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.5);
     }
+    input::placeholder, textarea::placeholder {
+      font-size: 11px !important;
+      color: rgba(255, 255, 255, 0.35) !important;
+      font-weight: normal;
+    }
     .modal-header {
-      padding: 24px; border-bottom: 1px solid var(--line);
+      padding: 20px 24px 16px; border-bottom: 1px solid var(--line);
       display: flex; justify-content: space-between; align-items: center;
     }
-    .modal-header h3 { font-size: 24px; margin: 0; text-transform: none; }
+    .modal-header h3 { font-size: 22px; margin: 0; text-transform: none; }
     .modal-close {
       background: transparent; border: none; color: var(--muted);
       font-size: 24px; cursor: pointer;
     }
-    .modal-body { padding: 24px; display: grid; gap: 16px; max-height: 70vh; overflow-y: auto; }
+    .modal-tabs-nav {
+      display: flex; gap: 8px; padding: 12px 24px;
+      border-bottom: 1px solid var(--line); background: rgba(var(--cream-rgb), 0.02);
+      overflow-x: auto;
+    }
+    .modal-tab-btn {
+      background: transparent; border: 1px solid var(--line); color: var(--muted);
+      padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: all 0.2s ease; font-family: inherit;
+    }
+    .modal-tab-btn:hover { color: var(--cream); border-color: rgba(197, 170, 103, 0.4); }
+    .modal-tab-btn.active {
+      background: rgba(197, 170, 103, 0.15); border-color: var(--gold); color: var(--gold);
+    }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: grid; gap: 16px; }
+    .modal-body { padding: 20px 24px; max-height: 70vh; overflow-y: auto; }
     
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { font-size: 13px; color: var(--muted); font-weight: 600; }
@@ -234,81 +255,88 @@
         <h3 id="modalTitle">Редактирование объекта</h3>
         <button class="modal-close" id="closeModalBtn">&times;</button>
       </div>
+      <div class="modal-tabs-nav" id="modalTabsNav">
+        <button type="button" class="modal-tab-btn active" data-tab="tabMain">1. Основные параметры</button>
+        <button type="button" class="modal-tab-btn" data-tab="tabAddons">2. Настройка дополнений и страницы</button>
+        <button type="button" class="modal-tab-btn" data-tab="tabSync">3. Синхронизация (iCal / Сервисы бронирования)</button>
+      </div>
       <div class="modal-body">
         <input type="hidden" id="cabinId">
         
-        <!-- Галерея фотографий -->
-        <div class="gallery-section">
-          <div class="gallery-title">
-            <span>Главная фотография</span>
-            <span style="font-size: 12px; font-weight: 400; color: var(--muted);">1 фото</span>
+        <!-- Вкладка 1: Основные параметры -->
+        <div class="tab-pane active" id="tabMain">
+          <!-- Галерея фотографий -->
+          <div class="gallery-section">
+            <div class="gallery-title">
+              <span>Главная фотография</span>
+              <span style="font-size: 12px; font-weight: 400; color: var(--muted);">1 фото</span>
+            </div>
+            <div class="gallery-grid" id="mainGalleryGrid">
+              <label class="gallery-upload-btn" id="btnMainUpload">
+                <input type="file" id="fileInputMain" accept="image/*" style="display:none">
+                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Добавить
+              </label>
+            </div>
           </div>
-          <div class="gallery-grid" id="mainGalleryGrid">
-            <label class="gallery-upload-btn" id="btnMainUpload">
-              <input type="file" id="fileInputMain" accept="image/*" style="display:none">
-              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-              Добавить
-            </label>
-          </div>
-        </div>
 
-        <div class="gallery-section">
-          <div class="gallery-title">
-            <span>Интерьер</span>
-            <span style="font-size: 12px; font-weight: 400; color: var(--muted);" id="interiorCount">0 / 10</span>
+          <div class="gallery-section">
+            <div class="gallery-title">
+              <span>Интерьер</span>
+              <span style="font-size: 12px; font-weight: 400; color: var(--muted);" id="interiorCount">0 / 10</span>
+            </div>
+            <div class="gallery-grid" id="interiorGalleryGrid">
+              <label class="gallery-upload-btn" id="btnInteriorUpload">
+                <input type="file" id="fileInputInterior" accept="image/*" multiple style="display:none">
+                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Добавить
+              </label>
+            </div>
           </div>
-          <div class="gallery-grid" id="interiorGalleryGrid">
-            <label class="gallery-upload-btn" id="btnInteriorUpload">
-              <input type="file" id="fileInputInterior" accept="image/*" multiple style="display:none">
-              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-              Добавить
-            </label>
-          </div>
-        </div>
 
-        <div class="gallery-section">
-          <div class="gallery-title">
-            <span>Улица / Экстерьер</span>
-            <span style="font-size: 12px; font-weight: 400; color: var(--muted);" id="exteriorCount">0 / 10</span>
+          <div class="gallery-section">
+            <div class="gallery-title">
+              <span>Улица / Экстерьер</span>
+              <span style="font-size: 12px; font-weight: 400; color: var(--muted);" id="exteriorCount">0 / 10</span>
+            </div>
+            <div class="gallery-grid" id="exteriorGalleryGrid">
+              <label class="gallery-upload-btn" id="btnExteriorUpload">
+                <input type="file" id="fileInputExterior" accept="image/*" multiple style="display:none">
+                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Добавить
+              </label>
+            </div>
           </div>
-          <div class="gallery-grid" id="exteriorGalleryGrid">
-            <label class="gallery-upload-btn" id="btnExteriorUpload">
-              <input type="file" id="fileInputExterior" accept="image/*" multiple style="display:none">
-              <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-              Добавить
-            </label>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Название</label>
-          <input type="text" id="cabinName">
-        </div>
-        
-        <div class="form-group">
-          <label>Описание</label>
-          <textarea id="cabinDescription" rows="4"></textarea>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-bottom: 16px;">
+          
           <div class="form-group">
-            <label>Включено гостей (чел.)</label>
-            <input type="number" id="cabinBaseGuests" min="1" placeholder="2" style="width: 100%; box-sizing: border-box;">
+            <label>Название</label>
+            <input type="text" id="cabinName">
+          </div>
+          
+          <div class="form-group">
+            <label>Описание</label>
+            <textarea id="cabinDescription" rows="4"></textarea>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div class="form-group">
+              <label>Включено гостей (чел.)</label>
+              <input type="number" id="cabinBaseGuests" min="1" placeholder="2" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div class="form-group">
+              <label>За доп. гостя (₽/сут)</label>
+              <input type="number" id="cabinExtraGuestPrice" min="0" placeholder="1000" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div class="form-group">
+              <label>Макс. вместимость (чел.)</label>
+              <input type="number" id="cabinCapacity" min="1" max="20" required style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div class="form-group">
+              <label>Базовая цена (₽/сутки)</label>
+              <input type="number" id="cabinBasePrice" min="0" step="100" required style="width: 100%; box-sizing: border-box;">
+            </div>
           </div>
           <div class="form-group">
-            <label>За доп. гостя (₽/сут)</label>
-            <input type="number" id="cabinExtraGuestPrice" min="0" placeholder="1000" style="width: 100%; box-sizing: border-box;">
-          </div>
-          <div class="form-group">
-            <label>Макс. вместимость (чел.)</label>
-            <input type="number" id="cabinCapacity" min="1" max="20" required style="width: 100%; box-sizing: border-box;">
-          </div>
-          <div class="form-group">
-            <label>Базовая цена (₽/сутки)</label>
-            <input type="number" id="cabinBasePrice" min="0" step="100" required style="width: 100%; box-sizing: border-box;">
-          </div>
-        </div>
-        <div class="form-group">
             <label>Статус на сайте</label>
             <select id="cabinStatus">
               <option value="active">Активен (доступен для бронирования)</option>
@@ -317,7 +345,7 @@
             </select>
           </div>
           <div class="form-group" style="justify-content: center;">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 24px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 16px;">
               <input type="checkbox" id="cabinAllowPets" style="width: 18px; height: 18px;">
               Разрешено с питомцами
             </label>
@@ -333,57 +361,245 @@
                 <input type="checkbox" id="cabinPetCat" value="cat"> Кошки
               </label>
             </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-              <div>
-                <label style="font-size: 13px; color: var(--muted);">Доплата за питомца (₽)</label>
-                <input type="number" id="cabinPetPrice" min="0" placeholder="0 (бесплатно)">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
+              <div class="form-group" style="gap: 6px;">
+                <label style="font-size: 12px; color: var(--muted); font-weight: 600;">Доплата за питомца (₽)</label>
+                <input type="number" id="cabinPetPrice" min="0" placeholder="0 (бесплатно)" style="height: 42px; padding: 0 14px; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); font-size: 13px; width: 100%; box-sizing: border-box;">
               </div>
-              <div style="flex: 1 1 130px;">
-                <label style="font-size: 13px; color: var(--muted);">Тип доплаты</label>
-                <select id="cabinPetPriceType">
+              <div class="form-group" style="gap: 6px;">
+                <label style="font-size: 12px; color: var(--muted); font-weight: 600;">Тип доплаты</label>
+                <select id="cabinPetPriceType" style="height: 42px; padding: 0 14px; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); font-size: 13px; width: 100%; box-sizing: border-box; cursor: pointer;">
                   <option value="per_night">За сутки</option>
                   <option value="per_stay">За весь период</option>
                 </select>
               </div>
             </div>
           </div>
-        
-        <div class="form-group">
-          <label>Что есть в объекте</label>
-          <div class="amenities-grid" id="cabinAmenitiesGrid" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-            <!-- Будут загружены динамически -->
+        </div>
+
+        <!-- Вкладка 2: Настройка дополнений и страницы объекта -->
+        <div class="tab-pane" id="tabAddons">
+          <!-- 1. Первый экран (Hero) — оформление первого экрана -->
+          <div style="background: #14120F; border: 1px solid rgba(197, 170, 103, 0.35); border-radius: 12px; padding: 18px; position: relative;">
+            <div style="font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(197, 170, 103, 0.2); padding-bottom: 8px;">
+              <span>1. Первый экран (Hero)</span>
+              <span style="font-size: 10px; color: var(--muted); text-transform: none; letter-spacing: 0; font-weight: normal;">Главное фото берётся из вкладки «1. Основные параметры»</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <!-- Надзаголовок (кикер) -->
+              <div>
+                <div id="heroKickerPreview" style="font-size: 11px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;">
+                  — ДОМ-А · АРЕНДА
+                </div>
+                <div style="font-size: 10px; color: var(--muted); margin-top: 2px;">Надзаголовок формируется автоматически из названия объекта на сайте</div>
+              </div>
+
+              <!-- Крупный заголовок объекта -->
+              <div class="form-group" style="gap: 4px;">
+                <label style="font-size: 12px; color: var(--cream); font-weight: 600;">
+                  Крупный заголовок объекта (если пусто — выводится название):
+                </label>
+                <input type="text" id="addonHeroTitle" placeholder="Пример: Сутки ближе к природе" 
+                       style="font-size: 18px; font-weight: 700; color: #FAF7F0; padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197, 170, 103, 0.4); border-radius: 6px;">
+              </div>
+
+              <!-- Текст описания под заголовком -->
+              <div class="form-group" style="gap: 4px;">
+                <label style="font-size: 12px; color: var(--cream); font-weight: 600;">
+                  Текст описания под заголовком (если не заполнено — не выводится):
+                </label>
+                <textarea id="addonHeroSubtitle" rows="2" placeholder="Пример: Для душевных вечеров и красивых закатов..." 
+                          style="font-size: 12px; line-height: 1.4; color: #CCC4B6; padding: 8px 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--line); border-radius: 6px;"></textarea>
+              </div>
+
+              <!-- Кнопка первого экрана -->
+              <div class="form-group" style="gap: 4px;">
+                <label style="font-size: 12px; color: var(--cream); font-weight: 600;">
+                  Кнопка действия (открывает бронирование):
+                </label>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <input type="text" id="addonHeroBtn" placeholder="ЗАБРОНИРОВАТЬ" 
+                         style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); background: rgba(197, 170, 103, 0.1); padding: 6px 14px; border-radius: 999px; max-width: 180px;">
+                  <span style="color: var(--gold); font-size: 14px; font-weight: bold;">→</span>
+                  <span style="font-size: 10px; color: var(--muted);">(По умолчанию: «ЗАБРОНИРОВАТЬ»)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Блок: 3 Ключевые характеристики (полоса под первым экраном) -->
+          <div style="background: rgba(var(--cream-rgb), 0.03); border: 1px solid var(--line); border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <h4 style="margin: 0; font-size: 14px; color: var(--gold);">2. Ключевые характеристики (полоса под первым экраном)</h4>
+              <div style="font-size: 11px; color: var(--muted);">3 плашки на сайте: выберите иконку, заголовок и подзаголовок</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+              <!-- Характеристика 1 -->
+              <div style="padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(var(--cream-rgb), 0.03); display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: 0.05em;">БЛОК 1</span>
+                  <div id="addonHighlight1IconPreview" style="width: 38px; height: 38px; border-radius: 8px; background: rgba(197, 170, 103, 0.15); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); box-sizing: border-box;">
+                    <i data-lucide="users" style="width: 20px; height: 20px;"></i>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Иконка (нарисуется на сайте)</label>
+                  <select id="addonHighlight1Icon" class="icon-select" data-preview="addonHighlight1IconPreview" style="height: 38px; padding: 0 10px; font-size: 12px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;"></select>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Заголовок</label>
+                  <input type="text" id="addonHighlight1Title" placeholder="Пример: До 4 гостей" style="height: 38px; padding: 0 12px; font-size: 13px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;">
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Подзаголовок (опционально)</label>
+                  <input type="text" id="addonHighlight1Sub" placeholder="Пример: Уютный отдых" style="height: 38px; padding: 0 12px; font-size: 13px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;">
+                </div>
+              </div>
+
+              <!-- Характеристика 2 -->
+              <div style="padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(var(--cream-rgb), 0.03); display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: 0.05em;">БЛОК 2</span>
+                  <div id="addonHighlight2IconPreview" style="width: 38px; height: 38px; border-radius: 8px; background: rgba(197, 170, 103, 0.15); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); box-sizing: border-box;">
+                    <i data-lucide="flame" style="width: 20px; height: 20px;"></i>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Иконка (нарисуется на сайте)</label>
+                  <select id="addonHighlight2Icon" class="icon-select" data-preview="addonHighlight2IconPreview" style="height: 38px; padding: 0 10px; font-size: 12px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;"></select>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Заголовок</label>
+                  <input type="text" id="addonHighlight2Title" placeholder="Пример: Сауна в доме" style="height: 38px; padding: 0 12px; font-size: 13px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;">
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Подзаголовок (опционально)</label>
+                  <input type="text" id="addonHighlight2Sub" placeholder="Пример: Для релакса" style="height: 38px; padding: 0 12px; font-size: 13px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;">
+                </div>
+              </div>
+
+              <!-- Характеристика 3 -->
+              <div style="padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(var(--cream-rgb), 0.03); display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: 0.05em;">БЛОК 3</span>
+                  <div id="addonHighlight3IconPreview" style="width: 38px; height: 38px; border-radius: 8px; background: rgba(197, 170, 103, 0.15); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); box-sizing: border-box;">
+                    <i data-lucide="home" style="width: 20px; height: 20px;"></i>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Иконка (нарисуется на сайте)</label>
+                  <select id="addonHighlight3Icon" class="icon-select" data-preview="addonHighlight3IconPreview" style="height: 38px; padding: 0 10px; font-size: 12px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;"></select>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Заголовок</label>
+                  <input type="text" id="addonHighlight3Title" placeholder="Пример: Беседка" style="height: 38px; padding: 0 12px; font-size: 13px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;">
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Подзаголовок (опционально)</label>
+                  <input type="text" id="addonHighlight3Sub" placeholder="Пример: Душевные вечера" style="height: 38px; padding: 0 12px; font-size: 13px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Блок: Секция «О месте» -->
+          <div style="background: rgba(var(--cream-rgb), 0.03); border: 1px solid var(--line); border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <h4 style="margin: 0; font-size: 14px; color: var(--gold);">3. Секция «О месте»</h4>
+              <div style="font-size: 11px; color: var(--muted);">Блок со 2-й фотографией (из экстерьера) и рассказом о локации</div>
+            </div>
+
+            <div class="form-group" style="gap: 4px;">
+              <label style="font-size: 12px;">Заголовок секции:</label>
+              <input type="text" id="addonAboutTitle" placeholder="По умолчанию: О месте" style="padding: 8px 12px; font-size: 12px;">
+              <div style="font-size: 10px; color: var(--muted);">Если оставить пустым — выводится: «О месте» (универсально для домов, квартир и апартаментов)</div>
+            </div>
+
+            <div class="form-group" style="margin-top: 10px; gap: 4px;">
+              <label style="font-size: 12px;">Подробное описание:</label>
+              <textarea id="addonAboutDesc" rows="3" placeholder="Пример: Рассказ об атмосфере, виде из окна, тишине или правилах..." style="padding: 8px 12px; font-size: 12px; line-height: 1.4;"></textarea>
+              <div style="font-size: 10px; color: var(--muted);">Если оставить пустым — блок на сайте остаётся чистым (без демонстрационного текста)</div>
+            </div>
+
+            <!-- Плашка особенности с нарисованной иконкой -->
+            <div style="margin-top: 14px; padding: 14px; background: rgba(var(--cream-rgb), 0.03); border: 1px solid var(--line); border-radius: 12px;">
+              <div style="font-size: 11px; color: var(--gold); font-weight: 700; margin-bottom: 10px;">
+                Плашка-метка под описанием (на сайте: золотая иконка + текст):
+              </div>
+              <div style="display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;">
+                <!-- Нарисованная иконка -->
+                <div>
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Превью</label>
+                  <div id="addonBadgeIconPreview" style="width: 38px; height: 38px; border-radius: 8px; background: rgba(197, 170, 103, 0.15); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); flex-shrink: 0; box-sizing: border-box;">
+                    <i data-lucide="map-pin" style="width: 20px; height: 20px;"></i>
+                  </div>
+                </div>
+
+                <!-- Выбор иконки -->
+                <div style="flex: 0 1 220px; min-width: 180px;">
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Иконка особенности</label>
+                  <select id="addonBadgeIcon" class="icon-select" data-preview="addonBadgeIconPreview" style="height: 38px; padding: 0 10px; font-size: 12px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;"></select>
+                </div>
+
+                <!-- Текст особенности -->
+                <div style="flex: 1 1 240px; min-width: 200px;">
+                  <label style="font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px;">Текст особенности / плашки (опционально)</label>
+                  <input type="text" id="addonBadgeText" placeholder="Пример: Прогулочная тропа к озеру" style="height: 38px; padding: 0 12px; font-size: 13px; width: 100%; border-radius: 8px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); box-sizing: border-box;">
+                </div>
+              </div>
+              <div style="font-size: 10px; color: var(--muted); margin-top: 8px;">
+                Если оставить пустым — плашка на сайте не отображается.
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Блок: Категории удобств («Что есть в домике») -->
+          <div style="background: rgba(var(--cream-rgb), 0.03); border: 1px solid var(--line); border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+              <div>
+                <h4 style="margin: 0 0 4px; font-size: 14px; color: var(--gold);">4. Категории удобств («Что есть в домике»)</h4>
+                <div style="font-size: 11px; color: var(--muted); max-width: 500px;">
+                  Создавайте любые категории (Зона отдыха, Тепло и забота, Бытовые удобства, Пляж) и отмечайте галочками удобства для каждой категории.
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" id="addCustomCategoryBtn" style="min-height: 32px; padding: 0 12px; font-size: 12px; white-space: nowrap;">+ Добавить категорию</button>
+            </div>
+            
+            <div id="customCategoriesContainer" style="display: grid; gap: 12px;">
+              <!-- Карточки категорий с чекбоксами загружаются скриптом -->
+            </div>
+            <!-- Скрытый контейнер для совместимости со старыми селекторами -->
+            <div id="cabinAmenitiesGrid" style="display: none;"></div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Теги фильтрации</label>
-          <div class="tags-grid" id="cabinTagsGrid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px;">
-            <!-- Будут загружены динамически -->
+        <!-- Вкладка 3: Синхронизация (Avito / iCal) -->
+        <div class="tab-pane" id="tabSync">
+          <div class="form-group" style="padding: 16px; background: rgba(187, 164, 111, 0.1); border: 1px solid rgba(187, 164, 111, 0.3); border-radius: 8px;">
+            <label style="color: var(--gold);">Шаг 1. Экспорт Eco Gorniy → Avito, Островок, Суточно.ру, Циан, Яндекс и др. (iCal)</label>
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте эту ссылку календаря занятости и вставьте её на любой площадке бронирования (Авито, Островок, Суточно.ру, Циан, Яндекс.Путешествия или любой сервис с поддержкой iCal) в поле импорта внешнего календаря. Занятые на вашем сайте даты будут автоматически передаваться на площадки.</div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="cabinExportLink" readonly style="flex: 1; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.3); color: #8bc48b; border: 1px solid rgba(var(--cream-rgb), 0.1); padding: 8px; border-radius: 4px;">
+              <button type="button" class="btn btn-ghost" id="copyExportLinkBtn" style="padding: 0 12px;">Копировать</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Шаг 2. Импорт Avito → Eco Gorniy (а также из Островка, Суточно.ру, Яндекс и любых iCal-календарей)</label>
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте ссылку на экспорт календаря (iCal / .ics) из вашего сервиса бронирования (Авито, Островок, Суточно.ру, Яндекс.Путешествия и др.) и вставьте её ниже. Занятые на внешних площадках дни автоматически закроются на сайте.</div>
+            <div class="external-calendar-list" id="externalCalendarList"></div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-ghost" id="addExternalCalendarBtn" style="min-height:34px; padding:0 12px; font-size:12px;">+ Добавить источник календаря</button>
+              <button type="button" class="btn btn-ghost" id="syncExternalCalendarsBtn" style="min-height:34px; padding:0 12px; font-size:12px;">Синхронизировать</button>
+            </div>
+            <div class="external-calendar-status" id="externalCalendarStatus">Поддерживаются любые сервисы с iCal: Авито, Островок, Суточно.ру, Яндекс.Путешествия, Циан и др.</div>
           </div>
         </div>
 
-
-        <div class="form-group" style="margin-top: 16px; margin-bottom: 16px; padding: 16px; background: rgba(187, 164, 111, 0.1); border: 1px solid rgba(187, 164, 111, 0.3); border-radius: 8px;">
-          <label style="color: var(--gold);">Шаг 1. Экспорт Eco Gorniy → Avito, Циан и другие площадки</label>
-          <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте зелёную ссылку и вставьте её на площадке в поле «Добавить / импортировать календарь». После нажатия «Добавить» поле Avito может очиститься — убедитесь, что календарь появился в списке подключённых. Новые брони передаются в ленту сразу, но Avito обновляет импортированный календарь по собственному расписанию, поэтому дата может закрыться не мгновенно.</div>
-          <div style="display: flex; gap: 8px;">
-            <input type="text" id="cabinExportLink" readonly style="flex: 1; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.3); color: #8bc48b; border: 1px solid rgba(var(--cream-rgb), 0.1); padding: 8px; border-radius: 4px;">
-            <button type="button" class="btn btn-ghost" id="copyExportLinkBtn" style="padding: 0 12px;">Копировать</button>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Шаг 2. Импорт Avito → Eco Gorniy</label>
-          <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">В Avito скопируйте серую ссылку из блока «Ваш календарь на Авито», затем добавьте её ниже. Зелёную ссылку Eco Gorniy сюда вставлять не нужно.</div>
-          <div class="external-calendar-list" id="externalCalendarList"></div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button type="button" class="btn btn-ghost" id="addExternalCalendarBtn" style="min-height:34px; padding:0 12px; font-size:12px;">+ Добавить источник</button>
-            <button type="button" class="btn btn-ghost" id="syncExternalCalendarsBtn" style="min-height:34px; padding:0 12px; font-size:12px;">Синхронизировать</button>
-          </div>
-          <div class="external-calendar-status" id="externalCalendarStatus">Avito, Суточно, Островок, Яндекс.Путешествия или другой iCal URL.</div>
-        </div>
-
-
+        <!-- Скрытый блок для тегов фильтрации (сохраняет совместимость) -->
+        <div id="cabinTagsGrid" style="display: none;"></div>
       </div>
       <div class="modal-footer">
         <div>
@@ -398,7 +614,9 @@
   </div>
 
   <script src="/js/api.js?v=20260923-5"></script>
-  <script src="/js/admin-cabins.js?v=20260814-2"></script>
+  <script src="/js/icons.js?v=20260811-2"></script>
+  <script src="/js/lucide.min.js?v=20260811-2"></script>
+  <script src="/js/admin-cabins.js?v=20261011-3"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
   <script src="/js/admin-mobile.js?v=20260811-2"></script>
 </body>

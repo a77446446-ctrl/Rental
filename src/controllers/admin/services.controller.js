@@ -87,6 +87,7 @@ function itemPayload(body, previous = {}, fallbackOrder = 0) {
   return {
     ...previous,
     name: name.slice(0, 255),
+    category: String(body.category == null ? previous.category || '' : body.category).trim().slice(0, 100),
     is_active: body.is_active !== false,
     sort_order: Number(body.sort_order) || previous.sort_order || fallbackOrder,
     icon: String(body.icon || previous.icon || 'check').replace(/[^a-z0-9-]/gi, '').slice(0, 60) || 'check',
