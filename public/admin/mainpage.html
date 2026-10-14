@@ -107,6 +107,355 @@
     
     /* Скелетон загрузки */
     .loading-area { opacity: 0.6; pointer-events: none; }
+
+    /* 2-колоночный живой макет для Hero (Главный экран) */
+    .hero-split-container {
+      display: grid;
+      grid-template-columns: minmax(340px, 1fr) minmax(420px, 1.18fr);
+      gap: 28px;
+      align-items: start;
+    }
+    .hero-split-form {
+      display: grid;
+      gap: 16px;
+    }
+    .hero-split-preview {
+      position: sticky;
+      top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(18, 14, 11, 0.75);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    }
+    .hero-mockup-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(var(--cream-rgb), 0.08);
+    }
+    .hero-mockup-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: 0.03em;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 10px #4ade80;
+      animation: pulseLive 2s infinite ease-in-out;
+    }
+    @keyframes pulseLive {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .hero-mockup-modes {
+      display: inline-flex;
+      gap: 4px;
+      background: rgba(var(--cream-rgb), 0.06);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+    .hero-mockup-mode-btn {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .hero-mockup-mode-btn:hover {
+      color: var(--cream);
+    }
+    .hero-mockup-mode-btn.active {
+      background: var(--gold);
+      color: #1a1410;
+    }
+    .hero-mockup-wrapper {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #0f0d0a;
+      border: 1px solid rgba(var(--cream-rgb), 0.12);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+    }
+    .hero-mockup-device {
+      width: 100%;
+      transition: max-width 0.3s ease, margin 0.3s ease;
+    }
+    .hero-mockup-device.is-mobile {
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .hero-mockup-device-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 14px;
+      background: rgba(var(--cream-rgb), 0.04);
+      border-bottom: 1px solid rgba(var(--cream-rgb), 0.08);
+    }
+    .hero-mockup-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .hero-mockup-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .hero-mockup-dots span:nth-child(1) { background: #ff5f56; }
+    .hero-mockup-dots span:nth-child(2) { background: #ffbd2e; }
+    .hero-mockup-dots span:nth-child(3) { background: #27c93f; }
+    .hero-mockup-url-bar {
+      flex: 1;
+      padding: 2px 10px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+    .hero-mockup-screen {
+      position: relative;
+      background: #110e0b;
+      min-height: 410px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .hero-mockup-site-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+    }
+    .hero-mockup-site-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+    }
+    .hero-mockup-site-logo img {
+      max-height: 22px;
+      max-width: 80px;
+      object-fit: contain;
+    }
+    .hero-mockup-nav-pills {
+      display: flex;
+      gap: 8px;
+      font-size: 10px;
+      color: rgba(var(--cream-rgb), 0.7);
+    }
+    .hero-mockup-stage {
+      position: relative;
+      flex: 1;
+      min-height: 370px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      padding: 56px 16px 16px;
+      box-sizing: border-box;
+      gap: 16px;
+    }
+    .hero-mockup-device.is-desktop .hero-mockup-stage {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .hero-mockup-device.is-mobile .hero-mockup-stage {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      padding-top: 48px;
+    }
+    .hero-mockup-tint {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(17, 24, 20, 0.45), rgba(17, 24, 20, 0.75));
+      transition: background 0.15s ease;
+      z-index: 1;
+    }
+    .hero-mockup-content {
+      position: relative;
+      z-index: 2;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hero-mockup-kicker {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+    .hero-mockup-title {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 24px;
+      line-height: 1.05;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #ede4d6;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+    }
+    .hero-mockup-title .title-accent {
+      color: var(--gold);
+    }
+    .hero-mockup-title .title-rest {
+      color: #ede4d6;
+    }
+    .hero-mockup-desc {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.45;
+      color: rgba(var(--cream-rgb), 0.85);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+      max-width: 290px;
+    }
+    .hero-mockup-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .hero-mockup-btn {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: default;
+      white-space: nowrap;
+    }
+    .hero-mockup-btn-primary {
+      background: linear-gradient(180deg, #95663f, #6f482e);
+      color: #fff;
+    }
+    .hero-mockup-btn-ghost {
+      border: 1px solid rgba(var(--cream-rgb), 0.3);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--cream);
+    }
+    .hero-mockup-booking {
+      position: relative;
+      z-index: 2;
+      background: rgba(27, 22, 18, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(var(--cream-rgb), 0.16);
+      border-radius: 10px;
+      padding: 10px 12px;
+      width: 175px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .hero-mockup-device.is-mobile .hero-mockup-booking {
+      width: auto;
+      margin-top: 8px;
+    }
+    .hero-mockup-booking-title {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+    .hero-mockup-booking-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 8px;
+    }
+    .hero-mockup-booking-cell {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--muted);
+      padding: 2px 4px;
+      background: rgba(var(--cream-rgb), 0.04);
+      border-radius: 4px;
+    }
+    .hero-mockup-booking-cell b {
+      color: var(--cream);
+    }
+    .hero-mockup-booking-btn {
+      background: var(--gold);
+      color: #1a1410;
+      font-size: 9px;
+      font-weight: 800;
+      text-align: center;
+      padding: 5px 6px;
+      border-radius: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .hero-mockup-marquee-strip {
+      position: relative;
+      z-index: 3;
+      background: rgba(14, 11, 8, 0.9);
+      border-top: 1px solid rgba(var(--cream-rgb), 0.1);
+      padding: 5px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .hero-mockup-marquee-inner {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      font-weight: 600;
+      text-transform: uppercase;
+      animation: marqueeScroll 25s linear infinite;
+    }
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    .hero-mockup-hint {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+      padding: 0 4px;
+    }
+
+    /* На экранах до 1100px скрываем правый тяжелый блок */
+    @media (max-width: 1100px) {
+      .hero-split-container {
+        display: block !important;
+      }
+      .hero-split-preview {
+        display: none !important;
+      }
+    }
   </style>
   <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-5">
   <script src="/js/lucide.min.js?v=20260811-2"></script>
@@ -217,41 +566,122 @@
         </details>
 
         <!-- Главный блок -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="heroAccordion" open>
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Главный блок (Hero)</h3>
               <i data-lucide="chevron-down" class="accordion-icon"></i>
             </div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Первый экран сайта: заголовок, бегущая строка и фоновое видео/фото.</div>
+            <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Первый экран сайта: заголовок, бегущая строка и фоновое видео/фото. Интерактивный живой образец для ПК.</div>
           </summary>
           <div class="admin-accordion-content" style="padding-top: 16px;">
-            <div style="display: grid; gap: 16px;">
-              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
-                <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Главный заголовок</label>
-                <input type="text" id="heroTitle" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
-              </div>
-              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
-                <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Фоновое видео/фото</label>
-                <div style="display: flex; gap: 8px;">
-                  <input type="file" id="heroFile" accept="image/*,video/*" style="flex:1; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
-                  <button type="button" onclick="document.getElementById('heroBgUrl').value=''; document.getElementById('heroPreview').style.backgroundImage='none'; document.getElementById('heroPreview').innerHTML='Фон очищен (прозрачный)';" style="background: var(--line); border: none; color: var(--cream); border-radius: 8px; padding: 0 16px; cursor: pointer;">Очистить</button>
+            <div class="hero-split-container">
+              <!-- Левая колонка: Форма настроек -->
+              <div class="hero-split-form">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+                  <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Главный заголовок</label>
+                  <input type="text" id="heroTitle" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
                 </div>
-                <input type="hidden" id="heroBgUrl">
-                <div id="heroPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+                  <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Фоновое видео/фото</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="file" id="heroFile" accept="image/*,video/*" style="flex:1; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
+                    <button type="button" id="clearHeroBgBtn" onclick="document.getElementById('heroBgUrl').value=''; document.getElementById('heroPreview').style.backgroundImage='none'; document.getElementById('heroPreview').innerHTML='Фон очищен (прозрачный)';" style="background: var(--line); border: none; color: var(--cream); border-radius: 8px; padding: 0 16px; cursor: pointer;">Очистить</button>
+                  </div>
+                  <input type="hidden" id="heroBgUrl">
+                  <div id="heroPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+                  <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Главный текст описания</label>
+                  <textarea id="heroDesc" rows="4" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;"></textarea>
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+                  <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Бегущая строка</label>
+                  <input type="text" id="marqueeText" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+                  <label for="marqueeDuration" style="font-size: 13px; color: var(--muted); font-weight: 600;">Скорость бегущей строки</label>
+                  <input type="number" id="marqueeDuration" min="20" max="120" step="5" value="55" inputmode="numeric" style="width: 180px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
+                  <span style="font-size: 12px; color: var(--muted);">Секунд на один круг: больше значение — медленнее. На мобильном скорость дополнительно снижается.</span>
+                </div>
               </div>
-              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
-                <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Главный текст описания</label>
-                <textarea id="heroDesc" rows="4" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;"></textarea>
-              </div>
-              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
-                <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Бегущая строка</label>
-                <input type="text" id="marqueeText" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
-              </div>
-              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
-                <label for="marqueeDuration" style="font-size: 13px; color: var(--muted); font-weight: 600;">Скорость бегущей строки</label>
-                <input type="number" id="marqueeDuration" min="20" max="120" step="5" value="55" inputmode="numeric" style="width: 180px; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
-                <span style="font-size: 12px; color: var(--muted);">Секунд на один круг: больше значение — медленнее. На мобильном скорость дополнительно снижается.</span>
+
+              <!-- Правая колонка: Живой макет для компьютера -->
+              <div class="hero-split-preview">
+                <div class="hero-mockup-toolbar">
+                  <div class="hero-mockup-status">
+                    <span class="live-dot"></span>
+                    <span>Живой образец первого экрана</span>
+                  </div>
+                  <div class="hero-mockup-modes" role="group" aria-label="Режим отображения макета">
+                    <button type="button" class="hero-mockup-mode-btn active" id="mockupModeDesktop">🖥️ Компьютер</button>
+                    <button type="button" class="hero-mockup-mode-btn" id="mockupModeMobile">📱 Телефон</button>
+                  </div>
+                </div>
+
+                <div class="hero-mockup-wrapper">
+                  <div class="hero-mockup-device is-desktop" id="heroMockupDevice">
+                    <!-- Заголовочная плашка устройства -->
+                    <div class="hero-mockup-device-header">
+                      <div class="hero-mockup-dots">
+                        <span></span><span></span><span></span>
+                      </div>
+                      <div class="hero-mockup-url-bar">eco-gorniy.ru</div>
+                    </div>
+
+                    <!-- Экран сайта -->
+                    <div class="hero-mockup-screen" id="heroMockupScreen">
+                      <!-- Шапка сайта в макете -->
+                      <div class="hero-mockup-site-header">
+                        <div class="hero-mockup-site-logo" id="heroMockupLogo">
+                          <span id="heroMockupLogoText">ECO GORNIY</span>
+                        </div>
+                        <div class="hero-mockup-nav-pills">
+                          <span>Домики</span>
+                          <span>Территория</span>
+                          <span>Контакты</span>
+                        </div>
+                      </div>
+
+                      <!-- Hero Section в макете -->
+                      <div class="hero-mockup-stage" id="heroMockupStage">
+                        <div class="hero-mockup-tint" id="heroMockupTint"></div>
+                        <div class="hero-mockup-content">
+                          <div class="hero-mockup-kicker" id="heroMockupKicker">Уединенные эко-домики в Горном Алтае</div>
+                          <h1 class="hero-mockup-title" id="heroMockupTitle">
+                            <span class="title-accent">Отдых на</span> <span class="title-rest">природе Горного Алтая</span>
+                          </h1>
+                          <p class="hero-mockup-desc" id="heroMockupDesc">ECO Gorniy — Уединенные эко-домики с панорамными окнами на берегу реки.</p>
+                          <div class="hero-mockup-actions">
+                            <span class="hero-mockup-btn hero-mockup-btn-primary">Выбрать домик</span>
+                            <span class="hero-mockup-btn hero-mockup-btn-ghost">Смотреть территорию</span>
+                          </div>
+                        </div>
+
+                        <!-- Мини-виджет бронирования -->
+                        <div class="hero-mockup-booking">
+                          <div class="hero-mockup-booking-title">Быстрый подбор</div>
+                          <div class="hero-mockup-booking-grid">
+                            <div class="hero-mockup-booking-cell"><span>Заезд:</span> <b>Сегодня</b></div>
+                            <div class="hero-mockup-booking-cell"><span>Выезд:</span> <b>Через 2 дня</b></div>
+                            <div class="hero-mockup-booking-cell"><span>Гости:</span> <b>2 гостя</b></div>
+                          </div>
+                          <div class="hero-mockup-booking-btn">Найти свободные даты</div>
+                        </div>
+                      </div>
+
+                      <!-- Бегущая строка в макете -->
+                      <div class="hero-mockup-marquee-strip">
+                        <div class="hero-mockup-marquee-inner" id="heroMockupMarquee">
+                          <span>ЭКО-ОТДЫХ • ПАНОРАМНЫЕ ОКНА • БАНЯ У ОЗЕРА • ТИШИНА И ПРИРОДА • </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hero-mockup-hint">
+                  💡 На ПК макет мгновенно обновляется при вводе текста, выборе фото или смене затемнения.
+                </div>
               </div>
             </div>
           </div>

@@ -566,6 +566,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       normalizeReviews();
       renderFeatures();
       renderReviews();
+      updateHeroMockup();
 
     } catch (err) {
       console.error('Error loading data', err);
@@ -602,6 +603,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
           preview.innerHTML = `<img src="${proxiedUrl}" style="max-height: 50px;">`;
         }
+        if (urlInputId === 'heroBgUrl') { heroBlobUrl = null; }
+        updateHeroMockup();
         showToast('Изображение загружено', 'success');
       } else {
         showToast(json.error || 'Ошибка загрузки', 'error');
@@ -734,6 +737,166 @@ document.addEventListener('DOMContentLoaded', async () => {
       saveBtn.textContent = 'Сохранить изменения';
     }
   });
+
+  // --- ЖИВОЙ МАКЕТ ПЕРВОГО ЭКРАНА (LIVE PREVIEW ДЛЯ ДЕСКТОПА) ---
+  let heroBlobUrl = null;
+
+  function updateHeroMockup() {
+    const titleEl = document.getElementById('heroMockupTitle');
+    const descEl = document.getElementById('heroMockupDesc');
+    const kickerEl = document.getElementById('heroMockupKicker');
+    const marqueeEl = document.getElementById('heroMockupMarquee');
+    const stageEl = document.getElementById('heroMockupStage');
+    const tintEl = document.getElementById('heroMockupTint');
+    const logoEl = document.getElementById('heroMockupLogo');
+    if (!titleEl || !stageEl) return;
+
+    // 1. Заголовок (с золотым акцентом на первые 2 слова)
+    const rawTitle = (document.getElementById('heroTitle') || {}).value || 'Отдых на природе Горного Алтая';
+    const words = String(rawTitle).trim().split(/\s+/).filter(Boolean);
+    titleEl.replaceChildren();
+    if (words.length > 0) {
+      const splitAt = Math.min(2, words.length);
+      const accentText = words.slice(0, splitAt).join(' ');
+      const restText = words.slice(splitAt).join(' ');
+
+      const accentSpan = document.createElement('span');
+      accentSpan.className = 'title-accent';
+      accentSpan.textContent = accentText;
+      titleEl.appendChild(accentSpan);
+
+      if (restText) {
+        titleEl.appendChild(document.createTextNode(' '));
+        const restSpan = document.createElement('span');
+        restSpan.className = 'title-rest';
+        restSpan.textContent = restText;
+        titleEl.appendChild(restSpan);
+      }
+    }
+
+    // 2. Описание
+    const logoName = (document.getElementById('logoText') || {}).value || 'ECO Gorniy';
+    let rawDesc = (document.getElementById('heroDesc') || {}).value || 'Уединенные эко-домики с панорамными окнами на берегу реки.';
+    rawDesc = rawDesc.replace(/^[—\-\s]+/, '');
+    if (descEl) {
+      descEl.textContent = `${logoName} — ${rawDesc}`;
+    }
+
+    // 3. Бегущая строка / Кикер
+    const rawMarquee = (document.getElementById('marqueeText') || {}).value || 'Уединенные эко-домики в Горном Алтае';
+    if (kickerEl) kickerEl.textContent = rawMarquee;
+    if (marqueeEl) {
+      const fullMarq = (rawMarquee + ' • ').repeat(4);
+      marqueeEl.textContent = fullMarq;
+    }
+
+    // 4. Скорость бегущей строки
+    const durationInput = document.getElementById('marqueeDuration');
+    if (durationInput && marqueeEl) {
+      const dur = Math.max(10, Math.min(120, parseInt(durationInput.value, 10) || 55));
+      marqueeEl.style.animationDuration = Math.round(dur * 0.45) + 's';
+    }
+
+    // 5. Логотип
+    const currentLogoUrl = (document.getElementById('logoUrl') || {}).value;
+    if (logoEl) {
+      logoEl.replaceChildren();
+      if (currentLogoUrl) {
+        const img = document.createElement('img');
+        img.src = currentLogoUrl;
+        img.alt = 'Логотип';
+        logoEl.appendChild(img);
+      } else {
+        const textSpan = document.createElement('span');
+        textSpan.id = 'heroMockupLogoText';
+        textSpan.textContent = logoName.toUpperCase();
+        logoEl.appendChild(textSpan);
+      }
+    }
+
+    // 6. Фоновое изображение и затемнение
+    const heroBgVal = (document.getElementById('heroBgUrl') || {}).value;
+    const globalBgVal = (document.getElementById('globalBgUrl') || {}).value || '/images/banya-chan.jpg';
+    const globalDimmingVal = parseInt((document.getElementById('globalBgDimming') || {}).value, 10) || 65;
+
+    const activeBg = heroBlobUrl || heroBgVal;
+    if (activeBg) {
+      stageEl.style.backgroundImage = `url('${activeBg}')`;
+      if (tintEl) {
+        tintEl.style.background = 'linear-gradient(rgba(17, 24, 20, 0.45), rgba(17, 24, 20, 0.75))';
+      }
+    } else {
+      stageEl.style.backgroundImage = `url('${globalBgVal}')`;
+      if (tintEl) {
+        const tintRatio = (Math.max(0, Math.min(85, globalDimmingVal)) / 100).toFixed(2);
+        tintEl.style.background = `rgba(3, 5, 4, ${tintRatio})`;
+      }
+    }
+  }
+
+  // Переключение режимов макета (Десктоп / Мобильный)
+  const mockupDevice = document.getElementById('heroMockupDevice');
+  const btnMockupDesktop = document.getElementById('mockupModeDesktop');
+  const btnMockupMobile = document.getElementById('mockupModeMobile');
+
+  if (btnMockupDesktop && mockupDevice) {
+    btnMockupDesktop.addEventListener('click', () => {
+      btnMockupDesktop.classList.add('active');
+      if (btnMockupMobile) btnMockupMobile.classList.remove('active');
+      mockupDevice.classList.remove('is-mobile');
+      mockupDevice.classList.add('is-desktop');
+    });
+  }
+  if (btnMockupMobile && mockupDevice) {
+    btnMockupMobile.addEventListener('click', () => {
+      btnMockupMobile.classList.add('active');
+      if (btnMockupDesktop) btnMockupDesktop.classList.remove('active');
+      mockupDevice.classList.remove('is-desktop');
+      mockupDevice.classList.add('is-mobile');
+    });
+  }
+
+  // Слушатели ввода для моментального реактивного обновления макета
+  const heroInputIds = ['heroTitle', 'heroDesc', 'marqueeText', 'marqueeDuration', 'logoText', 'globalBgDimming'];
+  heroInputIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', updateHeroMockup);
+      el.addEventListener('change', updateHeroMockup);
+    }
+  });
+
+  // Локальный мгновенный предпросмотр при выборе фото
+  const heroFileInput = document.getElementById('heroFile');
+  if (heroFileInput) {
+    heroFileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        try {
+          heroBlobUrl = URL.createObjectURL(file);
+          updateHeroMockup();
+        } catch (err) {
+          console.warn('Hero blob error', err);
+        }
+      }
+    });
+  }
+
+  // Очистка фото первого экрана
+  const clearHeroBtn = document.getElementById('clearHeroBgBtn');
+  if (clearHeroBtn) {
+    clearHeroBtn.addEventListener('click', () => {
+      document.getElementById('heroBgUrl').value = '';
+      heroBlobUrl = null;
+      const preview = document.getElementById('heroPreview');
+      if (preview) {
+        preview.style.backgroundImage = 'none';
+        preview.innerHTML = 'Фон очищен (прозрачный)';
+      }
+      updateHeroMockup();
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
+    });
+  }
 
   // Логика "грязного" состояния (disable/enable кнопки Сохранить)
   saveBtn.disabled = true;
