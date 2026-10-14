@@ -179,9 +179,14 @@
   var isNavigatingDirectToCalendar = (window.location.search.indexOf('cabin=') !== -1) || (window.location.hash.indexOf('calendar') !== -1);
   var splashAlreadySeen = false;
   try { splashAlreadySeen = sessionStorage.getItem('eco_splash_seen') === '1'; } catch (e) {}
+  var isPreviewParam = false;
+  try { isPreviewParam = new URLSearchParams(window.location.search).has('preview') || (window.parent && window.parent !== window); } catch (e) {}
   var SPLASH_MIN_DURATION_MS = 5000;
-  if (window.__SKIP_SPLASH__ || isNavigatingDirectToCalendar || splashAlreadySeen) {
+  if (window.__SKIP_SPLASH__ || isNavigatingDirectToCalendar || splashAlreadySeen || isPreviewParam) {
     SPLASH_MIN_DURATION_MS = 0;
+  }
+  if (isPreviewParam && document.documentElement) {
+    document.documentElement.classList.add('is-admin-preview');
   }
   var STARTUP_REQUEST_TIMEOUT_MS = 5000;
   var splashStartedAt = Number(window.__APP_SPLASH_STARTED_AT);
@@ -2192,6 +2197,36 @@
       closeTerritoryMap();
     }
   });
+
+  // --- Слушатель сообщений для живого образца (Admin Live Preview) ---
+  function applyMainpageDraft(draftData) {
+    if (!draftData) return;
+    state.mainpage = Object.assign({}, state.mainpage, draftData);
+    applyMainpageSettings();
+  }
+  window.applyMainpageDraft = applyMainpageDraft;
+
+  window.addEventListener('message', function (e) {
+    if (!e.data) return;
+    if (e.data.type === 'APPLY_MAINPAGE_DRAFT' && e.data.data) {
+      applyMainpageDraft(e.data.data);
+    }
+    if (e.data.type === 'SCROLL_TO_SECTION' && e.data.sectionId) {
+      var target = document.getElementById(e.data.sectionId);
+      if (!target && e.data.sectionId === 'about') target = document.querySelector('.mission') || document.querySelector('.intro');
+      if (!target && e.data.sectionId === 'contacts') target = document.getElementById('contacts') || document.querySelector('.contact-section');
+      if (!target && e.data.sectionId === 'reviews') target = document.querySelector('.reviews');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+
+  if (isPreviewParam && window.parent && window.parent !== window) {
+    try {
+      window.parent.postMessage({ type: 'PREVIEW_IFRAME_READY' }, '*');
+    } catch (e) {}
+  }
 
   // --- Галерея Модалка ---
   const galleryModal = document.getElementById('galleryModal');

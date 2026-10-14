@@ -3806,3 +3806,11 @@ select {
     background-position: right 14px center !important;
     padding-right: 36px !important;
 }
+
+/* Скрытие чата и подсказок в окне живого образца админки */
+.is-admin-preview #chat-widget-btn,
+.is-admin-preview #chat-window,
+.is-admin-preview .chat-widget,
+.is-admin-preview #app-loading {
+  display: none !important;
+}

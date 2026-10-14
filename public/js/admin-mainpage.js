@@ -566,7 +566,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       normalizeReviews();
       renderFeatures();
       renderReviews();
-      updateHeroMockup();
+      syncPreviewWithDraft();
 
     } catch (err) {
       console.error('Error loading data', err);
@@ -603,8 +603,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
           preview.innerHTML = `<img src="${proxiedUrl}" style="max-height: 50px;">`;
         }
-        if (urlInputId === 'heroBgUrl') { heroBlobUrl = null; }
-        updateHeroMockup();
+        if (urlInputId === 'heroBgUrl') draftBlobs.hero = null;
+        if (urlInputId === 'globalBgUrl') draftBlobs.globalBg = null;
+        if (urlInputId === 'territoryBgUrl') draftBlobs.territory = null;
+        if (urlInputId === 'logoUrl') draftBlobs.logo = null;
+        if (urlInputId === 'contactBgUrl') draftBlobs.contactBg = null;
+        syncPreviewWithDraft();
         showToast('Изображение загружено', 'success');
       } else {
         showToast(json.error || 'Ошибка загрузки', 'error');
@@ -738,162 +742,237 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // --- ЖИВОЙ МАКЕТ ПЕРВОГО ЭКРАНА (LIVE PREVIEW ДЛЯ ДЕСКТОПА) ---
-  let heroBlobUrl = null;
+  // --- ЖИВОЙ ОБРАЗЕЦ ВСЕГО САЙТА (LIVE PREVIEW В ПРАВОЙ КОЛОНКЕ) ---
+  const previewIframe = document.getElementById('siteLivePreviewIframe');
+  const previewDeviceFrame = document.getElementById('previewDeviceFrame');
+  const btnPreviewDesktop = document.getElementById('btnPreviewDesktop');
+  const btnPreviewMobile = document.getElementById('btnPreviewMobile');
+  const btnPreviewReload = document.getElementById('btnPreviewReload');
 
-  function updateHeroMockup() {
-    const titleEl = document.getElementById('heroMockupTitle');
-    const descEl = document.getElementById('heroMockupDesc');
-    const kickerEl = document.getElementById('heroMockupKicker');
-    const marqueeEl = document.getElementById('heroMockupMarquee');
-    const stageEl = document.getElementById('heroMockupStage');
-    const tintEl = document.getElementById('heroMockupTint');
-    const logoEl = document.getElementById('heroMockupLogo');
-    if (!titleEl || !stageEl) return;
+  const draftBlobs = {
+    logo: null,
+    globalBg: null,
+    hero: null,
+    territory: null,
+    contactBg: null
+  };
 
-    // 1. Заголовок (с золотым акцентом на первые 2 слова)
-    const rawTitle = (document.getElementById('heroTitle') || {}).value || 'Отдых на природе Горного Алтая';
-    const words = String(rawTitle).trim().split(/\s+/).filter(Boolean);
-    titleEl.replaceChildren();
-    if (words.length > 0) {
-      const splitAt = Math.min(2, words.length);
-      const accentText = words.slice(0, splitAt).join(' ');
-      const restText = words.slice(splitAt).join(' ');
+  function collectAllMainpageDraft() {
+    const rawLogoUrl = draftBlobs.logo || (document.getElementById('logoUrl') || {}).value || '';
+    const proxiedLogo = rawLogoUrl && window.EcoMedia ? window.EcoMedia.url(rawLogoUrl) : rawLogoUrl;
 
-      const accentSpan = document.createElement('span');
-      accentSpan.className = 'title-accent';
-      accentSpan.textContent = accentText;
-      titleEl.appendChild(accentSpan);
+    const rawGlobalBg = draftBlobs.globalBg || (document.getElementById('globalBgUrl') || {}).value || '';
+    const proxiedGlobalBg = rawGlobalBg && window.EcoMedia ? window.EcoMedia.url(rawGlobalBg) : rawGlobalBg;
 
-      if (restText) {
-        titleEl.appendChild(document.createTextNode(' '));
-        const restSpan = document.createElement('span');
-        restSpan.className = 'title-rest';
-        restSpan.textContent = restText;
-        titleEl.appendChild(restSpan);
+    const rawHeroBg = draftBlobs.hero || (document.getElementById('heroBgUrl') || {}).value || '';
+    const proxiedHeroBg = rawHeroBg && window.EcoMedia ? window.EcoMedia.url(rawHeroBg) : rawHeroBg;
+
+    const rawTerritoryBg = draftBlobs.territory || (document.getElementById('territoryBgUrl') || {}).value || '';
+    const proxiedTerritoryBg = rawTerritoryBg && window.EcoMedia ? window.EcoMedia.url(rawTerritoryBg) : rawTerritoryBg;
+
+    const rawContactBg = draftBlobs.contactBg || (document.getElementById('contactBgUrl') || {}).value || '';
+    const proxiedContactBg = rawContactBg && window.EcoMedia ? window.EcoMedia.url(rawContactBg) : rawContactBg;
+
+    const territoryData = collectTerritoryFields();
+    if (proxiedTerritoryBg) territoryData.background_url = proxiedTerritoryBg;
+
+    return {
+      global_bg_url: proxiedGlobalBg,
+      global_bg_dimming: parseInt((document.getElementById('globalBgDimming') || {}).value, 10) || 65,
+      logo: {
+        text: (document.getElementById('logoText') || {}).value || '',
+        url: proxiedLogo
+      },
+      hero: {
+        title: (document.getElementById('heroTitle') || {}).value || '',
+        background_url: proxiedHeroBg,
+        desc: (document.getElementById('heroDesc') || {}).value || ''
+      },
+      marquee: {
+        text: (document.getElementById('marqueeText') || {}).value || '',
+        duration: parseInt((document.getElementById('marqueeDuration') || {}).value, 10) || 55
+      },
+      about: {
+        title: (document.getElementById('aboutTitle') || {}).value || '',
+        desc: (document.getElementById('aboutDesc') || {}).value || '',
+        video_url: (document.getElementById('aboutVideoUrl') || {}).value || '',
+        video_file_url: (document.getElementById('aboutVideoFileUrl') || {}).value || '',
+        video_autoplay: !!(document.getElementById('aboutVideoAutoplay') && document.getElementById('aboutVideoAutoplay').checked),
+        video_start: parseInt((document.getElementById('aboutVideoStart') || {}).value, 10) || 0,
+        video_end: parseInt((document.getElementById('aboutVideoEnd') || {}).value, 10) || 0
+      },
+      features_meta: {
+        label: (document.getElementById('featuresLabel') || {}).value || '',
+        title: (document.getElementById('featuresTitle') || {}).value || ''
+      },
+      features: collectFeaturesPreviewList(),
+      territory: territoryData,
+      reviews_meta: {
+        label: (document.getElementById('reviewsLabel') || {}).value || '',
+        title: (document.getElementById('reviewsTitle') || {}).value || ''
+      },
+      reviews: collectReviews(),
+      contacts: {
+        label: (document.getElementById('contactLabel') || {}).value || '',
+        title: (document.getElementById('contactTitle') || {}).value || '',
+        desc: (document.getElementById('contactDesc') || {}).value || '',
+        phone: (document.getElementById('contactPhone') || {}).value || '',
+        email: (document.getElementById('contactEmail') || {}).value || '',
+        max: (document.getElementById('contactMax') || {}).value || '',
+        whatsapp: (document.getElementById('contactWhatsapp') || {}).value || '',
+        telegram: (document.getElementById('contactTelegram') || {}).value || '',
+        vk: (document.getElementById('contactVk') || {}).value || '',
+        ok: (document.getElementById('contactOk') || {}).value || '',
+        cta_text: (document.getElementById('contactCta') || {}).value || '',
+        map_code: (document.getElementById('contactMapCoords') || {}).value || '',
+        background_url: proxiedContactBg,
+        footer_slogan: (document.getElementById('footerSlogan') || {}).value || ''
       }
-    }
-
-    // 2. Описание
-    const logoName = (document.getElementById('logoText') || {}).value || 'ECO Gorniy';
-    let rawDesc = (document.getElementById('heroDesc') || {}).value || 'Уединенные эко-домики с панорамными окнами на берегу реки.';
-    rawDesc = rawDesc.replace(/^[—\-\s]+/, '');
-    if (descEl) {
-      descEl.textContent = `${logoName} — ${rawDesc}`;
-    }
-
-    // 3. Бегущая строка / Кикер
-    const rawMarquee = (document.getElementById('marqueeText') || {}).value || 'Уединенные эко-домики в Горном Алтае';
-    if (kickerEl) kickerEl.textContent = rawMarquee;
-    if (marqueeEl) {
-      const fullMarq = (rawMarquee + ' • ').repeat(4);
-      marqueeEl.textContent = fullMarq;
-    }
-
-    // 4. Скорость бегущей строки
-    const durationInput = document.getElementById('marqueeDuration');
-    if (durationInput && marqueeEl) {
-      const dur = Math.max(10, Math.min(120, parseInt(durationInput.value, 10) || 55));
-      marqueeEl.style.animationDuration = Math.round(dur * 0.45) + 's';
-    }
-
-    // 5. Логотип
-    const currentLogoUrl = (document.getElementById('logoUrl') || {}).value;
-    if (logoEl) {
-      logoEl.replaceChildren();
-      if (currentLogoUrl) {
-        const img = document.createElement('img');
-        img.src = currentLogoUrl;
-        img.alt = 'Логотип';
-        logoEl.appendChild(img);
-      } else {
-        const textSpan = document.createElement('span');
-        textSpan.id = 'heroMockupLogoText';
-        textSpan.textContent = logoName.toUpperCase();
-        logoEl.appendChild(textSpan);
-      }
-    }
-
-    // 6. Фоновое изображение и затемнение
-    const heroBgVal = (document.getElementById('heroBgUrl') || {}).value;
-    const globalBgVal = (document.getElementById('globalBgUrl') || {}).value || '/images/banya-chan.jpg';
-    const globalDimmingVal = parseInt((document.getElementById('globalBgDimming') || {}).value, 10) || 65;
-
-    const activeBg = heroBlobUrl || heroBgVal;
-    if (activeBg) {
-      stageEl.style.backgroundImage = `url('${activeBg}')`;
-      if (tintEl) {
-        tintEl.style.background = 'linear-gradient(rgba(17, 24, 20, 0.45), rgba(17, 24, 20, 0.75))';
-      }
-    } else {
-      stageEl.style.backgroundImage = `url('${globalBgVal}')`;
-      if (tintEl) {
-        const tintRatio = (Math.max(0, Math.min(85, globalDimmingVal)) / 100).toFixed(2);
-        tintEl.style.background = `rgba(3, 5, 4, ${tintRatio})`;
-      }
-    }
+    };
   }
 
-  // Переключение режимов макета (Десктоп / Мобильный)
-  const mockupDevice = document.getElementById('heroMockupDevice');
-  const btnMockupDesktop = document.getElementById('mockupModeDesktop');
-  const btnMockupMobile = document.getElementById('mockupModeMobile');
-
-  if (btnMockupDesktop && mockupDevice) {
-    btnMockupDesktop.addEventListener('click', () => {
-      btnMockupDesktop.classList.add('active');
-      if (btnMockupMobile) btnMockupMobile.classList.remove('active');
-      mockupDevice.classList.remove('is-mobile');
-      mockupDevice.classList.add('is-desktop');
+  function collectFeaturesPreviewList() {
+    const list = [];
+    const container = document.getElementById('featuresContainer');
+    if (!container) return list;
+    const items = container.querySelectorAll('.feature-admin-item');
+    items.forEach((item, index) => {
+      list.push({
+        title: (document.getElementById(`featTitle_${index}`) || {}).value || '',
+        subtitle: (document.getElementById(`featSubtitle_${index}`) || {}).value || '',
+        image_url: (document.getElementById(`featUrl_${index}`) || {}).value || '',
+        icon: (document.getElementById(`featIconBtn_${index}`) || {}).dataset.icon || ''
+      });
     });
-  }
-  if (btnMockupMobile && mockupDevice) {
-    btnMockupMobile.addEventListener('click', () => {
-      btnMockupMobile.classList.add('active');
-      if (btnMockupDesktop) btnMockupDesktop.classList.remove('active');
-      mockupDevice.classList.remove('is-desktop');
-      mockupDevice.classList.add('is-mobile');
-    });
+    return list;
   }
 
-  // Слушатели ввода для моментального реактивного обновления макета
-  const heroInputIds = ['heroTitle', 'heroDesc', 'marqueeText', 'marqueeDuration', 'logoText', 'globalBgDimming'];
-  heroInputIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('input', updateHeroMockup);
-      el.addEventListener('change', updateHeroMockup);
+  function syncPreviewWithDraft() {
+    if (!previewIframe || !previewIframe.contentWindow) return;
+    const draft = collectAllMainpageDraft();
+    try {
+      if (typeof previewIframe.contentWindow.applyMainpageDraft === 'function') {
+        previewIframe.contentWindow.applyMainpageDraft(draft);
+      }
+    } catch (e) {}
+    try {
+      previewIframe.contentWindow.postMessage({
+        type: 'APPLY_MAINPAGE_DRAFT',
+        data: draft
+      }, '*');
+    } catch (e) {}
+  }
+
+  window.syncPreviewWithDraft = syncPreviewWithDraft;
+
+  // Слушатель готовности iframe
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'PREVIEW_IFRAME_READY') {
+      syncPreviewWithDraft();
     }
   });
 
-  // Локальный мгновенный предпросмотр при выборе фото
-  const heroFileInput = document.getElementById('heroFile');
-  if (heroFileInput) {
-    heroFileInput.addEventListener('change', (e) => {
+  if (previewIframe) {
+    previewIframe.addEventListener('load', () => {
+      setTimeout(syncPreviewWithDraft, 120);
+    });
+  }
+
+  // Переключение режимов: Десктоп / Мобильный
+  if (btnPreviewDesktop && previewDeviceFrame) {
+    btnPreviewDesktop.addEventListener('click', () => {
+      btnPreviewDesktop.classList.add('active');
+      if (btnPreviewMobile) btnPreviewMobile.classList.remove('active');
+      previewDeviceFrame.classList.remove('is-mobile');
+      previewDeviceFrame.classList.add('is-desktop');
+    });
+  }
+  if (btnPreviewMobile && previewDeviceFrame) {
+    btnPreviewMobile.addEventListener('click', () => {
+      btnPreviewMobile.classList.add('active');
+      if (btnPreviewDesktop) btnPreviewDesktop.classList.remove('active');
+      previewDeviceFrame.classList.remove('is-desktop');
+      previewDeviceFrame.classList.add('is-mobile');
+    });
+  }
+  if (btnPreviewReload && previewIframe) {
+    btnPreviewReload.addEventListener('click', () => {
+      previewIframe.src = '/?preview=1&r=' + Date.now();
+    });
+  }
+
+  // Навигация по разделам сайта в образце
+  document.querySelectorAll('.preview-nav-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      if (!previewIframe || !previewIframe.contentWindow) return;
+      previewIframe.contentWindow.postMessage({ type: 'SCROLL_TO_SECTION', sectionId: targetId }, '*');
+    });
+  });
+
+  // Автоскролл образца при раскрытии аккордеонов настроек
+  const accordionScrollMap = {
+    accHero: 'hero-section',
+    accAbout: 'about',
+    accFeatures: 'features',
+    accTerritory: 'territory',
+    accReviews: 'reviews',
+    accContacts: 'contacts',
+    accFooter: 'contacts'
+  };
+
+  document.querySelectorAll('.admin-accordion').forEach(acc => {
+    acc.addEventListener('toggle', () => {
+      if (acc.open && accordionScrollMap[acc.id] && previewIframe && previewIframe.contentWindow) {
+        previewIframe.contentWindow.postMessage({
+          type: 'SCROLL_TO_SECTION',
+          sectionId: accordionScrollMap[acc.id]
+        }, '*');
+      }
+    });
+  });
+
+  // Вся колонка настроек триггерит обновление образца
+  const settingsCol = document.getElementById('mainpageSettingsColumn');
+  if (settingsCol) {
+    settingsCol.addEventListener('input', syncPreviewWithDraft);
+    settingsCol.addEventListener('change', syncPreviewWithDraft);
+  }
+
+  // Мгновенный предпросмотр выбранных файлов
+  function bindFilePreview(inputId, blobKey) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
       if (file) {
         try {
-          heroBlobUrl = URL.createObjectURL(file);
-          updateHeroMockup();
+          draftBlobs[blobKey] = URL.createObjectURL(file);
+          syncPreviewWithDraft();
         } catch (err) {
-          console.warn('Hero blob error', err);
+          console.warn('Blob error', err);
         }
       }
     });
   }
+  bindFilePreview('logoFile', 'logo');
+  bindFilePreview('globalBgFile', 'globalBg');
+  bindFilePreview('heroFile', 'hero');
+  bindFilePreview('territoryFile', 'territory');
+  bindFilePreview('contactBgFile', 'contactBg');
 
   // Очистка фото первого экрана
   const clearHeroBtn = document.getElementById('clearHeroBgBtn');
   if (clearHeroBtn) {
     clearHeroBtn.addEventListener('click', () => {
       document.getElementById('heroBgUrl').value = '';
-      heroBlobUrl = null;
+      draftBlobs.hero = null;
       const preview = document.getElementById('heroPreview');
       if (preview) {
         preview.style.backgroundImage = 'none';
         preview.innerHTML = 'Фон очищен (прозрачный)';
       }
-      updateHeroMockup();
+      syncPreviewWithDraft();
       if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
     });
   }
