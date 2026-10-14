@@ -56,6 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       cabinSelector.innerHTML = '<option value="">-- Выберите объект --</option>' + 
         data.data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+      if (data.data.length > 0) {
+        cabinSelector.value = data.data[0].id;
+        pricesLayout.style.display = 'grid';
+        selectedDates.clear();
+        updateSelectionUI();
+        loadPrices(data.data[0].id);
+      }
     } catch (e) {
       console.error(e);
       window.showToast('Ошибка загрузки объектов', 'error');
@@ -482,8 +490,72 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Управление временем заезда и выезда
+  const checkInTimeInput = document.getElementById('checkInTimeInput');
+  const checkOutTimeInput = document.getElementById('checkOutTimeInput');
+  const saveStayTimesBtn = document.getElementById('saveStayTimesBtn');
+
+  if (!window.showToast) {
+    window.showToast = function (msg, type) {
+      const container = document.getElementById('toast-container');
+      if (!container) return alert(msg);
+      const toast = document.createElement('div');
+      toast.className = 'toast toast-' + (type || 'info');
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    };
+  }
+
+  async function loadStayTimes() {
+    try {
+      const res = await fetch('/api/admin/settings');
+      const data = await res.json();
+      if (data && data.success && data.data) {
+        if (checkInTimeInput && data.data.checkInTime) {
+          checkInTimeInput.value = data.data.checkInTime;
+        }
+        if (checkOutTimeInput && data.data.checkOutTime) {
+          checkOutTimeInput.value = data.data.checkOutTime;
+        }
+      }
+    } catch (e) {
+      console.error('Ошибка загрузки времени заезда/выезда:', e);
+    }
+  }
+
+  if (saveStayTimesBtn) {
+    saveStayTimesBtn.addEventListener('click', async () => {
+      const checkInTime = (checkInTimeInput ? checkInTimeInput.value : '').trim() || '16:00';
+      const checkOutTime = (checkOutTimeInput ? checkOutTimeInput.value : '').trim() || '14:00';
+
+      const originalText = saveStayTimesBtn.textContent;
+      saveStayTimesBtn.textContent = 'Сохранение...';
+      saveStayTimesBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/admin/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ checkInTime, checkOutTime })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Ошибка при сохранении');
+
+        window.showToast('Время заезда и выезда сохранено', 'success');
+      } catch (err) {
+        console.error(err);
+        window.showToast(err.message || 'Ошибка сохранения времени', 'error');
+      } finally {
+        saveStayTimesBtn.textContent = originalText;
+        saveStayTimesBtn.disabled = false;
+      }
+    });
+  }
+
   // Инициализация
   loadCabins();
+  loadStayTimes();
   
   // Рисуем первоначальный пустой календарь
   renderCalendar();

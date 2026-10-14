@@ -540,13 +540,16 @@ h2 { margin-top: 18px; font-size: clamp(46px, 6vw, 84px); line-height: .9; lette
 .calendar-top h3 { font-size: 42px; font-weight: 500; letter-spacing: -.04em; }
 .calendar-top p { margin-top: 4px; color: var(--muted-2); font-size: 13px; }
 
-.arrows { display: flex; gap: 8px; }
+.arrows { display: flex; gap: 8px; align-items: center; }
 .arrows button {
   width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 8px;
   background: rgba(var(--cream-rgb),.045); color: var(--cream); cursor: pointer;
-  transition: background .25s ease;
+  display: inline-flex; align-items: center; justify-content: center; padding: 0; line-height: 1;
+  transition: background .25s ease, border-color .25s ease, transform .15s ease;
 }
-.arrows button:hover { background: rgba(var(--cream-rgb),.1); }
+.arrows button:hover { background: rgba(var(--cream-rgb),.1); border-color: var(--line-2); }
+.arrows button:active { transform: scale(0.95); }
+.arrows button svg { display: block; width: 18px; height: 18px; pointer-events: none; }
 
 .weekdays, .dates { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 .weekdays { margin-bottom: 8px; color: var(--muted-2); text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; }
@@ -1446,7 +1449,7 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
     gap: 14px;
   }
   .calendar-top {
-    align-items: flex-start;
+    align-items: center;
     gap: 14px;
   }
   .calendar-top h3,

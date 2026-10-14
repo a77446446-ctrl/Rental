@@ -1015,7 +1015,7 @@
     // Обновляем текст заезда/выезда на странице
     var checkoutInfoEl = document.getElementById('checkout-time-info');
     if (checkoutInfoEl) {
-      checkoutInfoEl.textContent = 'Заезд с ' + state.settings.checkInTime + ', выезд до ' + state.settings.checkOutTime + ' (МСК). Выберите услуги — сумма обновится автоматически.';
+      checkoutInfoEl.textContent = 'Заезд с ' + ((state.settings && state.settings.checkInTime) || '16:00') + ', выезд до ' + ((state.settings && state.settings.checkOutTime) || '14:00') + ' (МСК). Выберите услуги — сумма обновится автоматически.';
     }
 
     // Инициализация календаря
