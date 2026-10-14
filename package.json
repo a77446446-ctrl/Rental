@@ -7,7 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "setup:db": "node scripts/setup-pocketbase.js",
-    "test": "node --test test/*.test.js",
+    "test": "node --test scripts/run-tests.js",
     "lint": "eslint .",
     "check": "npm test && npm run lint"
   },

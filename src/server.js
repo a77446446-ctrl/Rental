@@ -11,7 +11,7 @@ const { config, validateEnv } = require('./config/env');
 const publicRoutes = require('./routes/public.routes');
 const chatRoutes = require('./routes/chat.routes');
 const adminRoutes = require('./routes/admin.routes');
-const { router: mediaRoutes } = require('./routes/media.routes');
+const { router: mediaRoutes, handlePocketbaseProxy } = require('./routes/media.routes');
 const { requireAdmin } = require('./middleware/auth');
 const externalCalendarService = require('./services/externalCalendar.service');
 const { pbAdmin } = require('./config/pocketbase');
@@ -90,6 +90,16 @@ app.set('trust proxy', 1);
 /* Публичные изображения и видео отдаём через домен приложения. Это позволяет
    сайту работать у провайдеров, где прямой доступ к *.supabase.co нестабилен. */
 app.use('/media', mediaRoutes);
+
+/* Прямой прокси для файлов PocketBase через /api/files/... */
+app.get('/api/files/*', (req, res) => {
+  return handlePocketbaseProxy(req.params[0], req, res);
+});
+
+/* Перенаправление стандартного запроса фавикона браузера */
+app.get('/favicon.ico', (_req, res) => {
+  res.redirect(302, '/api/icon.png');
+});
 
 /* ────────────────────────────────────────
    Защита статики админ-панели

@@ -113,6 +113,7 @@ test('действия с бронированием не включают пр�
 test('storage cleanup accepts PocketBase media paths and rejects unrelated paths', () => {
   const url = 'https://pb.example.com/api/files/media/record123/photo.jpg';
   assert.equal(storage.extractStoragePath(url), 'record123');
+  assert.equal(storage.extractStoragePath('/media/pocketbase/media/record123/photo.jpg'), 'record123');
   assert.equal(storage.isCabinPath(url), true);
   assert.equal(storage.isCabinPath('/api/files/chat/record123/photo.jpg'), false);
   assert.equal(storage.isCabinPath('../secret'), false);
@@ -130,6 +131,10 @@ test('public media proxy only targets the configured PocketBase origin', () => {
       toSameOriginMediaPath('https://pb.example.com/api/files/media/record123/photo%20one.jpg'),
       '/media/pocketbase/media/record123/photo%20one.jpg'
     );
+    assert.equal(
+      toSameOriginMediaPath('/api/files/media/record123/photo%20one.jpg'),
+      '/media/pocketbase/media/record123/photo%20one.jpg'
+    );
     assert.equal(buildPocketbaseMediaUrl('../secret'), null);
   } finally {
     config.pocketbaseUrl = previousUrl;
@@ -140,6 +145,10 @@ test('media uploads are identified by file signature instead of client MIME only
   const png = Buffer.from('89504e470d0a1a0a0000000000000000', 'hex');
   assert.deepEqual(storage.detectMediaFile(png, 'image/png'), {
     mimeType: 'image/png', extension: 'png', mediaType: 'image',
+  });
+  const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><circle/></svg>', 'utf8');
+  assert.deepEqual(storage.detectMediaFile(svg, 'image/svg+xml'), {
+    mimeType: 'image/svg+xml', extension: 'svg', mediaType: 'image',
   });
   assert.throws(
     () => storage.detectMediaFile(Buffer.from('this is not an image'), 'image/png'),

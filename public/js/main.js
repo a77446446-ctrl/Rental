@@ -179,7 +179,10 @@
   var isNavigatingDirectToCalendar = (window.location.search.indexOf('cabin=') !== -1) || (window.location.hash.indexOf('calendar') !== -1);
   var splashAlreadySeen = false;
   try { splashAlreadySeen = sessionStorage.getItem('eco_splash_seen') === '1'; } catch (e) {}
-  var SPLASH_MIN_DURATION_MS = (window.__SKIP_SPLASH__ || isNavigatingDirectToCalendar || splashAlreadySeen) ? 0 : 5000;
+  var SPLASH_MIN_DURATION_MS = 5000;
+  if (window.__SKIP_SPLASH__ || isNavigatingDirectToCalendar || splashAlreadySeen) {
+    SPLASH_MIN_DURATION_MS = 0;
+  }
   var STARTUP_REQUEST_TIMEOUT_MS = 5000;
   var splashStartedAt = Number(window.__APP_SPLASH_STARTED_AT);
   if (!Number.isFinite(splashStartedAt)) splashStartedAt = performance.now();
@@ -541,7 +544,7 @@
     
     renderExtraServices();
     
-    var petsContainer = document.getElementById('checkoutPetsContainer');
+    petsContainer = document.getElementById('checkoutPetsContainer');
     var withPetsCb = document.getElementById('checkoutWithPets');
     var dogLabel = document.getElementById('checkoutPetDogLabel');
     var catLabel = document.getElementById('checkoutPetCatLabel');

@@ -36,12 +36,19 @@ function buildPocketbaseMediaUrl(relativePath) {
 
 function toSameOriginMediaPath(value) {
   const raw = String(value || '').trim();
-  if (!raw || !config.pocketbaseUrl) return raw;
+  if (!raw) return raw;
+  if (raw.startsWith('/media/pocketbase/')) return raw;
 
   try {
-    const source = new URL(raw);
-    const configuredPb = new URL(config.pocketbaseUrl);
-    if (source.origin !== configuredPb.origin || !source.pathname.startsWith(PB_STORAGE_PREFIX)) {
+    let source;
+    if (raw.startsWith(PB_STORAGE_PREFIX)) {
+      if (!config.pocketbaseUrl) return raw;
+      source = new URL(raw, config.pocketbaseUrl);
+    } else {
+      source = new URL(raw);
+    }
+    const configuredPb = config.pocketbaseUrl ? new URL(config.pocketbaseUrl) : null;
+    if (!configuredPb || source.origin !== configuredPb.origin || !source.pathname.startsWith(PB_STORAGE_PREFIX)) {
       return raw;
     }
 
@@ -53,8 +60,8 @@ function toSameOriginMediaPath(value) {
   }
 }
 
-router.get('/pocketbase/*', async (req, res) => {
-  const upstreamUrl = buildPocketbaseMediaUrl(req.params[0]);
+async function handlePocketbaseProxy(relativePath, req, res) {
+  const upstreamUrl = buildPocketbaseMediaUrl(relativePath);
   if (!upstreamUrl) {
     return res.status(400).json({ success: false, error: 'Некорректный адрес медиафайла' });
   }
@@ -107,6 +114,10 @@ router.get('/pocketbase/*', async (req, res) => {
     }
     return res.end();
   }
+}
+
+router.get('/pocketbase/*', async (req, res) => {
+  return handlePocketbaseProxy(req.params[0], req, res);
 });
 
-module.exports = { router, buildPocketbaseMediaUrl, toSameOriginMediaPath };
+module.exports = { router, buildPocketbaseMediaUrl, toSameOriginMediaPath, handlePocketbaseProxy };

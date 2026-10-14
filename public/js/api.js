@@ -27,12 +27,9 @@
 
     try {
       var parsed = new URL(raw, window.location.origin);
-      // Assuming PocketBase URLs look like http://<host>/api/files/...
+      // Assuming PocketBase URLs look like http://<host>/api/files/... or /api/files/...
       var prefixIndex = parsed.pathname.indexOf(PB_API_FILES_PREFIX);
       if (prefixIndex === -1) return raw;
-      
-      // Don't proxy if it's already on the same origin and just a relative path
-      if (parsed.origin === window.location.origin && raw.indexOf('http') !== 0) return raw;
 
       var relativePath = parsed.pathname.slice(prefixIndex + PB_API_FILES_PREFIX.length);
       var encodedPath = relativePath.split('/').map(function (segment) {

@@ -2,7 +2,7 @@ const js = require('@eslint/js');
 
 module.exports = [
   {
-    ignores: ['node_modules/**', 'public/js/lucide.min.js', 'public/js/supabase.js'],
+    ignores: ['node_modules/**', 'public/js/lucide.min.js', 'public/js/supabase.js', 'patch_stepper_and_select.js', 'script.js', 'update_tooltips.js'],
   },
   js.configs.recommended,
   {

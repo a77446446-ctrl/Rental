@@ -17,3 +17,4 @@ mediakit_*.html
 *.pdf
 scripts/*.py
 script*.py
+*.zip

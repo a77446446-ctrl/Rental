@@ -91,6 +91,10 @@ exports.updateMainpage = async (req, res) => {
       features_meta: req.body.features_meta || previous.features_meta || { label: '', title: '' },
       reviews_meta: req.body.reviews_meta || previous.reviews_meta || { label: '', title: '' },
     };
+    if (next.logo && next.logo.url) {
+      const { toSameOriginMediaPath } = require('../../routes/media.routes');
+      next.logo.url = toSameOriginMediaPath(next.logo.url);
+    }
     await write(STORES.mainpage, next);
     res.json({ success: true, data: next });
   } catch (err) {

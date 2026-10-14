@@ -12,13 +12,14 @@ const IMAGE_EXTENSIONS = {
   'image/webp': 'webp',
   'image/avif': 'avif',
   'image/gif': 'gif',
+  'image/svg+xml': 'svg',
   'video/mp4': 'mp4',
   'video/webm': 'webm',
 };
 
 function assertImageMime(mimeType) {
   const extension = IMAGE_EXTENSIONS[mimeType];
-  if (!extension) throw new Error('Допустимы только JPG, PNG, WEBP, AVIF, GIF, MP4 или WEBM');
+  if (!extension) throw new Error('Допустимы только JPG, PNG, WEBP, AVIF, GIF, SVG, MP4 или WEBM');
   return extension;
 }
 
@@ -119,6 +120,10 @@ function detectMediaFile(fileBuffer, declaredMime = '') {
   if (ascii.startsWith('ID3') || (fileBuffer[0] === 0xff && (fileBuffer[1] & 0xe0) === 0xe0)) {
     return { mimeType: 'audio/mpeg', extension: 'mp3', mediaType: 'audio' };
   }
+  const head = fileBuffer.subarray(0, 512).toString('utf8').trim();
+  if (head.startsWith('<svg') || (head.startsWith('<?xml') && head.includes('<svg'))) {
+    return { mimeType: 'image/svg+xml', extension: 'svg', mediaType: 'image' };
+  }
   throw mediaValidationError('Фактический формат файла не поддерживается');
 }
 
@@ -161,15 +166,13 @@ async function uploadFileToPB(fileBuffer, mimeType, extension) {
   formData.append('file', blob, filename);
 
   const record = await pbAdmin.collection('media').create(formData);
-  const fullUrl = pbAdmin.files.getUrl(record, record.file);
-  let publicUrl = fullUrl;
-  try {
-    const parsed = new URL(fullUrl);
-    publicUrl = parsed.pathname + parsed.search;
-  } catch (e) {}
+  const collection = encodeURIComponent(record.collectionName || 'media');
+  const recordId = encodeURIComponent(record.id);
+  const fileField = encodeURIComponent(record.file);
+  const proxiedUrl = `/media/pocketbase/${collection}/${recordId}/${fileField}`;
 
   return {
-    url: publicUrl,
+    url: proxiedUrl,
     path: record.id // В PocketBase храним ID записи как путь
   };
 }
@@ -188,8 +191,8 @@ function extractStoragePath(value) {
   const raw = String(value || '').trim();
   if (!raw) return null;
   
-  // Для PocketBase ссылки выглядят так: /api/files/media/{record_id}/{filename}
-  const match = raw.match(/\/api\/files\/media\/([^\/]+)\//);
+  // Для PocketBase ссылки могут быть /api/files/media/{record_id}/{filename} или /media/pocketbase/media/{record_id}/{filename}
+  const match = raw.match(/\/(?:api\/files|media\/pocketbase)\/media\/([^\/?#]+)/);
   if (match && match[1]) {
     return match[1]; // Возвращаем ID записи
   }

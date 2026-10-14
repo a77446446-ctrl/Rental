@@ -40,8 +40,10 @@ async function getConfiguredLogoUrl() {
 }
 
 async function readConfiguredLogoBuffer(logoUrl) {
-  if (logoUrl.startsWith('/media/pocketbase/')) {
-    const encodedPath = logoUrl.slice('/media/pocketbase/'.length);
+  const cleanUrl = String(logoUrl || '').trim().split('?')[0];
+
+  if (cleanUrl.startsWith('/media/pocketbase/')) {
+    const encodedPath = cleanUrl.slice('/media/pocketbase/'.length);
     const relativePath = encodedPath.split('/').map((segment) => decodeURIComponent(segment)).join('/');
     const upstreamUrl = buildPocketbaseMediaUrl(relativePath);
     if (!upstreamUrl) throw new Error('Некорректный адрес логотипа');
@@ -50,8 +52,17 @@ async function readConfiguredLogoBuffer(logoUrl) {
     return Buffer.from(await response.arrayBuffer());
   }
 
-  if (logoUrl.startsWith('/')) {
-    const localPath = path.resolve(publicRoot, '.' + logoUrl.split('?')[0]);
+  if (cleanUrl.startsWith('/api/files/')) {
+    const relativePath = cleanUrl.slice('/api/files/'.length);
+    const upstreamUrl = buildPocketbaseMediaUrl(relativePath);
+    if (!upstreamUrl) throw new Error('Некорректный адрес логотипа');
+    const response = await fetch(upstreamUrl, { signal: AbortSignal.timeout(8000) });
+    if (!response.ok) throw new Error('Логотип временно недоступен');
+    return Buffer.from(await response.arrayBuffer());
+  }
+
+  if (cleanUrl.startsWith('/')) {
+    const localPath = path.resolve(publicRoot, '.' + cleanUrl);
     if (!localPath.startsWith(publicRoot + path.sep)) throw new Error('Некорректный путь логотипа');
     return fs.promises.readFile(localPath);
   }

@@ -480,7 +480,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('logoText').value = mainpageData.logo?.text || '';
       document.getElementById('logoUrl').value = mainpageData.logo?.url || '';
       if (mainpageData.logo?.url) {
-        document.getElementById('logoPreview').innerHTML = `<img src="${mainpageData.logo.url}" style="max-height: 50px;">`;
+        const logoDisplayUrl = window.EcoMedia ? window.EcoMedia.url(mainpageData.logo.url) : mainpageData.logo.url;
+        document.getElementById('logoPreview').innerHTML = `<div style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: rgba(var(--cream-rgb), 0.04); border: 1px solid var(--line); border-radius: 8px; margin-top: 6px;"><img src="${logoDisplayUrl}" alt="Логотип" style="max-height: 48px; max-width: 180px; object-fit: contain;"></div>`;
       }
 
       document.getElementById('heroTitle').value = mainpageData.hero?.title || '';
@@ -569,12 +570,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       const json = await res.json();
       if (json.success) {
-        document.getElementById(urlInputId).value = json.url;
+        const proxiedUrl = window.EcoMedia ? window.EcoMedia.url(json.url) : json.url;
+        document.getElementById(urlInputId).value = proxiedUrl;
         const preview = document.getElementById(previewId);
-        if (preview.tagName.toLowerCase() === 'div') {
-          preview.style.backgroundImage = `url('${json.url}')`;
+        if (previewId === 'logoPreview') {
+          preview.innerHTML = `<div style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: rgba(var(--cream-rgb), 0.04); border: 1px solid var(--line); border-radius: 8px; margin-top: 6px;"><img src="${proxiedUrl}" alt="Превью логотипа" style="max-height: 48px; max-width: 180px; object-fit: contain;"></div>`;
+        } else if (preview.tagName.toLowerCase() === 'div') {
+          preview.style.backgroundImage = `url('${proxiedUrl}')`;
         } else {
-          preview.innerHTML = `<img src="${json.url}" style="max-height: 50px;">`;
+          preview.innerHTML = `<img src="${proxiedUrl}" style="max-height: 50px;">`;
         }
         showToast('Изображение загружено', 'success');
       } else {
@@ -605,7 +609,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     mainpageData.global_bg_dimming = normalizeGlobalBgDimming(document.getElementById('globalBgDimming').value);
     
     mainpageData.logo.text = document.getElementById('logoText').value;
-    mainpageData.logo.url = document.getElementById('logoUrl').value;
+    const rawLogoUrl = document.getElementById('logoUrl').value;
+    mainpageData.logo.url = window.EcoMedia ? window.EcoMedia.url(rawLogoUrl) : rawLogoUrl;
 
     mainpageData.hero.title = document.getElementById('heroTitle').value;
     mainpageData.hero.background_url = document.getElementById('heroBgUrl').value;
