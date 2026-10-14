@@ -1796,10 +1796,36 @@
 
     // Территория
     applyTerritoryText(data.territory);
-    if (data.territory && data.territory.background_url) {
-      document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(var(--bg-rgb),.44) 0%, rgba(var(--bg-rgb),.76) 55%, rgba(var(--bg-rgb),.95) 100%), url('${mainpageMediaUrl(data.territory.background_url)}')`;
-      document.getElementById('territory-stage').style.backgroundSize = 'cover';
-      document.getElementById('territory-stage').style.backgroundPosition = 'center';
+    const territoryBgUrl = (data.territory && data.territory.background_url) ? data.territory.background_url : '';
+    const territoryStage = document.getElementById('territory-stage');
+    if (territoryStage) {
+      if (territoryBgUrl) {
+        document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(var(--bg-rgb),.44) 0%, rgba(var(--bg-rgb),.76) 55%, rgba(var(--bg-rgb),.95) 100%), url('${mainpageMediaUrl(data.territory.background_url)}')`;
+        territoryStage.style.backgroundSize = 'cover';
+        territoryStage.style.backgroundPosition = 'center';
+      } else {
+        territoryStage.style.backgroundImage = '';
+      }
+    }
+    const territoryOpenMap = !data.territory || data.territory.open_map_modal !== false;
+    const canOpenTerritoryMap = Boolean(territoryBgUrl && territoryOpenMap);
+    const openTerritoryMapBtnEl = document.getElementById('openTerritoryMapBtn');
+    const territoryLabelEl = document.getElementById('territory-label');
+    if (openTerritoryMapBtnEl) {
+      openTerritoryMapBtnEl.style.display = canOpenTerritoryMap ? 'inline-flex' : 'none';
+    }
+    if (territoryLabelEl) {
+      if (canOpenTerritoryMap) {
+        territoryLabelEl.style.cursor = 'pointer';
+        territoryLabelEl.setAttribute('role', 'button');
+        territoryLabelEl.setAttribute('tabindex', '0');
+        territoryLabelEl.title = 'Нажмите, чтобы открыть карту территории в полном размере';
+      } else {
+        territoryLabelEl.style.cursor = '';
+        territoryLabelEl.removeAttribute('role');
+        territoryLabelEl.removeAttribute('tabindex');
+        territoryLabelEl.removeAttribute('title');
+      }
     }
 
     // Контакты
@@ -2109,6 +2135,63 @@
       if (vid) { vid.pause(); vid.src = ''; }
     });
   }
+
+  // --- Модалка карты территории ---
+  const territoryMapModal = document.getElementById('territoryMapModal');
+  const closeTerritoryModalBtn = document.getElementById('closeTerritoryModalBtn');
+  const territoryModalBackdrop = document.getElementById('territoryModalBackdrop');
+  const territoryModalImg = document.getElementById('territoryModalImg');
+  const openTerritoryMapBtn = document.getElementById('openTerritoryMapBtn');
+  const territoryLabel = document.getElementById('territory-label');
+
+  function openTerritoryMap() {
+    if (!territoryMapModal || !territoryModalImg) return;
+    const tData = state.mainpage && state.mainpage.territory ? state.mainpage.territory : {};
+    if (!tData.background_url) return;
+    const imgUrl = mainpageMediaUrl(tData.background_url);
+    territoryModalImg.src = imgUrl;
+    territoryMapModal.setAttribute('aria-hidden', 'false');
+    territoryMapModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeTerritoryMap() {
+    if (!territoryMapModal) return;
+    territoryMapModal.setAttribute('aria-hidden', 'true');
+    territoryMapModal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  window.openTerritoryMap = openTerritoryMap;
+  window.closeTerritoryMap = closeTerritoryMap;
+
+  if (openTerritoryMapBtn) {
+    openTerritoryMapBtn.addEventListener('click', openTerritoryMap);
+  }
+  if (territoryLabel) {
+    territoryLabel.addEventListener('click', function() {
+      if (territoryLabel.getAttribute('role') === 'button') {
+        openTerritoryMap();
+      }
+    });
+    territoryLabel.addEventListener('keydown', function(e) {
+      if ((e.key === 'Enter' || e.key === ' ') && territoryLabel.getAttribute('role') === 'button') {
+        e.preventDefault();
+        openTerritoryMap();
+      }
+    });
+  }
+  if (closeTerritoryModalBtn) {
+    closeTerritoryModalBtn.addEventListener('click', closeTerritoryMap);
+  }
+  if (territoryModalBackdrop) {
+    territoryModalBackdrop.addEventListener('click', closeTerritoryMap);
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && territoryMapModal && territoryMapModal.getAttribute('aria-hidden') === 'false') {
+      closeTerritoryMap();
+    }
+  });
 
   // --- Галерея Модалка ---
   const galleryModal = document.getElementById('galleryModal');

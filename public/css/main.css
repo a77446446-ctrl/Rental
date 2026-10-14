@@ -682,11 +682,173 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 .chat-date-group-body .conversation-item { border-radius: 0; border: none; border-bottom: 1px solid var(--line); margin-bottom: 0; }
 .chat-date-group-body .conversation-item:last-child { border-bottom: none; }
 
-.territory-stage > .section-label {
+.territory-header-row {
   position: absolute;
   top: 32px;
   left: 32px;
+  right: 32px;
   z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.territory-stage > .section-label,
+.territory-header-row > .section-label {
+  margin: 0;
+  position: static;
+}
+.btn-territory-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 0 14px;
+  border: 1px solid rgba(var(--gold-rgb), 0.4);
+  border-radius: 999px;
+  background: rgba(14, 11, 8, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s ease;
+}
+.btn-territory-map:hover {
+  background: rgba(var(--gold-rgb), 0.2);
+  border-color: var(--gold);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+.btn-territory-map:active {
+  transform: scale(0.97);
+}
+.btn-territory-map svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
+}
+
+/* Модальное окно полноразмерной карты */
+.territory-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.territory-modal[aria-hidden="true"] {
+  display: none !important;
+}
+.territory-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeInTerritory 0.2s ease;
+}
+.territory-modal-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-width: 96vw;
+  max-height: 94vh;
+  width: auto;
+  background: #1b1612;
+  border: 1px solid rgba(var(--cream-rgb), 0.16);
+  border-radius: 14px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  animation: zoomInTerritory 0.22s ease-out;
+}
+.territory-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  background: rgba(var(--cream-rgb), 0.03);
+  border-bottom: 1px solid rgba(var(--cream-rgb), 0.08);
+}
+.territory-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.territory-modal-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cream);
+}
+.territory-modal-badge {
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(var(--gold-rgb), 0.14);
+  border: 1px solid rgba(var(--gold-rgb), 0.3);
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.territory-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(var(--cream-rgb), 0.14);
+  border-radius: 8px;
+  background: rgba(var(--cream-rgb), 0.05);
+  color: var(--cream);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.territory-modal-close:hover {
+  background: rgba(var(--cream-rgb), 0.12);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.territory-modal-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 10px;
+  max-height: calc(94vh - 65px);
+  background: #110e0b;
+}
+.territory-modal-body img {
+  max-width: 100%;
+  max-height: calc(94vh - 85px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+@keyframes fadeInTerritory {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes zoomInTerritory {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .territory-tags {

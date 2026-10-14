@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       title: '',
       desc: '',
       side_title: '',
+      open_map_modal: true,
       items: []
     },
     contacts: { label: '', title: '', desc: '', phone: '', email: '', cta_text: '', map_code: '', background_url: '' },
@@ -435,6 +436,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (title) title.value = territory.title || '';
     if (desc) desc.value = territory.desc || '';
     if (sideTitle) sideTitle.value = territory.side_title || '';
+    const openMapCb = document.getElementById('territoryOpenMapModal');
+    if (openMapCb) openMapCb.checked = territory.open_map_modal !== false;
     for (let i = 0; i < 3; i++) {
       const item = items[i] || {};
       const itemTitle = document.getElementById('territoryItemTitle_' + i);
@@ -451,6 +454,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       title: (document.getElementById('territoryTitle') || {}).value || '',
       desc: (document.getElementById('territoryDesc') || {}).value || '',
       side_title: (document.getElementById('territorySideTitle') || {}).value || '',
+      open_map_modal: !!(document.getElementById('territoryOpenMapModal') && document.getElementById('territoryOpenMapModal').checked),
       items: []
     };
     for (let i = 0; i < 3; i++) {
