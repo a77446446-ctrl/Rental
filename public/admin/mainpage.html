@@ -107,20 +107,279 @@
     
     /* Скелетон загрузки */
     .loading-area { opacity: 0.6; pointer-events: none; }
-    /* Полноэкранный двухколоночный макет для настроек Главного экрана */
+    /* Двухколоночный макет и режим с образцом / без образца */
     .mainpage-workspace-grid {
-      display: grid;
-      grid-template-columns: minmax(400px, 470px) minmax(540px, 1fr);
-      gap: 26px;
-      align-items: start;
       margin-top: 20px;
+      transition: all 0.3s ease;
     }
+    
+    .mainpage-workspace-grid.with-preview {
+      display: grid;
+      grid-template-columns: minmax(380px, 460px) minmax(520px, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .mainpage-workspace-grid.with-preview .mainpage-preview-column {
+      display: block;
+    }
+
+    .mainpage-workspace-grid.without-preview {
+      display: block;
+      max-width: 1080px;
+      margin: 20px auto 0 auto;
+    }
+    .mainpage-workspace-grid.without-preview .mainpage-preview-column {
+      display: none !important;
+    }
+    .mainpage-workspace-grid.without-preview .mainpage-settings-column {
+      width: 100%;
+      max-width: 100%;
+    }
+
     .mainpage-settings-column {
       display: flex;
       flex-direction: column;
       gap: 0;
       min-width: 0;
+      box-sizing: border-box;
     }
+    .mainpage-settings-column * {
+      box-sizing: border-box;
+    }
+    .mainpage-settings-column .admin-accordion-content {
+      overflow-x: hidden;
+      min-width: 0;
+    }
+    .mainpage-settings-column .form-group {
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+    }
+    .mainpage-settings-column input[type="text"],
+    .mainpage-settings-column input[type="number"],
+    .mainpage-settings-column input[type="email"],
+    .mainpage-settings-column input[type="file"],
+    .mainpage-settings-column textarea,
+    .mainpage-settings-column select {
+      box-sizing: border-box;
+      max-width: 100%;
+      width: 100%;
+      min-width: 0;
+    }
+    .mainpage-settings-column textarea {
+      width: 100% !important;
+      max-width: 100% !important;
+      resize: vertical;
+    }
+    .mainpage-settings-column input[type="file"] {
+      width: 100%;
+      max-width: 100%;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Адаптивные ряды формы */
+    .admin-form-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      box-sizing: border-box;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .admin-form-row-2col.col-span-2,
+    .admin-form-row-2col .col-span-2 {
+      grid-column: span 2;
+    }
+
+    .admin-flex-row-wrap {
+      display: flex;
+      gap: 8px;
+      min-width: 0;
+      max-width: 100%;
+      align-items: center;
+    }
+    .admin-flex-row-wrap > input {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .admin-flex-row-wrap > button {
+      flex-shrink: 0;
+    }
+
+    /* Сетка карточек преимуществ */
+    .admin-feature-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(237, 228, 214, 0.02);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-sizing: border-box;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    /* Сетка карточек отзывов */
+    .admin-review-item-row {
+      display: grid;
+      grid-template-columns: 70px minmax(130px, 0.7fr) minmax(260px, 1fr) auto;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(237, 228, 214, 0.025);
+      align-items: center;
+      box-sizing: border-box;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    /* КОГДА ОБРАЗЕЦ ВКЛЮЧЕН — делаем все элементы слева компактными в 1 столбец */
+    .mainpage-workspace-grid.with-preview .admin-form-row-2col,
+    .mainpage-workspace-grid.with-preview .admin-feature-card-grid {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+    }
+    .mainpage-workspace-grid.with-preview .admin-form-row-2col .col-span-2 {
+      grid-column: span 1 !important;
+    }
+    .mainpage-workspace-grid.with-preview .admin-review-item-row {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+    .mainpage-workspace-grid.with-preview .admin-review-item-row > div:last-child {
+      justify-content: flex-start !important;
+    }
+
+    /* Анимация подсветки аккордеона при навигации с образца */
+    @keyframes accordionHighlightGlow {
+      0% {
+        box-shadow: 0 0 0 2px var(--gold), 0 0 26px rgba(var(--gold-rgb), 0.55);
+        border-color: var(--gold);
+      }
+      50% {
+        box-shadow: 0 0 0 2px var(--gold), 0 0 16px rgba(var(--gold-rgb), 0.35);
+        border-color: var(--gold);
+      }
+      100% {
+        box-shadow: none;
+        border-color: var(--line);
+      }
+    }
+    .accordion-highlight-pulse {
+      animation: accordionHighlightGlow 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+      border-color: var(--gold) !important;
+    }
+
+    /* Тумблер в шапке для показа/скрытия живого образца */
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .preview-toggle-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 6px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(237, 228, 214, 0.04);
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    .preview-toggle-wrapper:hover {
+      background: rgba(237, 228, 214, 0.08);
+      border-color: rgba(var(--gold-rgb), 0.5);
+    }
+    .preview-toggle-wrapper.is-active {
+      border-color: rgba(var(--gold-rgb), 0.7);
+      background: rgba(var(--gold-rgb), 0.12);
+    }
+    .preview-toggle-switch {
+      position: relative;
+      display: inline-block;
+      flex: 0 0 40px;
+      width: 40px;
+      height: 24px;
+      cursor: pointer;
+      margin: 0;
+    }
+    .preview-toggle-switch input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: inherit;
+    }
+    .preview-toggle-track {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(237, 228, 214, 0.15);
+      border-radius: 999px;
+      background: rgba(237, 228, 214, 0.12);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      pointer-events: none;
+    }
+    .preview-toggle-dot {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--muted);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .preview-toggle-switch input:checked + .preview-toggle-track {
+      border-color: rgba(74, 222, 128, 0.8);
+      background: #2ea043;
+    }
+    .preview-toggle-switch input:checked + .preview-toggle-track .preview-toggle-dot {
+      transform: translateX(16px);
+      background: #ffffff;
+    }
+    .preview-toggle-label-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .preview-close-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(var(--cream-rgb), 0.06);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .preview-close-btn:hover {
+      background: rgba(255, 100, 100, 0.15);
+      border-color: rgba(255, 100, 100, 0.4);
+      color: #ff8c8c;
+    }
+
     .mainpage-preview-column {
       position: sticky;
       top: 16px;
@@ -257,8 +516,9 @@
       white-space: nowrap;
       transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .preview-nav-pill:hover {
-      background: rgba(var(--gold-rgb), 0.18);
+    .preview-nav-pill:hover,
+    .preview-nav-pill.active {
+      background: rgba(var(--gold-rgb), 0.2);
       border-color: var(--gold);
       color: var(--gold);
     }
@@ -345,6 +605,9 @@
       .mainpage-preview-column {
         display: none !important;
       }
+      .preview-toggle-wrapper {
+        display: none !important;
+      }
     }
   </style>
   <link rel="stylesheet" href="/css/admin-responsive.css?v=20260923-5">
@@ -393,15 +656,27 @@
           <h2>Главный экран</h2>
           <span style="color: var(--muted);">Управление контентом главной страницы сайта</span>
         </div>
-        <button class="btn btn-primary" id="saveMainpageBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">Сохранить изменения</button>
+        <div class="admin-header-actions">
+          <label class="preview-toggle-wrapper is-active" id="previewToggleWrapper" title="Показать или скрыть живой демонстрационный образец сайта">
+            <span class="preview-toggle-switch">
+              <input type="checkbox" id="toggleLivePreviewCheckbox" checked aria-label="Показать живой демонстрационный образец">
+              <span class="preview-toggle-track">
+                <span class="preview-toggle-dot"></span>
+              </span>
+            </span>
+            <span class="preview-toggle-label-text" id="previewToggleLabelText">
+              👁️ Демо-экран: <span style="color: #4ade80;">ВКЛ</span>
+            </span>
+          </label>
+          <button class="btn btn-primary" id="saveMainpageBtn" style="padding: 0 16px; min-height: 40px; font-size: 14px;">Сохранить изменения</button>
+        </div>
       </div>
 
-
-      <div class="mainpage-workspace-grid">
+      <div class="mainpage-workspace-grid with-preview" id="mainpageWorkspaceGrid">
         <!-- ЛЕВАЯ КОЛОНКА: ВСЕ НАСТРОЙКИ (АККОРДЕОНЫ) -->
         <div class="mainpage-settings-column" id="mainpageSettingsColumn">
           <!-- Общие настройки -->
-        <details class="admin-accordion" open>
+        <details class="admin-accordion" id="accLogo" open>
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Логотип</h3>
@@ -410,7 +685,7 @@
             <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Текст или графический файл (желательно SVG/PNG) в шапке сайта.</div>
           </summary>
           <div class="admin-accordion-content" style="padding-top: 16px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="admin-form-row-2col">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Текст логотипа (если нет картинки)</label>
                 <input type="text" id="logoText" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -426,7 +701,7 @@
         </details>
 
         <!-- Глобальный фон -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accGlobalBg">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Общий фон сайта (Глобальный)</h3>
@@ -476,7 +751,7 @@
               </div>
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Фоновое видео/фото</label>
-                <div style="display: flex; gap: 8px;">
+                <div class="admin-flex-row-wrap">
                   <input type="file" id="heroFile" accept="image/*,video/*" style="flex:1; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
                   <button type="button" id="clearHeroBgBtn" onclick="document.getElementById('heroBgUrl').value=''; document.getElementById('heroPreview').style.backgroundImage='none'; document.getElementById('heroPreview').innerHTML='Фон очищен (прозрачный)';" style="background: var(--line); border: none; color: var(--cream); border-radius: 8px; padding: 0 16px; cursor: pointer;">Очистить</button>
                 </div>
@@ -501,7 +776,7 @@
         </details>
 
         <!-- О месте -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accAbout">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Видео "О месте"</h3>
@@ -510,18 +785,18 @@
             <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Блок с рассказом о локации. Лучше использовать короткое атмосферное видео.</div>
           </summary>
           <div class="admin-accordion-content" style="padding-top: 16px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="admin-form-row-2col">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Заголовок блока</label>
                 <input type="text" id="aboutTitle" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
               </div>
-              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; grid-column: span 2;">
+              <div class="form-group col-span-2" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Текст описания "О месте"</label>
                 <textarea id="aboutDesc" rows="4" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;"></textarea>
               </div>
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Ссылка на YouTube/VK/Vimeo</label>
-                <div style="display: flex; gap: 8px;">
+                <div class="admin-flex-row-wrap">
                   <input type="text" id="aboutVideoUrl" placeholder="Вставьте ссылку или код (iframe)..." style="flex:1; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
                   <button type="button" id="clearVideoUrlBtn" class="btn btn-outline" style="padding: 12px;" title="Удалить ссылку">✖</button>
                 </div>
@@ -529,7 +804,7 @@
               
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--gold); font-weight: 600;">ИЛИ Загрузить видео-файл (.mp4)</label>
-                <div style="display: flex; gap: 8px;">
+                <div class="admin-flex-row-wrap">
                   <input type="file" id="aboutVideoFile" accept="video/mp4,video/webm" style="flex:1; background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
                   <button type="button" id="clearVideoFileBtn" class="btn btn-outline" style="padding: 9px 12px;" title="Удалить файл">✖</button>
                 </div>
@@ -544,13 +819,13 @@
                 </label>
               </div>
 
-              <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; grid-column: span 2;">
-                <div style="display: flex; gap: 16px;">
-                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <div class="form-group col-span-2" style="display: flex; flex-direction: column; gap: 8px;">
+                <div class="admin-form-row-2col">
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
                     <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Начало (сек)</label>
                     <input type="number" id="aboutVideoStart" placeholder="0" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
                   </div>
-                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
                     <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Конец (сек)</label>
                     <input type="number" id="aboutVideoEnd" placeholder="Без ограничений" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
                   </div>
@@ -562,7 +837,7 @@
         </details>
 
         <!-- Почему здесь хорошо -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accFeatures">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Почему здесь хорошо</h3>
@@ -571,7 +846,7 @@
             <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Список главных преимуществ. Добавьте иконку, заголовок и пару слов описания.</div>
           </summary>
           <div class="admin-accordion-content" style="padding-top: 16px;">
-            <div style="display: grid; grid-template-columns: minmax(0, .55fr) minmax(0, 1fr); gap: 16px; margin-bottom: 16px;">
+            <div class="admin-form-row-2col" style="margin-bottom: 16px;">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Маленькая подпись блока</label>
                 <input type="text" id="featuresLabel" placeholder="Например: Почему здесь хорошо" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -589,7 +864,7 @@
         </details>
 
         <!-- Теги для объектов -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accTags">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Теги фильтрации объектов</h3>
@@ -607,7 +882,7 @@
         </details>
 
         <!-- Территория -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accTerritory">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Карта территории</h3>
@@ -623,7 +898,7 @@
               <div id="territoryPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px;"></div>
             </div>
 
-            <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 18px;">
+            <div class="admin-form-row-2col" style="margin-top: 18px;">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Заголовок блока территории</label>
                 <input type="text" id="territoryTitle" placeholder="Например: Лесная чаща, озеро и приватные зоны" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -641,15 +916,15 @@
 
             <div style="margin-top: 18px; display: grid; gap: 12px;">
               <div style="color: var(--muted); font-size: 12px;">Эти три пункта выводятся в блоке «Что рядом» на главной странице.</div>
-              <div style="display: grid; grid-template-columns: minmax(140px, .45fr) minmax(220px, 1fr); gap: 12px;">
+              <div class="admin-form-row-2col" style="gap: 12px;">
                 <input type="text" id="territoryItemTitle_0" placeholder="Пункт 1: 2 минуты до озера" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
                 <input type="text" id="territoryItemDesc_0" placeholder="Описание пункта 1" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
               </div>
-              <div style="display: grid; grid-template-columns: minmax(140px, .45fr) minmax(220px, 1fr); gap: 12px;">
+              <div class="admin-form-row-2col" style="gap: 12px;">
                 <input type="text" id="territoryItemTitle_1" placeholder="Пункт 2: Баня и чан" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
                 <input type="text" id="territoryItemDesc_1" placeholder="Описание пункта 2" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
               </div>
-              <div style="display: grid; grid-template-columns: minmax(140px, .45fr) minmax(220px, 1fr); gap: 12px;">
+              <div class="admin-form-row-2col" style="gap: 12px;">
                 <input type="text" id="territoryItemTitle_2" placeholder="Пункт 3: Лесные маршруты" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
                 <input type="text" id="territoryItemDesc_2" placeholder="Описание пункта 3" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
               </div>
@@ -669,7 +944,7 @@
 
 
         <!-- Отзывы гостей -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accReviews">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Отзывы гостей</h3>
@@ -684,7 +959,7 @@
               </div>
               <button type="button" class="btn btn-ghost" id="addReviewBtn" style="min-height: 36px; padding: 0 14px; border-color: var(--line);">+ Добавить отзыв</button>
             </div>
-            <div style="display: grid; grid-template-columns: minmax(0, .55fr) minmax(0, 1fr); gap: 16px; margin-bottom: 16px;">
+            <div class="admin-form-row-2col" style="margin-bottom: 16px;">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Маленькая подпись блока</label>
                 <input type="text" id="reviewsLabel" placeholder="Например: Отзывы гостей" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -699,7 +974,7 @@
         </details>
 
         <!-- Контакты и Карта -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accContacts">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Контакты и Карта</h3>
@@ -708,7 +983,7 @@
             <div style="font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: normal;">Контактные данные, призыв к действию и интерактивная Яндекс Карта.</div>
           </summary>
           <div class="admin-accordion-content" style="padding-top: 16px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="admin-form-row-2col" style="margin-bottom: 16px;">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Маленькая подпись контактного блока</label>
                 <input type="text" id="contactLabel" placeholder="Например: Название проекта" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -730,7 +1005,7 @@
               <div id="contactBgPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px;"></div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="admin-form-row-2col">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Телефон</label>
                 <input type="text" id="contactPhone" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -758,7 +1033,7 @@
         </details>
 
         <!-- Нижний подвал (Футер) -->
-        <details class="admin-accordion">
+        <details class="admin-accordion" id="accFooter">
           <summary class="admin-accordion-header">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <h3 style="margin: 0; color: var(--gold); font-size: 18px;">Нижний подвал (Футер)</h3>
@@ -772,7 +1047,7 @@
               <input type="text" id="footerSlogan" placeholder="Например: Бронирование и аренда" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+            <div class="admin-form-row-2col" style="margin-top: 16px;">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">MAX (ссылка на бота/чат)</label>
                 <input type="text" id="contactMax" placeholder="Например: https://t.me/MAXBot..." style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -783,7 +1058,7 @@
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+            <div class="admin-form-row-2col" style="margin-top: 16px;">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Telegram (юзернейм или ссылка)</label>
                 <input type="text" id="contactTelegram" placeholder="Например: @ecogorniy" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -794,7 +1069,7 @@
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+            <div class="admin-form-row-2col" style="margin-top: 16px;">
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                 <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Одноклассники (ссылка)</label>
                 <input type="text" id="contactOk" placeholder="https://ok.ru/..." style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 12px; border-radius: 8px;">
@@ -813,28 +1088,33 @@
                 <span>Живой образец сайта</span>
                 <span class="preview-badge">LIVE</span>
               </div>
-              <div class="preview-device-switch" role="group" aria-label="Формат отображения образца">
-                <button type="button" class="preview-switch-btn active" id="btnPreviewDesktop" title="Полноразмерный вид для компьютера">
-                  🖥️ Десктоп
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="preview-device-switch" role="group" aria-label="Формат отображения образца">
+                  <button type="button" class="preview-switch-btn active" id="btnPreviewDesktop" title="Полноразмерный вид для компьютера">
+                    🖥️ Десктоп
+                  </button>
+                  <button type="button" class="preview-switch-btn" id="btnPreviewMobile" title="Экран смартфона">
+                    📱 Телефон
+                  </button>
+                </div>
+                <button type="button" class="preview-reload-btn" id="btnPreviewReload" title="Перезагрузить образец">
+                  <i data-lucide="rotate-cw"></i>
                 </button>
-                <button type="button" class="preview-switch-btn" id="btnPreviewMobile" title="Экран смартфона">
-                  📱 Телефон
+                <button type="button" class="preview-close-btn" id="btnHidePreview" title="Скрыть живой образец (развернуть настройки на весь экран)">
+                  ✕ Скрыть
                 </button>
               </div>
-              <button type="button" class="preview-reload-btn" id="btnPreviewReload" title="Перезагрузить образец">
-                <i data-lucide="rotate-cw"></i>
-              </button>
             </div>
 
             <!-- Быстрый переход к разделам сайта в образце -->
-            <div class="preview-nav-ribbon">
+            <div class="preview-nav-ribbon" id="previewNavRibbon">
               <span class="preview-nav-label">К разделу:</span>
-              <button type="button" class="preview-nav-pill" data-target="hero-section">Главный</button>
-              <button type="button" class="preview-nav-pill" data-target="about">О месте</button>
-              <button type="button" class="preview-nav-pill" data-target="features">Плюсы</button>
-              <button type="button" class="preview-nav-pill" data-target="territory">Территория</button>
-              <button type="button" class="preview-nav-pill" data-target="reviews">Отзывы</button>
-              <button type="button" class="preview-nav-pill" data-target="contacts">Контакты</button>
+              <button type="button" class="preview-nav-pill active" data-target="hero-section" data-accordion="accHero">Главный</button>
+              <button type="button" class="preview-nav-pill" data-target="about" data-accordion="accAbout">О месте</button>
+              <button type="button" class="preview-nav-pill" data-target="features" data-accordion="accFeatures">Плюсы</button>
+              <button type="button" class="preview-nav-pill" data-target="territory" data-accordion="accTerritory">Территория</button>
+              <button type="button" class="preview-nav-pill" data-target="reviews" data-accordion="accReviews">Отзывы</button>
+              <button type="button" class="preview-nav-pill" data-target="contacts" data-accordion="accContacts">Контакты</button>
             </div>
 
             <!-- Рамка браузера / устройства -->

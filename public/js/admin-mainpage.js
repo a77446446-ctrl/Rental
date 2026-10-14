@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       mainpageData.reviews.forEach(function(review, index) {
         const row = document.createElement('div');
-        row.style.cssText = 'display:grid;grid-template-columns:70px minmax(130px,.7fr) minmax(260px,1fr) auto;gap:12px;padding:12px;border:1px solid var(--line);border-radius:8px;background:rgba(237,228,214,.025);align-items:center;';
+        row.className = 'admin-review-item-row';
 
         const rating = document.createElement('div');
         rating.innerHTML = '<strong style="color:var(--gold);font-size:18px;">' + (review.rating || 5) + '</strong><span style="display:block;color:var(--muted);font-size:11px;">оценка</span>';
@@ -334,13 +334,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     mainpageData.features.forEach((feat, index) => {
       const featurePreviewUrl = window.EcoMedia ? window.EcoMedia.url(feat.image_url || '') : (feat.image_url || '');
       const div = document.createElement('div');
-      div.style.display = 'grid';
-      div.style.gridTemplateColumns = '1fr 1fr';
-      div.style.gap = '16px';
-      div.style.padding = '16px';
-      div.style.background = 'rgba(237, 228, 214, 0.02)';
-      div.style.border = '1px solid var(--line)';
-      div.style.borderRadius = '8px';
+      div.className = 'admin-feature-card-grid';
 
       div.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 8px; position: relative;">
@@ -901,17 +895,84 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Навигация по разделам сайта в образце
-  document.querySelectorAll('.preview-nav-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.dataset.target;
-      if (!previewIframe || !previewIframe.contentWindow) return;
-      previewIframe.contentWindow.postMessage({ type: 'SCROLL_TO_SECTION', sectionId: targetId }, '*');
-    });
-  });
+  // Управление видимостью демонстрационного экрана (Показать / Скрыть)
+  const toggleLivePreview = document.getElementById('toggleLivePreviewCheckbox');
+  const previewToggleWrapper = document.getElementById('previewToggleWrapper');
+  const previewToggleLabelText = document.getElementById('previewToggleLabelText');
+  const workspaceGrid = document.getElementById('mainpageWorkspaceGrid');
+  const btnHidePreview = document.getElementById('btnHidePreview');
 
-  // Автоскролл образца при раскрытии аккордеонов настроек
+  function setPreviewVisibility(isVisible) {
+    if (workspaceGrid) {
+      if (isVisible) {
+        workspaceGrid.classList.remove('without-preview');
+        workspaceGrid.classList.add('with-preview');
+      } else {
+        workspaceGrid.classList.remove('with-preview');
+        workspaceGrid.classList.add('without-preview');
+      }
+    }
+    if (toggleLivePreview) {
+      toggleLivePreview.checked = isVisible;
+    }
+    if (previewToggleWrapper) {
+      if (isVisible) {
+        previewToggleWrapper.classList.add('is-active');
+      } else {
+        previewToggleWrapper.classList.remove('is-active');
+      }
+    }
+    if (previewToggleLabelText) {
+      if (isVisible) {
+        previewToggleLabelText.innerHTML = '👁️ Демо-экран: <span style="color: #4ade80;">ВКЛ</span>';
+      } else {
+        previewToggleLabelText.innerHTML = '👁️ Показать демо-экран';
+      }
+    }
+    try {
+      localStorage.setItem('eco_admin_mainpage_preview', isVisible ? '1' : '0');
+    } catch (e) {}
+
+    if (isVisible) {
+      setTimeout(syncPreviewWithDraft, 100);
+    }
+  }
+
+  if (toggleLivePreview) {
+    toggleLivePreview.addEventListener('change', (e) => {
+      setPreviewVisibility(e.target.checked);
+    });
+  }
+
+  if (btnHidePreview) {
+    btnHidePreview.addEventListener('click', () => {
+      setPreviewVisibility(false);
+    });
+  }
+
+  // Восстановление сохраненного состояния (по умолчанию включено)
+  try {
+    const savedPreview = localStorage.getItem('eco_admin_mainpage_preview');
+    if (savedPreview === '0') {
+      setPreviewVisibility(false);
+    } else {
+      setPreviewVisibility(true);
+    }
+  } catch (e) {}
+
+  // Двусторонняя навигация по разделам сайта (образца и меню настроек)
+  const ribbonAccordionMap = {
+    'hero-section': 'accHero',
+    'about': 'accAbout',
+    'features': 'accFeatures',
+    'territory': 'accTerritory',
+    'reviews': 'accReviews',
+    'contacts': 'accContacts'
+  };
+
   const accordionScrollMap = {
+    accLogo: 'hero-section',
+    accGlobalBg: 'hero-section',
     accHero: 'hero-section',
     accAbout: 'about',
     accFeatures: 'features',
@@ -921,13 +982,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     accFooter: 'contacts'
   };
 
+  function activateSection(targetId, accId, shouldScrollAccordion = true) {
+    // 1. Подсветка кнопки в ленте "К разделу:"
+    document.querySelectorAll('.preview-nav-pill').forEach(btn => {
+      if (btn.dataset.target === targetId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // 2. Скролл в iframe демонстрационного экрана
+    if (previewIframe && previewIframe.contentWindow) {
+      previewIframe.contentWindow.postMessage({ type: 'SCROLL_TO_SECTION', sectionId: targetId }, '*');
+    }
+
+    // 3. Открытие и плавная прокрутка к блоку настроек в левом меню
+    const targetAccId = accId || ribbonAccordionMap[targetId];
+    if (targetAccId && shouldScrollAccordion) {
+      const acc = document.getElementById(targetAccId);
+      if (acc) {
+        acc.open = true;
+        acc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        acc.classList.remove('accordion-highlight-pulse');
+        void acc.offsetWidth; // trigger reflow
+        acc.classList.add('accordion-highlight-pulse');
+        setTimeout(() => {
+          acc.classList.remove('accordion-highlight-pulse');
+        }, 2200);
+      }
+    }
+  }
+
+  // Клик по кнопкам в ленте образца
+  document.querySelectorAll('.preview-nav-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const accId = btn.dataset.accordion || ribbonAccordionMap[targetId];
+      activateSection(targetId, accId, true);
+    });
+  });
+
+  // Автоскролл образца и подсветка кнопки при раскрытии аккордеонов настроек
   document.querySelectorAll('.admin-accordion').forEach(acc => {
     acc.addEventListener('toggle', () => {
-      if (acc.open && accordionScrollMap[acc.id] && previewIframe && previewIframe.contentWindow) {
-        previewIframe.contentWindow.postMessage({
-          type: 'SCROLL_TO_SECTION',
-          sectionId: accordionScrollMap[acc.id]
-        }, '*');
+      if (acc.open && accordionScrollMap[acc.id]) {
+        activateSection(accordionScrollMap[acc.id], acc.id, false);
       }
     });
   });
