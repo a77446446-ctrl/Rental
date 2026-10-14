@@ -373,3 +373,207 @@ select option { background-color: var(--bg-1, #1e1e1e); color: var(--cream, #f1e
 
 /* Fix for Avito export link flex container */
 #copyExportLinkBtn { flex: 0 0 auto !important; width: auto !important; }
+
+/* ==========================================================================
+   УНИФИЦИРОВАННАЯ ТЕМА АДМИНИСТРАТИВНОЙ ПАНЕЛИ: ЧЁТКИЙ, ОДНОТОННЫЙ ФОН
+   ========================================================================== */
+
+/* 1. Убираем сепию, шум и градиентную дымку на всех страницах админки */
+body:has(.admin-header),
+body:has(.admin-layout),
+body:has(.login-box),
+body.admin-mobile-ready {
+  background: #201b16 !important;
+  background-image: none !important;
+  color: #f7f1e9 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body:has(.admin-header)::before,
+body:has(.admin-header)::after,
+body:has(.admin-layout)::before,
+body:has(.admin-layout)::after,
+body:has(.login-box)::before,
+body:has(.login-box)::after,
+body.admin-mobile-ready::before,
+body.admin-mobile-ready::after {
+  display: none !important;
+  content: none !important;
+}
+
+body:has(.admin-header) .noise,
+body:has(.admin-layout) .noise,
+body:has(.login-box) .noise,
+body.admin-mobile-ready .noise {
+  display: none !important;
+}
+
+/* 2. Шапка и боковая панель — монолитный тёмный тон с чёткими границами */
+body:has(.admin-header) .admin-header,
+body.admin-mobile-ready .admin-header {
+  background: #181411 !important;
+  border-bottom: 1px solid #3c3026 !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35) !important;
+}
+
+body:has(.admin-layout) .admin-sidebar,
+body.admin-mobile-ready .admin-sidebar {
+  background: #1b1612 !important;
+  border-right: 1px solid #3c3026 !important;
+}
+
+body:has(.admin-layout) .admin-menu-item,
+body.admin-mobile-ready .admin-menu-item {
+  color: #cfbfb0 !important;
+  font-weight: 600 !important;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+body:has(.admin-layout) .admin-menu-item:hover,
+body.admin-mobile-ready .admin-menu-item:hover {
+  background: #2a221b !important;
+  color: #ffffff !important;
+}
+
+body:has(.admin-layout) .admin-menu-item.active,
+body.admin-mobile-ready .admin-menu-item.active {
+  background: #352b21 !important;
+  color: #edd197 !important;
+  border-left: 3px solid #edd197 !important;
+  font-weight: 700 !important;
+}
+
+/* 3. Блоки, карточки, аккордеоны — однотонный выделяющийся фон с высокой резкостью */
+body:has(.admin-layout) .admin-accordion,
+body:has(.admin-layout) .settings-card,
+body:has(.admin-layout) .metric-card,
+body:has(.admin-layout) .panel,
+body:has(.admin-layout) .analytics-guest-detail,
+body:has(.admin-layout) .bookings-counter,
+body:has(.admin-layout) .booking-archive,
+body:has(.admin-layout) .gallery-section,
+body:has(.admin-layout) .external-calendar-row,
+body:has(.login-box) .login-box,
+body.admin-mobile-ready .admin-accordion,
+body.admin-mobile-ready .settings-card,
+body.admin-mobile-ready .metric-card,
+body.admin-mobile-ready .panel,
+body.admin-mobile-ready .login-box {
+  background: #29221b !important;
+  border: 1px solid #44362a !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+}
+
+body:has(.admin-layout) .admin-accordion-header:hover,
+body.admin-mobile-ready .admin-accordion-header:hover {
+  background: #322921 !important;
+}
+
+body:has(.admin-layout) .admin-accordion-content,
+body.admin-mobile-ready .admin-accordion-content {
+  border-top: 1px solid #44362a !important;
+}
+
+body:has(.admin-layout) .admin-accordion-header h3,
+body.admin-mobile-ready .admin-accordion-header h3,
+body:has(.admin-layout) .settings-card h3,
+body.admin-mobile-ready .settings-card h3 {
+  color: #edd197 !important;
+  font-weight: 700 !important;
+}
+
+/* 4. Таблицы — высокая чёткость строк, чёткие границы */
+body:has(.admin-layout) .admin-table,
+body.admin-mobile-ready .admin-table {
+  background: #251e18 !important;
+  border: 1px solid #44362a !important;
+}
+
+body:has(.admin-layout) .admin-table th,
+body.admin-mobile-ready .admin-table th {
+  background: #1c1713 !important;
+  color: #eed69f !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid #44362a !important;
+}
+
+body:has(.admin-layout) .admin-table td,
+body.admin-mobile-ready .admin-table td {
+  border-bottom: 1px solid #382c22 !important;
+  color: #f7f1e9 !important;
+}
+
+body:has(.admin-layout) .admin-table tbody tr:hover td,
+body.admin-mobile-ready .admin-table tbody tr:hover td {
+  background: #30261e !important;
+}
+
+/* 5. Поля ввода и элементы форм — глубокий контрастный фон, резкие рамки */
+body:has(.admin-layout) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+body:has(.admin-layout) textarea,
+body:has(.admin-layout) select,
+body:has(.admin-layout) .action-select,
+body:has(.login-box) input,
+body.admin-mobile-ready input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+body.admin-mobile-ready textarea,
+body.admin-mobile-ready select {
+  background: #181410 !important;
+  border: 1px solid #4d3d2f !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+body:has(.admin-layout) input:focus,
+body:has(.admin-layout) textarea:focus,
+body:has(.admin-layout) select:focus,
+body:has(.login-box) input:focus,
+body.admin-mobile-ready input:focus,
+body.admin-mobile-ready textarea:focus,
+body.admin-mobile-ready select:focus {
+  border-color: #d4af37 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.28) !important;
+}
+
+/* 6. Текстовая резкость: контрастные заголовки, подписи и подсказки */
+body:has(.admin-layout) label,
+body:has(.login-box) label,
+body.admin-mobile-ready label {
+  color: #e5d7c8 !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+}
+
+body:has(.admin-layout) .hint,
+body:has(.admin-layout) span[id*="Hint"],
+body:has(.admin-layout) .form-group span,
+body.admin-mobile-ready .hint {
+  color: #baa996 !important;
+}
+
+body:has(.admin-layout) .accordion-icon,
+body.admin-mobile-ready .accordion-icon {
+  color: #eed69f !important;
+}
+
+/* 7. Модальные окна */
+body:has(.admin-layout) .modal,
+body:has(.admin-layout) .modal-content,
+body.admin-mobile-ready .modal,
+body.admin-mobile-ready .modal-content {
+  background: #272019 !important;
+  border: 1px solid #4a3b2e !important;
+}
+
+body:has(.admin-layout) .modal-header,
+body:has(.admin-layout) .modal-footer,
+body.admin-mobile-ready .modal-header,
+body.admin-mobile-ready .modal-footer {
+  background: #1e1813 !important;
+  border-color: #3f3125 !important;
+}

@@ -196,9 +196,13 @@
               <label style="font-size: 13px; color: var(--muted); font-weight: 600;">Загрузить фото для заднего фона</label>
               <input type="file" id="globalBgFile" accept="image/*" style="background: rgba(var(--cream-rgb), 0.05); border: 1px solid var(--line); color: var(--cream); padding: 9px; border-radius: 8px;">
               <input type="hidden" id="globalBgUrl">
-              <div id="globalBgPreview" style="margin-top: 8px; width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 8px; position: relative; overflow: hidden;">
-                <div id="globalBgPreviewTint" style="position: absolute; inset: 0; background: rgba(3, 5, 4, 0.65); border-radius: 8px;"></div>
-                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--gold); text-align: center; padding: 12px;">Предварительный просмотр затемнения</div>
+              <div id="globalBgPreview" style="margin-top: 8px; width: 100%; height: 170px; background-size: cover; background-position: center center; background-repeat: no-repeat; border-radius: 10px; position: relative; overflow: hidden; border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3);">
+                <div id="globalBgPreviewTint" style="position: absolute; inset: 0; background: rgba(3, 5, 4, 0.65); border-radius: 10px; transition: background 0.1s ease;"></div>
+                <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 16px; text-align: center; pointer-events: none; z-index: 2;">
+                  <div id="globalBgPreviewPlaceholder" style="font-size: 11px; padding: 3px 8px; border-radius: 6px; background: rgba(0,0,0,0.65); color: var(--gold); border: 1px solid rgba(187,164,111,0.4); margin-bottom: 2px;">Предварительный просмотр затемнения</div>
+                  <div style="font-size: 17px; font-weight: 700; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.85); letter-spacing: 0.02em;">Eco Gorniy — Уютный отдых</div>
+                  <div style="font-size: 12px; color: var(--gold); text-shadow: 0 1px 4px rgba(0,0,0,0.9);">Пример читаемости текста (затемнение <span id="globalBgSamplePercent">65%</span>)</div>
+                </div>
               </div>
               <div class="form-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">

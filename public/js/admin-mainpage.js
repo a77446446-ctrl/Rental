@@ -14,8 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const field = document.getElementById('globalBgDimming');
     const output = document.getElementById('globalBgDimmingValue');
     const tint = document.getElementById('globalBgPreviewTint');
+    const sample = document.getElementById('globalBgSamplePercent');
     if (field) field.value = String(normalized);
     if (output) output.textContent = normalized + '%';
+    if (sample) sample.textContent = normalized + '%';
     if (tint) tint.style.background = `rgba(3, 5, 4, ${(normalized / 100).toFixed(2)})`;
   };
 
@@ -491,9 +493,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       document.getElementById('heroDesc').value = mainpageData.hero?.desc || '';
 
-      document.getElementById('globalBgUrl').value = mainpageData.global_bg_url || '';
-      if (mainpageData.global_bg_url) {
-        document.getElementById('globalBgPreview').style.backgroundImage = `url('${mainpageData.global_bg_url}')`;
+      document.getElementById('globalBgUrl').value = mainpageData.global_bg_url ? (window.EcoMedia ? window.EcoMedia.url(mainpageData.global_bg_url) : mainpageData.global_bg_url) : '';
+      const globalBgPreviewEl = document.getElementById('globalBgPreview');
+      const globalBgPlaceholderEl = document.getElementById('globalBgPreviewPlaceholder');
+      if (globalBgPreviewEl) {
+        if (mainpageData.global_bg_url) {
+          const proxiedGlobalBg = window.EcoMedia ? window.EcoMedia.url(mainpageData.global_bg_url) : mainpageData.global_bg_url;
+          globalBgPreviewEl.style.backgroundImage = `url('${proxiedGlobalBg}')`;
+          if (globalBgPlaceholderEl) globalBgPlaceholderEl.textContent = 'Текущий фон сайта';
+        } else {
+          globalBgPreviewEl.style.backgroundImage = "url('/images/banya-chan.jpg')";
+          if (globalBgPlaceholderEl) globalBgPlaceholderEl.textContent = 'Пример фона (загрузите своё фото выше)';
+        }
+
+
+
       }
 
       updateGlobalBgDimmingPreview(mainpageData.global_bg_dimming);
@@ -575,6 +589,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const preview = document.getElementById(previewId);
         if (previewId === 'logoPreview') {
           preview.innerHTML = `<div style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: rgba(var(--cream-rgb), 0.04); border: 1px solid var(--line); border-radius: 8px; margin-top: 6px;"><img src="${proxiedUrl}" alt="Превью логотипа" style="max-height: 48px; max-width: 180px; object-fit: contain;"></div>`;
+        } else if (previewId === 'globalBgPreview') {
+          preview.style.backgroundImage = `url('${proxiedUrl}')`;
+          const placeholder = document.getElementById('globalBgPreviewPlaceholder');
+          if (placeholder) placeholder.textContent = 'Загруженное фоновое изображение';
         } else if (preview.tagName.toLowerCase() === 'div') {
           preview.style.backgroundImage = `url('${proxiedUrl}')`;
         } else {
@@ -591,7 +609,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Обработчики кнопок загрузки
-  document.getElementById('globalBgFile').addEventListener('change', (e) => uploadImage(e.target, 'globalBgUrl', 'globalBgPreview'));
+  document.getElementById('globalBgFile').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      try {
+        const tempUrl = URL.createObjectURL(file);
+        const preview = document.getElementById('globalBgPreview');
+        if (preview) preview.style.backgroundImage = `url('${tempUrl}')`;
+        const placeholder = document.getElementById('globalBgPreviewPlaceholder');
+        if (placeholder) placeholder.textContent = 'Выбранное фото (загружается...)';
+      } catch (err) {
+        console.warn('Could not create object URL', err);
+      }
+    }
+    uploadImage(e.target, 'globalBgUrl', 'globalBgPreview');
+  });
   document.getElementById('globalBgDimming').addEventListener('input', (e) => updateGlobalBgDimmingPreview(e.target.value));
   document.getElementById('logoFile').addEventListener('change', (e) => uploadImage(e.target, 'logoUrl', 'logoPreview'));
   document.getElementById('heroFile').addEventListener('change', (e) => uploadImage(e.target, 'heroBgUrl', 'heroPreview'));
