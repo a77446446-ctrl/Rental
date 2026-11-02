@@ -43,6 +43,28 @@
     initMobileNav();
     initLightboxEvents();
 
+    document.addEventListener('click', function (event) {
+      if (typeof window.reachGoal !== 'function') return;
+
+      var telLink = event.target.closest('a[href^="tel:"]');
+      if (telLink) {
+        window.reachGoal('click_phone', { phone: telLink.getAttribute('href') });
+        return;
+      }
+
+      var mailLink = event.target.closest('a[href^="mailto:"]');
+      if (mailLink) {
+        window.reachGoal('click_email', { email: mailLink.getAttribute('href') });
+        return;
+      }
+
+      var messengerLink = event.target.closest('a[href*="t.me"], a[href*="wa.me"], a[href*="whatsapp.com"]');
+      if (messengerLink) {
+        window.reachGoal('click_messenger', { url: messengerLink.getAttribute('href') });
+        return;
+      }
+    });
+
     const mainpagePromise = loadMainpageSettings();
     mainpagePromise.then(applyBrandAndContacts).catch(() => {});
 
@@ -90,6 +112,10 @@
         || (Array.isArray(cabin.amenities) ? cabin.amenities : []);
 
       renderCabinPage(currentCabin, cabinAmenities, houseItems, mainpage);
+
+      if (typeof window.reachGoal === 'function') {
+        window.reachGoal('view_cabin', { cabin_id: currentCabin.id, cabin_name: currentCabin.name });
+      }
 
     } catch (err) {
       console.error('[cabin.js] Ошибка при инициализации страницы:', err);

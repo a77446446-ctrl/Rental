@@ -4,9 +4,31 @@
   <!-- TEST MARKER -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Онлайн-бронирование и посуточная аренда. Актуальные цены, свободные даты и моментальное бронирование.">
+  <meta name="description" content="Посуточная аренда уютных домиков и коттеджей у озера на эко-базе «ЭКО Горный». Комфортное размещение, баня, панорамные виды, мангальная зона. Онлайн-календарь свободных дат и бронирование без посредников.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://eco-gorniy.ru/">
+  <meta name="keywords" content="аренда домиков, снять домик, отдых у озера, эко отдых, база отдыха, коттедж посуточно, бронирование домиков, Горный Алтай, домики у воды">
+  
+  <!-- Open Graph / Яндекс / Соцсети -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="ЭКО Горный">
+  <meta property="og:title" content="ЭКО Горный — Посуточная аренда уютных домиков у озера">
+  <meta property="og:description" content="Уединенный отдых на природе со всеми удобствами. Домики у озера, баня, терраса, онлайн-календарь свободных дат и прямое бронирование.">
+  <meta property="og:url" content="https://eco-gorniy.ru/">
+  <meta property="og:image" content="https://eco-gorniy.ru/api/pwa-icon/512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ЭКО Горный — Аренда домиков у озера">
+  <meta name="twitter:description" content="Уединенный отдых на природе со всеми удобствами. Онлайн-бронирование.">
+  <meta name="twitter:image" content="https://eco-gorniy.ru/api/pwa-icon/512.png">
+
+  <!-- Верификация Яндекс Вебмастер -->
+  <meta name="yandex-verification" content="%YANDEX_VERIFICATION%">
+  <meta name="geo.region" content="RU">
   <meta name="theme-color" content="#120f0d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,13 +36,91 @@
   <link rel="manifest" href="/api/manifest.json">
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" sizes="192x192" href="/api/pwa-icon/192.png">
-  <title>Название проекта — аренда домиков для отдыха у озера</title>
+  <title>ЭКО Горный — аренда домиков для отдыха у озера | Онлайн-бронирование</title>
 
   <!-- Google Fonts -->
   <link rel="stylesheet" href="/css/main.css?v=20260923-5">
   <link rel="stylesheet" href="/css/mobile-app.css?v=20260822-3">
   <link rel="stylesheet" href="/css/mobile-layout.css?v=20260821-4">
 
+  <!-- Микроразметка Schema.org для Яндекса и поисковых систем -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "name": "ЭКО Горный",
+    "description": "Посуточная аренда уютных домиков для отдыха у озера со всеми удобствами, баней и панорамным видом.",
+    "url": "https://eco-gorniy.ru/",
+    "logo": "https://eco-gorniy.ru/api/pwa-icon/512.png",
+    "image": "https://eco-gorniy.ru/api/pwa-icon/512.png",
+    "priceRange": "₽₽",
+    "currenciesAccepted": "RUB",
+    "checkinTime": "16:00",
+    "checkoutTime": "14:00",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "RU",
+      "addressLocality": "Горный Алтай"
+    },
+    "amenityFeature": [
+      { "@type": "LocationFeatureSpecification", "name": "Панорамный вид на озеро", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Баня", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Мангальная зона", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Wi-Fi", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Парковка", "value": true }
+    ]
+  }
+  </script>
+
+  <!-- Яндекс Метрика & Конфигурация -->
+  <script src="/api/seo-config.js"></script>
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    window.YANDEX_METRIKA_ID = window.YANDEX_METRIKA_ID || "%YANDEX_METRIKA_ID%";
+
+    function initYandexMetrika() {
+      var id = window.YANDEX_METRIKA_ID;
+      if (id && id !== "%YANDEX_METRIKA_ID%" && !id.includes("XXXXX")) {
+        var numId = parseInt(id, 10);
+        if (!isNaN(numId)) {
+          ym(numId, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true
+          });
+        }
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initYandexMetrika);
+    } else {
+      initYandexMetrika();
+    }
+
+    // Вспомогательная функция отправки целей в Яндекс Метрику
+    window.reachGoal = function(goalName, goalParams) {
+      try {
+        var id = window.YANDEX_METRIKA_ID;
+        if (typeof window.ym === 'function' && id && id !== "%YANDEX_METRIKA_ID%" && !id.includes("XXXXX")) {
+          var numId = parseInt(id, 10);
+          if (!isNaN(numId)) {
+            window.ym(numId, 'reachGoal', goalName, goalParams);
+          }
+        }
+      } catch (err) {
+        console.warn('[Metrika] Ошибка отправки цели:', err);
+      }
+    };
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/%YANDEX_METRIKA_ID%" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Яндекс Метрика -->
   </head>
 <body class="app-loading-active">
   <script>try{var _t=localStorage.getItem('siteTheme');if(_t)document.body.classList.add(_t);var _s=window.location.search||'';var _h=window.location.hash||'';if(_s.indexOf('cabin=')!==-1||_h.indexOf('calendar')!==-1||sessionStorage.getItem('eco_splash_seen')==='1'){document.body.classList.remove('app-loading-active');window.__SKIP_SPLASH__=true;}}catch(e){}</script>

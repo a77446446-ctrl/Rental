@@ -176,7 +176,6 @@ async function getSources(cabinId) {
   try {
     const records = await pbAdmin.collection('external_calendar_sources').getFullList({
       filter: `cabin_id="${validCabinId}"`,
-      sort: 'created',
     });
     return records.map(toSourceView);
   } catch (error) {

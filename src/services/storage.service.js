@@ -134,17 +134,19 @@ async function ensureMediaCollection() {
     await pbAdmin.collections.getOne('media');
   } catch (err) {
     if (err.status === 404) {
+      const fileField = {
+        name: 'file',
+        type: 'file',
+        maxSelect: 1,
+        maxSize: 524288000,
+      };
       await pbAdmin.collections.create({
         name: 'media',
         type: 'base',
-        schema: [
-          {
-            name: 'file',
-            type: 'file',
-            maxSelect: 1,
-            maxSize: 524288000,
-          }
-        ]
+        schema: [fileField],
+        fields: [fileField],
+        viewRule: '',
+        listRule: '',
       });
       console.log('[storage] Коллекция media успешно создана в PocketBase');
     }

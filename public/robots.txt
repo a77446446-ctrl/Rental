@@ -1,9 +1,72 @@
-User-agent: *
+# robots.txt для eco-gorniy.ru
+# Инструкции для роботов поисковых систем (Яндекс, Google и др.)
+
+User-agent: Yandex
 Allow: /
+Allow: /css/
+Allow: /js/
+Allow: /media/
+Allow: /icons/
+Allow: /api/cabins
+Allow: /api/extra-services
+Allow: /api/prices
+Allow: /api/amenities
+Allow: /api/settings
+Allow: /api/files/
+Allow: /api/icon.png
+Allow: /api/pwa-icon/
+Allow: /cabin.html
 Disallow: /admin/
 Disallow: /api/admin/
 Disallow: /api/chat/
+Disallow: /api/bookings
 Disallow: /success.html
+Disallow: /*?*preview=*
+Disallow: /*?*theme=*
+Clean-param: cabin /
+Clean-param: ref&utm_source&utm_medium&utm_campaign&utm_term&utm_content&yclid&ym_debug&_ym_counter /
 
-Host: eco-gorniy.ru
+User-agent: Googlebot
+Allow: /
+Allow: /css/
+Allow: /js/
+Allow: /media/
+Allow: /icons/
+Allow: /api/cabins
+Allow: /api/extra-services
+Allow: /api/prices
+Allow: /api/amenities
+Allow: /api/settings
+Allow: /api/files/
+Allow: /api/icon.png
+Allow: /api/pwa-icon/
+Allow: /cabin.html
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/chat/
+Disallow: /api/bookings
+Disallow: /success.html
+Disallow: /*?*preview=*
+
+User-agent: *
+Allow: /
+Allow: /css/
+Allow: /js/
+Allow: /media/
+Allow: /icons/
+Allow: /api/cabins
+Allow: /api/extra-services
+Allow: /api/prices
+Allow: /api/files/
+Allow: /api/icon.png
+Allow: /api/pwa-icon/
+Allow: /cabin.html
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/chat/
+Disallow: /api/bookings
+Disallow: /success.html
+Disallow: /*?*preview=*
+
+# Карта сайта
 Sitemap: https://eco-gorniy.ru/sitemap.xml

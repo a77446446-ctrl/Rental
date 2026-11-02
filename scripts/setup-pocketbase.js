@@ -44,38 +44,40 @@ async function ensureCollection(name, schemaFields, options = {}) {
     const existing = await pb.collections.getOne(name);
     console.log(`  ✓ Коллекция «${name}» уже существует. Проверка полей...`);
     
-    // Проверяем, есть ли все поля
-    const currentSchema = existing.schema || [];
+    const currentFields = existing.fields || existing.schema || [];
     let updated = false;
 
     for (const field of schemaFields) {
-      const found = currentSchema.find((f) => f.name === field.name);
+      const found = currentFields.find((f) => f.name === field.name);
       if (!found) {
-        currentSchema.push(field);
+        currentFields.push(field);
         updated = true;
         console.log(`    + Добавлено недостающее поле «${field.name}» (${field.type})`);
       }
     }
 
     if (updated) {
-      await pb.collections.update(name, { schema: currentSchema });
+      const updatePayload = existing.fields ? { fields: currentFields } : { schema: currentFields };
+      await pb.collections.update(name, updatePayload);
       console.log(`    ✓ Схема коллекции «${name}» обновлена.`);
     }
     return existing;
   } catch (err) {
     if (err.status === 404) {
       console.log(`  + Создание коллекции «${name}»...`);
-      const created = await pb.collections.create({
+      const payload = {
         name,
         type: 'base',
         schema: schemaFields,
+        fields: schemaFields,
         listRule: options.listRule !== undefined ? options.listRule : null,
         viewRule: options.viewRule !== undefined ? options.viewRule : null,
         createRule: options.createRule !== undefined ? options.createRule : null,
         updateRule: options.updateRule !== undefined ? options.updateRule : null,
         deleteRule: options.deleteRule !== undefined ? options.deleteRule : null,
         ...options
-      });
+      };
+      const created = await pb.collections.create(payload);
       console.log(`  ✓ Коллекция «${name}» успешно создана!`);
       return created;
     }
@@ -85,12 +87,16 @@ async function ensureCollection(name, schemaFields, options = {}) {
 
 async function run() {
   console.log('================================================================');
-  console.log('🌲 Инициализация базы данных PocketBase для EcoGorniy Rental');
+  console.log('🚀 Инициализация базы данных PocketBase');
   console.log('================================================================');
   console.log(`Подключение к: ${pbUrl}`);
 
   try {
-    await pb.admins.authWithPassword(pbEmail, pbPassword);
+    try {
+      await pb.collection('_superusers').authWithPassword(pbEmail, pbPassword);
+    } catch {
+      await pb.admins.authWithPassword(pbEmail, pbPassword);
+    }
     console.log('✓ Авторизация супер-администратора успешна!\n');
   } catch (err) {
     console.error('\x1b[31m[Ошибка авторизации] Не удалось войти в PocketBase:\x1b[0m', err.message);
@@ -118,7 +124,7 @@ async function run() {
     { name: 'amenities', type: 'json' },
     { name: 'tags', type: 'json' },
     { name: 'sort_order', type: 'number' },
-  ]);
+  ], { listRule: '', viewRule: '' });
 
   // 2. Коллекция prices
   await ensureCollection('prices', [
@@ -127,7 +133,7 @@ async function run() {
     { name: 'custom_price', type: 'number' },
     { name: 'is_promo', type: 'bool' },
     { name: 'promo_description', type: 'text' },
-  ]);
+  ], { listRule: '', viewRule: '' });
 
   // 3. Коллекция guests
   await ensureCollection('guests', [
@@ -171,7 +177,7 @@ async function run() {
   await ensureCollection('app_config', [
     { name: 'key', type: 'text', required: true, unique: true },
     { name: 'value', type: 'json' },
-  ]);
+  ], { listRule: '', viewRule: '' });
 
   // 8. Коллекция external_calendar_sources
   await ensureCollection('external_calendar_sources', [
@@ -322,7 +328,11 @@ async function run() {
   console.log('================================================================\n');
 }
 
-run().catch((err) => {
-  console.error('\n\x1b[31m[Критическая ошибка]:\x1b[0m', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  run().catch((err) => {
+    console.error('\n\x1b[31m[Критическая ошибка]:\x1b[0m', err);
+    process.exit(1);
+  });
+}
+
+module.exports = { runSetup: run };

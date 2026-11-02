@@ -62,6 +62,35 @@
     });
   });
 
+  /* Отслеживание конверсионных кликов для Яндекс Метрики */
+  document.addEventListener('click', function (event) {
+    if (typeof window.reachGoal !== 'function') return;
+
+    var telLink = event.target.closest('a[href^="tel:"]');
+    if (telLink) {
+      window.reachGoal('click_phone', { phone: telLink.getAttribute('href') });
+      return;
+    }
+
+    var mailLink = event.target.closest('a[href^="mailto:"]');
+    if (mailLink) {
+      window.reachGoal('click_email', { email: mailLink.getAttribute('href') });
+      return;
+    }
+
+    var messengerLink = event.target.closest('a[href*="t.me"], a[href*="wa.me"], a[href*="whatsapp.com"]');
+    if (messengerLink) {
+      window.reachGoal('click_messenger', { url: messengerLink.getAttribute('href') });
+      return;
+    }
+
+    var chatToggleBtn = event.target.closest('#chat-toggle, #chat-widget-btn');
+    if (chatToggleBtn) {
+      window.reachGoal('open_chat');
+      return;
+    }
+  });
+
   /* Инициализация глобального стейта */
   var state = {
     cabins: [],
@@ -1262,6 +1291,9 @@
           });
           const data = await res.json();
           if (data.success) {
+            if (typeof window.reachGoal === 'function') {
+              window.reachGoal('booking_submit', { cabin_id: state.selectedCabinId, price: payload.total_price });
+            }
             sessionStorage.setItem('lastBooking', JSON.stringify(data.data));
             sessionStorage.setItem('lastBookingPayload', JSON.stringify(payload));
             window.location.href = `/success.html`;

@@ -3,14 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Подробная информация о домике: фотографии интерьера и территории, удобства, актуальные цены и бронирование на эко-базе «ЭКО Горный».">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://eco-gorniy.ru/cabin.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="ЭКО Горный">
+  <meta property="og:title" content="Подробно о домике | ЭКО Горный">
+  <meta property="og:description" content="Фотографии интерьера, удобства, актуальные цены и прямое бронирование домика на берегу озера.">
+  <meta property="og:image" content="https://eco-gorniy.ru/api/pwa-icon/512.png">
+  <meta name="yandex-verification" content="%YANDEX_VERIFICATION%">
   <meta name="theme-color" content="#14120F">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <meta name="apple-mobile-web-app-title" content="ЭКО Горный">
   <link rel="manifest" href="/api/manifest.json">
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" href="/api/icon.png">
-  <title>Подробно о домике | EcoGorniy.ru</title>
+  <title>Подробно о домике | ЭКО Горный</title>
 
   <!-- Google Fonts: Cormorant Garamond & Manrope -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,6 +30,69 @@
   <!-- Project Base & Cabin Styles -->
   <link rel="stylesheet" href="/css/main.css?v=20260923-5">
   <link rel="stylesheet" href="/css/cabin.css?v=20261011-1">
+  <!-- Микроразметка Schema.org для Яндекса -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "name": "ЭКО Горный",
+    "url": "https://eco-gorniy.ru/cabin.html",
+    "image": "https://eco-gorniy.ru/api/pwa-icon/512.png",
+    "priceRange": "₽₽",
+    "currenciesAccepted": "RUB",
+    "checkinTime": "16:00",
+    "checkoutTime": "14:00"
+  }
+  </script>
+
+  <!-- Яндекс Метрика & Конфигурация -->
+  <script src="/api/seo-config.js"></script>
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    window.YANDEX_METRIKA_ID = window.YANDEX_METRIKA_ID || "%YANDEX_METRIKA_ID%";
+
+    function initYandexMetrika() {
+      var id = window.YANDEX_METRIKA_ID;
+      if (id && id !== "%YANDEX_METRIKA_ID%" && !id.includes("XXXXX")) {
+        var numId = parseInt(id, 10);
+        if (!isNaN(numId)) {
+          ym(numId, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true
+          });
+        }
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initYandexMetrika);
+    } else {
+      initYandexMetrika();
+    }
+
+    window.reachGoal = function(goalName, goalParams) {
+      try {
+        var id = window.YANDEX_METRIKA_ID;
+        if (typeof window.ym === 'function' && id && id !== "%YANDEX_METRIKA_ID%" && !id.includes("XXXXX")) {
+          var numId = parseInt(id, 10);
+          if (!isNaN(numId)) {
+            window.ym(numId, 'reachGoal', goalName, goalParams);
+          }
+        }
+      } catch (err) {
+        console.warn('[Metrika] Ошибка отправки цели:', err);
+      }
+    };
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/%YANDEX_METRIKA_ID%" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Яндекс Метрика -->
 </head>
 <body class="cabin-page-body" style="background-color: #14120F; color: #F1EADD; margin: 0; padding: 0;">
   <script>try{var _t=localStorage.getItem('siteTheme');if(_t)document.body.classList.add(_t);}catch(e){}</script>

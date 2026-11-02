@@ -5,6 +5,7 @@
 
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { config, validateEnv } = require('./config/env');
@@ -36,7 +37,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://api-maps.yandex.ru", "https://yastatic.net"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://api-maps.yandex.ru", "https://yastatic.net", "https://mc.yandex.ru", "https://*.yandex.ru"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: [
@@ -47,7 +48,10 @@ app.use(
           "https://*.supabase.co",
           "https://*.maps.yandex.net",
           "https://core-renderer-tiles.maps.yandex.net",
-          "https://api-maps.yandex.ru"
+          "https://api-maps.yandex.ru",
+          "https://mc.yandex.ru",
+          "https://*.yandex.ru",
+          "https://favicon.yandex.net"
         ],
         mediaSrc: [
           "'self'",
@@ -58,6 +62,9 @@ app.use(
           "wss://*.supabase.co", 
           "https://*.supabase.co",
           "https://api-maps.yandex.ru",
+          "https://mc.yandex.ru",
+          "https://*.yandex.ru",
+          "https://favicon.yandex.net",
           "https://*.maps.yandex.net",
           "https://core-renderer-tiles.maps.yandex.net"
         ],
@@ -66,9 +73,12 @@ app.use(
           "https://www.youtube.com", 
           "https://player.vimeo.com", 
           "https://vk.com",
-          "https://vkvideo.ru"
+          "https://vkvideo.ru",
+          "https://webvisor.com",
+          "https://*.yandex.ru"
         ],
         objectSrc: ["'none'"],
+        childSrc: ["'self'", "blob:", "https://webvisor.com"],
       },
     },
     crossOriginEmbedderPolicy: false,
@@ -101,6 +111,58 @@ app.get('/favicon.ico', (_req, res) => {
   res.redirect(302, '/api/icon.png');
 });
 
+/* Автоматическое подтверждение прав в Яндекс Вебмастере (yandex_*.html) */
+app.get('/yandex_:code.html', (req, res) => {
+  const code = req.params.code;
+  res.type('text/html').send(`<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Verification: ${code}</body></html>`);
+});
+
+/* Динамическая карта сайта sitemap.xml для поисковых систем (Яндекс, Google) */
+app.get('/sitemap.xml', async (_req, res) => {
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  const domain = (config.baseUrl && !config.baseUrl.includes('localhost')) ? config.baseUrl : 'https://eco-gorniy.ru';
+  const today = new Date().toISOString().slice(0, 10);
+
+  let cabinUrls = '';
+  try {
+    const cabins = await pbAdmin.collection('cabins').getFullList({
+      filter: 'is_active = true',
+      fields: 'id,slug,updated',
+    });
+    cabinUrls = cabins.map((c) => {
+      const slugOrId = c.slug || c.id;
+      const mod = c.updated ? c.updated.slice(0, 10) : today;
+      return `  <url>\n    <loc>${domain}/cabin.html?id=${slugOrId}</loc>\n    <lastmod>${mod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`;
+    }).join('\n');
+  } catch (_e) {
+    // fallback
+  }
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${domain}/</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n  <url>\n    <loc>${domain}/cabin.html</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n${cabinUrls ? cabinUrls + '\n' : ''}</urlset>`;
+  res.send(xml);
+});
+
+/* Динамическая конфигурация Яндекс Метрики и Вебмастера */
+app.get('/api/seo-config.js', async (_req, res) => {
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+
+  let metrikaId = config.yandexMetrikaId || '';
+  let verification = config.yandexVerification || '';
+
+  try {
+    const dataStore = require('./services/dataStore.service');
+    const settings = await dataStore.get('settings', 'settings.json', {});
+    if (settings) {
+      if (settings.yandexMetrikaId) metrikaId = settings.yandexMetrikaId;
+      if (settings.yandexVerification) verification = settings.yandexVerification;
+    }
+  } catch (_e) {}
+
+  res.send(`window.YANDEX_METRIKA_ID = ${JSON.stringify(metrikaId)};\nwindow.YANDEX_VERIFICATION = ${JSON.stringify(verification)};`);
+});
+
 /* ────────────────────────────────────────
    Защита статики админ-панели
    ──────────────────────────────────────── */
@@ -114,6 +176,35 @@ app.use('/admin', (req, res, next) => {
 /* ────────────────────────────────────────
    Техническое обслуживание (Server-side)
    ──────────────────────────────────────── */
+const serveHtmlWithSeo = (fileName) => {
+  return async (_req, res) => {
+    try {
+      const fullPath = path.join(__dirname, '..', 'public', fileName);
+      let html = await fs.promises.readFile(fullPath, 'utf8');
+
+      let metrikaId = config.yandexMetrikaId || '';
+      let verification = config.yandexVerification || '';
+      try {
+        const dataStore = require('./services/dataStore.service');
+        const settings = await dataStore.get('settings', 'settings.json', {});
+        if (settings) {
+          if (settings.yandexMetrikaId) metrikaId = settings.yandexMetrikaId;
+          if (settings.yandexVerification) verification = settings.yandexVerification;
+        }
+      } catch (_e) {}
+
+      html = html.replace(/%YANDEX_METRIKA_ID%/g, metrikaId);
+      html = html.replace(/%YANDEX_VERIFICATION%/g, verification);
+
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+      return res.send(html);
+    } catch (err) {
+      return res.sendFile(path.join(__dirname, '..', 'public', fileName));
+    }
+  };
+};
+
 app.use(async (req, res, next) => {
   if (req.method === 'GET' && !req.path.startsWith('/admin') && !req.path.startsWith('/api') && !req.path.startsWith('/media')) {
     if (req.path === '/' || req.path === '/index.html' || (req.headers.accept && req.headers.accept.includes('text/html'))) {
@@ -126,6 +217,12 @@ app.use(async (req, res, next) => {
         }
       } catch (err) {
         // ignore
+      }
+
+      if (['/', '/index.html', '/cabin.html', '/success.html'].includes(req.path)) {
+        const fileName = (req.path === '/' || req.path === '/index.html') ? 'index.html' : req.path.slice(1);
+        return serveHtmlWithSeo(fileName)(req, res);
+      }
       }
     }
   }
@@ -177,9 +274,8 @@ app.get('/ready', async (_req, res) => {
   }
 });
 
-/* ────────────────────────────────────────
-   API-маршруты
-   ──────────────────────────────────────── */
+/* Прокси для публичных файлов PocketBase (/api/files/...) */
+app.get('/api/files/*', (req, res) => handlePocketbaseProxy(req.params[0], req, res));
 
 app.use('/api', (req, res, next) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -206,7 +302,7 @@ app.use((req, res) => {
   }
 
   /* Для остальных — отдаём index.html (SPA-подход) */
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  return serveHtmlWithSeo('index.html')(req, res);
 });
 
 /* ────────────────────────────────────────
@@ -237,16 +333,31 @@ let calendarJob = null;
 let currentPort = config.port;
 let server;
 
-function startServer() {
+async function startServer() {
+  try {
+    const { ensureLocalPocketbase } = require('./services/localPocketbase.service');
+    await ensureLocalPocketbase();
+    const { initPocketBase } = require('./config/pocketbase');
+    await initPocketBase();
+  } catch (err) {
+    console.error('[server] Ошибка инициализации локальной базы данных:', err.message);
+  }
+
   server = app.listen(currentPort, () => {
     console.log('');
-    console.log('╔══════════════════════════════════════════════╗');
-    console.log('║        🌲  EcoGorniy.ru — Сервер запущен     ║');
-    console.log('╠══════════════════════════════════════════════╣');
-    console.log(`║  Адрес:      http://localhost:${currentPort.toString().padEnd(15)}║`);
-    console.log(`║  Режим:      ${config.nodeEnv.padEnd(32)}║`);
-    console.log(`║  Healthcheck: ${(config.baseUrl + '/health').padEnd(31)}║`);
-    console.log('╚══════════════════════════════════════════════╝');
+    console.log('╔══════════════════════════════════════════════════════════════════════╗');
+    console.log('║        🏠  Платформа аренды — Сервер успешно запущен                 ║');
+    console.log('╠══════════════════════════════════════════════════════════════════════╣');
+    console.log(`║  🌐  Сайт:          http://localhost:${currentPort.toString().padEnd(38)}║`);
+    console.log(`║  🔐  Панель админа: http://localhost:${currentPort}/admin`.padEnd(71) + '║');
+    console.log(`║  👤  Логин:         ${(config.adminUsername || 'admin').padEnd(48)}║`);
+    console.log(`║  🔑  Пароль:        ${(config.adminPassword || 'admin').padEnd(48)}║`);
+    if (config.adminPassword === 'admin' || !config.adminPassword) {
+      console.log('║                                                                      ║');
+      console.log('║  ⚠️   Пароль «admin» временный! Смените его в файле .env             ║');
+      console.log('║      перед публикацией сайта в интернете.                            ║');
+    }
+    console.log('╚══════════════════════════════════════════════════════════════════════╝');
     console.log('');
     
     const chatService = require('./services/chat.service');
