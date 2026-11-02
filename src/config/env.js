@@ -42,7 +42,7 @@ const config = {
   maxApiUrl: process.env.MAX_API_URL || 'https://platform-api2.max.ru',
 
   /* Яндекс SEO & Метрика */
-  yandexMetrikaId: process.env.YANDEX_METRIKA_ID || '',
+  yandexMetrikaId: process.env.YANDEX_METRIKA_ID || '114026887',
   yandexVerification: process.env.YANDEX_VERIFICATION || '',
 
   /* Внешние iCal-календари */
