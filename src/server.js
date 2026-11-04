@@ -210,7 +210,7 @@ const serveHtmlWithSeo = (fileName) => {
             const domain = (config.baseUrl && !config.baseUrl.includes('localhost')) ? config.baseUrl : 'https://eco-gorniy.ru';
             const cabinTitle = `${cabin.name} — Аренда домика в лесу у озера в Подмосковье | ЭКО Горный`;
             const cleanDesc = (cabin.description || '').replace(/"/g, '&quot;').slice(0, 150);
-            const cabinDesc = `Снять домик «${cabin.name}» (до ${cabin.capacity || 2} гостей) на базе отдыха «ЭКО Горный» в Подмосковье (д. Пашуково). ${cleanDesc}`;
+            const cabinDesc = `Снять домик «${cabin.name}» (до ${cabin.capacity || 2} гостей) на базе отдыха «ЭКО Горный» в Подмосковье (д. Пашуково, Горный проезд). ${cleanDesc}`;
 
             html = html.replace(/<title>.*?<\/title>/i, `<title>${cabinTitle}</title>`);
             html = html.replace(/<meta name="description" content=".*?"/i, `<meta name="description" content="${cabinDesc}"`);
