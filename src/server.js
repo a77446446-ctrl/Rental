@@ -177,12 +177,12 @@ app.use('/admin', (req, res, next) => {
    Техническое обслуживание (Server-side)
    ──────────────────────────────────────── */
 const serveHtmlWithSeo = (fileName) => {
-  return async (_req, res) => {
+  return async (req, res) => {
     try {
       const fullPath = path.join(__dirname, '..', 'public', fileName);
       let html = await fs.promises.readFile(fullPath, 'utf8');
 
-      let metrikaId = config.yandexMetrikaId || '';
+      let metrikaId = config.yandexMetrikaId || '114026887';
       let verification = config.yandexVerification || '';
       try {
         const dataStore = require('./services/dataStore.service');
@@ -195,6 +195,31 @@ const serveHtmlWithSeo = (fileName) => {
 
       html = html.replace(/%YANDEX_METRIKA_ID%/g, metrikaId);
       html = html.replace(/%YANDEX_VERIFICATION%/g, verification);
+
+      // Уникализация заголовков и описаний для каждого домика (устранение дублей title в Яндексе)
+      if (fileName === 'cabin.html' && req && req.query && (req.query.id || req.query.slug)) {
+        const cabinIdOrSlug = String(req.query.id || req.query.slug).trim();
+        try {
+          let cabin = null;
+          try {
+            cabin = await pbAdmin.collection('cabins').getOne(cabinIdOrSlug);
+          } catch (_e1) {
+            cabin = await pbAdmin.collection('cabins').getFirstListItem(`slug="${cabinIdOrSlug}"`);
+          }
+          if (cabin && cabin.name) {
+            const domain = (config.baseUrl && !config.baseUrl.includes('localhost')) ? config.baseUrl : 'https://eco-gorniy.ru';
+            const cabinTitle = `${cabin.name} — Аренда домика в лесу у озера в Подмосковье | ЭКО Горный`;
+            const cleanDesc = (cabin.description || '').replace(/"/g, '&quot;').slice(0, 150);
+            const cabinDesc = `Снять домик «${cabin.name}» (до ${cabin.capacity || 2} гостей) на базе отдыха «ЭКО Горный» в Подмосковье (д. Пашуково). ${cleanDesc}`;
+
+            html = html.replace(/<title>.*?<\/title>/i, `<title>${cabinTitle}</title>`);
+            html = html.replace(/<meta name="description" content=".*?"/i, `<meta name="description" content="${cabinDesc}"`);
+            html = html.replace(/<link rel="canonical" href=".*?"/i, `<link rel="canonical" href="${domain}/cabin.html?id=${encodeURIComponent(cabin.slug || cabin.id)}"`);
+            html = html.replace(/<meta property="og:title" content=".*?"/i, `<meta property="og:title" content="${cabinTitle}"`);
+            html = html.replace(/<meta property="og:description" content=".*?"/i, `<meta property="og:description" content="${cabinDesc}"`);
+          }
+        } catch (_cabErr) {}
+      }
 
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-cache, must-revalidate');
