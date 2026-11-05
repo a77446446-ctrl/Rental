@@ -1101,16 +1101,19 @@
    КОМПАКТНЫЙ СТИЛЬ УДОБСТВ ДОМИКА (Адаптация для мобильных и десктопа)
    ========================================================================== */
 
-/* Блоки удобств: БЕЗ рамок и границ, с мягким свечением сзади слева вверху, правый край тает в фоне */
+/* Блоки удобств:
+   - Сзади слева — деликатная подсветка, подчеркивающая контур начала блока;
+   - Справа — ПОЛНОЕ бесшовное слияние с фоном страницы (без рамок, без тени, 100% прозрачность справа).
+*/
 .cabin-amenity-item {
   position: relative !important;
   border: none !important;
   outline: none !important;
   border-radius: 10px !important;
-  /* Ровный спокойный темный тон слева, плавно тающий к правому краю в прозрачность */
-  background: linear-gradient(135deg, #24201a 0%, #1c1915 45%, rgba(20, 18, 15, 0) 90%) !important;
-  /* Мягкое свечение СЗАДИ блока ТОЛЬКО в верхнем левом углу */
-  box-shadow: -5px -4px 16px rgba(212, 175, 55, 0.15) !important;
+  /* Мягкий градиент слева, который к 60% становится полностью прозрачным */
+  background: linear-gradient(90deg, rgba(34, 29, 23, 0.45) 0%, rgba(20, 18, 15, 0.08) 35%, transparent 60%) !important;
+  /* Убираем обычный box-shadow, чтобы справа не было ни малейшего ореола */
+  box-shadow: none !important;
   padding: 8px 10px !important;
   font-size: 13.5px !important;
   font-weight: 500 !important;
@@ -1119,11 +1122,30 @@
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
-  transition: box-shadow 0.25s ease !important;
+  transition: opacity 0.2s ease, background 0.2s ease !important;
+}
+
+/* Деликатное свечение СТРОГО СЛЕВА (не доходит до правой половины блока) */
+.cabin-amenity-item::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -2px !important;
+  left: -6px !important;
+  bottom: -2px !important;
+  width: 32px !important;
+  background: radial-gradient(ellipse at 0% 50%, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.04) 55%, transparent 100%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  filter: blur(4px) !important;
+}
+
+.cabin-amenity-item > * {
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .cabin-amenity-item:hover {
-  box-shadow: -7px -6px 20px rgba(212, 175, 55, 0.22) !important;
+  background: linear-gradient(90deg, rgba(42, 36, 28, 0.55) 0%, rgba(20, 18, 15, 0.12) 35%, transparent 60%) !important;
 }
 
 .cabin-amenity-item svg {
@@ -1172,8 +1194,8 @@
   .cabin-amenity-item {
     border: none !important;
     border-radius: 10px !important;
-    background: linear-gradient(135deg, #24201a 0%, #1c1915 45%, rgba(20, 18, 15, 0) 90%) !important;
-    box-shadow: -5px -4px 15px rgba(212, 175, 55, 0.15) !important;
+    background: linear-gradient(90deg, rgba(34, 29, 23, 0.45) 0%, rgba(20, 18, 15, 0.08) 35%, transparent 60%) !important;
+    box-shadow: none !important;
     padding: 7px 9px !important;
     font-size: 13px !important;
     min-height: 40px !important;
