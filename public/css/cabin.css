@@ -1101,12 +1101,16 @@
    КОМПАКТНЫЙ СТИЛЬ УДОБСТВ ДОМИКА (Адаптация для мобильных и десктопа)
    ========================================================================== */
 
-/* Общий стиль карточки удобства: деликатная плашка с золотой вертикальной палочкой-акцентом */
+/* Блоки удобств: БЕЗ рамок и границ, с мягким свечением сзади слева вверху, правый край тает в фоне */
 .cabin-amenity-item {
-  background: rgba(255, 255, 255, 0.035) !important;
-  border: 1px solid rgba(237, 228, 214, 0.08) !important;
-  border-left: 2.5px solid var(--cp-gold, #c5aa67) !important;
-  border-radius: 8px !important;
+  position: relative !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 10px !important;
+  /* Ровный спокойный темный тон слева, плавно тающий к правому краю в прозрачность */
+  background: linear-gradient(135deg, #24201a 0%, #1c1915 45%, rgba(20, 18, 15, 0) 90%) !important;
+  /* Мягкое свечение СЗАДИ блока ТОЛЬКО в верхнем левом углу */
+  box-shadow: -5px -4px 16px rgba(212, 175, 55, 0.15) !important;
   padding: 8px 10px !important;
   font-size: 13.5px !important;
   font-weight: 500 !important;
@@ -1115,14 +1119,11 @@
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
-  transition: all 0.2s ease !important;
+  transition: box-shadow 0.25s ease !important;
 }
 
 .cabin-amenity-item:hover {
-  background: rgba(197, 170, 103, 0.09) !important;
-  border-color: rgba(197, 170, 103, 0.25) !important;
-  border-left-color: #e5cb85 !important;
-  transform: translateY(-1px) !important;
+  box-shadow: -7px -6px 20px rgba(212, 175, 55, 0.22) !important;
 }
 
 .cabin-amenity-item svg {
@@ -1131,6 +1132,7 @@
   stroke: var(--cp-gold, #c5aa67) !important;
   stroke-width: 1.8 !important;
   flex-shrink: 0 !important;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
 }
 
 /* Мобильная версия: 2 колонки, компактный заголовок, плотная компоновка */
@@ -1168,6 +1170,10 @@
   }
 
   .cabin-amenity-item {
+    border: none !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, #24201a 0%, #1c1915 45%, rgba(20, 18, 15, 0) 90%) !important;
+    box-shadow: -5px -4px 15px rgba(212, 175, 55, 0.15) !important;
     padding: 7px 9px !important;
     font-size: 13px !important;
     min-height: 40px !important;

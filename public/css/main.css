@@ -3942,26 +3942,6 @@ select {
     margin: 0 !important;
   }
 }
-  }
-  .feature-item > div {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    width: 32px !important;
-    height: 32px !important;
-    margin: 0 !important;
-  }
-}
-    box-shadow: none !important;
-    width: 32px !important;
-    height: 32px !important;
-    margin: 0 !important;
-  }
-}
-    width: 32px !important;
-    height: 32px !important;
-  }
-}
 
 /* 4. Календарь, Оформление заявки и Отзывы: четкая аккуратная темно-серая рамка (без тени/свечения) */
 .calendar-card,
@@ -3971,13 +3951,43 @@ select {
   box-shadow: none !important;
 }
 
-/* 5. Кнопки в тактильном стиле 3D: темно-серый фон, плотная тень справа и снизу */
+/* 5. Кнопки в тактильном стиле 3D */
+
+/* 5.1. Главные кнопки действия («Выбрать» в карточках и «Выбрать домик» в Hero):
+   Цвет как у кнопки «Забронировать» (теплый коньячно-терракотовый), белый текст, 3D-тень */
 .hero-actions .btn-primary,
+.house-content .select-cabin-btn {
+  background: linear-gradient(180deg, #a06e44, #734a2e) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border: 1px solid #b87d50 !important;
+  border-radius: 8px !important;
+  box-shadow: 4px 5px 0px #352014, 6px 8px 16px rgba(0, 0, 0, 0.75) !important;
+  transition: transform .12s ease, box-shadow .12s ease, background .15s ease !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hero-actions .btn-primary:hover,
+.house-content .select-cabin-btn:hover {
+  background: linear-gradient(180deg, #ad784c, #7e5234) !important;
+  color: #ffffff !important;
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 6px 0px #352014, 8px 10px 20px rgba(0, 0, 0, 0.85) !important;
+}
+
+.hero-actions .btn-primary:active,
+.house-content .select-cabin-btn:active {
+  transform: translate(3px, 4px) !important;
+  box-shadow: 1px 1px 0px #352014, 2px 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 5.2. Второстепенные кнопки («Подробно» в карточках и «Смотреть территорию» в Hero):
+   Спокойный темно-серый 3D-стиль */
 .hero-actions .btn-ghost,
-.house-content .select-cabin-btn,
 .house-content a.btn-ghost {
   background: linear-gradient(180deg, #343029, #23201b) !important;
   color: #ede4d6 !important;
+  font-weight: 600 !important;
   border: 1px solid #4a443b !important;
   border-radius: 8px !important;
   box-shadow: 4px 5px 0px #0e0d0b, 6px 8px 16px rgba(0, 0, 0, 0.75) !important;
@@ -3985,19 +3995,15 @@ select {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.hero-actions .btn-primary:hover,
 .hero-actions .btn-ghost:hover,
-.house-content .select-cabin-btn:hover,
 .house-content a.btn-ghost:hover {
   background: linear-gradient(180deg, #3e3a32, #292621) !important;
-  color: #fff !important;
+  color: #ffffff !important;
   transform: translate(-1px, -1px);
   box-shadow: 5px 6px 0px #0e0d0b, 8px 10px 20px rgba(0, 0, 0, 0.85) !important;
 }
 
-.hero-actions .btn-primary:active,
 .hero-actions .btn-ghost:active,
-.house-content .select-cabin-btn:active,
 .house-content a.btn-ghost:active {
   transform: translate(3px, 4px) !important;
   box-shadow: 1px 1px 0px #0e0d0b, 2px 2px 6px rgba(0, 0, 0, 0.5) !important;
