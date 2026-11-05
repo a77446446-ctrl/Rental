@@ -671,15 +671,15 @@
 }
 
 .cabin-pricing-card {
-  background-color: var(--cp-surface);
-  border: 1px solid var(--cp-line);
-  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(62, 98, 52, 0.52) 0%, rgba(42, 64, 36, 0.32) 28%, #1a1814 62%, #131210 100%) !important;
+  border: 1.5px solid rgba(115, 162, 100, 0.36) !important;
+  border-radius: 14px !important;
   padding: 36px 44px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 32px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
 
 .cabin-pricing-left {
