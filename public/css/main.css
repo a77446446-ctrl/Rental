@@ -4041,12 +4041,12 @@ select {
   }
 }
 
-/* 6.1. ВЫБРАННЫЕ ДАТЫ: насыщенный сочный зеленый цвет (как в легенде «Выбрано») */
+/* 6.1. ВЫБРАННЫЕ ДАТЫ: благородный хвойно-моховый цвет (как в блоке «Итог» и «Выбрано») */
 .calendar-day.selected {
-  background: linear-gradient(135deg, #439637 0%, #2b6d21 100%) !important;
-  border: 1.5px solid #6de358 !important;
+  background: linear-gradient(135deg, rgba(62, 98, 52, 0.92) 0%, rgba(42, 64, 36, 0.95) 100%) !important;
+  border: 1.5px solid rgba(115, 162, 100, 0.85) !important;
   color: #ffffff !important;
-  box-shadow: 0 0 14px rgba(78, 184, 60, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 0 14px rgba(62, 98, 52, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
   transform: scale(1.02);
   z-index: 2;
 }
@@ -4056,19 +4056,19 @@ select {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 .calendar-day.selected small {
-  color: #e4f7e0 !important;
+  color: #dcead7 !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 .calendar-day.selected:hover {
-  background: linear-gradient(135deg, #4ca83d 0%, #327c27 100%) !important;
-  border-color: #84f272 !important;
-  box-shadow: 0 0 18px rgba(78, 184, 60, 0.65) !important;
+  background: linear-gradient(135deg, rgba(72, 112, 60, 0.95) 0%, rgba(50, 76, 42, 0.98) 100%) !important;
+  border-color: rgba(135, 185, 120, 0.95) !important;
+  box-shadow: 0 0 18px rgba(62, 98, 52, 0.6) !important;
 }
 
-/* 6.2. ДИАПАЗОН МЕЖДУ ВЫБРАННЫМИ ДАТАМИ (полупрозрачный сочный зеленый) */
+/* 6.2. ДИАПАЗОН МЕЖДУ ВЫБРАННЫМИ ДАТАМИ (полупрозрачный хвойно-моховый) */
 .calendar-day.range-between {
-  background: rgba(58, 138, 46, 0.35) !important;
-  border: 1.5px solid rgba(108, 217, 89, 0.45) !important;
+  background: rgba(62, 98, 52, 0.38) !important;
+  border: 1.5px solid rgba(115, 162, 100, 0.45) !important;
   color: #ffffff !important;
 }
 .calendar-day.range-between span {
@@ -4076,11 +4076,11 @@ select {
   font-weight: 600 !important;
 }
 .calendar-day.range-between small {
-  color: #d2edd0 !important;
+  color: #dcead7 !important;
 }
 .calendar-day.range-between:hover {
-  background: rgba(58, 138, 46, 0.5) !important;
-  border-color: rgba(108, 217, 89, 0.75) !important;
+  background: rgba(62, 98, 52, 0.52) !important;
+  border-color: rgba(115, 162, 100, 0.75) !important;
 }
 
 /* 6.3. ЗАНЯТЫЕ ДАТЫ: понятный серый нейтральный цвет */
@@ -4112,16 +4112,16 @@ select {
   font-weight: 500 !important;
 }
 .legend i {
-  width: 12px !important;
-  height: 12px !important;
+  width: 13px !important;
+  height: 13px !important;
   border-radius: 4px !important;
   display: inline-block !important;
   flex-shrink: 0 !important;
 }
 .legend i.legend-color-selected {
-  background: linear-gradient(135deg, #439637, #2b6d21) !important;
-  border: 1.5px solid #6de358 !important;
-  box-shadow: 0 0 8px rgba(78, 184, 60, 0.5) !important;
+  background: linear-gradient(135deg, rgba(62, 98, 52, 0.95), rgba(42, 64, 36, 0.95)) !important;
+  border: 1.5px solid rgba(115, 162, 100, 0.85) !important;
+  box-shadow: 0 0 6px rgba(62, 98, 52, 0.4) !important;
 }
 .legend i.legend-color-busy {
   background: #3e3a34 !important;
@@ -4131,11 +4131,15 @@ select {
 .legend i.legend-promo {
   background: transparent !important;
   color: var(--gold, #d4af37) !important;
-  font-size: 14px !important;
+  font-size: 19px !important;
   line-height: 1 !important;
+  width: 13px !important;
+  height: 13px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  text-shadow: 0 0 6px rgba(212, 175, 55, 0.45);
+  transform: translateY(-1px);
 }
 
 /* 7. Оформление заявки (справа): выраженные, четкие рамки у всех полей ввода */
