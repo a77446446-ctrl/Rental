@@ -3823,3 +3823,83 @@ select {
 .is-admin-preview #app-loading {
   display: none !important;
 }
+
+
+/* ==========================================================================
+   ЭКСПЕРИМЕНТАЛЬНЫЙ СТИЛЬ: 3D-кнопки, теневое свечение и рамки
+   (Легко отключить или откатить при необходимости)
+   ========================================================================== */
+
+/* 1. Карточки домиков: темно-серая рамка с мягким теплым "солнечным" свечением */
+.house-card {
+  border: 1px solid #3d3730 !important;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.18), 0 16px 45px rgba(0, 0, 0, 0.6) !important;
+  transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease !important;
+}
+.house-card:hover {
+  border-color: #594f43 !important;
+  box-shadow: 0 0 28px rgba(212, 175, 55, 0.28), 0 20px 50px rgba(0, 0, 0, 0.75) !important;
+}
+
+/* 2. Блоки с глубокой черной 3D-тенью справа и снизу (эффект черного объемного свечения) */
+.hero-booking,
+.territory-stage,
+.cta-card,
+.feature-panel,
+.feature-image {
+  box-shadow: 12px 16px 36px rgba(0, 0, 0, 0.92), 4px 6px 14px rgba(0, 0, 0, 0.98) !important;
+}
+
+/* 3. Преимущества (Преимущество 1, 2, 3, 4): НЕ кнопки, без грубой рамки, мягкий двухтоновый градиент */
+.feature-item {
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, rgba(62, 48, 35, 0.7) 0%, rgba(38, 36, 33, 0.85) 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+  cursor: default !important;
+  transition: transform .25s ease, background .25s ease !important;
+}
+.feature-item:hover {
+  background: linear-gradient(135deg, rgba(74, 58, 43, 0.75) 0%, rgba(45, 43, 39, 0.9) 100%) !important;
+  transform: translateY(-2px);
+}
+
+/* 4. Календарь, Оформление заявки и Отзывы: четкая аккуратная темно-серая рамка (без тени/свечения) */
+.calendar-card,
+.checkout-card,
+.review {
+  border: 1px solid #3a342c !important;
+  box-shadow: none !important;
+}
+
+/* 5. Кнопки в тактильном стиле 3D: темно-серый фон, плотная тень справа и снизу */
+.hero-actions .btn-primary,
+.hero-actions .btn-ghost,
+.house-content .select-cabin-btn,
+.house-content a.btn-ghost {
+  background: linear-gradient(180deg, #343029, #23201b) !important;
+  color: #ede4d6 !important;
+  border: 1px solid #4a443b !important;
+  border-radius: 8px !important;
+  box-shadow: 4px 5px 0px #0e0d0b, 6px 8px 16px rgba(0, 0, 0, 0.75) !important;
+  transition: transform .12s ease, box-shadow .12s ease, background .15s ease !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hero-actions .btn-primary:hover,
+.hero-actions .btn-ghost:hover,
+.house-content .select-cabin-btn:hover,
+.house-content a.btn-ghost:hover {
+  background: linear-gradient(180deg, #3e3a32, #292621) !important;
+  color: #fff !important;
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 6px 0px #0e0d0b, 8px 10px 20px rgba(0, 0, 0, 0.85) !important;
+}
+
+.hero-actions .btn-primary:active,
+.hero-actions .btn-ghost:active,
+.house-content .select-cabin-btn:active,
+.house-content a.btn-ghost:active {
+  transform: translate(3px, 4px) !important;
+  box-shadow: 1px 1px 0px #0e0d0b, 2px 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
