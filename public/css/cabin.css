@@ -1095,3 +1095,89 @@
   outline: 2px solid var(--cp-gold);
   outline-offset: 3px;
 }
+
+
+/* ==========================================================================
+   КОМПАКТНЫЙ СТИЛЬ УДОБСТВ ДОМИКА (Адаптация для мобильных и десктопа)
+   ========================================================================== */
+
+/* Общий стиль карточки удобства: деликатная плашка с золотой вертикальной палочкой-акцентом */
+.cabin-amenity-item {
+  background: rgba(255, 255, 255, 0.035) !important;
+  border: 1px solid rgba(237, 228, 214, 0.08) !important;
+  border-left: 2.5px solid var(--cp-gold, #c5aa67) !important;
+  border-radius: 8px !important;
+  padding: 8px 10px !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.25 !important;
+  color: var(--cp-text, #ede4d6) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.cabin-amenity-item:hover {
+  background: rgba(197, 170, 103, 0.09) !important;
+  border-color: rgba(197, 170, 103, 0.25) !important;
+  border-left-color: #e5cb85 !important;
+  transform: translateY(-1px) !important;
+}
+
+.cabin-amenity-item svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: var(--cp-gold, #c5aa67) !important;
+  stroke-width: 1.8 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Мобильная версия: 2 колонки, компактный заголовок, плотная компоновка */
+@media (max-width: 900px) {
+  .cabin-amenities-groups {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .cabin-amenity-group-head {
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
+    gap: 10px !important;
+  }
+
+  .cabin-amenity-group-icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .cabin-amenity-group-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .cabin-amenity-group-title {
+    font-size: 17px !important;
+  }
+
+  /* Размещение в 2 колонки вместо одной длинной вертикальной цепочки */
+  .cabin-amenity-items {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px 10px !important;
+  }
+
+  .cabin-amenity-item {
+    padding: 7px 9px !important;
+    font-size: 13px !important;
+    min-height: 40px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .cabin-amenity-item {
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+}
