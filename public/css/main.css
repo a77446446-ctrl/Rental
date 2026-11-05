@@ -3850,49 +3850,39 @@ select {
   box-shadow: 12px 16px 36px rgba(0, 0, 0, 0.92), 4px 6px 14px rgba(0, 0, 0, 0.98) !important;
 }
 
-/* 3. Преимущества: свет сзади ЛЕВОГО верхнего угла; виден только левый и верхний контур, а правый и нижний край полностью растворяются в фоне */
+/* 3. Преимущества:
+   - Сзади левого верхнего угла — мягкое теплое свечение наружу (box-shadow);
+   - Внутри блока — ровный благородный коричневый тон без светлых/желтых пятен вокруг иконки;
+   - Полное отсутствие белых линий и рамок (border: none со всех 4 сторон);
+   - Справа и снизу блок на 100% бесшовно сливается с фоном панели (без свечения и без границ).
+*/
 .feature-item {
   position: relative !important;
-  border-top: 1px solid rgba(237, 228, 214, 0.22) !important;
-  border-left: 1px solid rgba(237, 228, 214, 0.22) !important;
-  border-right: none !important;
-  border-bottom: none !important;
+  border: none !important;
+  outline: none !important;
   border-radius: 14px !important;
-  /* Мягкий градиент: от подсвеченного левого верхнего угла плавно растворяется в фон к правому нижнему краю */
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.045) 0%, rgba(212, 175, 55, 0.05) 18%, rgba(20, 18, 15, 0.25) 45%, transparent 75%) !important;
-  box-shadow: -4px -4px 22px rgba(212, 175, 55, 0.12) !important;
+  /* Ровный спокойный коричневый тон вверху-слева, мягко переходящий в прозрачность к правому нижнему краю */
+  background: linear-gradient(135deg, #24201a 0%, #1c1915 45%, rgba(20, 18, 15, 0) 90%) !important;
+  /* Свечение СЗАДИ блока ТОЛЬКО в верхнем левом углу (отрицательные координаты X и Y) */
+  /* Справа и снизу свечения нет — край полностью сливается с фоном панели */
+  box-shadow: -8px -8px 24px rgba(212, 175, 55, 0.16) !important;
   padding: 16px 14px !important;
   cursor: default !important;
   transform: none !important;
-  transition: all .25s ease !important;
+  transition: box-shadow .25s ease !important;
+}
+
+/* Полностью выключаем внутренний желтый световой диск */
+.feature-item::before {
+  display: none !important;
+  content: none !important;
 }
 
 .feature-item:hover {
-  border-top-color: rgba(212, 175, 55, 0.45) !important;
-  border-left-color: rgba(212, 175, 55, 0.45) !important;
-  box-shadow: -5px -5px 26px rgba(212, 175, 55, 0.2) !important;
+  box-shadow: -10px -10px 28px rgba(212, 175, 55, 0.24) !important;
 }
 
-/* Свечение сзади блока в ЛЕВОМ верхнем углу */
-.feature-item::before {
-  content: "" !important;
-  position: absolute !important;
-  top: -20px !important;
-  left: -20px !important;
-  width: 120px !important;
-  height: 120px !important;
-  background: radial-gradient(circle at center, rgba(212, 175, 55, 0.26) 0%, rgba(212, 175, 55, 0.08) 45%, transparent 75%) !important;
-  pointer-events: none !important;
-  z-index: 0 !important;
-  filter: blur(12px) !important;
-}
-
-.feature-item > * {
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-/* Снимаем плашку-кнопку вокруг иконки, чтобы она была свободным золотистым акцентом */
+/* Иконка: аккуратный золотистый символ на ровном коричневом фоне */
 .feature-item > div {
   background: transparent !important;
   border: none !important;
@@ -3915,7 +3905,7 @@ select {
   stroke: var(--gold, #d4af37) !important;
   stroke-width: 1.8 !important;
   display: block !important;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
 }
 
 .feature-item h3 {
@@ -3931,18 +3921,27 @@ select {
   margin-top: 6px !important;
 }
 
-/* В мобильной версии: подсветка слева вверху, правый и нижний край тают в фоне */
+/* В мобильной версии: ровный тон, свечение только сзади слева вверху, без белых рамок */
 @media (max-width: 520px) {
   .feature-grid {
     gap: 12px !important;
   }
   .feature-item {
-    border-top: 1px solid rgba(237, 228, 214, 0.22) !important;
-    border-left: 1px solid rgba(237, 228, 214, 0.22) !important;
-    border-right: none !important;
-    border-bottom: none !important;
+    border: none !important;
     border-radius: 14px !important;
+    background: linear-gradient(135deg, #24201a 0%, #1c1915 45%, rgba(20, 18, 15, 0) 90%) !important;
+    box-shadow: -7px -7px 20px rgba(212, 175, 55, 0.16) !important;
     padding: 14px 14px !important;
+  }
+  .feature-item > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 !important;
+  }
+}
   }
   .feature-item > div {
     background: transparent !important;
