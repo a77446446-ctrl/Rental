@@ -3903,3 +3903,65 @@ select {
   transform: translate(3px, 4px) !important;
   box-shadow: 1px 1px 0px #0e0d0b, 2px 2px 6px rgba(0, 0, 0, 0.5) !important;
 }
+
+
+/* 6. Календарь: выраженные, отчетливые рамки свободных незаполненных дат (десктоп и мобильный) */
+.calendar-day:not(.empty):not(.past):not(.busy) {
+  border: 1.5px solid rgba(237, 228, 214, 0.3) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25) !important;
+  transition: all .2s ease !important;
+}
+.calendar-day:not(.empty):not(.past):not(.busy):hover {
+  border-color: rgba(212, 175, 55, 0.75) !important;
+  background: rgba(212, 175, 55, 0.15) !important;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2) !important;
+}
+
+@media (max-width: 900px) {
+  .calendar-day:not(.empty):not(.past):not(.busy) {
+    border: 1.5px solid rgba(237, 228, 214, 0.38) !important;
+  }
+}
+
+/* 7. Оформление заявки (справа): выраженные, четкие рамки у всех полей ввода */
+#checkoutSelectedInfo,
+.guest-stepper,
+.booking-form .input,
+.booking-form textarea.input,
+.booking-extras-disclosure {
+  border: 1.5px solid rgba(237, 228, 214, 0.28) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  transition: border-color .2s ease, box-shadow .2s ease !important;
+}
+
+.booking-form .input:focus,
+.booking-form textarea.input:focus {
+  border-color: var(--gold, #d4af37) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18) !important;
+}
+
+.guest-stepper-btn {
+  border-left: 1px solid rgba(237, 228, 214, 0.18) !important;
+  border-right: 1px solid rgba(237, 228, 214, 0.18) !important;
+}
+
+/* 8. Блок «Итог»: градиент от зелененького (хвойно-мохового) в верхнем левом углу к графитовому в центре */
+.summary {
+  background: linear-gradient(135deg, rgba(62, 98, 52, 0.52) 0%, rgba(42, 64, 36, 0.32) 28%, #1a1814 62%, #131210 100%) !important;
+  border: 1.5px solid rgba(115, 162, 100, 0.36) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  padding: 18px !important;
+}
+
+.summary-row.total {
+  border-top: 1px solid rgba(237, 228, 214, 0.18) !important;
+  color: #fff !important;
+}
+
+.summary-row.total b {
+  color: var(--gold-light, #f3e5ab) !important;
+}
