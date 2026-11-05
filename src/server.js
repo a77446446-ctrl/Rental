@@ -248,7 +248,6 @@ app.use(async (req, res, next) => {
         const fileName = (req.path === '/' || req.path === '/index.html') ? 'index.html' : req.path.slice(1);
         return serveHtmlWithSeo(fileName)(req, res);
       }
-      }
     }
   }
   next();
