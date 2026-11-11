@@ -125,7 +125,7 @@ function parseIcsEvents(icsText) {
 }
 
 const SOURCE_FIELD_CONTRACT = {
-  fields: new Set(['cabin_id', 'name', 'url', 'is_active']),
+  fields: new Set(['cabin_id', 'name', 'url', 'is_active', 'last_synced_at', 'last_error', 'last_sync_status', 'last_sync_error']),
   name: 'name',
   url: 'url',
 };
@@ -157,12 +157,20 @@ async function getBookingFieldContract() {
 function toSourceView(record) {
   const sourceName = normalizeSourceName(record?.source_name || record?.name);
   const icalUrl = String(record?.ical_url || record?.url || '').trim();
+  const lastError = record?.last_error || record?.last_sync_error || '';
+  const lastSyncedAt = record?.last_synced_at || null;
+  const lastSyncStatus = record?.last_sync_status || (lastError ? 'error' : (lastSyncedAt ? 'success' : null));
+
   return {
     ...record,
     source_name: sourceName,
     ical_url: icalUrl,
     name: sourceName,
     url: icalUrl,
+    last_synced_at: lastSyncedAt,
+    last_sync_status: lastSyncStatus,
+    last_sync_error: lastError,
+    last_error: lastError,
   };
 }
 
@@ -258,12 +266,27 @@ async function saveSources(cabinId, sources) {
 
 async function updateSourceSyncState(sourceId, status, errorMessage = '') {
   const contract = await getSourceFieldContract();
+  const nowIso = new Date().toISOString();
   const payload = {};
-  if (contract.fields.has('last_synced_at')) payload.last_synced_at = new Date().toISOString();
+  if (contract.fields.has('last_synced_at')) payload.last_synced_at = nowIso;
   if (contract.fields.has('last_sync_status')) payload.last_sync_status = status;
   if (contract.fields.has('last_sync_error')) payload.last_sync_error = errorMessage || '';
-  if (Object.keys(payload).length) {
-    await pbAdmin.collection('external_calendar_sources').update(sourceId, payload);
+  if (contract.fields.has('last_error')) payload.last_error = errorMessage || '';
+
+  if (Object.keys(payload).length && pbAdmin) {
+    try {
+      await pbAdmin.collection('external_calendar_sources').update(sourceId, payload);
+    } catch (updateErr) {
+      // Fallback на базовые поля при различиях в схеме
+      try {
+        await pbAdmin.collection('external_calendar_sources').update(sourceId, {
+          last_synced_at: nowIso,
+          last_error: errorMessage || '',
+        });
+      } catch (fallbackErr) {
+        console.warn(`[externalCalendar] Не удалось обновить статус источника ${sourceId}:`, fallbackErr.message);
+      }
+    }
   }
 }
 
@@ -330,17 +353,28 @@ async function syncSourceById(sourceId) {
 
 async function syncAllActiveSources() {
   if (!pbAdmin) return { synced: 0, failed: 0, results: [] };
-  const records = await pbAdmin.collection('external_calendar_sources').getFullList({ filter: 'is_active=true' });
+  let records = [];
+  try {
+    records = await pbAdmin.collection('external_calendar_sources').getFullList({ filter: 'is_active=true' });
+  } catch (err) {
+    if (isExternalCalendarSchemaMissing(err)) return { synced: 0, failed: 0, results: [] };
+    console.error('[iCal Sync] Ошибка получения активных источников:', err.message);
+    return { synced: 0, failed: 0, results: [] };
+  }
+
   let failed = 0;
+  let totalImported = 0;
   const results = [];
   for (const record of records) {
     try {
-      results.push(await syncSource(record));
+      const res = await syncSource(record);
+      totalImported += (res.imported || 0);
+      results.push(res);
     } catch (_error) {
       failed += 1;
     }
   }
-  return { synced: results.length, failed, results };
+  return { synced: results.length, failed, totalImported, results };
 }
 async function getExternalBookingsForRange(cabinId, from, to) {
   if (!pbAdmin) return [];
@@ -372,10 +406,43 @@ async function assertNoExternalOverlap(cabinId, checkIn, checkOut) {
   if (ext.length > 0) throw new Error(`Даты заняты в календаре: ${ext[0].source_name}`);
 }
 
-function startExternalCalendarSync(intervalMinutes = 30) {
-  const ms = Math.max(intervalMinutes, 5) * 60000;
-  const timer = setInterval(() => syncAllActiveSources().catch(console.error), ms);
-  return { stop: () => clearInterval(timer) };
+function startExternalCalendarSync(intervalMinutes = 10) {
+  const mins = Math.max(intervalMinutes || 10, 5);
+  const ms = mins * 60000;
+  console.log(`[iCal Sync] Служба авто-синхронизации запущена (периодичность: каждые ${mins} мин.)`);
+
+  // Запуск первичной проверки сразу через 5 секунд после старта сервера
+  const initialTimer = setTimeout(() => {
+    syncAllActiveSources()
+      .then((res) => {
+        if (res.synced > 0 || res.failed > 0) {
+          console.log(`[iCal Sync] Стартовая проверка: успешно ${res.synced} источников (${res.totalImported || 0} событий), ошибок: ${res.failed}`);
+        }
+      })
+      .catch((err) => {
+        console.error('[iCal Sync] Ошибка стартовой проверки:', err.message);
+      });
+  }, 5000);
+
+  // Регулярная проверка по расписанию
+  const timer = setInterval(() => {
+    syncAllActiveSources()
+      .then((res) => {
+        if (res.synced > 0 || res.failed > 0) {
+          console.log(`[iCal Sync] Периодическая проверка: успешно ${res.synced} источников (${res.totalImported || 0} событий), ошибок: ${res.failed}`);
+        }
+      })
+      .catch((err) => {
+        console.error('[iCal Sync] Ошибка авто-синхронизации по расписанию:', err.message);
+      });
+  }, ms);
+
+  return {
+    stop: () => {
+      clearTimeout(initialTimer);
+      clearInterval(timer);
+    }
+  };
 }
 
 module.exports = {

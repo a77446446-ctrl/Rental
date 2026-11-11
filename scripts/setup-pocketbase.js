@@ -187,6 +187,8 @@ async function run() {
     { name: 'is_active', type: 'bool' },
     { name: 'last_synced_at', type: 'date' },
     { name: 'last_error', type: 'text' },
+    { name: 'last_sync_status', type: 'text' },
+    { name: 'last_sync_error', type: 'text' },
   ]);
 
   // 9. Коллекция external_bookings

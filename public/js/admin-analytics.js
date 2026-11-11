@@ -94,19 +94,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxRevenue = Math.max(...items.map((item) => item.revenue || 0), 1);
     cabinsTableWrap.innerHTML =
       '<table class="admin-table analytics-table">' +
-        '<thead><tr><th>Объект</th><th><span class="color-moss">Активные</span>/Всего</th><th>Ночи</th><th>Гости</th><th>Выручка</th><th>Средний чек</th><th></th></tr></thead>' +
+        '<thead><tr><th>Объект</th><th>Брони (активные / всего)</th><th>Ночи</th><th>Гости</th><th>Выручка</th><th>Средний чек</th><th></th></tr></thead>' +
         '<tbody>' +
           items.map((item) => {
             const width = Math.max(4, Math.round(((item.revenue || 0) / maxRevenue) * 100));
+            const activeBookings = Number(item.active_bookings || 0);
+            const totalBookings = Number(item.bookings || 0);
+            const cancelledBookings = totalBookings - activeBookings;
+
+            const activeNights = item.active_nights != null ? Number(item.active_nights) : Number(item.nights || 0);
+            const totalNights = Number(item.nights || 0);
+
+            const activeGuests = item.active_guests != null ? Number(item.active_guests) : Number(item.guests_count || 0);
+            const totalGuests = Number(item.guests_count || 0);
+
+            const bookingsHtml =
+              '<span style="white-space: nowrap;" title="' + activeBookings + ' активных, ' + cancelledBookings + ' отмененных (всего ' + totalBookings + ')">' +
+                '<strong class="color-moss" style="font-size:14px;">' + formatNumber(activeBookings) + '</strong> ' +
+                '<span style="color:var(--muted); font-size:12px;">из</span> ' +
+                '<span style="font-weight:600;">' + formatNumber(totalBookings) + '</span>' +
+              '</span>';
+
+            const nightsHtml = totalNights > activeNights
+              ? '<span style="font-weight:600;">' + formatNumber(activeNights) + '</span>' +
+                '<span style="display:block; color:var(--muted); font-size:11px; white-space:nowrap;">всего: ' + formatNumber(totalNights) + '</span>'
+              : '<span style="font-weight:600;">' + formatNumber(activeNights) + '</span>';
+
+            const guestsHtml = totalGuests > activeGuests
+              ? '<span style="font-weight:600;">' + formatNumber(activeGuests) + '</span>' +
+                '<span style="display:block; color:var(--muted); font-size:11px; white-space:nowrap;">всего: ' + formatNumber(totalGuests) + '</span>'
+              : '<span style="font-weight:600;">' + formatNumber(activeGuests) + '</span>';
+
             return (
               '<tr>' +
                 '<td data-label="Объект" style="font-weight:600;">' + escapeHtml(item.cabin_name) + '</td>' +
-                '<td class="td-complex-label">' +
-                  '<span class="mobile-complex-label"><span class="color-moss">Активные</span> / <span class="color-gold">Всего броней</span></span>' +
-                  '<span><span class="color-moss" style="font-weight: 600;">' + formatNumber(item.active_bookings) + '</span> / <span class="color-gold" style="font-weight: 600;">' + formatNumber(item.bookings) + '</span></span>' +
-                '</td>' +
-                '<td data-label="Ночи">' + formatNumber(item.nights) + '</td>' +
-                '<td data-label="Гости">' + formatNumber(item.guests_count) + '</td>' +
+                '<td data-label="Брони">' + bookingsHtml + '</td>' +
+                '<td data-label="Ночи" title="' + formatNumber(activeNights) + ' ночей по активным броням (всего по заявкам: ' + formatNumber(totalNights) + ')">' + nightsHtml + '</td>' +
+                '<td data-label="Гости" title="' + formatNumber(activeGuests) + ' гостей по активным броням (всего по заявкам: ' + formatNumber(totalGuests) + ')">' + guestsHtml + '</td>' +
                 '<td data-label="Выручка" class="money">' + formatPrice(item.revenue) + '</td>' +
                 '<td data-label="Средний чек">' + formatPrice(item.avg_check) + '</td>' +
                 '<td data-label=""><div class="bar-track"><div class="bar-fill" style="width:' + width + '%"></div></div></td>' +
@@ -127,15 +151,24 @@ document.addEventListener('DOMContentLoaded', () => {
       '<table class="admin-table analytics-table">' +
         '<thead><tr><th>Месяц</th><th>Активные брони</th><th>Всего заявок</th><th>Ночи</th><th>Выручка</th></tr></thead>' +
         '<tbody>' +
-          items.map((item) => (
-            '<tr>' +
-              '<td data-label="Месяц">' + escapeHtml(formatMonth(item.month)) + '</td>' +
-              '<td data-label="Активные брони"><span><span class="color-moss" style="font-weight: 600;">' + formatNumber(item.active_bookings) + '</span></span></td>' +
-              '<td data-label="Всего заявок">' + formatNumber(item.bookings) + '</td>' +
-              '<td data-label="Ночи">' + formatNumber(item.nights) + '</td>' +
-              '<td data-label="Выручка" class="money">' + formatPrice(item.revenue) + '</td>' +
-            '</tr>'
-          )).join('') +
+          items.map((item) => {
+            const activeNights = item.active_nights != null ? Number(item.active_nights) : Number(item.nights || 0);
+            const totalNights = Number(item.nights || 0);
+            const nightsHtml = totalNights > activeNights
+              ? '<span style="font-weight:600;">' + formatNumber(activeNights) + '</span>' +
+                '<span style="display:block; color:var(--muted); font-size:11px; white-space:nowrap;">всего: ' + formatNumber(totalNights) + '</span>'
+              : '<span style="font-weight:600;">' + formatNumber(activeNights) + '</span>';
+
+            return (
+              '<tr>' +
+                '<td data-label="Месяц">' + escapeHtml(formatMonth(item.month)) + '</td>' +
+                '<td data-label="Активные брони"><span><strong class="color-moss" style="font-size:14px;">' + formatNumber(item.active_bookings) + '</strong></span></td>' +
+                '<td data-label="Всего заявок">' + formatNumber(item.bookings) + '</td>' +
+                '<td data-label="Ночи" title="' + formatNumber(activeNights) + ' ночей по активным броням (всего по заявкам: ' + formatNumber(totalNights) + ')">' + nightsHtml + '</td>' +
+                '<td data-label="Выручка" class="money">' + formatPrice(item.revenue) + '</td>' +
+              '</tr>'
+            );
+          }).join('') +
         '</tbody>' +
       '</table>';
   }
@@ -148,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const desktopTable =
       '<table class="admin-table analytics-table analytics-desktop-guests">' +
-        '<thead><tr><th>Гость</th><th><span class="color-moss">Активные</span>/Всего</th><th>LTV (Выручка)</th></tr></thead>' +
+        '<thead><tr><th>Гость</th><th>Брони (активные / всего)</th><th>LTV (Выручка)</th></tr></thead>' +
         '<tbody>' +
           items.map((item) => (
             '<tr>' +
@@ -156,9 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div style="font-weight:600;">' + escapeHtml(item.name) + '</div>' +
                 '<small class="muted">' + escapeHtml(item.phone || item.telegram || '') + '</small>' +
               '</td>' +
-                '<td class="td-complex-label">' +
-                  '<span class="mobile-complex-label"><span class="color-moss">Активные</span> / <span class="color-gold">Всего броней</span></span>' +
-                  '<span><span class="color-moss" style="font-weight: 600;">' + formatNumber(item.active_bookings) + '</span> / <span class="color-gold" style="font-weight: 600;">' + formatNumber(item.bookings) + '</span></span>' +
+                '<td data-label="Брони">' +
+                  '<span style="white-space: nowrap;">' +
+                    '<strong class="color-moss" style="font-size:14px;">' + formatNumber(item.active_bookings) + '</strong> ' +
+                    '<span style="color:var(--muted); font-size:12px;">из</span> ' +
+                    '<span style="font-weight:600;">' + formatNumber(item.bookings) + '</span>' +
+                  '</span>' +
                 '</td>' +
               '<td data-label="LTV (Выручка)" class="money">' + formatPrice(item.ltv) + '</td>' +
             '</tr>'

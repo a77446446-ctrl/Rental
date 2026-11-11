@@ -589,13 +589,16 @@ router.get('/availability', async (req, res) => {
         String(currentDate.getDate()).padStart(2, '0');
 
       const priceEntry = priceMap[dateStr];
+      const hasCustomPrice = Boolean(priceEntry && Number(priceEntry.custom_price) > 0);
+      const isPromo = Boolean(priceEntry && (priceEntry.is_promo === true || priceEntry.is_promo === 1 || priceEntry.is_promo === 'true'));
+      const promoDesc = priceEntry ? (priceEntry.promo_description || '') : '';
 
       dates.push({
         date: dateStr,
-        price: priceEntry ? priceEntry.custom_price : cabinData.base_price,
+        price: hasCustomPrice ? Number(priceEntry.custom_price) : cabinData.base_price,
         available: !busyDates.has(dateStr) && !(priceEntry && priceEntry.promo_description === 'CLOSED'),
-        is_promo: priceEntry ? priceEntry.is_promo : false,
-        promo_description: priceEntry ? (priceEntry.promo_description || null) : null,
+        is_promo: isPromo,
+        promo_description: promoDesc || null,
         busy_source: externalBusyMap[dateStr] ? externalBusyMap[dateStr].source : null,
         busy_summary: externalBusyMap[dateStr] ? externalBusyMap[dateStr].summary : null,
       });

@@ -182,10 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (priceData) {
         if (priceData.promo_description === 'CLOSED') {
           isClosed = true;
-        } else if (priceData.custom_price) {
+        } else if (priceData.custom_price && Number(priceData.custom_price) > 0) {
           displayPrice = priceData.custom_price;
         }
-        isPromo = priceData.is_promo;
+        isPromo = Boolean(priceData.is_promo);
       }
 
       if (isClosed) {
@@ -295,8 +295,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateStr = Array.from(selectedDates)[0];
         const priceData = customPricesData.find(p => p.date === dateStr);
         if (priceData) {
-          customPriceInput.value = priceData.custom_price || '';
-          promoCheckbox.checked = priceData.is_promo;
+          const cabinIdStr = cabinSelector.value;
+          const cabinObj = cabinsList.find(c => String(c.id) === String(cabinIdStr));
+          const basePrice = cabinObj ? cabinObj.base_price : null;
+
+          if (priceData.custom_price && Number(priceData.custom_price) !== Number(basePrice)) {
+            customPriceInput.value = priceData.custom_price;
+          } else {
+            customPriceInput.value = '';
+          }
+
+          promoCheckbox.checked = Boolean(priceData.is_promo);
           closeDatesCheckbox.checked = (priceData.promo_description === 'CLOSED');
           document.getElementById('promoDescInput').value = (priceData.promo_description && priceData.promo_description !== 'CLOSED') ? priceData.promo_description : '';
           document.getElementById('promoDescContainer').style.display = priceData.is_promo ? 'block' : 'none';
@@ -382,11 +391,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!cabin_id || dates.length === 0) return;
 
     // Определяем какую цену отправлять
-    let finalPrice = customPriceInput.value ? parseInt(customPriceInput.value) : null;
+    let finalPrice = customPriceInput.value ? parseInt(customPriceInput.value, 10) : null;
     
     if (!finalPrice) {
-      const cabin = cabinsList.find(c => c.id === cabin_id);
-      if (cabin) {
+      const cabin = cabinsList.find(c => String(c.id) === String(cabin_id));
+      if (cabin && cabin.base_price) {
         finalPrice = cabin.base_price;
       }
     }

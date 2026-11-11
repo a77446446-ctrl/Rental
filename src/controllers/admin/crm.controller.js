@@ -8,10 +8,29 @@ exports.getAnalytics = async (req, res) => {
     const targetDate = req.query.date;
     const targetMonth = req.query.month;
 
-    const bookings = (await pbAdmin.collection('bookings').getFullList({
-      expand: 'cabin_id,guest_id',
-      sort: 'created'
-    })).map(normalizeBookingRecord);
+    let bookingsRaw = [];
+    try {
+      bookingsRaw = await pbAdmin.collection('bookings').getFullList({
+        sort: '-check_in_date'
+      });
+    } catch (_err) {
+      bookingsRaw = await pbAdmin.collection('bookings').getFullList();
+    }
+    const bookings = bookingsRaw.map(normalizeBookingRecord);
+
+    let allCabins = [];
+    try {
+      allCabins = await pbAdmin.collection('cabins').getFullList();
+    } catch (_e) {}
+    const cabinsMap = {};
+    allCabins.forEach((c) => { cabinsMap[c.id] = c; });
+
+    let allGuests = [];
+    try {
+      allGuests = await pbAdmin.collection('guests').getFullList();
+    } catch (_e) {}
+    const guestsMapById = {};
+    allGuests.forEach((g) => { guestsMapById[g.id] = g; });
 
     function getNights(checkIn, checkOut) {
       const start = new Date(checkIn + 'T00:00:00');
@@ -43,7 +62,7 @@ exports.getAnalytics = async (req, res) => {
     }
 
     const statusLabels = { pending: 'Ожидает', confirmed: 'Подтверждена', cancelled: 'Отменена', completed: 'Завершена' };
-    const summary = { total_bookings: 0, active_bookings: 0, pending_bookings: 0, confirmed_bookings: 0, cancelled_bookings: 0, completed_bookings: 0, gross_revenue: 0, active_revenue: 0, confirmed_revenue: 0, pending_revenue: 0, cancelled_revenue: 0, avg_check: 0, total_nights: 0, active_nights: 0, guests_count: 0, unique_guests: 0 };
+    const summary = { total_bookings: 0, active_bookings: 0, pending_bookings: 0, confirmed_bookings: 0, cancelled_bookings: 0, completed_bookings: 0, gross_revenue: 0, active_revenue: 0, confirmed_revenue: 0, pending_revenue: 0, cancelled_revenue: 0, avg_check: 0, total_nights: 0, active_nights: 0, guests_count: 0, active_guests: 0, unique_guests: 0 };
     const byStatus = {}; const byCabin = {}; const byMonth = {}; const guestsMap = {};
 
     (filteredBookings || []).forEach((booking) => {
@@ -54,13 +73,13 @@ exports.getAnalytics = async (req, res) => {
       const isCancelled = status === 'cancelled';
       const isConfirmedRevenue = status === 'confirmed' || status === 'completed';
       
-      const cabin = booking.expand?.cabin_id;
-      const guest = booking.expand?.guest_id;
+      const cabin = booking.expand?.cabin_id || cabinsMap[booking.cabin_id];
+      const guest = booking.expand?.guest_id || guestsMapById[booking.guest_id];
       
-      const cabinName = cabin?.name || 'Без домика';
+      const cabinName = cabin?.name || (booking.cabin_id ? `Домик (${booking.cabin_id})` : 'Без домика');
       const cabinKey = booking.cabin_id || cabinName;
       const monthKey = booking.check_in ? booking.check_in.slice(0, 7) : 'unknown';
-      const phone = guest?.phone || 'unknown:' + booking.id;
+      const phone = guest?.phone || (booking.guest_phone || 'unknown:' + booking.id);
 
       summary.total_bookings += 1;
       summary.gross_revenue += price;
@@ -76,6 +95,7 @@ exports.getAnalytics = async (req, res) => {
         summary.active_bookings += 1;
         summary.active_revenue += price;
         summary.active_nights += nights;
+        summary.active_guests += guests;
       } else {
         summary.cancelled_revenue += price;
       }
@@ -91,29 +111,65 @@ exports.getAnalytics = async (req, res) => {
       byStatus[status].nights += nights;
 
       if (!byCabin[cabinKey]) {
-        byCabin[cabinKey] = { cabin_id: booking.cabin_id, cabin_name: cabinName, bookings: 0, active_bookings: 0, revenue: 0, confirmed_revenue: 0, nights: 0, guests_count: 0, avg_check: 0 };
+        byCabin[cabinKey] = {
+          cabin_id: booking.cabin_id,
+          cabin_name: cabinName,
+          bookings: 0,
+          active_bookings: 0,
+          cancelled_bookings: 0,
+          revenue: 0,
+          confirmed_revenue: 0,
+          nights: 0,
+          active_nights: 0,
+          guests_count: 0,
+          active_guests: 0,
+          avg_check: 0
+        };
       }
       byCabin[cabinKey].bookings += 1;
       byCabin[cabinKey].nights += nights;
       byCabin[cabinKey].guests_count += guests;
       if (!isCancelled) {
         byCabin[cabinKey].active_bookings += 1;
+        byCabin[cabinKey].active_nights += nights;
+        byCabin[cabinKey].active_guests += guests;
         byCabin[cabinKey].revenue += price;
+      } else {
+        byCabin[cabinKey].cancelled_bookings += 1;
       }
       if (isConfirmedRevenue) byCabin[cabinKey].confirmed_revenue += price;
 
       if (!byMonth[monthKey]) {
-        byMonth[monthKey] = { month: monthKey, bookings: 0, active_bookings: 0, revenue: 0, nights: 0 };
+        byMonth[monthKey] = {
+          month: monthKey,
+          bookings: 0,
+          active_bookings: 0,
+          cancelled_bookings: 0,
+          revenue: 0,
+          nights: 0,
+          active_nights: 0
+        };
       }
       byMonth[monthKey].bookings += 1;
       byMonth[monthKey].nights += nights;
       if (!isCancelled) {
         byMonth[monthKey].active_bookings += 1;
+        byMonth[monthKey].active_nights += nights;
         byMonth[monthKey].revenue += price;
+      } else {
+        byMonth[monthKey].cancelled_bookings += 1;
       }
 
       if (!guestsMap[phone]) {
-        guestsMap[phone] = { phone: guest?.phone || '', name: guest?.full_name || 'Неизвестно', telegram: guest?.telegram || '', bookings: 0, active_bookings: 0, ltv: 0, last_booking: booking.created };
+        guestsMap[phone] = {
+          phone: guest?.phone || booking.guest_phone || '',
+          name: guest?.full_name || booking.guest_name || 'Неизвестно',
+          telegram: guest?.telegram || booking.guest_telegram || '',
+          bookings: 0,
+          active_bookings: 0,
+          ltv: 0,
+          last_booking: booking.created
+        };
       }
       guestsMap[phone].bookings += 1;
       guestsMap[phone].last_booking = booking.created;
@@ -142,25 +198,36 @@ exports.getAnalytics = async (req, res) => {
 
 exports.getGuests = async (req, res) => {
   try {
-    const bookings = await pbAdmin.collection('bookings').getFullList({
-      expand: 'guest_id',
-      sort: 'created'
-    });
+    let bookings = [];
+    try {
+      bookings = await pbAdmin.collection('bookings').getFullList({
+        sort: '-check_in_date'
+      });
+    } catch (_err) {
+      bookings = await pbAdmin.collection('bookings').getFullList();
+    }
+
+    let allGuests = [];
+    try {
+      allGuests = await pbAdmin.collection('guests').getFullList();
+    } catch (_e) {}
+    const guestsMapById = {};
+    allGuests.forEach((g) => { guestsMapById[g.id] = g; });
 
     const notes = await dataStore.get('guest_notes', 'guest_notes.json', {});
 
     const guestsMap = {};
 
     bookings.forEach(b => {
-      const guest = b.expand?.guest_id;
-      const phone = guest?.phone;
+      const guest = b.expand?.guest_id || guestsMapById[b.guest_id];
+      const phone = guest?.phone || b.guest_phone;
       if (!phone) return;
 
       if (!guestsMap[phone]) {
         guestsMap[phone] = {
           phone,
-          name: guest?.full_name || 'Неизвестно',
-          telegram: guest?.telegram || '',
+          name: guest?.full_name || b.guest_name || 'Неизвестно',
+          telegram: guest?.telegram || b.guest_telegram || '',
           first_booking: b.created,
           last_booking: b.created,
           total_bookings: 0,

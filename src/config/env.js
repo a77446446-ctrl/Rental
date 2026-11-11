@@ -46,7 +46,7 @@ const config = {
   yandexVerification: process.env.YANDEX_VERIFICATION || '',
 
   /* Внешние iCal-календари */
-  externalCalendarSyncMinutes: parseInt(process.env.EXTERNAL_CALENDAR_SYNC_MINUTES, 10) || 30,
+  externalCalendarSyncMinutes: parseInt(process.env.EXTERNAL_CALENDAR_SYNC_MINUTES, 10) || 10,
   disableBackgroundJobs: process.env.DISABLE_BACKGROUND_JOBS === 'true',
 };
 

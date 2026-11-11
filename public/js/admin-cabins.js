@@ -713,8 +713,8 @@ const extraGuestPriceField = document.getElementById('cabinExtraGuestPrice');
       externalCalendarList.innerHTML = '<div style="color:var(--muted); font-size:13px;">Источники не добавлены.</div>';
     } else {
       externalCalendarList.innerHTML = currentExternalCalendars.map((source, index) => {
-        const status = source.last_sync_status === 'error'
-          ? 'Ошибка: ' + (source.last_sync_error || 'не удалось синхронизировать')
+        const status = (source.last_sync_status === 'error' || source.last_error)
+          ? 'Ошибка: ' + (source.last_sync_error || source.last_error || 'не удалось синхронизировать')
           : source.last_synced_at
             ? 'Синхр.: ' + new Date(source.last_synced_at).toLocaleString('ru-RU')
             : 'Еще не синхронизирован';

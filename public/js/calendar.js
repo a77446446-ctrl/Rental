@@ -357,8 +357,8 @@
       var isCheckoutBoundary = canBeCheckout || Boolean(
         isBusy && this.checkOut && dateStr === this.checkOut
       );
-      var isPromo = dayData ? dayData.is_promo : false;
-      var price = dayData ? dayData.price : this.basePrice;
+      var isPromo = dayData ? (dayData.is_promo === true || dayData.is_promo === 1 || dayData.is_promo === 'true') : false;
+      var price = (dayData && Number(dayData.price) > 0) ? dayData.price : this.basePrice;
 
       var btn = document.createElement('button');
       btn.type = 'button';

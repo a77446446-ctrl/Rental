@@ -105,17 +105,30 @@ exports.bulkUpsert = async (req, res) => {
       return res.json({ success: true });
     }
 
-    if (!is_closed && custom_price == null) {
-       return res.status(400).json({ success: false, error: 'Особая цена обязательна' });
+    let resolvedPrice = 0;
+    if (custom_price != null && custom_price !== '' && !isNaN(Number(custom_price))) {
+      resolvedPrice = Math.max(0, parseInt(custom_price, 10));
+    } else if (!is_closed) {
+      // Пользователь оставил поле пустым для базовой цены объекта
+      try {
+        const cabin = await pbAdmin.collection('cabins').getOne(cabin_id);
+        resolvedPrice = cabin ? (cabin.base_price || 0) : 0;
+      } catch (_e) {
+        resolvedPrice = 0;
+      }
     }
+
+    const cleanPromoDesc = is_closed
+      ? 'CLOSED'
+      : (promo_description ? String(promo_description).trim() : '');
 
     for (const date of dates) {
       const row = {
         cabin_id,
         date: toPocketBaseDate(date),
-        custom_price: custom_price ? parseInt(custom_price) : 0,
+        custom_price: resolvedPrice,
         is_promo: Boolean(is_promo),
-        promo_description: is_closed ? 'CLOSED' : (promo_description || null)
+        promo_description: cleanPromoDesc
       };
 
       if (priceMap[date]) {
