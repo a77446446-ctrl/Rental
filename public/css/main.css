@@ -1282,10 +1282,11 @@ textarea.input { min-height: 94px; padding-top: 15px; resize: vertical; }
 }
 .gallery-btn:hover { background: rgba(var(--cream-rgb), 0.1); border-color: var(--gold); }
 
-/* Weekend Calendar Colors */
-.calendar-day.friday, .day-cell.friday { color: #d49a6a; } /* Light Orange / gold-ish */
-.calendar-day.saturday, .day-cell.saturday { color: #a83232; } /* Dark Red */
-.calendar-day.sunday, .day-cell.sunday { color: #a83232; } /* Dark Red */
+/* Weekend Calendar Colors (Пт и Сб — тарифные выходные дни, Вс — будний день) */
+.calendar-day.friday, .day-cell.friday { color: #d49a6a; } /* Мягкий янтарно-золотистый */
+.calendar-day.saturday, .day-cell.saturday { color: #d88f66; } /* Мягкий приглушенный теплый оранжево-янтарный */
+.calendar-day.sunday, .day-cell.sunday { color: inherit; } /* Воскресенье — будний день */
+.calendar-day.busy.friday, .calendar-day.busy.saturday, .calendar-day.busy.sunday { color: var(--muted-2) !important; }
 .calendar-day.past.friday, .day-cell.past.friday, .calendar-day.past.saturday, .day-cell.past.saturday, .calendar-day.past.sunday, .day-cell.past.sunday { color: var(--muted-2); }
 
 /* Mobile app shell */

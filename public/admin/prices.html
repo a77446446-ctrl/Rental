@@ -96,9 +96,10 @@
     }
     .day-cell:hover { background: rgba(var(--cream-rgb), 0.08); }
     
-    .day-cell.weekend { color: #a83232; }
-    .day-cell.sunday, .day-cell.saturday { color: #a83232; }
+    .day-cell.weekend { color: #d88f66; }
+    .day-cell.saturday { color: #d88f66; }
     .day-cell.friday { color: #d49a6a; }
+    .day-cell.sunday { color: inherit; }
     .day-cell.holiday { background: rgba(255, 100, 100, 0.1); border-color: rgba(255, 100, 100, 0.3); color: #a83232; }
     .day-cell.holiday::after {
       content: "Праздник";
@@ -282,8 +283,8 @@
             <div class="weekday">Ср</div>
             <div class="weekday">Чт</div>
             <div class="weekday" style="color: #d49a6a;">Пт</div>
-            <div class="weekday weekend">Сб</div>
-            <div class="weekday weekend">Вс</div>
+            <div class="weekday" style="color: #d88f66;">Сб</div>
+            <div class="weekday">Вс</div>
           </div>
           
           <div class="calendar-grid" id="calendarDays">
@@ -291,7 +292,8 @@
           </div>
           
           <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background: rgba(255, 100, 100, 0.1); border: 1px solid rgba(255, 100, 100, 0.3);"></div> Выходные / Праздники</div>
+            <div class="legend-item"><div class="legend-dot" style="background: rgba(216, 143, 102, 0.18); border: 1px solid #d88f66;"></div> Пт-Сб (Выходные)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: rgba(255, 100, 100, 0.1); border: 1px solid rgba(255, 100, 100, 0.3);"></div> Праздники</div>
             <div class="legend-item"><div class="legend-dot" style="background: rgba(187, 164, 111, 0.15); border: 1px solid var(--gold);"></div> Выбрано</div>
             <div class="legend-item"><div style="color: var(--gold); font-size: 14px;">★</div> Акция</div>
           </div>
@@ -361,7 +363,7 @@
   </div>
   
   <script src="/js/api.js?v=20260923-5"></script>
-  <script src="/js/admin-prices.js?v=20261112-1"></script>
+  <script src="/js/admin-prices.js?v=20261112-2"></script>
   <script src="/js/pwa.js?v=20260811-2"></script>
   <script src="/js/admin-mobile.js?v=20260811-2"></script>
 </body>
