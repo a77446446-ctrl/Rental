@@ -122,12 +122,19 @@ exports.bulkUpsert = async (req, res) => {
       ? 'CLOSED'
       : (promo_description ? String(promo_description).trim() : '');
 
+    const effectiveIsPromo = !is_closed && Boolean(
+      is_promo === true ||
+      is_promo === 1 ||
+      is_promo === 'true' ||
+      (cleanPromoDesc && cleanPromoDesc !== 'CLOSED')
+    );
+
     for (const date of dates) {
       const row = {
         cabin_id,
         date: toPocketBaseDate(date),
         custom_price: resolvedPrice,
-        is_promo: Boolean(is_promo),
+        is_promo: effectiveIsPromo,
         promo_description: cleanPromoDesc
       };
 

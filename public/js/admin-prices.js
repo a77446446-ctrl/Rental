@@ -185,7 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (priceData.custom_price && Number(priceData.custom_price) > 0) {
           displayPrice = priceData.custom_price;
         }
-        isPromo = Boolean(priceData.is_promo);
+        isPromo = Boolean(
+          priceData.is_promo === true ||
+          priceData.is_promo === 1 ||
+          priceData.is_promo === 'true' ||
+          (priceData.promo_description && priceData.promo_description !== 'CLOSED')
+        );
       }
 
       if (isClosed) {
@@ -305,10 +310,18 @@ document.addEventListener('DOMContentLoaded', () => {
             customPriceInput.value = '';
           }
 
-          promoCheckbox.checked = Boolean(priceData.is_promo);
+          const hasPromoText = Boolean(priceData.promo_description && priceData.promo_description !== 'CLOSED');
+          const isPromoActive = Boolean(
+            priceData.is_promo === true ||
+            priceData.is_promo === 1 ||
+            priceData.is_promo === 'true' ||
+            hasPromoText
+          );
+
+          promoCheckbox.checked = isPromoActive;
           closeDatesCheckbox.checked = (priceData.promo_description === 'CLOSED');
-          document.getElementById('promoDescInput').value = (priceData.promo_description && priceData.promo_description !== 'CLOSED') ? priceData.promo_description : '';
-          document.getElementById('promoDescContainer').style.display = priceData.is_promo ? 'block' : 'none';
+          document.getElementById('promoDescInput').value = hasPromoText ? priceData.promo_description : '';
+          document.getElementById('promoDescContainer').style.display = isPromoActive ? 'block' : 'none';
         } else {
           customPriceInput.value = '';
           promoCheckbox.checked = false;
@@ -370,10 +383,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   promoCheckbox.addEventListener('change', (e) => {
-    document.getElementById('promoDescContainer').style.display = e.target.checked ? 'block' : 'none';
-    const isPromo = e.target.checked;
+    const isChecked = e.target.checked;
+    document.getElementById('promoDescContainer').style.display = isChecked ? 'block' : 'none';
     liveUpdatePrices(data => {
-      data.is_promo = isPromo;
+      data.is_promo = isChecked;
+      if (!isChecked && data.promo_description !== 'CLOSED') {
+        data.promo_description = null;
+      }
     });
   });
 
@@ -381,6 +397,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const val = e.target.value;
     liveUpdatePrices(data => {
       data.promo_description = val;
+      if (val && val.trim() !== '' && val !== 'CLOSED') {
+        data.is_promo = true;
+      }
     });
   });
 
@@ -405,13 +424,16 @@ document.addEventListener('DOMContentLoaded', () => {
     savePricesBtn.disabled = true;
 
     try {
+      const promoDescVal = (document.getElementById('promoDescInput').value || '').trim();
+      const isPromoActive = !closeDatesCheckbox.checked && Boolean(promoCheckbox.checked || (promoDescVal && promoDescVal !== 'CLOSED'));
+
       const payload = {
         cabin_id,
         dates,
         custom_price: finalPrice,
-        is_promo: promoCheckbox.checked,
+        is_promo: isPromoActive,
         is_closed: closeDatesCheckbox.checked,
-        promo_description: document.getElementById('promoDescInput').value || null
+        promo_description: closeDatesCheckbox.checked ? 'CLOSED' : (promoDescVal || null)
       };
 
       const res = await fetch('/api/admin/prices/bulk-upsert', {

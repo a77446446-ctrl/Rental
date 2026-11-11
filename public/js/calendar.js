@@ -357,7 +357,13 @@
       var isCheckoutBoundary = canBeCheckout || Boolean(
         isBusy && this.checkOut && dateStr === this.checkOut
       );
-      var isPromo = dayData ? (dayData.is_promo === true || dayData.is_promo === 1 || dayData.is_promo === 'true') : false;
+      var hasPromoDesc = Boolean(dayData && dayData.promo_description && dayData.promo_description !== 'CLOSED');
+      var isPromo = dayData ? Boolean(
+        dayData.is_promo === true ||
+        dayData.is_promo === 1 ||
+        dayData.is_promo === 'true' ||
+        hasPromoDesc
+      ) : false;
       var price = (dayData && Number(dayData.price) > 0) ? dayData.price : this.basePrice;
 
       var btn = document.createElement('button');
@@ -405,6 +411,10 @@
 
       if (isBusy && !isPast) {
         btn.title = isCheckoutBoundary ? 'Дата выезда' : 'Занято';
+      } else if (isPromo && !isPast) {
+        btn.title = (dayData && dayData.promo_description && dayData.promo_description !== 'CLOSED')
+          ? ('Акция: ' + dayData.promo_description)
+          : 'Акция';
       }
 
       /* Занятая дата кликабельна только как граница выезда. */
@@ -432,7 +442,15 @@
         while (curr <= end) {
           var ds = EcoApi.toDateString(curr);
           var dd = this.availabilityMap[ds];
-          if (dd && dd.is_promo && dd.promo_description) {
+          var isItemPromo = Boolean(
+            dd && (
+              dd.is_promo === true ||
+              dd.is_promo === 1 ||
+              dd.is_promo === 'true' ||
+              (dd.promo_description && dd.promo_description !== 'CLOSED')
+            )
+          );
+          if (dd && isItemPromo && dd.promo_description && dd.promo_description !== 'CLOSED') {
             foundPromoDesc = dd.promo_description;
             break;
           }

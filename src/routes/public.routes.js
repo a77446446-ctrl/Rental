@@ -590,8 +590,15 @@ router.get('/availability', async (req, res) => {
 
       const priceEntry = priceMap[dateStr];
       const hasCustomPrice = Boolean(priceEntry && Number(priceEntry.custom_price) > 0);
-      const isPromo = Boolean(priceEntry && (priceEntry.is_promo === true || priceEntry.is_promo === 1 || priceEntry.is_promo === 'true'));
       const promoDesc = priceEntry ? (priceEntry.promo_description || '') : '';
+      const isPromo = Boolean(
+        priceEntry && (
+          priceEntry.is_promo === true ||
+          priceEntry.is_promo === 1 ||
+          priceEntry.is_promo === 'true' ||
+          (promoDesc && promoDesc !== 'CLOSED')
+        )
+      );
 
       dates.push({
         date: dateStr,
