@@ -1029,7 +1029,7 @@
     });
 
     if (state.settings.siteTheme) {
-      document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey');
+      document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey', 'theme-luxury-glass');
       if (state.settings.siteTheme !== 'theme-dark') {
         document.body.classList.add(state.settings.siteTheme);
       }

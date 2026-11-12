@@ -185,9 +185,9 @@
           <select id="siteThemeSelect">
             <option value="theme-dark">Тёмная (золотистая, по умолчанию)</option>
             <option value="theme-light">Светлая</option>
-            <option value="theme-dark-grey">Organic Wellness (Sage &amp; Forest — Pro Max)</option>
+            <option value="theme-dark-grey">Glassmorphism Luxury (Midnight &amp; Violet — Pro Max)</option>
           </select>
-          <span class="hint">Эта тема применяется ко всему сайту. Логика и структура блоков остаются неизменными, меняются палитра, кнопки, карточки и визуальные эффекты.</span>
+          <span class="hint">Премиальный стиль Glassmorphism: ночной градиент (Midnight Blue + Violet), полупрозрачные блоки из матового стекла (backdrop-blur) и интерактивные неоновые акценты.</span>
         </div>
       </div>
 
@@ -306,7 +306,7 @@
     // Изменение темы
     themeSelect.addEventListener('change', function() {
       currentTheme = this.value;
-      document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey');
+      document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey', 'theme-luxury-glass');
       if (currentTheme !== 'theme-dark') {
         document.body.classList.add(currentTheme);
       }

@@ -470,7 +470,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     EcoApi.getSettings().then(function(settings) {
       if (settings && settings.siteTheme) {
-        document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey');
+        document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey', 'theme-luxury-glass');
         if (settings.siteTheme !== 'theme-dark') {
           document.body.classList.add(settings.siteTheme);
         }
