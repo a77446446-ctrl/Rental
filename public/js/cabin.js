@@ -85,7 +85,7 @@
     const contentEl = document.getElementById('cabinContent');
     if (!cabinId) {
       if (contentEl) {
-        contentEl.innerHTML = '<div style="text-align: center; padding: 140px 0; color: #CCC4B6;">Объект не найден. <a href="/" style="color: #C5AA67; text-decoration: underline; margin-left: 8px;">На главную</a></div>';
+        contentEl.innerHTML = '<div class="cabin-empty-state" style="text-align: center; padding: 140px 0;">Объект не найден. <a href="/" style="text-decoration: underline; margin-left: 8px;">На главную</a></div>';
       }
       return;
     }
@@ -115,7 +115,7 @@
       currentCabin = cabins.find(c => c.id === cabinId || c.slug === cabinId || String(c.id) === String(cabinId));
       if (!currentCabin) {
         if (contentEl) {
-          contentEl.innerHTML = '<div style="text-align: center; padding: 140px 0; color: #CCC4B6;">Объект не найден. <a href="/" style="color: #C5AA67; text-decoration: underline; margin-left: 8px;">На главную</a></div>';
+          contentEl.innerHTML = '<div class="cabin-empty-state" style="text-align: center; padding: 140px 0;">Объект не найден. <a href="/" style="text-decoration: underline; margin-left: 8px;">На главную</a></div>';
         }
         return;
       }

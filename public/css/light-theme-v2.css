@@ -1,0 +1,908 @@
+/* ==========================================================================
+   СВЕТЛАЯ ТЕМА — СИСТЕМНЫЕ ПРАВКИ КОНТРАСТА (v2)
+   Исправляет: невидимый текст из-за rgba(var(--cream-rgb)) на светлом фоне,
+   тёмные «острова» (модалки, карточки, подсказки), неверные тона активных
+   состояний и недостающий контраст на всех страницах сайта
+   (главная, карточка дома, успешная заявка, техработы, админ-панель).
+   Базовые темы (:root золотистая, Glassmorphism Luxury) не затрагиваются.
+   Подключается последним, поэтому перекрывает и main.css, и cabin.css.
+   ========================================================================== */
+
+/* 1. Базовое состояние документа */
+body.theme-light {
+  --bg: #faf8f5;
+  --bg-rgb: 250, 248, 245;
+  --bg-2: #ffffff;
+  --panel: rgba(255, 255, 255, 0.98);
+  --panel-rgb: 255, 255, 255;
+  --cream-rgb: 17, 24, 39;
+  --cream-2: #374151;
+  --muted: #4b5563;
+  --muted-2: #6b7280;
+  --gold-light: #8a6a3b;
+  --surface-light: #ffffff;
+  background: #faf8f5 !important;
+  background-color: #faf8f5 !important;
+  color: #111827 !important;
+  color-scheme: light !important;
+}
+
+body.theme-light ::selection {
+  background: rgba(138, 106, 59, 0.22);
+  color: #111827;
+}
+
+body.theme-light :focus-visible {
+  outline-color: #8a6a3b;
+}
+
+body.theme-light .top-meta { color: #6b7280 !important; }
+body.theme-light .top-fade { display: none !important; }
+
+/* Стартовая заставка */
+body.theme-light .app-loading {
+  background-color: #faf8f5 !important;
+  background-image: radial-gradient(circle at 50% 42%, rgba(138, 106, 59, 0.10), transparent 32%) !important;
+}
+
+body.theme-light .app-loading .app-loading-welcome { color: #111827 !important; }
+
+body.theme-light .app-loading .app-loading-status { color: #4b5563 !important; }
+
+body.theme-light .app-loading-logo { filter: drop-shadow(0 14px 34px rgba(0, 0, 0, 0.16)) !important; }
+
+/* Заголовки со светлыми акцентами на фото (шапка героя) */
+body.theme-light .hero-title-accent,
+body.theme-light #hero-title .hero-title-accent {
+  color: #8a6a3b !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .hero-title-rest,
+body.theme-light #hero-title .hero-title-rest {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light input,
+body.theme-light textarea {
+  caret-color: #1e242b;
+}
+
+/* Пятница / суббота — тёмные варианты акцентов выходных */
+body.theme-light .calendar-day.friday,
+body.theme-light .day-cell.friday,
+body.theme-light .weekdays > div:nth-child(5) { color: #a35a1e !important; }
+
+body.theme-light .calendar-day.saturday,
+body.theme-light .day-cell.saturday,
+body.theme-light .weekdays > div:nth-child(6) { color: #a8461d !important; }
+
+body.theme-light .legend-weekend { background: #a8461d !important; }
+
+body.theme-light .calendar-day.friday span,
+body.theme-light .calendar-day.saturday span { color: inherit !important; }
+
+/* Инфраструктура рядом (описания на фото-подложке) */
+body.theme-light .infra-item,
+body.theme-light .infrastructure-item,
+body.theme-light .nearby-item {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light .infra-item b,
+body.theme-light .infra-item strong { color: #111827 !important; text-shadow: none !important; }
+
+body.theme-light .infra-item span,
+body.theme-light .infra-item p { color: #4b5563 !important; text-shadow: none !important; }
+
+/* Пустые состояния */
+body.theme-light .cabin-empty-state { color: #4b5563 !important; }
+
+body.theme-light .cabin-empty-state a { color: #8a6a3b !important; }
+
+/* 2. Typography */
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light h5,
+body.theme-light strong,
+body.theme-light b { color: #111827; }
+
+body.theme-light .section-label,
+body.theme-light .kicker,
+body.theme-light .stars,
+body.theme-light .footer-slogan { color: #8a6a3b !important; }
+
+/* 3. Кнопки и элементы управления */
+body.theme-light .btn-ghost {
+  background: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #1e242b !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-light .btn-ghost:hover {
+  background: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+body.theme-light .header-action,
+body.theme-light .btn-primary {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  border-color: #1e242b !important;
+  box-shadow: 0 6px 16px rgba(30, 36, 43, 0.22) !important;
+}
+
+body.theme-light .header-action:hover,
+body.theme-light .btn-primary:hover {
+  background: #0f1317 !important;
+  color: #ffffff !important;
+  border-color: #0f1317 !important;
+}
+
+/* 4. Карточки домов */
+body.theme-light .house-card { color: #111827; }
+
+body.theme-light .house-content p {
+  color: #4b5563 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .chip {
+  background: #f3f4f6 !important;
+  border-color: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+/* 5. Календарь (дополнение) */
+body.theme-light .calendar-day.busy {
+  color: #9ca3af !important;
+}
+
+body.theme-light .calendar-day.past {
+  opacity: 0.4 !important;
+}
+
+body.theme-light .legend i {
+  box-shadow: none !important;
+}
+
+/* 6. Территория: скрываем лесной фон и тёмные стеклянные блоки */
+body.theme-light .territory-stage {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+
+body.theme-light .territory-content {
+  grid-template-columns: 1fr 340px;
+}
+
+body.theme-light .territory-content > div:first-child {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.theme-light .territory-content h2 {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .territory-content p {
+  color: #4b5563 !important;
+  text-shadow: none !important;
+  font-weight: 400 !important;
+}
+
+body.theme-light .territory-tags span {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #374151 !important;
+  backdrop-filter: none !important;
+}
+
+body.theme-light .side-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06) !important;
+  backdrop-filter: none !important;
+}
+
+body.theme-light .side-card h3 { color: #111827 !important; }
+
+body.theme-light .side-item { border-top-color: #e5e7eb !important; }
+
+body.theme-light .side-item b {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .side-item span {
+  color: #4b5563 !important;
+  text-shadow: none !important;
+  font-weight: 400 !important;
+}
+
+body.theme-light .btn-territory-map {
+  background: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #8a6a3b !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-light .btn-territory-map:hover {
+  background: #f3f4f6 !important;
+  border-color: #8a6a3b !important;
+  color: #6e542e !important;
+}
+
+/* Модалка карты территории */
+body.theme-light .territory-modal-backdrop {
+  background: rgba(17, 24, 39, 0.45) !important;
+}
+
+body.theme-light .territory-modal-container {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18) !important;
+}
+
+body.theme-light .territory-modal-header {
+  background: #f9fafb !important;
+  border-bottom-color: #e5e7eb !important;
+}
+
+body.theme-light .territory-modal-title h3 { color: #111827 !important; }
+
+body.theme-light .territory-modal-badge {
+  background: rgba(138, 106, 59, 0.1) !important;
+  border-color: rgba(138, 106, 59, 0.3) !important;
+  color: #8a6a3b !important;
+}
+
+body.theme-light .territory-modal-close {
+  border-color: #e5e7eb !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+body.theme-light .territory-modal-close:hover {
+  background: #f3f4f6 !important;
+  border-color: #8a6a3b !important;
+  color: #6e542e !important;
+}
+
+body.theme-light .territory-modal-body { background: #f3f4f6 !important; }
+
+/* 7. Отзывы */
+body.theme-light .review { color: #111827; }
+
+body.theme-light .review p { color: #4b5563 !important; }
+
+body.theme-light .person b { color: #111827 !important; }
+
+body.theme-light .person span { color: #6b7280 !important; }
+
+body.theme-light .avatar {
+  background: #f3f4f6 !important;
+  border-color: #e5e7eb !important;
+  color: #8a6a3b !important;
+}
+
+/* 8. Формы, поля, чекбоксы */
+body.theme-light .input {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+body.theme-light .input::placeholder { color: #9ca3af !important; }
+
+body.theme-light .input:focus {
+  background: #ffffff !important;
+  border-color: #1e242b !important;
+  box-shadow: 0 0 0 3px rgba(30, 36, 43, 0.08) !important;
+}
+
+body.theme-light select.input option,
+body.theme-light select option {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+body.theme-light .extra-chip {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+body.theme-light .extra-chip:has(input:checked) {
+  background: #f3f4f6 !important;
+  border-color: #1e242b !important;
+  color: #111827 !important;
+}
+
+body.theme-light .guest-stepper {
+  border-color: #e5e7eb !important;
+  background: #f9fafb !important;
+}
+
+body.theme-light .guest-stepper-btn {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+body.theme-light .guest-stepper-btn:hover {
+  background: #f3f4f6 !important;
+}
+
+body.theme-light .summary {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+  box-shadow: none !important;
+}
+
+body.theme-light .summary-row { color: #4b5563 !important; }
+
+body.theme-light .summary-row.total,
+body.theme-light .summary-row.total b { color: #111827 !important; }
+
+body.theme-light .summary-row.total { border-top-color: #e5e7eb !important; }
+
+body.theme-light .summary-row small { color: #8a6a3b !important; }
+
+/* 9. История быстрой брони (тёмные блоки) */
+body.theme-light .chat-date-group { border-color: #e5e7eb !important; }
+
+body.theme-light .chat-date-group-header {
+  background: #f9fafb !important;
+  color: #111827 !important;
+}
+
+body.theme-light .chat-date-group-header:hover { background: #f3f4f6 !important; }
+
+body.theme-light .chat-date-group-body {
+  background: #ffffff !important;
+  border-top-color: #e5e7eb !important;
+}
+
+body.theme-light .chat-date-divider { color: #6b7280 !important; }
+
+body.theme-light .chat-date-divider span { background: #faf8f5 !important; }
+
+/* 10. Контакты и футер */
+body.theme-light .cta-card {
+  background-color: #ffffff !important;
+  color: #111827;
+}
+
+body.theme-light .cta-card p { color: #4b5563 !important; }
+
+body.theme-light .contact-list a {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+body.theme-light .contact-list a:hover {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+body.theme-light .footer { color: #6b7280 !important; }
+
+body.theme-light .footer-links a { color: #4b5563 !important; }
+
+body.theme-light .footer-links a:hover { color: #111827 !important; }
+
+body.theme-light .footer-contact-links a {
+  background: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #1e242b !important;
+}
+
+body.theme-light .footer-contact-links a:hover {
+  background: #f3f4f6 !important;
+}
+
+/* 11. Видео-панель */
+body.theme-light .video-panel.media-load-error::after {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light .play {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+/* 12. Мобильное приложение: экраны «карточки объектов», «календарь», «итого» */
+body.theme-light .mobile-drawer a,
+body.theme-light .mobile-bottom-nav a { -webkit-tap-highlight-color: transparent; }
+
+body.theme-light .app-sheet,
+body.theme-light .mobile-sheet,
+body.theme-light .bottom-sheet { background: #ffffff !important; }
+
+/* 13. Уведомления (toast) */
+body.theme-light .toast,
+body.theme-light .toast-container .toast {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+body.theme-light .chat-toast-banner {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.14) !important;
+}
+
+body.theme-light .chat-toast-banner:hover {
+  background: #f9fafb !important;
+  border-color: #8a6a3b !important;
+  color: #111827 !important;
+}
+
+/* 14. Кнопка и виджет чата сайта */
+body.theme-light .chat-widget {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #111827 !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.theme-light .chat-header {
+  background: #1e242b !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .chat-header button {
+  color: #ffffff !important;
+}
+
+/* Внешнее SVG-кольцо (.preview-ring / fallback без mobile-app.css) вращается поверх светлого фона */
+body.theme-light #chat-toggle .chat-ring-label text,
+body.theme-light .preview-ring text {
+  fill: #1e242b !important;
+}
+
+body.theme-light #chat-toggle .chat-ring-label {
+  filter: none !important;
+}
+
+body.theme-light .chat-body,
+body.theme-light .chat-messages,
+body.theme-light .messages-box {
+  background: #f9fafb !important;
+  color: #111827 !important;
+}
+
+body.theme-light .chat-message,
+body.theme-light .message-bubble {
+  color: #111827 !important;
+}
+
+body.theme-light .chat-message.admin {
+  background: #eef0f3 !important;
+  color: #111827 !important;
+}
+
+body.theme-light .chat-message.guest {
+  background: #2e4a32 !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .chat-form {
+  background: #ffffff !important;
+  border-top-color: #e5e7eb !important;
+}
+
+body.theme-light .chat-form input,
+body.theme-light .chat-input,
+body.theme-light .reply-form input,
+body.theme-light .reply-form textarea {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+@media (max-width: 760px) {
+  html body.theme-light .chat-widget.chat-widget[data-state="open"] {
+    background: #ffffff !important;
+    border-color: #e5e7eb !important;
+    color: #111827 !important;
+  }
+
+  html body.theme-light .chat-widget.chat-widget[data-state="open"] .chat-header {
+    background: #1e242b !important;
+    color: #ffffff !important;
+  }
+
+  html body.theme-light .chat-widget.chat-widget[data-state="open"] .chat-header button {
+    color: #ffffff !important;
+  }
+
+  html body.theme-light .chat-widget.chat-widget[data-state="open"] .chat-body {
+    background: #f9fafb !important;
+    color: #111827 !important;
+  }
+
+  html body.theme-light .chat-widget.chat-widget[data-state="open"] .chat-form {
+    background: #ffffff !important;
+    border-top-color: #e5e7eb !important;
+  }
+}
+
+/* 15. Админ-панель: светлый, чистый вариант вместо жёстко тёмного */
+body.theme-light:has(.login-box) .login-box .settings-card,
+body.theme-light:has(.admin-header) .admin-header .settings-card,
+body.theme-light.admin-mobile-ready .admin-header .settings-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-header),
+body.theme-light:has(.admin-layout),
+body.theme-light:has(.login-box),
+body.theme-light.admin-mobile-ready {
+  background: #f6f4f1 !important;
+  background-image: none !important;
+  color: #111827 !important;
+}
+
+body.theme-light:has(.admin-header) .admin-header,
+body.theme-light.admin-mobile-ready .admin-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-light:has(.admin-header) .admin-header h1,
+body.theme-light.admin-mobile-ready .admin-header h1 { color: #111827 !important; }
+
+body.theme-light:has(.admin-layout) .admin-sidebar,
+body.theme-light.admin-mobile-ready .admin-sidebar {
+  background: #fbfaf8 !important;
+  border-right: 1px solid #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-menu-item,
+body.theme-light.admin-mobile-ready .admin-menu-item {
+  color: #4b5563 !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-menu-item:hover,
+body.theme-light.admin-mobile-ready .admin-menu-item:hover {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-menu-item.active,
+body.theme-light.admin-mobile-ready .admin-menu-item.active {
+  background: #f3f4f6 !important;
+  color: #8a6a3b !important;
+  border-left: 3px solid #8a6a3b !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-accordion,
+body.theme-light:has(.admin-layout) .settings-card,
+body.theme-light:has(.admin-layout) .metric-card,
+body.theme-light:has(.admin-layout) .panel,
+body.theme-light:has(.admin-layout) .analytics-guest-detail,
+body.theme-light:has(.admin-layout) .bookings-counter,
+body.theme-light:has(.admin-layout) .booking-archive,
+body.theme-light:has(.admin-layout) .gallery-section,
+body.theme-light:has(.admin-layout) .external-calendar-row,
+body.theme-light:has(.login-box) .login-box,
+body.theme-light.admin-mobile-ready .admin-accordion,
+body.theme-light.admin-mobile-ready .settings-card,
+body.theme-light.admin-mobile-ready .metric-card,
+body.theme-light.admin-mobile-ready .panel,
+body.theme-light.admin-mobile-ready .login-box {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-accordion-header:hover,
+body.theme-light.admin-mobile-ready .admin-accordion-header:hover {
+  background: #f9fafb !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-accordion-content,
+body.theme-light.admin-mobile-ready .admin-accordion-content {
+  border-top: 1px solid #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-accordion-header h3,
+body.theme-light.admin-mobile-ready .admin-accordion-header h3,
+body.theme-light:has(.admin-layout) .settings-card h3,
+body.theme-light.admin-mobile-ready .settings-card h3 {
+  color: #111827 !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-table,
+body.theme-light.admin-mobile-ready .admin-table {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-table th,
+body.theme-light.admin-mobile-ready .admin-table th {
+  background: #f9fafb !important;
+  color: #6b7280 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-table td,
+body.theme-light.admin-mobile-ready .admin-table td {
+  border-bottom: 1px solid #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+body.theme-light:has(.admin-layout) .admin-table tbody tr:hover td,
+body.theme-light.admin-mobile-ready .admin-table tbody tr:hover td {
+  background: #f9fafb !important;
+}
+
+body.theme-light.admin-mobile-ready .admin-table tr {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+body.theme-light:has(.admin-layout) textarea,
+body.theme-light:has(.admin-layout) select,
+body.theme-light:has(.admin-layout) .action-select,
+body.theme-light:has(.login-box) input,
+body.theme-light.admin-mobile-ready input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+body.theme-light.admin-mobile-ready textarea,
+body.theme-light.admin-mobile-ready select {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+}
+
+body.theme-light:has(.admin-layout) input::placeholder,
+body.theme-light:has(.admin-layout) textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+body.theme-light:has(.admin-layout) input:focus,
+body.theme-light:has(.admin-layout) textarea:focus,
+body.theme-light:has(.admin-layout) select:focus,
+body.theme-light:has(.login-box) input:focus,
+body.theme-light.admin-mobile-ready input:focus,
+body.theme-light.admin-mobile-ready textarea:focus,
+body.theme-light.admin-mobile-ready select:focus {
+  border-color: #8a6a3b !important;
+  box-shadow: 0 0 0 3px rgba(138, 106, 59, 0.16) !important;
+}
+
+body.theme-light:has(.admin-layout) label,
+body.theme-light:has(.login-box) label,
+body.theme-light.admin-mobile-ready label {
+  color: #374151 !important;
+}
+
+body.theme-light:has(.admin-layout) .hint,
+body.theme-light:has(.admin-layout) span[id*="Hint"],
+body.theme-light:has(.admin-layout) .form-group span,
+body.theme-light.admin-mobile-ready .hint {
+  color: #6b7280 !important;
+}
+
+body.theme-light:has(.admin-layout) .accordion-icon,
+body.theme-light.admin-mobile-ready .accordion-icon {
+  color: #8a6a3b !important;
+}
+
+body.theme-light:has(.admin-layout) .modal,
+body.theme-light:has(.admin-layout) .modal-content,
+body.theme-light.admin-mobile-ready .modal,
+body.theme-light.admin-mobile-ready .modal-content {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) .modal-header,
+body.theme-light:has(.admin-layout) .modal-footer,
+body.theme-light.admin-mobile-ready .modal-header,
+body.theme-light.admin-mobile-ready .modal-footer {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) .modal-body,
+body.theme-light.admin-mobile-ready .modal-body { color: #111827 !important; }
+
+body.theme-light:has(.admin-layout) .icon-grid-item {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+body.theme-light:has(.admin-layout) .icon-grid-item:hover {
+  background: #f9fafb !important;
+  border-color: #8a6a3b !important;
+  color: #8a6a3b !important;
+}
+
+body.theme-light:has(.admin-layout) .icon-grid-item span { color: #6b7280 !important; }
+
+body.theme-light:has(.admin-layout) .bar-track { background: #f3f4f6 !important; }
+
+body.theme-light:has(.admin-layout) .color-red { color: #b91c1c !important; }
+
+body.theme-light:has(.admin-layout) .color-moss { color: #2e4a32 !important; }
+
+body.theme-light:has(.admin-layout) .color-gold { color: #8a6a3b !important; }
+
+body.theme-light:has(.admin-mobile-ready) .admin-menu-toggle {
+  border-color: #e5e7eb !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+body.theme-light .maintenance-control {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+body.theme-light .maintenance-control-label { color: #4b5563 !important; }
+
+body.theme-light .maintenance-control.is-enabled .maintenance-control-label { color: #111827 !important; }
+
+body.theme-light .maintenance-switch-track {
+  border-color: #d1d5db !important;
+  background: #e5e7eb !important;
+}
+
+body.theme-light .maintenance-switch input:checked + .maintenance-switch-track {
+  background: #2e4a32 !important;
+  border-color: #2e4a32 !important;
+}
+
+/* Статус-бейджи, календарь цен, предпросмотр виджета и редактор дополнений в админке */
+body.theme-light:has(.admin-layout) .status-pending {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+body.theme-light:has(.admin-layout) .status-confirmed {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+body.theme-light:has(.admin-layout) .status-cancelled {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+body.theme-light:has(.admin-layout) .day-cell.holiday {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #991b1b !important;
+}
+
+body.theme-light:has(.admin-layout) .day-cell.holiday::after {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+}
+
+body.theme-light:has(.admin-layout) .day-cell.external {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+}
+
+body.theme-light:has(.admin-layout) .day-cell.external .external-source {
+  color: #b91c1c !important;
+}
+
+body.theme-light:has(.admin-layout) .day-cell.internal-booking {
+  background: #dcfce7 !important;
+  border-color: #86efac !important;
+  color: #166534 !important;
+}
+
+body.theme-light:has(.admin-layout) .day-cell.internal-booking .external-source {
+  color: #15803d !important;
+}
+
+body.theme-light:has(.admin-layout) #tabAddons > div[style*="#14120F"] {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+}
+
+body.theme-light:has(.admin-layout) .preview-area {
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* 16. Страница успешной заявки */
+body.theme-light .success-card,
+body.theme-light .success-box,
+body.theme-light .success-container {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #111827 !important;
+  box-shadow: 0 12px 32px rgba(17, 24, 39, 0.08) !important;
+}
+
+body.theme-light .success-container h1 {
+  color: #111827 !important;
+}
+
+body.theme-light .success-container > p {
+  color: #4b5563 !important;
+}
+
+body.theme-light .details-box {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light .detail-label {
+  color: #4b5563 !important;
+}
+
+body.theme-light .detail-value {
+  color: #111827 !important;
+}
+
+body.theme-light .details-box .detail-item-total {
+  border-top-color: #e5e7eb !important;
+}
+
+body.theme-light .details-box .detail-item-total .detail-label,
+body.theme-light .details-box .detail-item-total .detail-value {
+  color: #8a6a3b !important;
+}
+
+body.theme-light .btn-home {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(30, 36, 43, 0.2) !important;
+}
+
+body.theme-light .btn-home:hover {
+  background: #0f1317 !important;
+  color: #ffffff !important;
+}
+
+/* 17. Мобильная версия: пружина «итог» не должна быть чёрной */
+body.theme-light .mobile-summary,
+body.theme-light .booking-summary-bar {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+/* 18. Проверка доступности: тёмный текст на светлых подложках */
+body.theme-light .calendar-card,
+body.theme-light .checkout-card,
+body.theme-light .hero-booking,
+body.theme-light .hero-stage,
+body.theme-light .feature-panel,
+body.theme-light .house-card,
+body.theme-light .review,
+body.theme-light .cta-card {
+  color: #111827;
+}
+
+body.theme-light .calendar-card ::placeholder,
+body.theme-light .checkout-card ::placeholder { color: #9ca3af; }

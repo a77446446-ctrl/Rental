@@ -1402,3 +1402,23 @@ body.theme-light .cabin-photo-caption {
   color: #ffffff !important;
 }
 
+.cabin-loading-state {
+  text-align: center;
+  padding: 140px 0;
+  color: var(--cp-text-muted, #CCC4B6);
+  font-size: 16px;
+}
+
+.cabin-empty-state {
+  color: var(--cp-text-muted, #CCC4B6);
+}
+
+.cabin-empty-state a {
+  color: var(--cp-gold, #C5AA67);
+}
+
+body.theme-light .cabin-loading-state,
+body.theme-light .cabin-empty-state { color: #4b5563 !important; }
+
+body.theme-light .cabin-empty-state a { color: #8a6a3b !important; }
+
