@@ -4158,47 +4158,45 @@ select {
 
 
 /* ==========================================================================
-   ORGANIC WELLNESS THEME: SAGE & FOREST GREEN (PRO MAX / SHADCN + MAGIC UI)
+   ORGANIC WELLNESS THEME: SAGE & FOREST (PRO MAX / SHADCN + MAGIC UI + ACETERNITY)
    Селектор: body.theme-dark-grey
    Не затрагивает базовую золотистую (:root) и светлую (.theme-light) темы!
    ========================================================================== */
 
 body.theme-dark-grey {
-  --bg: #0c1511;
-  --bg-rgb: 12, 21, 17;
-  --bg-2: #13221b;
-  --bg-2-rgb: 19, 34, 27;
-  --bg-3: #1a2c24;
-  --panel: rgba(19, 34, 27, 0.82);
-  --panel-rgb: 19, 34, 27;
-  --panel-soft: rgba(28, 48, 39, 0.62);
-  --cream: #edf5f0;
-  --cream-rgb: 237, 245, 240;
-  --cream-2: #c6ddd1;
-  --muted: rgba(237, 245, 240, 0.7);
-  --muted-2: rgba(237, 245, 240, 0.46);
-  --line: rgba(142, 194, 168, 0.16);
-  --line-2: rgba(142, 194, 168, 0.28);
-  --moss: #3a755d;
-  --moss-rgb: 58, 117, 93;
-  --moss-2: #4f967a;
-  --gold: #7ccca7;
-  --gold-rgb: 124, 204, 167;
-  --gold-light: #abead0;
-  --wood: #2a5443;
-  --shadow: 0 24px 64px -12px rgba(2, 10, 7, 0.7);
+  --bg: #0d0f11;
+  --bg-rgb: 13, 15, 17;
+  --bg-2: #14171a;
+  --bg-2-rgb: 20, 23, 26;
+  --bg-3: #1a1e22;
+  --panel: rgba(19, 22, 26, 0.88);
+  --panel-rgb: 19, 22, 26;
+  --panel-soft: rgba(28, 33, 38, 0.65);
+  --cream: #f0f4f2;
+  --cream-rgb: 240, 244, 242;
+  --cream-2: #cbd5d0;
+  --muted: rgba(240, 244, 242, 0.68);
+  --muted-2: rgba(240, 244, 242, 0.44);
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.16);
+  --moss: #2b5946;
+  --moss-rgb: 43, 89, 70;
+  --moss-2: #3d7a60;
+  --gold: #68b896;
+  --gold-rgb: 104, 184, 150;
+  --gold-light: #9ee0c4;
+  --wood: #2a3a33;
+  --shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.75);
   color-scheme: dark;
   background-color: var(--bg) !important;
   color: var(--cream);
 }
 
-/* 1. АВРОРА И СЕТКА (Magic UI / Aceternity Aurora Mesh & Tech Grid) */
+/* 1. ГЛУБОКИЙ ТЕМНЫЙ ФОН И МИКРОСЕТКА (Aceternity Grid + деликатный верхний свет) */
 body.theme-dark-grey {
   background: 
-    radial-gradient(ellipse 70% 45% at 50% -10%, rgba(58, 117, 93, 0.28), transparent 70%),
-    radial-gradient(circle at 85% 25%, rgba(58, 125, 118, 0.18), transparent 45%),
-    radial-gradient(circle at 15% 65%, rgba(42, 84, 67, 0.22), transparent 50%),
-    linear-gradient(180deg, #0f1c16 0%, #0c1511 50%, #0a120e 100%) !important;
+    radial-gradient(ellipse 65% 35% at 50% -5%, rgba(43, 89, 70, 0.15), transparent 70%),
+    linear-gradient(180deg, #111417 0%, #0d0f11 50%, #090a0c 100%) !important;
 }
 
 body.theme-dark-grey::before {
@@ -4208,12 +4206,12 @@ body.theme-dark-grey::before {
   z-index: -5 !important;
   pointer-events: none !important;
   background-image: 
-    linear-gradient(to right, rgba(142, 194, 168, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(142, 194, 168, 0.04) 1px, transparent 1px) !important;
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px) !important;
   background-size: 48px 48px !important;
-  mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 85%) !important;
-  -webkit-mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 85%) !important;
-  opacity: 0.85 !important;
+  mask-image: radial-gradient(circle at 50% 30%, black 25%, transparent 80%) !important;
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, black 25%, transparent 80%) !important;
+  opacity: 0.7 !important;
   display: block !important;
 }
 
@@ -4223,34 +4221,41 @@ body.theme-dark-grey::after {
   inset: 0 !important;
   z-index: -4 !important;
   pointer-events: none !important;
-  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(6, 12, 9, 0.75) 100%) !important;
+  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.65) 100%) !important;
   display: block !important;
 }
 
 body.theme-dark-grey .top-fade {
-  background: linear-gradient(to bottom, rgba(12, 21, 17, 1) 0%, rgba(12, 21, 17, 0.85) 40%, transparent 100%) !important;
+  background: linear-gradient(to bottom, rgba(13, 15, 17, 1) 0%, rgba(13, 15, 17, 0.8) 40%, transparent 100%) !important;
 }
 
-/* 2. ПЛАВАЮЩИЙ ХЕДЕР (Floating Island — shadcn/ui) */
-body.theme-dark-grey .header {
-  border-radius: 20px !important;
-  background: rgba(15, 27, 21, 0.74) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
-  box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+/* 2. ЛОГОТИП — ЧИСТЫЙ ПРОЗРАЧНЫЙ БЕЗ ЗЕЛЕНОЙ ПОДЛОЖКИ */
+body.theme-dark-grey .brand-mark.has-image {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
-
-body.theme-dark-grey .brand-mark {
+body.theme-dark-grey .brand-mark.has-image img {
+  filter: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+body.theme-dark-grey .brand-mark:not(.has-image) {
   border-radius: 14px !important;
-  background: radial-gradient(circle at 35% 28%, rgba(124, 204, 167, 0.28), transparent 45%), linear-gradient(135deg, #1b382c, #0d1e16) !important;
-  border: 1px solid rgba(142, 194, 168, 0.3) !important;
+  background: #181d22 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: var(--gold) !important;
 }
 
-body.theme-dark-grey .brand-mark.has-image {
-  background: linear-gradient(145deg, rgba(230, 245, 238, 0.95), rgba(162, 199, 182, 0.9)) !important;
-  border-color: rgba(142, 194, 168, 0.4) !important;
+/* 3. ПЛАВАЮЩИЙ ХЕДЕР (Floating Island — shadcn/ui) */
+body.theme-dark-grey .header {
+  border-radius: 20px !important;
+  background: rgba(17, 20, 24, 0.78) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 body.theme-dark-grey .nav a {
@@ -4258,30 +4263,30 @@ body.theme-dark-grey .nav a {
   transition: color 0.25s ease !important;
 }
 body.theme-dark-grey .nav a:hover {
-  color: var(--gold) !important;
+  color: #ffffff !important;
 }
 
 body.theme-dark-grey .header-action {
   border-radius: 9999px !important;
-  background: linear-gradient(135deg, #2b614c 0%, #1a4233 100%) !important;
-  border: 1px solid rgba(142, 214, 180, 0.35) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 18px rgba(35, 85, 65, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  background: linear-gradient(180deg, #283038 0%, #1a1f24 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
   font-weight: 600 !important;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 body.theme-dark-grey .header-action:hover {
   transform: translateY(-2px) scale(1.02) !important;
-  background: linear-gradient(135deg, #35755c 0%, #21523f 100%) !important;
-  border-color: var(--gold) !important;
-  box-shadow: 0 8px 26px rgba(45, 115, 88, 0.45) !important;
+  background: linear-gradient(180deg, #323c46 0%, #20262c 100%) !important;
+  border-color: rgba(104, 184, 150, 0.6) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(104, 184, 150, 0.25) !important;
 }
 
-/* 3. HERO ЭКРАН И BENTO БЫСТРЫЙ ПОДБОР */
+/* 4. HERO ЭКРАН И БЫСТРЫЙ ПОДБОР */
 body.theme-dark-grey .hero-stage {
   border-radius: 28px !important;
-  border: 1px solid rgba(142, 194, 168, 0.22) !important;
-  box-shadow: 0 32px 84px -16px rgba(2, 10, 7, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 32px 84px -16px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 body.theme-dark-grey .kicker {
@@ -4291,22 +4296,22 @@ body.theme-dark-grey .kicker {
 
 body.theme-dark-grey .hero-booking {
   border-radius: 24px !important;
-  background: rgba(16, 30, 24, 0.84) !important;
+  background: rgba(18, 21, 25, 0.86) !important;
   backdrop-filter: blur(28px) !important;
   -webkit-backdrop-filter: blur(28px) !important;
-  border: 1px solid rgba(142, 194, 168, 0.22) !important;
-  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 body.theme-dark-grey .quick-field {
   border-radius: 14px !important;
-  background: rgba(237, 245, 240, 0.045) !important;
-  border: 1px solid rgba(142, 194, 168, 0.16) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   transition: border-color 0.2s ease, background 0.2s ease !important;
 }
 body.theme-dark-grey .quick-field:focus-within {
   border-color: var(--gold) !important;
-  background: rgba(237, 245, 240, 0.07) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
 }
 body.theme-dark-grey .quick-field label {
   color: var(--muted-2) !important;
@@ -4318,9 +4323,8 @@ body.theme-dark-grey .quick-field select {
 
 body.theme-dark-grey .quick-total {
   border-radius: 16px !important;
-  background: linear-gradient(135deg, rgba(43, 97, 76, 0.35) 0%, rgba(20, 45, 35, 0.5) 100%) !important;
-  border: 1px solid rgba(124, 204, 167, 0.3) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 body.theme-dark-grey .quick-total b {
   color: var(--cream) !important;
@@ -4329,25 +4333,26 @@ body.theme-dark-grey .quick-total small {
   color: var(--gold) !important;
 }
 
-/* 4. КНОПКИ (Magic UI Shimmer & Smooth Transitions) */
+/* 5. КНОПКИ (ASTRYX / ACETERNITY / SHADCN PRO MAX) */
 body.theme-dark-grey .btn {
   border-radius: 12px !important;
   font-weight: 600 !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Главные кнопки (зеленый хвойно-шалфейный градиент, Pro Max) */
+/* Главные кнопки действия («Выбрать» в карточках, «Найти», «Подтвердить») */
 body.theme-dark-grey .btn-primary,
 body.theme-dark-grey .hero-actions .btn-primary,
 body.theme-dark-grey .house-content .select-cabin-btn,
 body.theme-dark-grey #submitBookingBtn,
 body.theme-dark-grey #btnQuickSearch {
-  background: linear-gradient(135deg, #2d6b53 0%, #1c4736 100%) !important;
+  background: linear-gradient(180deg, #272d34 0%, #171b1f 100%) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(142, 214, 180, 0.38) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 24px -4px rgba(28, 71, 54, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 body.theme-dark-grey .btn-primary:hover,
@@ -4355,46 +4360,108 @@ body.theme-dark-grey .hero-actions .btn-primary:hover,
 body.theme-dark-grey .house-content .select-cabin-btn:hover,
 body.theme-dark-grey #submitBookingBtn:hover,
 body.theme-dark-grey #btnQuickSearch:hover {
-  background: linear-gradient(135deg, #378064 0%, #235742 100%) !important;
-  transform: translateY(-2px) scale(1.015) !important;
-  border-color: var(--gold) !important;
-  box-shadow: 0 12px 30px -4px rgba(35, 87, 66, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  background: linear-gradient(180deg, #323a43 0%, #1e2429 100%) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  border-color: rgba(104, 184, 150, 0.6) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 14px rgba(104, 184, 150, 0.25) !important;
 }
 
 body.theme-dark-grey .btn-primary:active,
 body.theme-dark-grey .hero-actions .btn-primary:active,
 body.theme-dark-grey .house-content .select-cabin-btn:active {
   transform: translateY(1px) scale(0.99) !important;
-  box-shadow: 0 4px 12px rgba(20, 50, 38, 0.4) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Второстепенные кнопки (Ghost / Glass) */
+/* Второстепенные кнопки («Подробно» в карточках, «Смотреть территорию») */
 body.theme-dark-grey .btn-ghost,
 body.theme-dark-grey .hero-actions .btn-ghost,
 body.theme-dark-grey .house-content a.btn-ghost {
-  background: rgba(22, 40, 32, 0.55) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
-  color: var(--cream) !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 12px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
 body.theme-dark-grey .btn-ghost:hover,
 body.theme-dark-grey .hero-actions .btn-ghost:hover,
 body.theme-dark-grey .house-content a.btn-ghost:hover {
-  background: rgba(38, 70, 56, 0.45) !important;
-  border-color: var(--gold) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
 }
 
-/* 5. БЕГУЩАЯ СТРОКА (Magic UI Marquee с градиентной маской) */
+/* 6. КАРТОЧКИ ДОМИКОВ: ЯРКИЕ ЧЕТКИЕ ФОТО БЕЗ ЗЕЛЕНИ И ТЕМНО-СЕРЫЕ НОМЕРА */
+body.theme-dark-grey .house-card {
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: #121518 !important;
+  box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body.theme-dark-grey .house-card:hover {
+  transform: translateY(-5px) scale(1.01) !important;
+  border-color: rgba(104, 184, 150, 0.4) !important;
+  box-shadow: 0 24px 60px -8px rgba(0, 0, 0, 0.75), 0 0 16px rgba(104, 184, 150, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Картинки: 100% чистые и сочные без зеленой дымки */
+body.theme-dark-grey .house-image {
+  filter: none !important;
+}
+
+body.theme-dark-grey .house-card::after {
+  background: linear-gradient(180deg, transparent 0%, transparent 58%, rgba(0, 0, 0, 0.48) 75%, rgba(10, 12, 14, 0.95) 100%) !important;
+}
+
+/* Номера домиков: благородный матовый темно-серый цвет */
+body.theme-dark-grey .house-num {
+  color: rgba(255, 255, 255, 0.25) !important;
+  text-shadow: none !important;
+  font-weight: 600 !important;
+}
+
+body.theme-dark-grey .house-content h3 {
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+}
+
+body.theme-dark-grey .chip {
+  border-radius: 9999px !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: var(--cream) !important;
+}
+
+/* 7. ФИЛЬТРЫ ДОМИКОВ */
+body.theme-dark-grey .filter {
+  border-radius: 9999px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: var(--muted) !important;
+  transition: all 0.2s ease !important;
+}
+body.theme-dark-grey .filter:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+body.theme-dark-grey .filter.active {
+  background: linear-gradient(180deg, #272d34 0%, #181c20 100%) !important;
+  border-color: rgba(104, 184, 150, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 10px rgba(104, 184, 150, 0.2) !important;
+}
+
+/* 8. БЕГУЩАЯ СТРОКА (Magic UI Marquee) */
 body.theme-dark-grey .trust-strip {
-  background: linear-gradient(90deg, rgba(12, 21, 17, 0.95), rgba(19, 34, 27, 0.7), rgba(12, 21, 17, 0.95)) !important;
-  border-top: 1px solid rgba(142, 194, 168, 0.16) !important;
-  border-bottom: 1px solid rgba(142, 194, 168, 0.16) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%) !important;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%) !important;
 }
@@ -4405,93 +4472,31 @@ body.theme-dark-grey .marquee {
   letter-spacing: 0.08em !important;
 }
 
-/* 6. КАРТОЧКИ ДОМИКОВ (Bento Grid — Aceternity Glow Card, rounded-3xl) */
-body.theme-dark-grey .house-card {
-  border-radius: 24px !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
-  background: linear-gradient(180deg, rgba(20, 36, 29, 0.6) 0%, rgba(12, 21, 17, 0.96) 100%) !important;
-  box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-body.theme-dark-grey .house-card:hover {
-  transform: translateY(-6px) scale(1.01) !important;
-  border-color: rgba(124, 204, 167, 0.45) !important;
-  box-shadow: 0 24px 60px -8px rgba(30, 80, 60, 0.4), 0 0 20px rgba(124, 204, 167, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-}
-
-body.theme-dark-grey .house-card::after {
-  background: linear-gradient(180deg, rgba(12, 21, 17, 0.02) 0%, rgba(12, 21, 17, 0.65) 45%, rgba(10, 18, 14, 0.98) 100%), radial-gradient(circle at 50% 20%, rgba(124, 204, 167, 0.12), transparent 12rem) !important;
-}
-
-body.theme-dark-grey .house-num {
-  color: var(--gold) !important;
-  text-shadow: 0 2px 16px rgba(124, 204, 167, 0.35) !important;
-}
-
-body.theme-dark-grey .house-content h3 {
-  color: var(--cream) !important;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
-}
-
-body.theme-dark-grey .chip {
-  border-radius: 9999px !important;
-  background: rgba(58, 117, 93, 0.22) !important;
-  border: 1px solid rgba(124, 204, 167, 0.28) !important;
-  color: var(--cream) !important;
-}
-
-/* 7. ФИЛЬТРЫ ДОМИКОВ */
-body.theme-dark-grey .filter {
-  border-radius: 9999px !important;
-  background: rgba(237, 245, 240, 0.05) !important;
-  border: 1px solid rgba(142, 194, 168, 0.18) !important;
-  color: var(--muted) !important;
-  transition: all 0.2s ease !important;
-}
-body.theme-dark-grey .filter:hover {
-  background: rgba(58, 117, 93, 0.2) !important;
-  color: var(--cream) !important;
-}
-body.theme-dark-grey .filter.active {
-  background: linear-gradient(135deg, #2e6952 0%, #1c4736 100%) !important;
-  border-color: var(--gold) !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(28, 71, 54, 0.45) !important;
-}
-
-/* 8. СЕКЦИЯ УДОБСТВ (Bento Cards с мягким природным свечением) */
+/* 9. СЕКЦИЯ УДОБСТВ (Bento Cards) */
 body.theme-dark-grey .feature-panel {
   border-radius: 28px !important;
-  background: radial-gradient(circle at 80% 10%, rgba(58, 117, 93, 0.25), transparent 22rem), rgba(19, 34, 27, 0.85) !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
-  box-shadow: 0 24px 64px -12px rgba(2, 10, 7, 0.7) !important;
+  background: rgba(18, 21, 25, 0.88) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.7) !important;
 }
 
 body.theme-dark-grey .feature-image {
   border-radius: 28px !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 body.theme-dark-grey .feature-item {
   border-radius: 18px !important;
-  border: 1px solid rgba(142, 194, 168, 0.16) !important;
-  background: linear-gradient(135deg, rgba(237, 245, 240, 0.05) 0%, rgba(237, 245, 240, 0.01) 100%) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
-
-body.theme-dark-grey .feature-item::before {
-  background: radial-gradient(ellipse at 0% 0%, rgba(124, 204, 167, 0.25) 0%, transparent 65%) !important;
-}
-
 body.theme-dark-grey .feature-item:hover {
-  transform: translateY(-3px) scale(1.01) !important;
-  border-color: rgba(124, 204, 167, 0.4) !important;
-  background: linear-gradient(135deg, rgba(58, 117, 93, 0.18) 0%, rgba(237, 245, 240, 0.03) 100%) !important;
-  box-shadow: 0 16px 36px -6px rgba(15, 45, 33, 0.4) !important;
+  transform: translateY(-2px) scale(1.01) !important;
+  border-color: rgba(104, 184, 150, 0.4) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5) !important;
 }
 
 body.theme-dark-grey .feature-item > div svg,
@@ -4501,90 +4506,85 @@ body.theme-dark-grey .feature-item div {
   stroke: var(--gold) !important;
 }
 
-/* 9. СТАТИСТИКА И МИССИЯ */
+/* 10. СТАТИСТИКА И МИССИЯ */
 body.theme-dark-grey .video-panel {
   border-radius: 24px !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 body.theme-dark-grey .play {
   border-radius: 50% !important;
-  background: rgba(19, 34, 27, 0.65) !important;
-  border: 1px solid rgba(124, 204, 167, 0.4) !important;
+  background: rgba(25, 30, 36, 0.75) !important;
+  border: 1px solid rgba(104, 184, 150, 0.4) !important;
   color: var(--gold) !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
 }
 body.theme-dark-grey .play:hover {
   transform: scale(1.08) !important;
-  background: rgba(43, 97, 76, 0.8) !important;
+  background: #272d34 !important;
   color: #ffffff !important;
 }
 
 body.theme-dark-grey .stat {
   border-radius: 20px !important;
-  background: radial-gradient(circle at 80% 0%, rgba(58, 117, 93, 0.16), transparent 12rem), rgba(19, 34, 27, 0.72) !important;
-  border: 1px solid rgba(142, 194, 168, 0.18) !important;
+  background: rgba(18, 21, 25, 0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   box-shadow: 0 12px 32px -6px rgba(0, 0, 0, 0.45) !important;
 }
 
 body.theme-dark-grey .stat-icon {
   border-radius: 14px !important;
-  background: rgba(58, 117, 93, 0.24) !important;
+  background: rgba(43, 89, 70, 0.25) !important;
+  border: 1px solid rgba(104, 184, 150, 0.25) !important;
   color: var(--gold) !important;
-  border: 1px solid rgba(124, 204, 167, 0.25) !important;
 }
 
 body.theme-dark-grey .stat b {
   color: var(--cream) !important;
 }
 
-/* 10. КАЛЕНДАРЬ И ОФОРМЛЕНИЕ ЗАЯВКИ (Интерактивный виджет в стиле shadcn/ui) */
+/* 11. КАЛЕНДАРЬ И ОФОРМЛЕНИЕ ЗАЯВКИ (ЧЕТКИЙ И КОНТРАСТНЫЙ SHADCN СТИЛЬ БЕЗ МУТНОСТИ И ЗЕЛЕНИ) */
 body.theme-dark-grey .calendar-card,
 body.theme-dark-grey .checkout-card {
   border-radius: 24px !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
-  background: linear-gradient(180deg, rgba(237, 245, 240, 0.05), rgba(237, 245, 240, 0.015)), rgba(19, 34, 27, 0.78) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(18, 21, 25, 0.88) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 
 body.theme-dark-grey .arrows button {
   border-radius: 10px !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
-  background: rgba(237, 245, 240, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
   color: var(--cream) !important;
 }
 body.theme-dark-grey .arrows button:hover {
-  background: rgba(58, 117, 93, 0.3) !important;
-  border-color: var(--gold) !important;
-  color: var(--gold) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(104, 184, 150, 0.5) !important;
+  color: #ffffff !important;
 }
 
-body.theme-dark-grey .calendar-day {
-  border-radius: 12px !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-/* Свободные дни */
+/* Свободные дни календаря: нейтральный чистый графит без зелени */
 body.theme-dark-grey .calendar-day:not(.empty):not(.past):not(.busy):not(.selected):not(.range-between) {
-  border: 1.5px solid rgba(142, 194, 168, 0.25) !important;
-  background: rgba(237, 245, 240, 0.04) !important;
-  color: var(--cream) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #e5eaec !important;
 }
 body.theme-dark-grey .calendar-day:not(.empty):not(.past):not(.busy):not(.selected):not(.range-between):hover {
-  border-color: var(--gold) !important;
-  background: rgba(58, 117, 93, 0.28) !important;
+  border-color: rgba(104, 184, 150, 0.5) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
   transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 4px 14px rgba(58, 117, 93, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Выбранный день */
+/* Выбранный день: аккуратное изумрудное выделение */
 body.theme-dark-grey .calendar-day.selected {
-  background: linear-gradient(135deg, #2d6b53 0%, #1c4736 100%) !important;
-  border: 1.5px solid #7ccca7 !important;
+  background: linear-gradient(135deg, #1f4a38 0%, #153326 100%) !important;
+  border: 1.5px solid #68b896 !important;
   color: #ffffff !important;
-  box-shadow: 0 0 18px rgba(79, 150, 122, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 0 14px rgba(104, 184, 150, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
   transform: scale(1.03) !important;
   z-index: 2 !important;
 }
@@ -4592,103 +4592,125 @@ body.theme-dark-grey .calendar-day.selected span {
   color: #ffffff !important;
 }
 body.theme-dark-grey .calendar-day.selected small {
-  color: #d8f5e7 !important;
+  color: #c9eedf !important;
 }
 
 /* Промежуточные дни выбора */
 body.theme-dark-grey .calendar-day.range-between {
-  background: rgba(45, 107, 83, 0.32) !important;
-  border: 1.5px solid rgba(124, 204, 167, 0.45) !important;
+  background: rgba(31, 74, 56, 0.32) !important;
+  border: 1.5px solid rgba(104, 184, 150, 0.35) !important;
   color: #ffffff !important;
 }
 body.theme-dark-grey .calendar-day.range-between small {
-  color: #d8f5e7 !important;
+  color: #c9eedf !important;
 }
 
 /* Занятые дни */
 body.theme-dark-grey .calendar-day.busy:not(.checkout-option) {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  color: rgba(237, 245, 240, 0.28) !important;
-  opacity: 0.4 !important;
+  background: rgba(0, 0, 0, 0.22) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  color: rgba(255, 255, 255, 0.24) !important;
+  opacity: 0.38 !important;
 }
 
-/* Легенда календаря */
-body.theme-dark-grey .legend i.legend-color-selected {
-  background: linear-gradient(135deg, #2d6b53, #1c4736) !important;
-  border: 1.5px solid #7ccca7 !important;
+/* ЗВЕЗДОЧКА «АКЦИЯ» В ЛЕГЕНДЕ: ИДЕАЛЬНО РОВНАЯ И НЕ ВЫТЯНУТАЯ */
+body.theme-dark-grey .legend span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
 }
+
+body.theme-dark-grey .legend i {
+  flex-shrink: 0 !important;
+}
+
 body.theme-dark-grey .legend i.legend-promo {
-  color: var(--gold) !important;
+  width: 14px !important;
+  height: 14px !important;
+  aspect-ratio: 1 / 1 !important;
+  flex: 0 0 14px !important;
+  font-size: 14px !important;
+  line-height: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transform: none !important;
+  color: #68b896 !important;
+  text-shadow: none !important;
 }
 
-/* Поля формы бронирования */
+body.theme-dark-grey .legend i.legend-color-selected {
+  background: linear-gradient(135deg, #1f4a38, #153326) !important;
+  border: 1.5px solid #68b896 !important;
+}
+
+/* Форма заявки: четкая, без мутности */
 body.theme-dark-grey #checkoutSelectedInfo,
 body.theme-dark-grey .guest-stepper,
 body.theme-dark-grey .booking-form .input,
 body.theme-dark-grey .booking-form textarea.input,
 body.theme-dark-grey .booking-extras-disclosure {
-  border: 1.5px solid rgba(142, 194, 168, 0.22) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 12px !important;
-  background: rgba(237, 245, 240, 0.04) !important;
-  color: var(--cream) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #ffffff !important;
   transition: all 0.2s ease !important;
 }
 
 body.theme-dark-grey .booking-form .input:focus,
 body.theme-dark-grey .booking-form textarea.input:focus {
-  border-color: var(--gold) !important;
-  background: rgba(237, 245, 240, 0.07) !important;
-  box-shadow: 0 0 0 3px rgba(124, 204, 167, 0.2) !important;
+  border-color: #68b896 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 0 0 2px rgba(104, 184, 150, 0.2) !important;
 }
 
 body.theme-dark-grey .guest-stepper-btn {
-  color: var(--gold) !important;
-  border-color: rgba(142, 194, 168, 0.2) !important;
+  color: #68b896 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 body.theme-dark-grey .guest-stepper-btn:hover {
-  background: rgba(58, 117, 93, 0.25) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
 }
 
 body.theme-dark-grey .extra-chip {
   border-radius: 10px !important;
-  border: 1px solid rgba(142, 194, 168, 0.18) !important;
-  background: rgba(237, 245, 240, 0.035) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
   color: var(--muted) !important;
 }
 body.theme-dark-grey .extra-chip:has(input:checked) {
-  background: rgba(58, 117, 93, 0.25) !important;
-  border-color: var(--gold) !important;
-  color: var(--cream) !important;
+  background: rgba(43, 89, 70, 0.25) !important;
+  border-color: #68b896 !important;
+  color: #ffffff !important;
 }
 body.theme-dark-grey .extra-chip input[type="checkbox"] {
-  accent-color: var(--gold) !important;
+  accent-color: #68b896 !important;
 }
 
 /* Блок «Итог» */
 body.theme-dark-grey .summary {
   border-radius: 16px !important;
-  background: linear-gradient(135deg, rgba(45, 107, 83, 0.42) 0%, rgba(20, 48, 37, 0.35) 40%, rgba(12, 21, 17, 0.85) 100%) !important;
-  border: 1.5px solid rgba(124, 204, 167, 0.32) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  background: linear-gradient(145deg, #171b20 0%, #111417 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 body.theme-dark-grey .summary-row.total b {
   color: var(--gold-light) !important;
 }
 
-/* 11. ТЕРРИТОРИЯ */
+/* 12. ТЕРРИТОРИЯ */
 body.theme-dark-grey .territory-stage {
   border-radius: 28px !important;
-  border: 1px solid rgba(142, 194, 168, 0.22) !important;
-  box-shadow: 0 32px 84px -16px rgba(2, 10, 7, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 32px 84px -16px rgba(0, 0, 0, 0.8) !important;
 }
 
 body.theme-dark-grey .territory-content > div:first-child,
 body.theme-dark-grey .side-card {
   border-radius: 20px !important;
-  border: 1px solid rgba(142, 194, 168, 0.22) !important;
-  background: rgba(12, 21, 17, 0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(14, 17, 20, 0.8) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
   box-shadow: 0 20px 54px rgba(0, 0, 0, 0.6) !important;
@@ -4696,91 +4718,116 @@ body.theme-dark-grey .side-card {
 
 body.theme-dark-grey .btn-territory-map {
   border-radius: 9999px !important;
-  background: rgba(15, 27, 21, 0.85) !important;
-  border-color: rgba(124, 204, 167, 0.4) !important;
+  background: rgba(22, 26, 30, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
   color: var(--gold) !important;
 }
 body.theme-dark-grey .btn-territory-map:hover {
-  background: rgba(45, 107, 83, 0.35) !important;
+  background: #2a313a !important;
   border-color: var(--gold) !important;
   color: #ffffff !important;
 }
 
-/* 12. ОТЗЫВЫ ГОСТЕЙ */
+/* 13. ОТЗЫВЫ ГОСТЕЙ */
 body.theme-dark-grey .review {
   border-radius: 22px !important;
-  border: 1px solid rgba(142, 194, 168, 0.18) !important;
-  background: rgba(19, 34, 27, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(18, 21, 25, 0.75) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.5) !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 body.theme-dark-grey .review:hover {
-  transform: translateY(-4px) !important;
-  border-color: rgba(124, 204, 167, 0.38) !important;
-  box-shadow: 0 20px 48px -6px rgba(18, 50, 38, 0.45) !important;
+  transform: translateY(-3px) !important;
+  border-color: rgba(104, 184, 150, 0.35) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
 }
 
 body.theme-dark-grey .avatar {
   border-radius: 50% !important;
-  background: rgba(58, 117, 93, 0.25) !important;
-  border: 1px solid rgba(124, 204, 167, 0.3) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   color: var(--gold) !important;
 }
 
-/* 13. КОНТАКТЫ И ФУТЕР */
+/* 14. КОНТАКТЫ И ФУТЕР — КАРТИНКА СОХРАНЯЕТСЯ */
 body.theme-dark-grey .cta-card {
   border-radius: 28px !important;
-  border: 1px solid rgba(142, 194, 168, 0.22) !important;
-  background: linear-gradient(145deg, rgba(22, 42, 33, 0.92), rgba(12, 21, 17, 0.96)) !important;
-  box-shadow: 0 28px 72px -12px rgba(2, 10, 7, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: #121519 !important;
+  box-shadow: 0 28px 72px -12px rgba(0, 0, 0, 0.8) !important;
 }
 
 body.theme-dark-grey .contact-list a {
   border-radius: 14px !important;
-  border: 1px solid rgba(142, 194, 168, 0.2) !important;
-  background: rgba(12, 21, 17, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(18, 21, 25, 0.6) !important;
   backdrop-filter: blur(14px) !important;
 }
 body.theme-dark-grey .contact-list a:hover {
-  background: rgba(45, 107, 83, 0.3) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   border-color: var(--gold) !important;
 }
 
 body.theme-dark-grey .footer {
-  border-top-color: rgba(142, 194, 168, 0.18) !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* 14. СТРАНИЦА ДОМИКА (cabin.html) */
+/* 15. КНОПКА ЧАТА (ACETERNITY / MAGIC UI — ПРЕМИАЛЬНЫЙ ТЕМНЫЙ ГЛЯНЕЦ С МЯГКИМ СВЕЧЕНИЕМ) */
+body.theme-dark-grey .chat-widget:has(.chat-body[style*="none"]),
+body.theme-dark-grey .chat-widget[data-chat-color]:has(.chat-body[style*="none"]) {
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.14), transparent 22px), linear-gradient(145deg, #20262d, #101316) !important;
+  border: 1.5px solid rgba(104, 184, 150, 0.45) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(104, 184, 150, 0.22) !important;
+}
+
+body.theme-dark-grey .chat-widget:has(.chat-body[style*="none"]):hover,
+body.theme-dark-grey .chat-widget[data-chat-color]:has(.chat-body[style*="none"]):hover {
+  border-color: #68b896 !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 28px rgba(104, 184, 150, 0.38) !important;
+}
+
+body.theme-dark-grey #chat-toggle .chat-ring-label text,
+body.theme-dark-grey .preview-ring text {
+  fill: #d2ded8 !important;
+}
+
+body.theme-dark-grey #chat-toggle > svg:not(.chat-ring-label),
+body.theme-dark-grey .preview-fab svg:not(.preview-ring) {
+  fill: #f0f5f2 !important;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6)) !important;
+}
+
+/* 16. СТРАНИЦА ДОМИКА (cabin.html) */
 body.theme-dark-grey .cabin-page-container {
-  --cp-bg: #0c1511 !important;
-  --cp-surface: #14231d !important;
-  --cp-surface-hover: #1c322a !important;
-  --cp-text: #edf5f0 !important;
-  --cp-text-muted: #c6ddd1 !important;
-  --cp-gold: #7ccca7 !important;
-  --cp-gold-hover: #9ee6c6 !important;
-  --cp-gold-dim: rgba(124, 204, 167, 0.16) !important;
-  --cp-line: rgba(142, 194, 168, 0.18) !important;
-  --cp-line-light: rgba(124, 204, 167, 0.28) !important;
+  --cp-bg: #0d0f11 !important;
+  --cp-surface: #14171a !important;
+  --cp-surface-hover: #1a1e23 !important;
+  --cp-text: #f0f4f2 !important;
+  --cp-text-muted: #cbd5d0 !important;
+  --cp-gold: #68b896 !important;
+  --cp-gold-hover: #8fd4b6 !important;
+  --cp-gold-dim: rgba(104, 184, 150, 0.16) !important;
+  --cp-line: rgba(255, 255, 255, 0.08) !important;
+  --cp-line-light: rgba(104, 184, 150, 0.25) !important;
   background-color: var(--cp-bg) !important;
 }
 
 body.theme-dark-grey .cabin-header {
   border-radius: 20px !important;
-  background: rgba(15, 27, 21, 0.78) !important;
-  border-color: rgba(142, 194, 168, 0.2) !important;
+  background: rgba(17, 20, 24, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 body.theme-dark-grey .cabin-btn-gold {
-  background: linear-gradient(135deg, #2d6b53 0%, #1c4736 100%) !important;
+  background: linear-gradient(180deg, #272d34 0%, #181c20 100%) !important;
   color: #ffffff !important;
-  border-color: rgba(142, 214, 180, 0.4) !important;
-  box-shadow: 0 6px 20px rgba(28, 71, 54, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
 }
 body.theme-dark-grey .cabin-btn-gold:hover {
-  background: linear-gradient(135deg, #378064 0%, #235742 100%) !important;
+  background: linear-gradient(180deg, #323a43 0%, #1f2429 100%) !important;
   border-color: var(--gold) !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
@@ -4790,36 +4837,36 @@ body.theme-dark-grey .cabin-highlights,
 body.theme-dark-grey .cabin-about-photo-wrap,
 body.theme-dark-grey .cabin-pricing-card {
   border-radius: 22px !important;
-  border-color: rgba(142, 194, 168, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 body.theme-dark-grey .cabin-highlight-icon {
-  background: rgba(58, 117, 93, 0.22) !important;
-  border-color: rgba(124, 204, 167, 0.28) !important;
+  background: rgba(43, 89, 70, 0.25) !important;
+  border-color: rgba(104, 184, 150, 0.25) !important;
   color: var(--gold) !important;
 }
 
 body.theme-dark-grey .cabin-amenity-item {
   border-radius: 12px !important;
-  background: linear-gradient(90deg, rgba(30, 56, 45, 0.45) 0%, rgba(12, 21, 17, 0.1) 40%, transparent 70%) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
   color: var(--cp-text) !important;
 }
 body.theme-dark-grey .cabin-amenity-item svg {
   stroke: var(--gold) !important;
 }
 
-/* 15. ПАНЕЛЬ УПРАВЛЕНИЯ / АДМИНКА (Admin UI compatibility) */
+/* 17. ПАНЕЛЬ УПРАВЛЕНИЯ / АДМИНКА */
 body.theme-dark-grey .admin-header {
-  background: rgba(15, 27, 21, 0.88) !important;
-  border-bottom-color: rgba(142, 194, 168, 0.18) !important;
+  background: rgba(17, 20, 24, 0.9) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 body.theme-dark-grey .admin-sidebar {
-  border-right-color: rgba(142, 194, 168, 0.18) !important;
+  border-right-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 body.theme-dark-grey .admin-menu-item.active {
-  background: rgba(58, 117, 93, 0.32) !important;
+  background: rgba(43, 89, 70, 0.35) !important;
   color: var(--gold) !important;
 }
 
@@ -4829,19 +4876,19 @@ body.theme-dark-grey .metric-card,
 body.theme-dark-grey .settings-card,
 body.theme-dark-grey .panel {
   border-radius: 18px !important;
-  background: rgba(19, 34, 27, 0.65) !important;
-  border-color: rgba(142, 194, 168, 0.18) !important;
+  background: rgba(18, 21, 25, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 body.theme-dark-grey .modal {
   border-radius: 22px !important;
-  background: #12211a !important;
-  border-color: rgba(142, 194, 168, 0.25) !important;
+  background: #14171a !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 body.theme-dark-grey .chat-widget {
   border-radius: 18px !important;
 }
 body.theme-dark-grey .chat-header {
-  background: linear-gradient(135deg, #2d6b53, #1c4736) !important;
+  background: linear-gradient(180deg, #272d34 0%, #181c20 100%) !important;
 }
