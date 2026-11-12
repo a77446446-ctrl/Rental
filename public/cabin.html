@@ -23,6 +23,24 @@
   <link rel="apple-touch-icon" href="/api/icon.png">
   <title>Домик в лесу у озера в Подмосковье | База отдыха «ЭКО Горный»</title>
 
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('siteTheme');
+        if (t && t !== 'theme-dark') {
+          document.documentElement.classList.add(t);
+          if (document.body) {
+            document.body.classList.add(t);
+          } else {
+            document.addEventListener('DOMContentLoaded', function() {
+              document.body.classList.add(t);
+            });
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Google Fonts: Cormorant Garamond & Manrope -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

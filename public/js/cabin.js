@@ -38,8 +38,19 @@
     'Природа вокруг'
   ];
 
+  function applySiteTheme(theme) {
+    const currentTheme = theme || (function () {
+      try { return localStorage.getItem('siteTheme'); } catch (e) { return null; }
+    })();
+    document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey', 'theme-luxury-glass');
+    if (currentTheme && currentTheme !== 'theme-dark') {
+      document.body.classList.add(currentTheme);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     try { sessionStorage.setItem('eco_splash_seen', '1'); } catch (e) {}
+    applySiteTheme();
     initMobileNav();
     initLightboxEvents();
 
@@ -80,13 +91,22 @@
     }
 
     try {
-      const [cabins, mainpage, amenitiesMap, houseItems, cabinAddonsMap] = await Promise.all([
+      const [cabins, mainpage, amenitiesMap, houseItems, cabinAddonsMap, settings] = await Promise.all([
         EcoApi.get('/api/cabins').catch(() => []),
         mainpagePromise,
         EcoApi.getAmenities().catch(() => ({})),
         fetchHouseItems().catch(() => []),
-        fetch('/api/cabin-addons').then(r => r.json()).then(j => j.data || {}).catch(() => ({}))
+        fetch('/api/cabin-addons').then(r => r.json()).then(j => j.data || {}).catch(() => ({})),
+        fetch('/api/settings').then(r => r.json()).then(j => j.data || j || {}).catch(() => ({}))
       ]);
+
+      if (settings && settings.siteTheme) {
+        applySiteTheme(settings.siteTheme);
+        try { localStorage.setItem('siteTheme', settings.siteTheme); } catch (e) {}
+      } else if (mainpage && mainpage.siteTheme) {
+        applySiteTheme(mainpage.siteTheme);
+        try { localStorage.setItem('siteTheme', mainpage.siteTheme); } catch (e) {}
+      }
 
       if (!cabins || !cabins.length) {
         throw new Error('Не удалось загрузить данные об объектах');

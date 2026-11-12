@@ -56,8 +56,26 @@
     .form-group input:focus, .form-group select:focus {
       outline: none; border-color: var(--gold);
     }
-    .form-group select { color-scheme: inherit; }
-    .form-group select option { background: var(--bg-2); color: var(--cream); }
+    .form-group select {
+      background-color: var(--bg-2, #18130f) !important;
+      color: var(--cream, #ede4d6) !important;
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.15)) !important;
+      color-scheme: dark;
+    }
+    .form-group select option {
+      background-color: #18130f !important;
+      color: #ede4d6 !important;
+    }
+    body.theme-light .form-group select {
+      background-color: #ffffff !important;
+      color: #111827 !important;
+      border-color: #d1d5db !important;
+      color-scheme: light;
+    }
+    body.theme-light .form-group select option {
+      background-color: #ffffff !important;
+      color: #111827 !important;
+    }
 
     .color-picker-grid {
       display: flex; gap: 12px; flex-wrap: wrap;

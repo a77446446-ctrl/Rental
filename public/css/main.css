@@ -28,30 +28,31 @@
 }
 
 body.theme-light {
-  background: var(--bg) !important;
-  --bg: #f9f9f9;
-  --bg-rgb: 249, 249, 249;
+  background: #faf8f5 !important;
+  background-color: #faf8f5 !important;
+  --bg: #faf8f5;
+  --bg-rgb: 250, 248, 245;
   --bg-2: #ffffff;
   --bg-2-rgb: 255, 255, 255;
-  --bg-3: #f0f0f0;
-  --panel: rgba(255, 255, 255, 0.9);
+  --bg-3: #f3f4f6;
+  --panel: rgba(255, 255, 255, 0.98);
   --panel-rgb: 255, 255, 255;
-  --panel-soft: rgba(240, 240, 240, 0.7);
-  --cream: #1a1a1a;
-  --cream-rgb: 26, 26, 26;
-  --cream-2: #333333;
-  --muted: rgba(0, 0, 0, 0.5);
-  --muted-2: rgba(0, 0, 0, 0.3);
-  --line: rgba(0, 0, 0, 0.1);
-  --line-2: rgba(0, 0, 0, 0.15);
-  --moss: #4a5135;
-  --moss-rgb: 74, 81, 53;
-  --moss-2: #616848;
+  --panel-soft: rgba(243, 244, 246, 0.85);
+  --cream: #111827;
+  --cream-rgb: 17, 24, 39;
+  --cream-2: #374151;
+  --muted: #4b5563;
+  --muted-2: #6b7280;
+  --line: #e5e7eb;
+  --line-2: #d1d5db;
+  --moss: #2e4a32;
+  --moss-rgb: 46, 74, 50;
+  --moss-2: #3f6244;
   --gold: #8a6a3b;
   --gold-rgb: 138, 106, 59;
   --wood: #634128;
-  color-scheme: light;
-  background: var(--bg);
+  color-scheme: light !important;
+  color: #111827 !important;
 }
 
 body.theme-light::before, body.theme-light::after {
@@ -5054,4 +5055,764 @@ body.theme-dark-grey .chat-widget {
 body.theme-luxury-glass .chat-header,
 body.theme-dark-grey .chat-header {
   background: linear-gradient(135deg, #4f46e5, #3730a3) !important;
+}
+
+
+/* ==========================================================================
+   СВЕТЛАЯ ТЕМА (theme-light) — ПОЛНАЯ ПЕРЕРАБОТКА И ВЫСОКИЙ КОНТРАСТ
+   Очистка от туманности, затемнений, темных подложек и обеспечение четкого
+   темного текста на чистом светлом фоне.
+   ========================================================================== */
+
+/* 1. Глобальный фон: скрываем фото леса, затемнения, шумы и градиенты */
+body.theme-light,
+body.theme-light html {
+  background: #faf8f5 !important;
+  background-color: #faf8f5 !important;
+  color: #111827 !important;
+}
+
+body.theme-light #global-bg,
+body.theme-light::before,
+body.theme-light::after,
+body.theme-light .top-fade,
+body.theme-light .noise {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+body.theme-light img {
+  filter: none !important;
+}
+
+/* 2. Шапка, навигация и мобильное меню */
+body.theme-light .header {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+body.theme-light .brand-mark {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: #8a6a3b !important;
+}
+
+body.theme-light .brand-mark.has-image {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body.theme-light .brand-mark.has-image img {
+  filter: none !important;
+  border-radius: 8px !important;
+}
+
+body.theme-light .brand strong {
+  color: #111827 !important;
+}
+
+body.theme-light .brand span {
+  background: #f3f4f6 !important;
+  color: #4b5563 !important;
+  border-color: #e5e7eb !important;
+}
+
+body.theme-light .nav {
+  color: #4b5563 !important;
+}
+
+body.theme-light .nav a {
+  color: #4b5563 !important;
+}
+
+body.theme-light .nav a:hover {
+  color: #111827 !important;
+}
+
+body.theme-light .header-action {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  border-color: #1e242b !important;
+  box-shadow: 0 4px 12px rgba(30, 36, 43, 0.2) !important;
+}
+
+body.theme-light .header-action:hover {
+  background: #0f1317 !important;
+}
+
+/* Мобильная нижняя панель и мобильное меню */
+body.theme-light .mobile-bottom-nav {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-light .mobile-bottom-nav a {
+  color: #6b7280 !important;
+}
+
+body.theme-light .mobile-bottom-nav a.active {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+body.theme-light .mobile-bottom-nav svg,
+body.theme-light .mobile-bottom-nav i {
+  color: inherit !important;
+  stroke: currentColor !important;
+}
+
+body.theme-light .mobile-drawer {
+  background: #ffffff !important;
+  border-left: 1px solid #e5e7eb !important;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-light .mobile-drawer a {
+  color: #111827 !important;
+  border-bottom-color: #f3f4f6 !important;
+}
+
+/* 3. Первый экран (Hero) */
+body.theme-light .hero-stage {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .hero-stage::before {
+  display: none !important;
+}
+
+body.theme-light .hero-top-line {
+  color: #6b7280 !important;
+}
+
+body.theme-light .kicker {
+  color: #8a6a3b !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light h1,
+body.theme-light #hero-title {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .hero-content p,
+body.theme-light #hero-desc {
+  color: #4b5563 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .hero-actions .btn-primary {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  border: 1px solid #1e242b !important;
+  box-shadow: 0 8px 20px rgba(30, 36, 43, 0.25) !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .hero-actions .btn-primary:hover {
+  background: #0f1317 !important;
+  color: #ffffff !important;
+  border-color: #0f1317 !important;
+}
+
+body.theme-light .hero-actions .btn-ghost {
+  background: #ffffff !important;
+  color: #1e242b !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .hero-actions .btn-ghost:hover {
+  background: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+/* Карточка "Быстрый подбор" в Hero */
+body.theme-light .hero-booking {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+body.theme-light .hero-booking h3 {
+  color: #111827 !important;
+}
+
+body.theme-light .hero-booking p {
+  color: #6b7280 !important;
+}
+
+body.theme-light .quick-field {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light .quick-field label {
+  color: #6b7280 !important;
+}
+
+body.theme-light .quick-field strong,
+body.theme-light .quick-field select,
+body.theme-light .quick-field input {
+  color: #111827 !important;
+}
+
+body.theme-light .quick-field select option {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+body.theme-light .quick-total {
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light .quick-total span {
+  color: #6b7280 !important;
+}
+
+body.theme-light .quick-total b {
+  color: #111827 !important;
+}
+
+body.theme-light .hero-booking .btn-primary {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  border: 1px solid #1e242b !important;
+  box-shadow: 0 6px 16px rgba(30, 36, 43, 0.25) !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .hero-booking .btn-primary:hover {
+  background: #0f1317 !important;
+  color: #ffffff !important;
+}
+
+/* 4. Бегущая строка (Marquee) */
+body.theme-light .trust-strip {
+  background: #f3f4f6 !important;
+  border-color: #e5e7eb !important;
+}
+
+body.theme-light .marquee {
+  color: #4b5563 !important;
+}
+
+/* 5. Секция "О нас" и статистика */
+body.theme-light .section-label {
+  color: #8a6a3b !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light h2,
+body.theme-light .section-heading h2 {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .intro-copy {
+  color: #4b5563 !important;
+}
+
+body.theme-light .stat {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-light .stat-icon {
+  background: #f3f4f6 !important;
+  color: #8a6a3b !important;
+}
+
+body.theme-light .stat b {
+  color: #111827 !important;
+}
+
+body.theme-light .stat span {
+  color: #6b7280 !important;
+}
+
+body.theme-light .video-panel {
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-light .play {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* 6. Карточки домиков */
+body.theme-light .section-heading small {
+  color: #6b7280 !important;
+}
+
+body.theme-light .filter {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #4b5563 !important;
+}
+
+body.theme-light .filter.active {
+  background: #1e242b !important;
+  border-color: #1e242b !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .house-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-light .house-card:hover {
+  border-color: #d1d5db !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.09) !important;
+}
+
+body.theme-light .house-image {
+  filter: none !important;
+}
+
+body.theme-light .house-card::after {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 45%, rgba(255,255,255,0.98) 100%) !important;
+}
+
+body.theme-light .house-num {
+  color: #8a6a3b !important;
+}
+
+body.theme-light .house-content h3 {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .house-content p {
+  color: #4b5563 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .chip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+}
+
+body.theme-light .house-content .select-cabin-btn {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  border: 1px solid #1e242b !important;
+  box-shadow: 0 4px 14px rgba(30, 36, 43, 0.25) !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .house-content .select-cabin-btn:hover {
+  background: #0f1317 !important;
+  color: #ffffff !important;
+  border-color: #0f1317 !important;
+}
+
+body.theme-light .house-content a.btn-ghost {
+  background: #ffffff !important;
+  color: #1e242b !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .house-content a.btn-ghost:hover {
+  background: #f9fafb !important;
+  border-color: #9ca3af !important;
+  color: #0f1317 !important;
+}
+
+/* 7. Преимущества */
+body.theme-light .feature-panel {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .feature-panel h2 {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .feature-item {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: none !important;
+}
+
+body.theme-light .feature-item::before {
+  display: none !important;
+}
+
+body.theme-light .feature-item > div {
+  color: #8a6a3b !important;
+}
+
+body.theme-light .feature-item > div svg,
+body.theme-light .feature-item > div i {
+  stroke: #8a6a3b !important;
+  filter: none !important;
+}
+
+body.theme-light .feature-item h3 {
+  color: #111827 !important;
+}
+
+body.theme-light .feature-item p {
+  color: #4b5563 !important;
+}
+
+body.theme-light .feature-image {
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 8. Календарь и бронирование */
+body.theme-light .calendar-card,
+body.theme-light .checkout-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .calendar-top h3,
+body.theme-light .checkout-card h3 {
+  color: #111827 !important;
+}
+
+body.theme-light .calendar-top p,
+body.theme-light .checkout-card > p {
+  color: #6b7280 !important;
+}
+
+body.theme-light .arrows button {
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+  color: #111827 !important;
+}
+
+body.theme-light .arrows button:hover {
+  background: #e5e7eb !important;
+}
+
+body.theme-light .weekdays {
+  color: #6b7280 !important;
+}
+
+body.theme-light .calendar-day {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #111827 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-light .calendar-day span {
+  color: #111827 !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .calendar-day small {
+  color: #6b7280 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .calendar-day:hover {
+  background: #f9fafb !important;
+  border-color: #1e242b !important;
+}
+
+body.theme-light .calendar-day.busy {
+  background: #f3f4f6 !important;
+  border: 1px solid #f3f4f6 !important;
+  color: #9ca3af !important;
+  opacity: 0.55 !important;
+}
+
+body.theme-light .calendar-day.busy span,
+body.theme-light .calendar-day.busy small {
+  color: #9ca3af !important;
+}
+
+body.theme-light .calendar-day.busy.checkout-option {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #92400e !important;
+  opacity: 1 !important;
+}
+
+body.theme-light .calendar-day.busy.checkout-option small {
+  color: #b45309 !important;
+}
+
+body.theme-light .calendar-day.selected {
+  background: #1e242b !important;
+  border: 1.5px solid #1e242b !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(30, 36, 43, 0.25) !important;
+}
+
+body.theme-light .calendar-day.selected span,
+body.theme-light .calendar-day.selected small {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .calendar-day.range-between {
+  background: #e5e7eb !important;
+  border: 1.5px solid #d1d5db !important;
+  color: #111827 !important;
+}
+
+body.theme-light .calendar-day.range-between span {
+  color: #111827 !important;
+}
+
+body.theme-light .calendar-day.range-between small {
+  color: #4b5563 !important;
+}
+
+body.theme-light .calendar-day.promo::after {
+  color: #d97706 !important;
+  font-size: 13px !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .legend {
+  color: #4b5563 !important;
+}
+
+body.theme-light .legend i.legend-color-selected {
+  background: #1e242b !important;
+  border: 1.5px solid #1e242b !important;
+  box-shadow: none !important;
+}
+
+body.theme-light .legend i.legend-color-busy {
+  background: #d1d5db !important;
+  border: 1px solid #9ca3af !important;
+  box-shadow: none !important;
+}
+
+body.theme-light .legend i.legend-promo {
+  color: #d97706 !important;
+  font-size: 14px !important;
+  text-shadow: none !important;
+}
+
+/* Поля формы бронирования */
+body.theme-light #checkoutSelectedInfo,
+body.theme-light .guest-stepper,
+body.theme-light .booking-form .input,
+body.theme-light .booking-form textarea.input,
+body.theme-light .booking-extras-disclosure {
+  background: #f9fafb !important;
+  border: 1.5px solid #e5e7eb !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+
+body.theme-light #checkoutDatesInfo.has-dates {
+  color: #8a6a3b !important;
+}
+
+body.theme-light .booking-form .input::placeholder,
+body.theme-light .booking-form textarea.input::placeholder {
+  color: #9ca3af !important;
+}
+
+body.theme-light .booking-form .input:focus,
+body.theme-light .booking-form textarea.input:focus {
+  border-color: #1e242b !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(30, 36, 43, 0.1) !important;
+  color: #111827 !important;
+}
+
+body.theme-light .guest-stepper span {
+  color: #111827 !important;
+}
+
+body.theme-light .guest-stepper-btn {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
+
+body.theme-light .guest-stepper-btn:hover {
+  background: #f3f4f6 !important;
+  color: #000000 !important;
+}
+
+body.theme-light .booking-extras-disclosure summary {
+  color: #111827 !important;
+}
+
+body.theme-light .booking-extras-disclosure summary small {
+  color: #6b7280 !important;
+}
+
+body.theme-light .extra-chip {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+}
+
+body.theme-light .extra-chip:has(input:checked) {
+  background: #f3f4f6 !important;
+  border-color: #1e242b !important;
+  color: #111827 !important;
+}
+
+/* Блок "Итог" */
+body.theme-light .summary {
+  background: #f9fafb !important;
+  border: 1.5px solid #e5e7eb !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+}
+
+body.theme-light .summary-row {
+  color: #4b5563 !important;
+}
+
+body.theme-light .summary-row.total {
+  color: #111827 !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
+body.theme-light .summary-row.total b {
+  color: #111827 !important;
+}
+
+body.theme-light .booking-form .btn-primary {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  border: 1px solid #1e242b !important;
+  box-shadow: 0 8px 20px rgba(30, 36, 43, 0.25) !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .booking-form .btn-primary:hover {
+  background: #0f1317 !important;
+  color: #ffffff !important;
+  border-color: #0f1317 !important;
+}
+
+/* 9. Территория, отзывы, контакты и футер */
+body.theme-light .territory-stage {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .btn-territory-map {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #1e242b !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .review {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .review p,
+body.theme-light .review-text {
+  color: #4b5563 !important;
+}
+
+body.theme-light .review strong,
+body.theme-light .review-author {
+  color: #111827 !important;
+}
+
+body.theme-light .cta-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light .cta-card h2 {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .cta-card p {
+  color: #4b5563 !important;
+}
+
+body.theme-light .cta-card .btn-primary {
+  background: #1e242b !important;
+  color: #ffffff !important;
+  border: 1px solid #1e242b !important;
+  box-shadow: 0 8px 20px rgba(30, 36, 43, 0.25) !important;
+}
+
+body.theme-light #contact-map-container {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+body.theme-light .footer {
+  border-top: 1px solid #e5e7eb !important;
+  background: #faf8f5 !important;
+  color: #4b5563 !important;
+}
+
+body.theme-light .footer a {
+  color: #4b5563 !important;
+}
+
+body.theme-light .footer a:hover {
+  color: #111827 !important;
+}
+
+/* 10. Кнопка и виджет чата */
+body.theme-light .chat-widget:has(.chat-body[style*="none"]),
+body.theme-light .chat-widget[data-chat-color]:has(.chat-body[style*="none"]) {
+  background: #1e242b !important;
+  border: 1.5px solid #374151 !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.theme-light #chat-toggle .chat-ring-label text,
+body.theme-light .preview-ring text {
+  fill: #1e242b !important;
+}
+
+body.theme-light #chat-toggle > svg:not(.chat-ring-label),
+body.theme-light .preview-fab svg:not(.preview-ring) {
+  fill: #ffffff !important;
+}
+
+body.theme-light .chat-widget {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+  color: #111827 !important;
+}
+
+body.theme-light .chat-header {
+  background: #1e242b !important;
+  color: #ffffff !important;
 }
