@@ -37,7 +37,6 @@ body.theme-light :focus-visible {
 }
 
 body.theme-light .top-meta { color: #6b7280 !important; }
-body.theme-light .top-fade { display: none !important; }
 
 /* Стартовая заставка */
 body.theme-light .app-loading {
@@ -933,9 +932,9 @@ html body.theme-light {
   --photo-scrim-rgb: 12, 18, 28;
   --hero-scrim-top-a: 0.14;
   --hero-scrim-bot-a: 0.36;
-  --stage-scrim-top-a: 0.08;
-  --stage-scrim-mid-a: 0.18;
-  --stage-scrim-bot-a: 0.38;
+  --stage-scrim-top-a: 0.12;
+  --stage-scrim-mid-a: 0.28;
+  --stage-scrim-bot-a: 0.52;
   --cta-scrim-top-a: 0.16;
   --cta-scrim-bot-a: 0.56;
   background: #f5f5f7 !important;
@@ -945,10 +944,34 @@ html body.theme-light {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html body.theme-light .noise,
-html body.theme-light .top-fade {
+html body.theme-light .noise {
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* Верхняя матовая вуаль над шапкой и за ней — размывает детали рисунка при скролле, сохраняя цветность */
+html body.theme-light .top-fade {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: 136px !important;
+  z-index: 45 !important;
+  pointer-events: none !important;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 245, 247, 0.56) 0%,
+    rgba(245, 245, 247, 0.34) 52%,
+    rgba(245, 245, 247, 0) 100%
+  ) !important;
+  backdrop-filter: blur(56px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(56px) saturate(165%) !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%) !important;
+}
+
+html body.theme-light .top-meta {
+  color: rgba(29, 29, 31, 0.78) !important;
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.65) !important;
 }
 
 html body.theme-light .app-splash {
@@ -966,11 +989,11 @@ html body.theme-light .app-splash-sub {
 
 /* Шапка (Apple Frosted Bar) */
 html body.theme-light .header {
-  background: rgba(255, 255, 255, 0.78) !important;
-  backdrop-filter: saturate(180%) blur(20px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  box-shadow: 0 6px 26px rgba(15, 23, 42, 0.06) !important;
+  background: rgba(255, 255, 255, 0.68) !important;
+  backdrop-filter: saturate(185%) blur(32px) !important;
+  -webkit-backdrop-filter: saturate(185%) blur(32px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.68) !important;
+  box-shadow: 0 6px 26px rgba(15, 23, 42, 0.08) !important;
 }
 
 html body.theme-light .brand strong,
@@ -1022,49 +1045,54 @@ html body.theme-light .hero-stage {
 }
 
 html body.theme-light .hero-content {
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: saturate(180%) blur(24px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.92) !important;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.44) 100%) !important;
+  backdrop-filter: saturate(175%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(175%) blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.68) !important;
   border-radius: 26px !important;
   padding: clamp(24px, 3vw, 38px) !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12), 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.74),
+    0 20px 50px rgba(0, 0, 0, 0.14) !important;
 }
 
 html body.theme-light .hero-content h1,
 html body.theme-light .hero-title {
   color: #1d1d1f !important;
-  text-shadow: none !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) !important;
 }
 
 html body.theme-light .hero-title-accent {
-  color: #1e4d3b !important;
+  color: #164433 !important;
   text-shadow: none !important;
   background: none !important;
-  -webkit-text-fill-color: #1e4d3b !important;
+  -webkit-text-fill-color: #164433 !important;
 }
 
 html body.theme-light .hero-content p,
 html body.theme-light #hero-desc {
-  color: #48484a !important;
-  text-shadow: none !important;
+  color: #242426 !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) !important;
 }
 
 html body.theme-light .hero-content .kicker,
 html body.theme-light .kicker,
 html body.theme-light .section-kicker,
 html body.theme-light .section-label {
-  color: #1e4d3b !important;
+  color: #164433 !important;
   text-shadow: none !important;
 }
 
 html body.theme-light .hero-booking {
-  background: rgba(255, 255, 255, 0.92) !important;
-  backdrop-filter: saturate(180%) blur(24px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.56) 100%) !important;
+  backdrop-filter: saturate(180%) blur(22px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(22px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.76) !important;
   border-radius: 26px !important;
-  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.14), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 22px 54px rgba(0, 0, 0, 0.15) !important;
   color: #1d1d1f !important;
 }
 
@@ -1175,13 +1203,17 @@ html body.theme-light .tags-filter button.active {
   box-shadow: 0 6px 16px rgba(30, 77, 59, 0.22) !important;
 }
 
-/* КАРТОЧКИ ДОМОВ — ПОЛНЫЙ ОТКАЗ ОТ БЕЛОГО ТУМАНА НАД ФОТОГРАФИЯМИ */
+/* КАРТОЧКИ ДОМОВ — ПОЛНЫЙ ОТКАЗ ОТ БЕЛОГО ТУМАНА НАД ФОТОГРАФИЯМИ И КОМПАКТНЫЙ КОНТЕНТ */
+html body.theme-light .house-grid {
+  align-items: start !important;
+}
+
 html body.theme-light .house-card {
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
   min-height: 0 !important;
-  height: 100% !important;
+  height: auto !important;
   padding: 0 !important;
   background: #ffffff !important;
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
@@ -1256,6 +1288,7 @@ html body.theme-light .house-card .house-badge {
   pointer-events: auto;
 }
 
+html body.theme-light .house-card .house-content,
 html body.theme-light .house-card .house-body {
   position: relative !important;
   inset: auto !important;
@@ -1263,26 +1296,34 @@ html body.theme-light .house-card .house-body {
   flex: 1 1 auto !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px !important;
+  gap: 0 !important;
   margin: 0 !important;
-  padding: 20px 22px 22px !important;
+  padding: 18px 20px 20px !important;
   background: #ffffff !important;
   border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
   text-shadow: none !important;
 }
 
-html body.theme-light .house-card .house-body h3,
-html body.theme-light .house-card .house-title {
-  color: #1d1d1f !important;
-  text-shadow: none !important;
-}
-
 html body.theme-light .house-card .house-num,
 html body.theme-light .house-num {
-  color: rgba(29, 29, 31, 0.22) !important;
+  display: block !important;
+  margin: 0 0 6px !important;
+  font-size: 38px !important;
+  line-height: 0.9 !important;
+  color: rgba(29, 29, 31, 0.24) !important;
   background: none !important;
   text-shadow: none !important;
-  -webkit-text-fill-color: rgba(29, 29, 31, 0.22) !important;
+  -webkit-text-fill-color: rgba(29, 29, 31, 0.24) !important;
+}
+
+html body.theme-light .house-card .house-content h3,
+html body.theme-light .house-card .house-body h3,
+html body.theme-light .house-card .house-title {
+  margin: 0 !important;
+  font-size: 27px !important;
+  line-height: 1.06 !important;
+  color: #1d1d1f !important;
+  text-shadow: none !important;
 }
 
 html body.theme-light .house-card .house-price {
@@ -1291,27 +1332,49 @@ html body.theme-light .house-card .house-price {
   text-shadow: none !important;
 }
 
+html body.theme-light .house-card .house-content p,
 html body.theme-light .house-card .house-desc,
 html body.theme-light .house-card .house-body p {
+  min-height: 0 !important;
+  margin: 8px 0 0 !important;
   color: #6e6e73 !important;
+  font-size: 13px !important;
+  line-height: 1.48 !important;
   text-shadow: none !important;
 }
 
+html body.theme-light .house-card .house-content p:empty,
+html body.theme-light .house-card .house-body p:empty {
+  display: none !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
+
+html body.theme-light .house-card .house-meta {
+  margin: 12px 0 14px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
 html body.theme-light .house-card .house-meta span,
-html body.theme-light .house-card .house-tags span {
+html body.theme-light .house-card .house-tags span,
+html body.theme-light .house-card .chip {
   background: #f5f5f7 !important;
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
   color: #3a3a3c !important;
   border-radius: 8px !important;
 }
 
+html body.theme-light .house-card .house-content > div:last-child,
 html body.theme-light .house-card .house-actions {
-  margin-top: auto !important;
-  padding-top: 12px !important;
+  margin-top: 2px !important;
+  padding-top: 0 !important;
   display: flex !important;
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
+html body.theme-light .house-card .house-content button,
 html body.theme-light .house-card .house-actions button {
   background: #1d1d1f !important;
   border: 1px solid #1d1d1f !important;
@@ -1319,10 +1382,12 @@ html body.theme-light .house-card .house-actions button {
   border-radius: 12px !important;
 }
 
+html body.theme-light .house-card .house-content button:hover,
 html body.theme-light .house-card .house-actions button:hover {
   background: #333336 !important;
 }
 
+html body.theme-light .house-card .house-content a.btn-ghost,
 html body.theme-light .house-card .house-actions a {
   background: #f5f5f7 !important;
   border: 1px solid rgba(0, 0, 0, 0.09) !important;
@@ -1330,6 +1395,7 @@ html body.theme-light .house-card .house-actions a {
   border-radius: 12px !important;
 }
 
+html body.theme-light .house-card .house-content a.btn-ghost:hover,
 html body.theme-light .house-card .house-actions a:hover {
   background: #ebecee !important;
   border-color: rgba(0, 0, 0, 0.16) !important;
@@ -1403,58 +1469,75 @@ html body.theme-light .territory-stage .section-label {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
-html body.theme-light .territory-stage .territory-copy {
-  background: rgba(255, 255, 255, 0.92) !important;
-  backdrop-filter: saturate(180%) blur(20px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important;
-  border-radius: 22px !important;
-  padding: clamp(20px, 2.5vw, 30px) !important;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14) !important;
+html body.theme-light .territory-stage .territory-copy,
+html body.theme-light .territory-stage .territory-content > div:first-child {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 html body.theme-light .territory-stage .territory-copy h2,
 html body.theme-light .territory-stage .territory-copy .section-title,
 html body.theme-light .territory-stage .territory-copy h3 {
-  color: #1d1d1f !important;
-  text-shadow: none !important;
+  color: #f2f4f7 !important;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45) !important;
 }
 
 html body.theme-light .territory-stage .territory-copy p,
 html body.theme-light .territory-stage .territory-copy .section-sub {
-  color: #48484a !important;
-  text-shadow: none !important;
+  color: #d6dce5 !important;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45) !important;
 }
 
-html body.theme-light .territory-stage .kicker,
-html body.theme-light .territory-stage .section-kicker {
-  color: #1e4d3b !important;
+html body.theme-light .territory-stage .territory-copy .kicker,
+html body.theme-light .territory-stage .territory-copy .section-kicker {
+  color: #dbe4ea !important;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.42) !important;
 }
 
 html body.theme-light .territory-stage .side-card {
-  background: rgba(255, 255, 255, 0.94) !important;
-  backdrop-filter: saturate(180%) blur(20px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.62) 0%, rgba(246, 248, 250, 0.46) 100%) !important;
+  backdrop-filter: saturate(185%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(185%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
   border-radius: 22px !important;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16) !important;
-  color: #1d1d1f !important;
+  padding: 22px 20px !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+  color: #14181f !important;
 }
 
 html body.theme-light .territory-stage .side-card h3 {
-  color: #1d1d1f !important;
+  color: #14181f !important;
   text-shadow: none !important;
+  padding: 0 4px 12px !important;
+  margin-bottom: 12px !important;
 }
 
 html body.theme-light .territory-stage .side-card h3::after {
-  background: #1e4d3b !important;
+  background: rgba(30, 77, 59, 0.42) !important;
 }
 
 html body.theme-light .territory-stage .side-item {
-  background: #f5f5f7 !important;
-  border: 1px solid rgba(0, 0, 0, 0.07) !important;
+  background: rgba(255, 255, 255, 0.62) !important;
+  border: 1px solid rgba(255, 255, 255, 0.78) !important;
   border-radius: 14px !important;
-  color: #1d1d1f !important;
+  padding: 13px 15px !important;
+  color: #14181f !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05) !important;
+}
+
+html body.theme-light .territory-stage .side-item h4,
+html body.theme-light .territory-stage .side-item strong {
+  color: #11151a !important;
+}
+
+html body.theme-light .territory-stage .side-item p,
+html body.theme-light .territory-stage .side-item span {
+  color: #38414a !important;
 }
 
 html body.theme-light .territory-stage .side-item strong {
@@ -1582,9 +1665,7 @@ html body.theme-light .legend i.legend-color-busy {
 
 html body.theme-light .checkout-card input:not([type="checkbox"]):not([type="radio"]),
 html body.theme-light .checkout-card select,
-html body.theme-light .checkout-card textarea,
-html body.theme-light .hero-booking input,
-html body.theme-light .hero-booking select {
+html body.theme-light .checkout-card textarea {
   background: #f5f5f7 !important;
   border: 1px solid rgba(0, 0, 0, 0.10) !important;
   color: #1d1d1f !important;
@@ -1594,13 +1675,99 @@ html body.theme-light .hero-booking select {
 
 html body.theme-light .checkout-card input:focus,
 html body.theme-light .checkout-card select:focus,
-html body.theme-light .checkout-card textarea:focus,
-html body.theme-light .hero-booking input:focus,
-html body.theme-light .hero-booking select:focus {
+html body.theme-light .checkout-card textarea:focus {
   background: #ffffff !important;
   border-color: #1e4d3b !important;
   box-shadow: 0 0 0 4px rgba(30, 77, 59, 0.12) !important;
   outline: none !important;
+}
+
+html body.theme-light .hero-booking .quick-field {
+  background: rgba(255, 255, 255, 0.64) !important;
+  border: 1px solid rgba(17, 24, 39, 0.11) !important;
+  border-radius: 14px !important;
+  padding: 10px 10px 11px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+html body.theme-light .hero-booking .quick-field:focus-within {
+  background: rgba(255, 255, 255, 0.90) !important;
+  border-color: #1e4d3b !important;
+  box-shadow: 0 0 0 3px rgba(30, 77, 59, 0.14) !important;
+}
+
+html body.theme-light .hero-booking .quick-field label {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  padding: 0 !important;
+  margin: 0 0 4px !important;
+  color: #5c6570 !important;
+}
+
+html body.theme-light .hero-booking .quick-field input,
+html body.theme-light .hero-booking .quick-field select {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 28px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #1d1d1f !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  text-align-last: center !important;
+  color-scheme: light !important;
+  outline: none !important;
+}
+
+html body.theme-light .hero-booking .quick-field input[type="date"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2px 4px !important;
+  font-size: 13px !important;
+  letter-spacing: -0.01em !important;
+}
+
+html body.theme-light .hero-booking .quick-field input[type="date"]::-webkit-datetime-edit {
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+html body.theme-light .hero-booking .quick-field input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-left: 4px !important;
+  padding: 2px !important;
+  opacity: 0.72 !important;
+  cursor: pointer !important;
+}
+
+html body.theme-light .hero-booking .quick-field select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding: 2px 24px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2348484a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 6px center !important;
+  background-size: 12px 12px !important;
+  cursor: pointer !important;
+}
+
+html body.theme-light .hero-booking .quick-summary {
+  background: rgba(255, 255, 255, 0.68) !important;
+  border: 1px solid rgba(255, 255, 255, 0.78) !important;
+  border-radius: 16px !important;
 }
 
 html body.theme-light .booking-extras-disclosure,
@@ -1895,9 +2062,24 @@ html body.theme-light.maintenance-page .maintenance-chat-note {
 
 /* Мобильный брейкпоинт (перебивает жёсткий тёмный фон mobile-layout.css) */
 @media (max-width: 900px) {
+  html body.theme-light .top-fade {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: 92px !important;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.54) 0%, rgba(255, 255, 255, 0.28) 56%, rgba(255, 255, 255, 0) 100%) !important;
+    backdrop-filter: saturate(165%) blur(48px) !important;
+    -webkit-backdrop-filter: saturate(165%) blur(48px) !important;
+    mask-image: linear-gradient(180deg, #000000 0%, #000000 58%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(180deg, #000000 0%, #000000 58%, transparent 100%) !important;
+  }
+
   html body.theme-light .header {
-    background: rgba(255, 255, 255, 0.86) !important;
-    border-color: rgba(0, 0, 0, 0.07) !important;
+    background: rgba(255, 255, 255, 0.58) !important;
+    backdrop-filter: saturate(185%) blur(30px) !important;
+    -webkit-backdrop-filter: saturate(185%) blur(30px) !important;
+    border-color: rgba(255, 255, 255, 0.68) !important;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08) !important;
   }
 
   html body.theme-light .mobile-drawer,
@@ -1936,7 +2118,7 @@ html body.theme-light.maintenance-page .maintenance-chat-note {
   }
 
   html body.theme-light #hero-desc {
-    color: #48484a !important;
+    color: #32373e !important;
   }
 
   html body.theme-light #hero-section,
@@ -1945,17 +2127,80 @@ html body.theme-light.maintenance-page .maintenance-chat-note {
   }
 
   html body.theme-light .hero-content {
-    padding: 20px !important;
+    min-height: 0 !important;
+    justify-content: flex-start !important;
+    padding: 22px 20px !important;
     border-radius: 22px !important;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0.46) 100%) !important;
+    backdrop-filter: saturate(175%) blur(20px) !important;
+    -webkit-backdrop-filter: saturate(175%) blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.68) !important;
   }
 
-  html body.theme-light .hero-booking,
+  html body.theme-light .hero-booking {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.56) 100%) !important;
+    backdrop-filter: saturate(180%) blur(22px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(22px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.74) !important;
+    border-radius: 22px !important;
+    margin: 0 !important;
+    padding: 18px 16px !important;
+  }
+
   html body.theme-light .feature-panel,
   html body.theme-light .calendar-card,
   html body.theme-light .checkout-card {
     background: #ffffff !important;
     border: 1px solid rgba(0, 0, 0, 0.07) !important;
     border-radius: 22px !important;
+  }
+
+  html body.theme-light .stat-list .stat {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 14px 10px !important;
+  }
+
+  html body.theme-light .stat-list .stat > div:not(.stat-icon) {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  html body.theme-light .stat-list .stat strong,
+  html body.theme-light .stat-list .stat span {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  html body.theme-light .territory-stage .territory-copy,
+  html body.theme-light .territory-stage .territory-content > div:first-child {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  html body.theme-light .territory-stage .side-card {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.62) 0%, rgba(246, 248, 250, 0.46) 100%) !important;
+    backdrop-filter: saturate(185%) blur(22px) !important;
+    -webkit-backdrop-filter: saturate(185%) blur(22px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.72) !important;
+    padding: 18px 16px !important;
+    border-radius: 20px !important;
+  }
+
+  html body.theme-light .territory-stage .side-card h3 {
+    padding: 0 4px 10px !important;
+    margin-bottom: 10px !important;
+    text-align: left !important;
   }
 
   html body.theme-light .house-card .house-image,
