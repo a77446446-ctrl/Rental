@@ -1682,7 +1682,21 @@ html body.theme-light .checkout-card textarea:focus {
   outline: none !important;
 }
 
+html body.theme-light .hero-stage.has-open-select,
+html body.theme-light .hero-booking.has-open-select {
+  overflow: visible !important;
+}
+
+html body.theme-light .hero-stage.has-open-select::before {
+  border-radius: inherit !important;
+}
+
+html body.theme-light .hero-booking.has-open-select {
+  z-index: 45 !important;
+}
+
 html body.theme-light .hero-booking .quick-field {
+  position: relative !important;
   background: rgba(255, 255, 255, 0.64) !important;
   border: 1px solid rgba(17, 24, 39, 0.11) !important;
   border-radius: 14px !important;
@@ -1693,14 +1707,19 @@ html body.theme-light .hero-booking .quick-field {
   justify-content: center !important;
   text-align: center !important;
   min-width: 0 !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
 }
 
-html body.theme-light .hero-booking .quick-field:focus-within {
+html body.theme-light .hero-booking .quick-field:focus-within,
+html body.theme-light .hero-booking .quick-field.is-open {
   background: rgba(255, 255, 255, 0.90) !important;
   border-color: #1e4d3b !important;
   box-shadow: 0 0 0 3px rgba(30, 77, 59, 0.14) !important;
+}
+
+html body.theme-light .hero-booking .quick-field.is-open {
+  z-index: 60 !important;
 }
 
 html body.theme-light .hero-booking .quick-field label {
@@ -1762,6 +1781,144 @@ html body.theme-light .hero-booking .quick-field select {
   background-position: right 6px center !important;
   background-size: 12px 12px !important;
   cursor: pointer !important;
+}
+
+html body.theme-light .hero-booking .quick-field.has-custom-select select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+}
+
+html body.theme-light .hero-booking .quick-field.has-custom-select .quick-select-wrap {
+  display: block !important;
+  position: static !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body.theme-light .hero-booking .quick-select-trigger {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 28px !important;
+  padding: 2px 24px !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  color: #1d1d1f !important;
+  font-family: inherit !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  outline: none !important;
+}
+
+html body.theme-light .hero-booking .quick-select-value {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body.theme-light .hero-booking .quick-select-arrow {
+  position: absolute !important;
+  right: 6px !important;
+  top: 50% !important;
+  width: 12px !important;
+  height: 12px !important;
+  transform: translateY(-50%) !important;
+  color: #48484a !important;
+  pointer-events: none !important;
+  transition: transform 0.18s ease, color 0.18s ease !important;
+}
+
+html body.theme-light .hero-booking .quick-select-wrap.is-open .quick-select-arrow {
+  transform: translateY(-50%) rotate(180deg) !important;
+  color: #1e4d3b !important;
+}
+
+html body.theme-light .hero-booking .quick-select-menu {
+  position: absolute !important;
+  top: calc(100% + 5px) !important;
+  left: -1px !important;
+  right: -1px !important;
+  width: calc(100% + 2px) !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  z-index: 80 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  padding: 6px !important;
+  max-height: 220px !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(30, 77, 59, 0.22) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.18) !important;
+}
+
+html body.theme-light .hero-booking .quick-select-menu[hidden] {
+  display: none !important;
+}
+
+html body.theme-light .hero-booking .quick-select-menu.open-up {
+  top: auto !important;
+  bottom: calc(100% + 5px) !important;
+}
+
+html body.theme-light .hero-booking .quick-select-option {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: 34px !important;
+  padding: 7px 10px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: #1d1d1f !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.25 !important;
+  cursor: pointer !important;
+  transition: background 0.14s ease, color 0.14s ease !important;
+}
+
+html body.theme-light .hero-booking .quick-select-option:hover,
+html body.theme-light .hero-booking .quick-select-option:focus-visible {
+  background: rgba(30, 77, 59, 0.08) !important;
+  color: #164433 !important;
+  outline: none !important;
+}
+
+html body.theme-light .hero-booking .quick-select-option.is-selected {
+  background: #1e4d3b !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
 }
 
 html body.theme-light .hero-booking .quick-summary {

@@ -333,6 +333,7 @@ h1 { margin-top: 22px; font-size: clamp(64px, 8vw, 116px); line-height: .86; let
 .quick-field strong, .quick-field select { color: var(--cream); background: transparent; border: 0; outline: 0; font-weight: 600; width: 100%; }
 .quick-field select option { background-color: rgba(var(--panel-rgb), 0.95); color: var(--cream); }
 .quick-field input[type="date"] { color: var(--cream); background: transparent; border: 0; outline: 0; font-weight: 600; width: 100%; }
+.quick-select-wrap { display: none; }
 
 .quick-total {
   margin-top: 9px; padding: 14px; border: 1px solid rgba(var(--cream-rgb), .1); border-radius: 8px;

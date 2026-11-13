@@ -105,8 +105,33 @@
   .mission { padding: 0 8px 34px !important; }
   .mission .video-panel { display: none !important; }
   .stat-list { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 7px !important; }
-  .stat { min-height: 78px !important; padding: 10px 7px !important; text-align: center; }
+  .stat {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 78px !important;
+    padding: 10px 7px !important;
+    text-align: center !important;
+  }
   .stat-icon { display: none !important; }
+  .stat > div:not(.stat-icon) {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .stat b,
+  .stat strong,
+  .stat span {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
   .stat b { font-size: 20px !important; }
   .stat span { font-size: 10px !important; }
 

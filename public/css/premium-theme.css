@@ -940,16 +940,42 @@ html body.theme-luxury-glass .checkout-card .summary-row.total b {
   text-shadow: 0 0 14px rgba(122, 162, 255, 0.35) !important;
 }
 
-/* Быстрый подбор: сохраняем овальные поля внутри карточек, но текст свободно вмещается */
+/* Быстрый подбор: сохраняем овальные поля внутри карточек, а выпадающий список центрируем строго по ширине поля */
+html body.theme-dark-grey .hero-stage.has-open-select,
+html body.theme-luxury-glass .hero-stage.has-open-select,
+html body.theme-dark-grey .hero-booking.has-open-select,
+html body.theme-luxury-glass .hero-booking.has-open-select {
+  overflow: visible !important;
+}
+
+html body.theme-dark-grey .hero-stage.has-open-select::before,
+html body.theme-luxury-glass .hero-stage.has-open-select::before {
+  border-radius: inherit !important;
+}
+
+html body.theme-dark-grey .hero-booking.has-open-select,
+html body.theme-luxury-glass .hero-booking.has-open-select {
+  z-index: 45 !important;
+}
+
 html body.theme-dark-grey .hero-booking .quick-field,
 html body.theme-luxury-glass .hero-booking .quick-field {
+  position: relative !important;
   padding: 11px 11px 12px !important;
   min-width: 0 !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-field.is-open,
+html body.theme-luxury-glass .hero-booking .quick-field.is-open {
+  z-index: 60 !important;
+  border-color: rgba(143, 179, 255, 0.48) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 0 0 2px rgba(91, 134, 255, 0.24) !important;
 }
 
 html body.theme-dark-grey .hero-booking .quick-field label,
@@ -1016,6 +1042,169 @@ html body.theme-luxury-glass .hero-booking select {
   background-position: right 10px center !important;
   background-size: 12px 12px !important;
   cursor: pointer !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-field.has-custom-select select,
+html body.theme-luxury-glass .hero-booking .quick-field.has-custom-select select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-field.has-custom-select .quick-select-wrap,
+html body.theme-luxury-glass .hero-booking .quick-field.has-custom-select .quick-select-wrap {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-trigger,
+html body.theme-luxury-glass .hero-booking .quick-select-trigger {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 36px !important;
+  padding: 5px 28px !important;
+  box-sizing: border-box !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(143, 179, 255, 0.22) !important;
+  border-radius: 999px !important;
+  color: #f8fafc !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  outline: none !important;
+  transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-wrap.is-open .quick-select-trigger,
+html body.theme-luxury-glass .hero-booking .quick-select-wrap.is-open .quick-select-trigger,
+html body.theme-dark-grey .hero-booking .quick-select-trigger:focus-visible,
+html body.theme-luxury-glass .hero-booking .quick-select-trigger:focus-visible {
+  border-color: #7aa2ff !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+  box-shadow: 0 0 0 3px rgba(91, 134, 255, 0.26) !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-value,
+html body.theme-luxury-glass .hero-booking .quick-select-value {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-arrow,
+html body.theme-luxury-glass .hero-booking .quick-select-arrow {
+  position: absolute !important;
+  right: 11px !important;
+  top: 50% !important;
+  width: 12px !important;
+  height: 12px !important;
+  transform: translateY(-50%) !important;
+  color: #cbd5e1 !important;
+  pointer-events: none !important;
+  transition: transform 0.18s ease, color 0.18s ease !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-wrap.is-open .quick-select-arrow,
+html body.theme-luxury-glass .hero-booking .quick-select-wrap.is-open .quick-select-arrow {
+  transform: translateY(-50%) rotate(180deg) !important;
+  color: #93c5fd !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-menu,
+html body.theme-luxury-glass .hero-booking .quick-select-menu {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  z-index: 80 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  padding: 6px !important;
+  max-height: 220px !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  background: linear-gradient(180deg, #131b31 0%, #0d1323 100%) !important;
+  border: 1px solid rgba(143, 179, 255, 0.34) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 20px 46px rgba(0, 0, 0, 0.80) !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-menu[hidden],
+html body.theme-luxury-glass .hero-booking .quick-select-menu[hidden] {
+  display: none !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-menu.open-up,
+html body.theme-luxury-glass .hero-booking .quick-select-menu.open-up {
+  top: auto !important;
+  bottom: calc(100% + 6px) !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-option,
+html body.theme-luxury-glass .hero-booking .quick-select-option {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: 34px !important;
+  padding: 7px 10px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: #e2e8f0 !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.25 !important;
+  cursor: pointer !important;
+  transition: background 0.14s ease, color 0.14s ease !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-option:hover,
+html body.theme-luxury-glass .hero-booking .quick-select-option:hover,
+html body.theme-dark-grey .hero-booking .quick-select-option:focus-visible,
+html body.theme-luxury-glass .hero-booking .quick-select-option:focus-visible {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #ffffff !important;
+  outline: none !important;
+}
+
+html body.theme-dark-grey .hero-booking .quick-select-option.is-selected,
+html body.theme-luxury-glass .hero-booking .quick-select-option.is-selected {
+  background: linear-gradient(135deg, rgba(91, 134, 255, 0.88), rgba(99, 102, 241, 0.88)) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px rgba(91, 134, 255, 0.30) !important;
 }
 
 html body.theme-dark-grey .hero-booking input:focus,

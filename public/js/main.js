@@ -2330,7 +2330,268 @@
     });
   }
 
+  function initQuickSelects() {
+    var CUSTOM_THEMES = ['theme-light', 'theme-dark-grey', 'theme-luxury-glass'];
+    var controls = [];
+
+    function isCustomThemeActive() {
+      if (!document.body) return false;
+      return CUSTOM_THEMES.some(function(cls) {
+        return document.body.classList.contains(cls);
+      });
+    }
+
+    function updateOpenContainers(hasOpen) {
+      var heroBooking = document.getElementById('booking');
+      var heroStage = heroBooking ? heroBooking.closest('.hero-stage') : null;
+      if (heroBooking) heroBooking.classList.toggle('has-open-select', hasOpen);
+      if (heroStage) heroStage.classList.toggle('has-open-select', hasOpen);
+    }
+
+    function closeAll(exceptWrap) {
+      var hasOpen = false;
+      controls.forEach(function(ctrl) {
+        if (exceptWrap && ctrl.wrap === exceptWrap) {
+          if (ctrl.wrap.classList.contains('is-open')) hasOpen = true;
+          return;
+        }
+        ctrl.wrap.classList.remove('is-open');
+        ctrl.field.classList.remove('is-open');
+        ctrl.menu.hidden = true;
+        ctrl.menu.classList.remove('open-up');
+        ctrl.trigger.setAttribute('aria-expanded', 'false');
+      });
+      updateOpenContainers(hasOpen);
+    }
+
+    function setupSelect(select) {
+      if (!select) return;
+      var field = select.closest('.quick-field');
+      if (!field || field.querySelector('.quick-select-wrap')) return;
+
+      field.classList.add('has-custom-select');
+
+      var wrap = document.createElement('div');
+      wrap.className = 'quick-select-wrap';
+      wrap.setAttribute('data-for', select.id || '');
+
+      var trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'quick-select-trigger';
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      trigger.setAttribute('aria-expanded', 'false');
+
+      var valueSpan = document.createElement('span');
+      valueSpan.className = 'quick-select-value';
+
+      var arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      arrowSvg.setAttribute('class', 'quick-select-arrow');
+      arrowSvg.setAttribute('viewBox', '0 0 12 12');
+      arrowSvg.setAttribute('fill', 'none');
+      arrowSvg.setAttribute('aria-hidden', 'true');
+      var arrowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      arrowPath.setAttribute('d', 'M3 4.5L6 7.5L9 4.5');
+      arrowPath.setAttribute('stroke', 'currentColor');
+      arrowPath.setAttribute('stroke-width', '1.5');
+      arrowPath.setAttribute('stroke-linecap', 'round');
+      arrowPath.setAttribute('stroke-linejoin', 'round');
+      arrowSvg.appendChild(arrowPath);
+
+      trigger.appendChild(valueSpan);
+      trigger.appendChild(arrowSvg);
+
+      var menu = document.createElement('div');
+      menu.className = 'quick-select-menu';
+      menu.setAttribute('role', 'listbox');
+      menu.hidden = true;
+
+      wrap.appendChild(trigger);
+      wrap.appendChild(menu);
+      field.appendChild(wrap);
+
+      controls.push({ select: select, field: field, wrap: wrap, trigger: trigger, valueSpan: valueSpan, menu: menu });
+
+      function syncSelection() {
+        var options = Array.from(select.options || []);
+        var selectedOpt = options.find(function(o) { return o.selected; }) || options[select.selectedIndex] || options[0];
+        var currentVal = selectedOpt ? selectedOpt.value : '';
+        valueSpan.textContent = selectedOpt ? selectedOpt.textContent.trim() : 'Выбрать';
+
+        Array.from(menu.querySelectorAll('.quick-select-option')).forEach(function(btn) {
+          var isSelected = btn.getAttribute('data-value') === currentVal;
+          btn.classList.toggle('is-selected', isSelected);
+          btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        });
+      }
+
+      function rebuildOptions() {
+        menu.innerHTML = '';
+        var options = Array.from(select.options || []);
+        options.forEach(function(opt) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'quick-select-option';
+          btn.setAttribute('role', 'option');
+          btn.setAttribute('data-value', opt.value);
+          btn.textContent = opt.textContent.trim();
+          if (opt.disabled) btn.disabled = true;
+
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (opt.disabled) return;
+            var prevValue = select.value;
+            closeAll();
+            trigger.focus();
+            if (prevValue !== opt.value) {
+              select.value = opt.value;
+              select.dispatchEvent(new window.Event('change', { bubbles: true }));
+            } else {
+              syncSelection();
+            }
+          });
+
+          menu.appendChild(btn);
+        });
+        syncSelection();
+      }
+
+      function openMenu() {
+        closeAll(wrap);
+        rebuildOptions();
+        menu.hidden = false;
+        menu.classList.remove('open-up');
+        wrap.classList.add('is-open');
+        field.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        updateOpenContainers(true);
+
+        if (document.activeElement !== trigger) {
+          try { trigger.focus({ preventScroll: true }); } catch (err) { trigger.focus(); }
+        }
+
+        var rect = wrap.getBoundingClientRect();
+        var bottomOffset = window.innerWidth <= 900 ? 74 : 10;
+        var spaceBelow = window.innerHeight - rect.bottom - bottomOffset;
+        var spaceAbove = rect.top - 74;
+        var neededHeight = Math.min(menu.scrollHeight, 220);
+        if (spaceBelow < neededHeight && spaceAbove > spaceBelow) {
+          menu.classList.add('open-up');
+        }
+
+        var selectedBtn = menu.querySelector('.quick-select-option.is-selected');
+        if (selectedBtn && typeof selectedBtn.scrollIntoView === 'function') {
+          selectedBtn.scrollIntoView({ block: 'nearest' });
+        }
+      }
+
+      function toggleMenu() {
+        if (wrap.classList.contains('is-open')) {
+          closeAll();
+        } else {
+          openMenu();
+        }
+      }
+
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
+      });
+
+      field.addEventListener('click', function(e) {
+        if (!isCustomThemeActive()) return;
+        if (e.target.closest('.quick-select-menu') || e.target.closest('.quick-select-trigger')) return;
+        e.stopPropagation();
+        toggleMenu();
+      });
+
+      menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+
+      trigger.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+          if (!wrap.classList.contains('is-open')) {
+            e.preventDefault();
+            openMenu();
+            var targetBtn = menu.querySelector('.quick-select-option.is-selected') || menu.querySelector('.quick-select-option:not(:disabled)');
+            if (targetBtn) targetBtn.focus();
+          }
+        } else if (e.key === 'Escape') {
+          closeAll();
+        }
+      });
+
+      menu.addEventListener('keydown', function(e) {
+        var opts = Array.from(menu.querySelectorAll('.quick-select-option:not(:disabled)'));
+        var idx = opts.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (opts.length) opts[(idx + 1 + opts.length) % opts.length].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (opts.length) opts[(idx - 1 + opts.length) % opts.length].focus();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closeAll();
+          trigger.focus();
+        }
+      });
+
+      var nativeDesc = window.HTMLSelectElement && Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value');
+      if (nativeDesc && nativeDesc.get && nativeDesc.set) {
+        Object.defineProperty(select, 'value', {
+          configurable: true,
+          get: function() { return nativeDesc.get.call(this); },
+          set: function(nextVal) {
+            nativeDesc.set.call(this, nextVal);
+            syncSelection();
+          },
+        });
+      }
+
+      select.addEventListener('change', syncSelection);
+
+      var optObserver = new MutationObserver(function() {
+        rebuildOptions();
+      });
+      optObserver.observe(select, { childList: true, subtree: true, characterData: true, attributeFilter: ['disabled', 'selected'] });
+
+      rebuildOptions();
+    }
+
+    function syncThemeAccessibility() {
+      var active = isCustomThemeActive();
+      if (!active) closeAll();
+      controls.forEach(function(ctrl) {
+        if (active) {
+          ctrl.select.tabIndex = -1;
+          ctrl.select.setAttribute('aria-hidden', 'true');
+        } else {
+          ctrl.select.removeAttribute('tabindex');
+          ctrl.select.removeAttribute('aria-hidden');
+        }
+      });
+    }
+
+    setupSelect(els.quickHouse);
+    setupSelect(els.quickGuests);
+    syncThemeAccessibility();
+
+    if (document.body) {
+      var themeObserver = new MutationObserver(syncThemeAccessibility);
+      themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.quick-field.has-custom-select')) closeAll();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeAll();
+    });
+  }
+
   // Запуск
+  initQuickSelects();
   init();
 
   // Подсказка горизонтального скролла на мобильных устройствах
