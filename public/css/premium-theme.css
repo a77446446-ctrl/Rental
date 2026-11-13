@@ -1,0 +1,1321 @@
+/* ==========================================================================
+   PREMIUM THEME: APPLE PRO DARK & MICROSOFT FLUENT 2 GLASSMORPHISM
+   Активна для классов body.theme-dark-grey и body.theme-luxury-glass.
+   Полностью перекрывает устаревшие коричнево-золотые, мобильные и админские стили,
+   не затрагивая тему по умолчанию (theme-dark).
+   ========================================================================== */
+
+html body.theme-dark-grey,
+html body.theme-luxury-glass {
+  --bg: #07090f;
+  --bg-rgb: 7, 9, 15;
+  --bg-2: #0d111a;
+  --surface: rgba(16, 21, 34, 0.72);
+  --cream: #f4f6fb;
+  --cream-rgb: 244, 246, 251;
+  --muted: #98a2b8;
+  --muted-2: #6b768d;
+  --gold: #7aa2ff;
+  --gold-2: #a5c4ff;
+  --gold-rgb: 122, 162, 255;
+  --moss: #5b86ff;
+  --moss-2: #8fb3ff;
+  --moss-rgb: 91, 134, 255;
+  --line: rgba(255, 255, 255, 0.11);
+  --line-2: rgba(255, 255, 255, 0.18);
+  --photo-scrim-rgb: 7, 9, 15;
+  --hero-scrim-top-a: 0.20;
+  --hero-scrim-bot-a: 0.62;
+  --stage-scrim-top-a: 0.12;
+  --stage-scrim-mid-a: 0.34;
+  --stage-scrim-bot-a: 0.72;
+  --cta-scrim-top-a: 0.16;
+  --cta-scrim-bot-a: 0.78;
+
+  background-color: #07090f !important;
+  background-image:
+    radial-gradient(ellipse 85% 50% at 18% -8%, rgba(79, 124, 255, 0.14), transparent 62%),
+    radial-gradient(ellipse 65% 45% at 84% 12%, rgba(124, 58, 237, 0.11), transparent 58%),
+    radial-gradient(ellipse 60% 45% at 50% 100%, rgba(56, 189, 248, 0.06), transparent 60%) !important;
+  background-attachment: fixed !important;
+  color: #f4f6fb !important;
+  color-scheme: dark !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html body.theme-dark-grey .noise,
+html body.theme-luxury-glass .noise {
+  opacity: 0.018 !important;
+}
+
+html body.theme-dark-grey .top-fade,
+html body.theme-luxury-glass .top-fade {
+  background: linear-gradient(180deg, rgba(7, 9, 15, 0.92) 0%, rgba(7, 9, 15, 0.55) 55%, transparent 100%) !important;
+}
+
+html body.theme-dark-grey.has-global-background #global-bg::after,
+html body.theme-luxury-glass.has-global-background #global-bg::after {
+  background: linear-gradient(180deg, rgba(7, 9, 15, 0.58) 0%, rgba(7, 9, 15, 0.72) 100%) !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. ШАПКА И НАВИГАЦИЯ (Acrylic Smoked Glass)
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey .header,
+html body.theme-luxury-glass .header {
+  background: rgba(11, 15, 25, 0.74) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 14px 36px rgba(0, 0, 0, 0.48) !important;
+}
+
+html body.theme-dark-grey .brand strong,
+html body.theme-luxury-glass .brand strong,
+html body.theme-dark-grey .brand-text strong,
+html body.theme-luxury-glass .brand-text strong {
+  color: #f8fafc !important;
+}
+
+html body.theme-dark-grey .brand span,
+html body.theme-luxury-glass .brand span,
+html body.theme-dark-grey .brand-text span,
+html body.theme-luxury-glass .brand-text span {
+  color: #98a2b8 !important;
+}
+
+html body.theme-dark-grey .brand-mark,
+html body.theme-luxury-glass .brand-mark {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #f8fafc !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+html body.theme-dark-grey .nav a,
+html body.theme-luxury-glass .nav a {
+  color: #c2cbdc !important;
+  border-radius: 999px !important;
+  transition: background .2s ease, color .2s ease !important;
+}
+
+html body.theme-dark-grey .nav a:hover,
+html body.theme-luxury-glass .nav a:hover,
+html body.theme-dark-grey .nav a.active,
+html body.theme-luxury-glass .nav a.active {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #ffffff !important;
+}
+
+html body.theme-dark-grey .menu-toggle,
+html body.theme-luxury-glass .menu-toggle {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #f4f6fb !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. ТИПОГРАФИКА И КНОПКИ (Platinum & Sapphire Specular System)
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey .kicker,
+html body.theme-luxury-glass .kicker,
+html body.theme-dark-grey .section-kicker,
+html body.theme-luxury-glass .section-kicker,
+html body.theme-dark-grey .section-label,
+html body.theme-luxury-glass .section-label {
+  display: inline-flex !important;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(143, 179, 255, 0.24) !important;
+  color: #a5c4ff !important;
+  text-shadow: none !important;
+  letter-spacing: 0.12em !important;
+}
+
+html body.theme-dark-grey .section-title,
+html body.theme-luxury-glass .section-title,
+html body.theme-dark-grey .section-head h2,
+html body.theme-luxury-glass .section-head h2,
+html body.theme-dark-grey .feature-panel h2,
+html body.theme-luxury-glass .feature-panel h2,
+html body.theme-dark-grey .features-bento h2,
+html body.theme-luxury-glass .features-bento h2 {
+  color: #f8fafc !important;
+  text-shadow: none !important;
+  letter-spacing: -0.02em !important;
+}
+
+html body.theme-dark-grey .section-sub,
+html body.theme-luxury-glass .section-sub,
+html body.theme-dark-grey .section-head p,
+html body.theme-luxury-glass .section-head p {
+  color: #98a2b8 !important;
+}
+
+html body.theme-dark-grey .btn-primary,
+html body.theme-luxury-glass .btn-primary,
+html body.theme-dark-grey .btn-gold,
+html body.theme-luxury-glass .btn-gold {
+  background: linear-gradient(135deg, #4b74f5 0%, #585ce5 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 6px 18px rgba(79, 118, 246, 0.24) !important;
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease !important;
+}
+
+html body.theme-dark-grey .btn-primary:hover,
+html body.theme-luxury-glass .btn-primary:hover,
+html body.theme-dark-grey .btn-gold:hover,
+html body.theme-luxury-glass .btn-gold:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 10px 24px rgba(79, 118, 246, 0.34) !important;
+}
+
+html body.theme-dark-grey .btn-ghost,
+html body.theme-luxury-glass .btn-ghost,
+html body.theme-dark-grey .btn-outline,
+html body.theme-luxury-glass .btn-outline,
+html body.theme-dark-grey .hero-content .btn-ghost,
+html body.theme-luxury-glass .hero-content .btn-ghost {
+  background: rgba(255, 255, 255, 0.07) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #f4f6fb !important;
+  border-radius: 14px !important;
+  text-shadow: none !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+html body.theme-dark-grey .btn-ghost:hover,
+html body.theme-luxury-glass .btn-ghost:hover,
+html body.theme-dark-grey .btn-outline:hover,
+html body.theme-luxury-glass .btn-outline:hover,
+html body.theme-dark-grey .hero-content .btn-ghost:hover,
+html body.theme-luxury-glass .hero-content .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.13) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. HERO, БЫСТРОЕ БРОНИРОВАНИЕ И BENTO-СТАТИСТИКА
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey #hero-section,
+html body.theme-luxury-glass #hero-section {
+  background-color: #07090f !important;
+}
+
+html body.theme-dark-grey .hero-stage,
+html body.theme-luxury-glass .hero-stage {
+  background: linear-gradient(100deg, rgba(7, 9, 15, 0.78) 0%, rgba(7, 9, 15, 0.40) 56%, rgba(7, 9, 15, 0.14) 100%) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 28px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 24px 60px rgba(0, 0, 0, 0.50) !important;
+}
+
+html body.theme-dark-grey .hero-content h1,
+html body.theme-luxury-glass .hero-content h1,
+html body.theme-dark-grey .hero-title,
+html body.theme-luxury-glass .hero-title {
+  color: #f8fafc !important;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.42) !important;
+}
+
+html body.theme-dark-grey .hero-title-accent,
+html body.theme-luxury-glass .hero-title-accent {
+  background: linear-gradient(135deg, #ffffff 12%, #a5c4ff 62%, #c4b5fd 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+}
+
+html body.theme-dark-grey .hero-content p,
+html body.theme-luxury-glass .hero-content p,
+html body.theme-dark-grey #hero-desc,
+html body.theme-luxury-glass #hero-desc {
+  color: #cbd5e1 !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.40) !important;
+}
+
+html body.theme-dark-grey .hero-booking,
+html body.theme-luxury-glass .hero-booking {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
+  backdrop-filter: saturate(170%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(170%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 18px 42px rgba(0, 0, 0, 0.45) !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey .booking-field-hint,
+html body.theme-luxury-glass .booking-field-hint {
+  color: #98a2b8 !important;
+}
+
+html body.theme-dark-grey .stat-chip,
+html body.theme-luxury-glass .stat-chip,
+html body.theme-dark-grey .hero-stats > div,
+html body.theme-luxury-glass .hero-stats > div {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 100%) !important;
+  backdrop-filter: saturate(160%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(160%) blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 20px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    0 12px 32px rgba(0, 0, 0, 0.42) !important;
+}
+
+html body.theme-dark-grey .stat-chip strong,
+html body.theme-luxury-glass .stat-chip strong,
+html body.theme-dark-grey .stat-value,
+html body.theme-luxury-glass .stat-value {
+  color: #f8fafc !important;
+}
+
+html body.theme-dark-grey .stat-chip span,
+html body.theme-luxury-glass .stat-chip span,
+html body.theme-dark-grey .stat-label,
+html body.theme-luxury-glass .stat-label {
+  color: #98a2b8 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. ФИЛЬТРЫ И КАРТОЧКИ ДОМОВ (Без чёрных 3D-теней и коричневых следов)
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey .filter-pill,
+html body.theme-luxury-glass .filter-pill,
+html body.theme-dark-grey .tag-pill,
+html body.theme-luxury-glass .tag-pill,
+html body.theme-dark-grey .tags-filter button,
+html body.theme-luxury-glass .tags-filter button {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  color: #cbd5e1 !important;
+  border-radius: 999px !important;
+}
+
+html body.theme-dark-grey .filter-pill:hover,
+html body.theme-luxury-glass .filter-pill:hover,
+html body.theme-dark-grey .tag-pill:hover,
+html body.theme-luxury-glass .tag-pill:hover,
+html body.theme-dark-grey .tags-filter button:hover,
+html body.theme-luxury-glass .tags-filter button:hover {
+  background: rgba(255, 255, 255, 0.11) !important;
+  border-color: rgba(122, 162, 255, 0.36) !important;
+  color: #ffffff !important;
+}
+
+html body.theme-dark-grey .filter-pill.active,
+html body.theme-luxury-glass .filter-pill.active,
+html body.theme-dark-grey .tag-pill.active,
+html body.theme-luxury-glass .tag-pill.active,
+html body.theme-dark-grey .tags-filter button.active,
+html body.theme-luxury-glass .tags-filter button.active {
+  background: linear-gradient(135deg, #5b86ff, #6366f1) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 6px 18px rgba(91, 134, 255, 0.35) !important;
+}
+
+html body.theme-dark-grey .house-card,
+html body.theme-luxury-glass .house-card {
+  background: #0b0f18 !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  border-radius: 24px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 18px 42px -10px rgba(0, 0, 0, 0.68) !important;
+  transition: transform .3s cubic-bezier(.22, 1, .36, 1), border-color .25s ease, box-shadow .3s ease !important;
+}
+
+html body.theme-dark-grey .house-card:hover,
+html body.theme-luxury-glass .house-card:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(122, 162, 255, 0.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 24px 52px -8px rgba(0, 0, 0, 0.78),
+    0 0 28px rgba(91, 134, 255, 0.18) !important;
+}
+
+html body.theme-dark-grey .house-card::before,
+html body.theme-luxury-glass .house-card::before {
+  display: none !important;
+  content: none !important;
+}
+
+html body.theme-dark-grey .house-card::after,
+html body.theme-luxury-glass .house-card::after {
+  background: linear-gradient(
+    180deg,
+    rgba(7, 9, 15, 0.00) 0%,
+    rgba(7, 9, 15, 0.16) 44%,
+    rgba(7, 9, 15, 0.88) 78%,
+    rgba(7, 9, 15, 0.97) 100%
+  ) !important;
+}
+
+html body.theme-dark-grey .house-card .house-kicker,
+html body.theme-luxury-glass .house-card .house-kicker,
+html body.theme-dark-grey .house-card .house-badge,
+html body.theme-luxury-glass .house-card .house-badge {
+  background: rgba(10, 14, 24, 0.66) !important;
+  backdrop-filter: saturate(160%) blur(12px) !important;
+  -webkit-backdrop-filter: saturate(160%) blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #f1f5f9 !important;
+  border-radius: 999px !important;
+}
+
+html body.theme-dark-grey .house-card h3,
+html body.theme-luxury-glass .house-card h3,
+html body.theme-dark-grey .house-card .house-title,
+html body.theme-luxury-glass .house-card .house-title {
+  color: #ffffff !important;
+}
+
+html body.theme-dark-grey .house-card .house-num,
+html body.theme-luxury-glass .house-card .house-num,
+html body.theme-dark-grey .house-num,
+html body.theme-luxury-glass .house-num {
+  color: rgba(244, 246, 251, 0.24) !important;
+  -webkit-text-fill-color: rgba(244, 246, 251, 0.24) !important;
+}
+
+html body.theme-dark-grey .house-card .house-price,
+html body.theme-luxury-glass .house-card .house-price {
+  color: #9ec0ff !important;
+}
+
+html body.theme-dark-grey .house-card .house-desc,
+html body.theme-luxury-glass .house-card .house-desc,
+html body.theme-dark-grey .house-card p,
+html body.theme-luxury-glass .house-card p {
+  color: #cbd5e1 !important;
+}
+
+html body.theme-dark-grey .house-card .house-meta span,
+html body.theme-luxury-glass .house-card .house-meta span,
+html body.theme-dark-grey .house-card .house-tags span,
+html body.theme-luxury-glass .house-card .house-tags span {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #e2e8f0 !important;
+}
+
+html body.theme-dark-grey .house-card .house-actions button,
+html body.theme-luxury-glass .house-card .house-actions button {
+  background: linear-gradient(135deg, #5b86ff, #6366f1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 6px 18px rgba(79, 124, 255, 0.28) !important;
+}
+
+html body.theme-dark-grey .house-card .house-actions a,
+html body.theme-luxury-glass .house-card .house-actions a {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #f4f6fb !important;
+  border-radius: 12px !important;
+}
+
+html body.theme-dark-grey .house-card .house-actions a:hover,
+html body.theme-luxury-glass .house-card .house-actions a:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.30) !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. ПРЕИМУЩЕСТВА, ТЕРРИТОРИЯ И ОТЗЫВЫ (Снимаем золотые свечения и коричневый фон)
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey .feature-panel,
+html body.theme-luxury-glass .feature-panel,
+html body.theme-dark-grey .feature-item,
+html body.theme-luxury-glass .feature-item,
+html body.theme-dark-grey .review,
+html body.theme-luxury-glass .review {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.068) 0%, rgba(255, 255, 255, 0.022) 100%) !important;
+  backdrop-filter: saturate(165%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(165%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 18px 42px -12px rgba(0, 0, 0, 0.62) !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey .feature-item:hover,
+html body.theme-luxury-glass .feature-item:hover,
+html body.theme-dark-grey .review:hover,
+html body.theme-luxury-glass .review:hover {
+  border-color: rgba(122, 162, 255, 0.30) !important;
+}
+
+html body.theme-dark-grey .feature-item::before,
+html body.theme-luxury-glass .feature-item::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+html body.theme-dark-grey .feature-icon,
+html body.theme-luxury-glass .feature-icon {
+  background: rgba(91, 134, 255, 0.14) !important;
+  border: 1px solid rgba(122, 162, 255, 0.30) !important;
+  color: #a5c4ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+html body.theme-dark-grey .feature-icon svg,
+html body.theme-luxury-glass .feature-icon svg {
+  color: #a5c4ff !important;
+  stroke: #a5c4ff !important;
+}
+
+html body.theme-dark-grey .feature-item h3,
+html body.theme-luxury-glass .feature-item h3,
+html body.theme-dark-grey .feature-title,
+html body.theme-luxury-glass .feature-title {
+  color: #f8fafc !important;
+}
+
+html body.theme-dark-grey .feature-item p,
+html body.theme-luxury-glass .feature-item p,
+html body.theme-dark-grey .feature-text,
+html body.theme-luxury-glass .feature-text,
+html body.theme-dark-grey .review p,
+html body.theme-luxury-glass .review p {
+  color: #98a2b8 !important;
+}
+
+/* Территория */
+html body.theme-dark-grey .territory-stage,
+html body.theme-luxury-glass .territory-stage {
+  background-color: #090c14 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 28px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 24px 60px rgba(0, 0, 0, 0.62) !important;
+}
+
+html body.theme-dark-grey .territory-stage .territory-copy,
+html body.theme-luxury-glass .territory-stage .territory-copy {
+  padding: clamp(20px, 2.5vw, 28px) !important;
+}
+
+html body.theme-dark-grey .side-card,
+html body.theme-luxury-glass .side-card {
+  background: linear-gradient(165deg, rgba(16, 22, 38, 0.78) 0%, rgba(10, 14, 24, 0.84) 100%) !important;
+  backdrop-filter: saturate(170%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(170%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 20px 44px rgba(0, 0, 0, 0.50) !important;
+}
+
+html body.theme-dark-grey .side-card h3,
+html body.theme-luxury-glass .side-card h3 {
+  color: #f8fafc !important;
+}
+
+html body.theme-dark-grey .side-card h3::after,
+html body.theme-luxury-glass .side-card h3::after {
+  background: linear-gradient(90deg, #5b86ff, #a78bfa) !important;
+}
+
+html body.theme-dark-grey .side-item,
+html body.theme-luxury-glass .side-item {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 14px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html body.theme-dark-grey .side-item:hover,
+html body.theme-luxury-glass .side-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(122, 162, 255, 0.30) !important;
+}
+
+html body.theme-dark-grey .side-item strong,
+html body.theme-luxury-glass .side-item strong {
+  color: #f8fafc !important;
+}
+
+html body.theme-dark-grey .side-item span,
+html body.theme-luxury-glass .side-item span,
+html body.theme-dark-grey .side-item p,
+html body.theme-luxury-glass .side-item p {
+  color: #98a2b8 !important;
+}
+
+/* Звёзды отзывов */
+html body.theme-dark-grey .stars,
+html body.theme-luxury-glass .stars,
+html body.theme-dark-grey .review .stars,
+html body.theme-luxury-glass .review .stars {
+  color: #8fb3ff !important;
+  fill: #8fb3ff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 17'%3E%3Cpath fill='%238fb3ff' d='M9 0.9 11.2 6l5.5.45-4.15 3.62 1.25 5.43L9 12.7l-4.8 2.8 1.25-5.43L1.3 6.45 6.8 6z'/%3E%3C/svg%3E") !important;
+}
+
+html body.theme-dark-grey .stars *,
+html body.theme-luxury-glass .stars *,
+html body.theme-dark-grey .review-stars,
+html body.theme-luxury-glass .review-stars,
+html body.theme-dark-grey .review-stars *,
+html body.theme-luxury-glass .review-stars * {
+  color: #8fb3ff !important;
+  fill: #8fb3ff !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. КАЛЕНДАРЬ И ОФОРМЛЕНИЕ БРОНИРОВАНИЯ (Убираем зелёный мох и жёлтые рамки)
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey .calendar-card,
+html body.theme-luxury-glass .calendar-card,
+html body.theme-dark-grey .checkout-card,
+html body.theme-luxury-glass .checkout-card,
+html body.theme-dark-grey .summary-card,
+html body.theme-luxury-glass .summary-card,
+html body.theme-dark-grey .summary-box,
+html body.theme-luxury-glass .summary-box {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.068) 0%, rgba(255, 255, 255, 0.022) 100%) !important;
+  backdrop-filter: saturate(165%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(165%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 24px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 20px 46px rgba(0, 0, 0, 0.56) !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey .weekdays > div,
+html body.theme-luxury-glass .weekdays > div {
+  color: #8693aa !important;
+}
+
+html body.theme-dark-grey .weekdays > div:nth-child(6),
+html body.theme-luxury-glass .weekdays > div:nth-child(6),
+html body.theme-dark-grey .weekdays > div:nth-child(7),
+html body.theme-luxury-glass .weekdays > div:nth-child(7) {
+  color: #fda4af !important;
+}
+
+html body.theme-dark-grey .calendar-day:not(.empty):not(.past):not(.busy):not(.selected):not(.range-between),
+html body.theme-luxury-glass .calendar-day:not(.empty):not(.past):not(.busy):not(.selected):not(.range-between) {
+  background: rgba(255, 255, 255, 0.045) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  color: #f4f6fb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+html body.theme-dark-grey .calendar-day:not(.empty):not(.past):not(.busy):not(.selected):not(.range-between):hover,
+html body.theme-luxury-glass .calendar-day:not(.empty):not(.past):not(.busy):not(.selected):not(.range-between):hover {
+  background: rgba(91, 134, 255, 0.16) !important;
+  border-color: rgba(122, 162, 255, 0.55) !important;
+  box-shadow: 0 0 14px rgba(91, 134, 255, 0.22) !important;
+}
+
+html body.theme-dark-grey .calendar-day.selected,
+html body.theme-luxury-glass .calendar-day.selected {
+  background: linear-gradient(135deg, #5b86ff 0%, #6366f1 100%) !important;
+  border: 1.5px solid rgba(165, 196, 255, 0.72) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 6px 18px rgba(91, 134, 255, 0.42) !important;
+}
+
+html body.theme-dark-grey .calendar-day.selected span,
+html body.theme-luxury-glass .calendar-day.selected span,
+html body.theme-dark-grey .calendar-day.selected small,
+html body.theme-luxury-glass .calendar-day.selected small {
+  color: #ffffff !important;
+}
+
+html body.theme-dark-grey .calendar-day.range-between,
+html body.theme-luxury-glass .calendar-day.range-between {
+  background: rgba(91, 134, 255, 0.19) !important;
+  border: 1.5px solid rgba(122, 162, 255, 0.40) !important;
+  color: #e2e8f0 !important;
+  border-radius: 12px !important;
+}
+
+html body.theme-dark-grey .calendar-day.range-between span,
+html body.theme-luxury-glass .calendar-day.range-between span,
+html body.theme-dark-grey .calendar-day.range-between small,
+html body.theme-luxury-glass .calendar-day.range-between small {
+  color: #dbeafe !important;
+}
+
+html body.theme-dark-grey .calendar-day.busy:not(.checkout-option),
+html body.theme-luxury-glass .calendar-day.busy:not(.checkout-option) {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(148, 163, 184, 0.36) !important;
+}
+
+html body.theme-dark-grey .legend,
+html body.theme-luxury-glass .legend {
+  color: #98a2b8 !important;
+}
+
+html body.theme-dark-grey .legend i.legend-color-selected,
+html body.theme-luxury-glass .legend i.legend-color-selected {
+  background: linear-gradient(135deg, #5b86ff, #6366f1) !important;
+  border-color: rgba(165, 196, 255, 0.72) !important;
+  box-shadow: 0 0 8px rgba(91, 134, 255, 0.45) !important;
+}
+
+html body.theme-dark-grey .legend i.legend-color-busy,
+html body.theme-luxury-glass .legend i.legend-color-busy {
+  background: #1e293b !important;
+}
+
+/* Поля ввода */
+html body.theme-dark-grey .checkout-card input:not([type="checkbox"]):not([type="radio"]),
+html body.theme-luxury-glass .checkout-card input:not([type="checkbox"]):not([type="radio"]),
+html body.theme-dark-grey .checkout-card select,
+html body.theme-luxury-glass .checkout-card select,
+html body.theme-dark-grey .checkout-card textarea,
+html body.theme-luxury-glass .checkout-card textarea,
+html body.theme-dark-grey .hero-booking input,
+html body.theme-luxury-glass .hero-booking input,
+html body.theme-dark-grey .hero-booking select,
+html body.theme-luxury-glass .hero-booking select {
+  background: rgba(255, 255, 255, 0.055) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #f4f6fb !important;
+  border-radius: 12px !important;
+  color-scheme: dark !important;
+}
+
+html body.theme-dark-grey .checkout-card input:focus,
+html body.theme-luxury-glass .checkout-card input:focus,
+html body.theme-dark-grey .checkout-card select:focus,
+html body.theme-luxury-glass .checkout-card select:focus,
+html body.theme-dark-grey .checkout-card textarea:focus,
+html body.theme-luxury-glass .checkout-card textarea:focus,
+html body.theme-dark-grey .hero-booking input:focus,
+html body.theme-luxury-glass .hero-booking input:focus,
+html body.theme-dark-grey .hero-booking select:focus,
+html body.theme-luxury-glass .hero-booking select:focus {
+  border-color: #7aa2ff !important;
+  box-shadow: 0 0 0 3px rgba(91, 134, 255, 0.24) !important;
+  outline: none !important;
+}
+
+html body.theme-dark-grey .booking-extras-disclosure,
+html body.theme-luxury-glass .booking-extras-disclosure,
+html body.theme-dark-grey .addon-item,
+html body.theme-luxury-glass .addon-item,
+html body.theme-dark-grey .extra-item,
+html body.theme-luxury-glass .extra-item {
+  background: rgba(255, 255, 255, 0.045) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 16px !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey .mobile-summary,
+html body.theme-luxury-glass .mobile-summary,
+html body.theme-dark-grey .booking-summary-bar,
+html body.theme-luxury-glass .booking-summary-bar {
+  background: rgba(11, 15, 25, 0.90) !important;
+  backdrop-filter: saturate(180%) blur(22px) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 -10px 32px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. КОНТАКТЫ CTA, ФУТЕР, МОДАЛКИ, PWA PROMPT, ЧАТ (Побеждает mobile-app.css)
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey .cta-card,
+html body.theme-luxury-glass .cta-card {
+  background-color: #090d16 !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  border-radius: 28px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 24px 60px rgba(0, 0, 0, 0.62) !important;
+}
+
+html body.theme-dark-grey #contact-map-container,
+html body.theme-luxury-glass #contact-map-container {
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 22px !important;
+}
+
+html body.theme-dark-grey .footer,
+html body.theme-luxury-glass .footer {
+  background: rgba(7, 9, 15, 0.82) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #98a2b8 !important;
+}
+
+html body.theme-dark-grey .pwa-install-prompt,
+html body.theme-luxury-glass .pwa-install-prompt {
+  background: rgba(13, 18, 30, 0.92) !important;
+  backdrop-filter: saturate(180%) blur(22px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 18px 46px rgba(0, 0, 0, 0.65) !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey .chat-widget.is-collapsed,
+html body.theme-luxury-glass .chat-widget.is-collapsed,
+html body.theme-dark-grey .chat-widget[data-state="closed"],
+html body.theme-luxury-glass .chat-widget[data-state="closed"],
+html body.theme-dark-grey .chat-widget:has(.chat-body[style*="none"]),
+html body.theme-luxury-glass .chat-widget:has(.chat-body[style*="none"]),
+html body.theme-dark-grey .chat-widget.is-collapsed .chat-header,
+html body.theme-luxury-glass .chat-widget.is-collapsed .chat-header,
+html body.theme-dark-grey .chat-widget[data-state="closed"] .chat-header,
+html body.theme-luxury-glass .chat-widget[data-state="closed"] .chat-header,
+html body.theme-dark-grey .chat-widget:has(.chat-body[style*="none"]) .chat-header,
+html body.theme-luxury-glass .chat-widget:has(.chat-body[style*="none"]) .chat-header {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+html body.theme-dark-grey .chat-widget.chat-widget[data-state="closed"] #chat-toggle,
+html body.theme-luxury-glass .chat-widget.chat-widget[data-state="closed"] #chat-toggle,
+html body.theme-dark-grey #chat-toggle,
+html body.theme-luxury-glass #chat-toggle,
+html body.theme-dark-grey .chat-widget:has(.chat-body[style*="none"]) .chat-header button,
+html body.theme-luxury-glass .chat-widget:has(.chat-body[style*="none"]) .chat-header button {
+  background: linear-gradient(135deg, #5b86ff 0%, #6366f1 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 10px 28px rgba(79, 124, 255, 0.42) !important;
+  color: #ffffff !important;
+}
+
+html body.theme-dark-grey .chat-widget.chat-widget[data-state="open"],
+html body.theme-luxury-glass .chat-widget.chat-widget[data-state="open"] {
+  background: rgba(11, 15, 26, 0.94) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 24px 60px rgba(0, 0, 0, 0.72) !important;
+}
+
+html body.theme-dark-grey .chat-header,
+html body.theme-luxury-glass .chat-header {
+  background: rgba(18, 24, 40, 0.88) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+  color: #f8fafc !important;
+}
+
+html body.theme-dark-grey .chat-toast-banner,
+html body.theme-luxury-glass .chat-toast-banner {
+  background: rgba(14, 19, 32, 0.94) !important;
+  border: 1px solid rgba(122, 162, 255, 0.32) !important;
+  color: #f4f6fb !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. СТРАНИЦА ДОМИКА (cabin.html) — Убираем коричнево-моховые перебития cabin.css
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey .cabin-page-container,
+html body.theme-luxury-glass .cabin-page-container {
+  background: transparent !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey .cabin-header,
+html body.theme-luxury-glass .cabin-header {
+  background: rgba(11, 15, 25, 0.76) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+html body.theme-dark-grey .cabin-brand-name,
+html body.theme-luxury-glass .cabin-brand-name,
+html body.theme-dark-grey .cabin-hero-title,
+html body.theme-luxury-glass .cabin-hero-title,
+html body.theme-dark-grey .cabin-section-title,
+html body.theme-luxury-glass .cabin-section-title,
+html body.theme-dark-grey .cabin-about-title,
+html body.theme-luxury-glass .cabin-about-title,
+html body.theme-dark-grey .cabin-amenity-group-title,
+html body.theme-luxury-glass .cabin-amenity-group-title {
+  color: #f8fafc !important;
+}
+
+html body.theme-dark-grey .cabin-hero-title em,
+html body.theme-luxury-glass .cabin-hero-title em,
+html body.theme-dark-grey .cabin-hero-title-accent,
+html body.theme-luxury-glass .cabin-hero-title-accent {
+  background: linear-gradient(135deg, #ffffff 10%, #a5c4ff 62%, #c4b5fd 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html body.theme-dark-grey .cabin-hero-kicker,
+html body.theme-luxury-glass .cabin-hero-kicker,
+html body.theme-dark-grey .cabin-section-kicker,
+html body.theme-luxury-glass .cabin-section-kicker {
+  color: #9ec0ff !important;
+}
+
+html body.theme-dark-grey .cabin-hero-desc,
+html body.theme-luxury-glass .cabin-hero-desc,
+html body.theme-dark-grey .cabin-about-desc,
+html body.theme-luxury-glass .cabin-about-desc,
+html body.theme-dark-grey .cabin-highlight-sub,
+html body.theme-luxury-glass .cabin-highlight-sub,
+html body.theme-dark-grey .cabin-brand-slogan,
+html body.theme-luxury-glass .cabin-brand-slogan {
+  color: #98a2b8 !important;
+}
+
+html body.theme-dark-grey .cabin-nav-link,
+html body.theme-luxury-glass .cabin-nav-link {
+  color: #cbd5e1 !important;
+}
+
+html body.theme-dark-grey .cabin-nav-link:hover,
+html body.theme-luxury-glass .cabin-nav-link:hover,
+html body.theme-dark-grey .cabin-nav-link.active,
+html body.theme-luxury-glass .cabin-nav-link.active {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+
+html body.theme-dark-grey .cabin-highlights,
+html body.theme-luxury-glass .cabin-highlights,
+html body.theme-dark-grey .cabin-pricing-card,
+html body.theme-luxury-glass .cabin-pricing-card,
+html body.theme-dark-grey .cabin-amenity-item,
+html body.theme-luxury-glass .cabin-amenity-item,
+html body.theme-dark-grey .cabin-hero-photo-wrap,
+html body.theme-luxury-glass .cabin-hero-photo-wrap,
+html body.theme-dark-grey .cabin-about-photo-wrap,
+html body.theme-luxury-glass .cabin-about-photo-wrap,
+html body.theme-dark-grey .cabin-photo-card,
+html body.theme-luxury-glass .cabin-photo-card {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.068) 0%, rgba(255, 255, 255, 0.022) 100%) !important;
+  backdrop-filter: saturate(165%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(165%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 18px 42px rgba(0, 0, 0, 0.56) !important;
+}
+
+html body.theme-dark-grey .cabin-amenity-item::before,
+html body.theme-luxury-glass .cabin-amenity-item::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+html body.theme-dark-grey .cabin-amenity-item svg,
+html body.theme-luxury-glass .cabin-amenity-item svg,
+html body.theme-dark-grey .cabin-highlight-icon svg,
+html body.theme-luxury-glass .cabin-highlight-icon svg {
+  color: #8fb3ff !important;
+  stroke: #8fb3ff !important;
+}
+
+html body.theme-dark-grey .cabin-highlight-icon,
+html body.theme-luxury-glass .cabin-highlight-icon {
+  background: rgba(91, 134, 255, 0.14) !important;
+  border: 1px solid rgba(122, 162, 255, 0.28) !important;
+}
+
+html body.theme-dark-grey .cabin-pricing-price,
+html body.theme-luxury-glass .cabin-pricing-price {
+  color: #a5c4ff !important;
+}
+
+html body.theme-dark-grey .cabin-btn-gold,
+html body.theme-luxury-glass .cabin-btn-gold {
+  background: linear-gradient(135deg, #5b86ff, #6366f1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 24px rgba(79, 124, 255, 0.34) !important;
+}
+
+html body.theme-dark-grey .cabin-photo-card-footer,
+html body.theme-luxury-glass .cabin-photo-card-footer {
+  background: rgba(10, 14, 24, 0.78) !important;
+  backdrop-filter: blur(14px) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
+  color: #f4f6fb !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. СТРАНИЦЫ MAINTENANCE И SUCCESS
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey.maintenance-page,
+html body.theme-luxury-glass.maintenance-page {
+  background-color: #07090f !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey.maintenance-page .maintenance-header,
+html body.theme-luxury-glass.maintenance-page .maintenance-header {
+  background: rgba(11, 15, 25, 0.76) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 16px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+html body.theme-dark-grey.maintenance-page .maintenance-kicker,
+html body.theme-luxury-glass.maintenance-page .maintenance-kicker {
+  color: #9ec0ff !important;
+}
+
+html body.theme-dark-grey .success-card,
+html body.theme-luxury-glass .success-card,
+html body.theme-dark-grey .success-box,
+html body.theme-luxury-glass .success-box,
+html body.theme-dark-grey .success-container,
+html body.theme-luxury-glass .success-container {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.025) 100%) !important;
+  backdrop-filter: saturate(170%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  border-radius: 24px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 24px 56px rgba(0, 0, 0, 0.62) !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey .details-box,
+html body.theme-luxury-glass .details-box {
+  background: rgba(5, 8, 16, 0.52) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 16px !important;
+}
+
+html body.theme-dark-grey .btn-home,
+html body.theme-luxury-glass .btn-home {
+  background: linear-gradient(135deg, #5b86ff, #6366f1) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  border-radius: 14px !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. МОБИЛЬНАЯ ВЕРСИЯ (Перебивает коричневые стили #15130f mobile-layout.css)
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  html body.theme-dark-grey .header,
+  html body.theme-luxury-glass .header {
+    background: rgba(11, 15, 25, 0.84) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  html body.theme-dark-grey .mobile-drawer,
+  html body.theme-luxury-glass .mobile-drawer,
+  html body.theme-dark-grey .mobile-drawer-panel,
+  html body.theme-luxury-glass .mobile-drawer-panel {
+    background: rgba(10, 14, 24, 0.94) !important;
+    backdrop-filter: saturate(180%) blur(24px) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  html body.theme-dark-grey .mobile-bottom-nav,
+  html body.theme-luxury-glass .mobile-bottom-nav {
+    background: rgba(11, 15, 25, 0.88) !important;
+    backdrop-filter: saturate(180%) blur(22px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(22px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.11) !important;
+  }
+
+  html body.theme-dark-grey .mobile-nav-item.active,
+  html body.theme-luxury-glass .mobile-nav-item.active,
+  html body.theme-dark-grey .mobile-bottom-nav .active,
+  html body.theme-luxury-glass .mobile-bottom-nav .active,
+  html body.theme-dark-grey .mobile-nav-item.active svg,
+  html body.theme-luxury-glass .mobile-nav-item.active svg,
+  html body.theme-dark-grey .mobile-bottom-nav .active svg,
+  html body.theme-luxury-glass .mobile-bottom-nav .active svg {
+    color: #8fb3ff !important;
+    stroke: #8fb3ff !important;
+  }
+
+  html body.theme-dark-grey #hero-desc,
+  html body.theme-luxury-glass #hero-desc {
+    color: #cbd5e1 !important;
+  }
+
+  html body.theme-dark-grey .hero-booking,
+  html body.theme-luxury-glass .hero-booking,
+  html body.theme-dark-grey .feature-panel,
+  html body.theme-luxury-glass .feature-panel,
+  html body.theme-dark-grey .calendar-card,
+  html body.theme-luxury-glass .calendar-card,
+  html body.theme-dark-grey .checkout-card,
+  html body.theme-luxury-glass .checkout-card {
+    background: linear-gradient(165deg, rgba(16, 22, 38, 0.84) 0%, rgba(10, 14, 24, 0.90) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+
+  html body.theme-dark-grey .house-card::after,
+  html body.theme-luxury-glass .house-card::after {
+    background: linear-gradient(
+      180deg,
+      rgba(7, 9, 15, 0.04) 0%,
+      rgba(7, 9, 15, 0.24) 44%,
+      rgba(7, 9, 15, 0.94) 100%
+    ) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. АДМИН-ПАНЕЛЬ (Перебивает коричневые стили #201b16 admin-responsive.css)
+   -------------------------------------------------------------------------- */
+html body.theme-dark-grey:has(.admin-header),
+html body.theme-luxury-glass:has(.admin-header),
+html body.theme-dark-grey:has(.admin-layout),
+html body.theme-luxury-glass:has(.admin-layout),
+html body.theme-dark-grey:has(.login-box),
+html body.theme-luxury-glass:has(.login-box),
+html body.theme-dark-grey.admin-mobile-ready,
+html body.theme-luxury-glass.admin-mobile-ready {
+  background: #07090f !important;
+  background-image:
+    radial-gradient(ellipse 80% 45% at 15% -5%, rgba(79, 124, 255, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(124, 58, 237, 0.09), transparent 55%) !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey:has(.admin-header) .admin-header,
+html body.theme-luxury-glass:has(.admin-header) .admin-header,
+html body.theme-dark-grey.admin-mobile-ready .admin-header,
+html body.theme-luxury-glass.admin-mobile-ready .admin-header {
+  background: rgba(11, 15, 25, 0.86) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-sidebar,
+html body.theme-luxury-glass:has(.admin-layout) .admin-sidebar,
+html body.theme-dark-grey.admin-mobile-ready .admin-sidebar,
+html body.theme-luxury-glass.admin-mobile-ready .admin-sidebar {
+  background: rgba(10, 14, 24, 0.84) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-menu-item,
+html body.theme-luxury-glass:has(.admin-layout) .admin-menu-item,
+html body.theme-dark-grey.admin-mobile-ready .admin-menu-item,
+html body.theme-luxury-glass.admin-mobile-ready .admin-menu-item {
+  color: #98a2b8 !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-menu-item:hover,
+html body.theme-luxury-glass:has(.admin-layout) .admin-menu-item:hover,
+html body.theme-dark-grey.admin-mobile-ready .admin-menu-item:hover,
+html body.theme-luxury-glass.admin-mobile-ready .admin-menu-item:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #ffffff !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-menu-item.active,
+html body.theme-luxury-glass:has(.admin-layout) .admin-menu-item.active,
+html body.theme-dark-grey.admin-mobile-ready .admin-menu-item.active,
+html body.theme-luxury-glass.admin-mobile-ready .admin-menu-item.active {
+  background: rgba(91, 134, 255, 0.16) !important;
+  color: #a5c4ff !important;
+  border-left: 3px solid #6e93ff !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-accordion,
+html body.theme-luxury-glass:has(.admin-layout) .admin-accordion,
+html body.theme-dark-grey:has(.admin-layout) .settings-card,
+html body.theme-luxury-glass:has(.admin-layout) .settings-card,
+html body.theme-dark-grey:has(.admin-layout) .metric-card,
+html body.theme-luxury-glass:has(.admin-layout) .metric-card,
+html body.theme-dark-grey:has(.admin-layout) .panel,
+html body.theme-luxury-glass:has(.admin-layout) .panel,
+html body.theme-dark-grey:has(.admin-layout) .analytics-guest-detail,
+html body.theme-luxury-glass:has(.admin-layout) .analytics-guest-detail,
+html body.theme-dark-grey:has(.admin-layout) .bookings-counter,
+html body.theme-luxury-glass:has(.admin-layout) .bookings-counter,
+html body.theme-dark-grey:has(.admin-layout) .booking-archive,
+html body.theme-luxury-glass:has(.admin-layout) .booking-archive,
+html body.theme-dark-grey:has(.admin-layout) .gallery-section,
+html body.theme-luxury-glass:has(.admin-layout) .gallery-section,
+html body.theme-dark-grey:has(.admin-layout) .external-calendar-row,
+html body.theme-luxury-glass:has(.admin-layout) .external-calendar-row,
+html body.theme-dark-grey:has(.login-box) .login-box,
+html body.theme-luxury-glass:has(.login-box) .login-box,
+html body.theme-dark-grey.admin-mobile-ready .admin-accordion,
+html body.theme-luxury-glass.admin-mobile-ready .admin-accordion,
+html body.theme-dark-grey.admin-mobile-ready .settings-card,
+html body.theme-luxury-glass.admin-mobile-ready .settings-card,
+html body.theme-dark-grey.admin-mobile-ready .metric-card,
+html body.theme-luxury-glass.admin-mobile-ready .metric-card,
+html body.theme-dark-grey.admin-mobile-ready .panel,
+html body.theme-luxury-glass.admin-mobile-ready .panel,
+html body.theme-dark-grey.admin-mobile-ready .login-box,
+html body.theme-luxury-glass.admin-mobile-ready .login-box {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+  backdrop-filter: saturate(160%) blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 16px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 30px rgba(0, 0, 0, 0.44) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-accordion-header:hover,
+html body.theme-luxury-glass:has(.admin-layout) .admin-accordion-header:hover,
+html body.theme-dark-grey.admin-mobile-ready .admin-accordion-header:hover,
+html body.theme-luxury-glass.admin-mobile-ready .admin-accordion-header:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-accordion-header h3,
+html body.theme-luxury-glass:has(.admin-layout) .admin-accordion-header h3,
+html body.theme-dark-grey.admin-mobile-ready .admin-accordion-header h3,
+html body.theme-luxury-glass.admin-mobile-ready .admin-accordion-header h3,
+html body.theme-dark-grey:has(.admin-layout) .settings-card h3,
+html body.theme-luxury-glass:has(.admin-layout) .settings-card h3,
+html body.theme-dark-grey.admin-mobile-ready .settings-card h3,
+html body.theme-luxury-glass.admin-mobile-ready .settings-card h3 {
+  color: #a5c4ff !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-table,
+html body.theme-luxury-glass:has(.admin-layout) .admin-table,
+html body.theme-dark-grey.admin-mobile-ready .admin-table,
+html body.theme-luxury-glass.admin-mobile-ready .admin-table {
+  background: rgba(12, 16, 26, 0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-table th,
+html body.theme-luxury-glass:has(.admin-layout) .admin-table th,
+html body.theme-dark-grey.admin-mobile-ready .admin-table th,
+html body.theme-luxury-glass.admin-mobile-ready .admin-table th {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #a5c4ff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-table td,
+html body.theme-luxury-glass:has(.admin-layout) .admin-table td,
+html body.theme-dark-grey.admin-mobile-ready .admin-table td,
+html body.theme-luxury-glass.admin-mobile-ready .admin-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #f4f6fb !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .admin-table tbody tr:hover td,
+html body.theme-luxury-glass:has(.admin-layout) .admin-table tbody tr:hover td,
+html body.theme-dark-grey.admin-mobile-ready .admin-table tbody tr:hover td,
+html body.theme-luxury-glass.admin-mobile-ready .admin-table tbody tr:hover td {
+  background: rgba(91, 134, 255, 0.08) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body.theme-luxury-glass:has(.admin-layout) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body.theme-dark-grey:has(.admin-layout) textarea,
+html body.theme-luxury-glass:has(.admin-layout) textarea,
+html body.theme-dark-grey:has(.admin-layout) select,
+html body.theme-luxury-glass:has(.admin-layout) select,
+html body.theme-dark-grey:has(.login-box) input,
+html body.theme-luxury-glass:has(.login-box) input,
+html body.theme-dark-grey.admin-mobile-ready input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body.theme-luxury-glass.admin-mobile-ready input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body.theme-dark-grey.admin-mobile-ready textarea,
+html body.theme-luxury-glass.admin-mobile-ready textarea,
+html body.theme-dark-grey.admin-mobile-ready select,
+html body.theme-luxury-glass.admin-mobile-ready select {
+  background: rgba(5, 8, 16, 0.68) !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) input:focus,
+html body.theme-luxury-glass:has(.admin-layout) input:focus,
+html body.theme-dark-grey:has(.admin-layout) textarea:focus,
+html body.theme-luxury-glass:has(.admin-layout) textarea:focus,
+html body.theme-dark-grey:has(.admin-layout) select:focus,
+html body.theme-luxury-glass:has(.admin-layout) select:focus,
+html body.theme-dark-grey:has(.login-box) input:focus,
+html body.theme-luxury-glass:has(.login-box) input:focus {
+  border-color: #7aa2ff !important;
+  box-shadow: 0 0 0 3px rgba(91, 134, 255, 0.24) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) label,
+html body.theme-luxury-glass:has(.admin-layout) label,
+html body.theme-dark-grey:has(.login-box) label,
+html body.theme-luxury-glass:has(.login-box) label {
+  color: #cbd5e1 !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .hint,
+html body.theme-luxury-glass:has(.admin-layout) .hint,
+html body.theme-dark-grey:has(.admin-layout) span[id*="Hint"],
+html body.theme-luxury-glass:has(.admin-layout) span[id*="Hint"] {
+  color: #8693aa !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .accordion-icon,
+html body.theme-luxury-glass:has(.admin-layout) .accordion-icon {
+  color: #a5c4ff !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .modal,
+html body.theme-luxury-glass:has(.admin-layout) .modal,
+html body.theme-dark-grey:has(.admin-layout) .modal-content,
+html body.theme-luxury-glass:has(.admin-layout) .modal-content {
+  background: rgba(13, 18, 30, 0.94) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+html body.theme-dark-grey:has(.admin-layout) .modal-header,
+html body.theme-luxury-glass:has(.admin-layout) .modal-header,
+html body.theme-dark-grey:has(.admin-layout) .modal-footer,
+html body.theme-luxury-glass:has(.admin-layout) .modal-footer {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}

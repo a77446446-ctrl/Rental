@@ -5388,7 +5388,9 @@ body.theme-light .house-image {
 }
 
 body.theme-light .house-card::after {
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 45%, rgba(255,255,255,0.98) 100%) !important;
+  display: none !important;
+  content: none !important;
+  background: none !important;
 }
 
 body.theme-light .house-num {

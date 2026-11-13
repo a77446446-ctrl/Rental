@@ -1634,7 +1634,7 @@
       setSplitLeadWords('hero-title', data.hero.title, 'Заголовок главного экрана', 2);
       if (data.hero.background_url) {
         const heroSection = document.getElementById('hero-section');
-        heroSection.style.backgroundImage = `linear-gradient(rgba(var(--bg-rgb), 0.45), rgba(var(--bg-rgb), 0.75)), url('${mainpageMediaUrl(data.hero.background_url)}')`;
+        heroSection.style.backgroundImage = `linear-gradient(rgba(var(--photo-scrim-rgb, var(--bg-rgb)), var(--hero-scrim-top-a, 0.45)), rgba(var(--photo-scrim-rgb, var(--bg-rgb)), var(--hero-scrim-bot-a, 0.75))), url('${mainpageMediaUrl(data.hero.background_url)}')`;
         heroSection.style.backgroundSize = 'cover';
         heroSection.style.backgroundPosition = 'center';
         heroSection.style.backgroundRepeat = 'no-repeat';
@@ -1837,7 +1837,10 @@
     const territoryStage = document.getElementById('territory-stage');
     if (territoryStage) {
       if (territoryBgUrl) {
-        document.getElementById('territory-stage').style.backgroundImage = `linear-gradient(180deg, rgba(var(--bg-rgb),.44) 0%, rgba(var(--bg-rgb),.76) 55%, rgba(var(--bg-rgb),.95) 100%), url('${mainpageMediaUrl(data.territory.background_url)}')`;
+        const stageEl = document.getElementById('territory-stage');
+        const stageBg = `linear-gradient(180deg, rgba(var(--photo-scrim-rgb, var(--bg-rgb)), var(--stage-scrim-top-a, .44)) 0%, rgba(var(--photo-scrim-rgb, var(--bg-rgb)), var(--stage-scrim-mid-a, .76)) 55%, rgba(var(--photo-scrim-rgb, var(--bg-rgb)), var(--stage-scrim-bot-a, .95)) 100%), url('${mainpageMediaUrl(data.territory.background_url)}')`;
+        stageEl.style.setProperty('--stage-bg', stageBg);
+        stageEl.style.backgroundImage = stageBg;
         territoryStage.style.backgroundSize = 'cover';
         territoryStage.style.backgroundPosition = 'center';
       } else {
@@ -1958,7 +1961,9 @@
     if (contacts.background_url) {
       const ctaCard = document.getElementById('contact-bg-card');
       if (ctaCard) {
-        ctaCard.style.backgroundImage = "linear-gradient(180deg, rgba(var(--bg-rgb),.18), rgba(var(--bg-rgb),.86)), url('" + mainpageMediaUrl(contacts.background_url) + "')";
+        const ctaBg = "linear-gradient(180deg, rgba(var(--photo-scrim-rgb, var(--bg-rgb)), var(--cta-scrim-top-a, .18)), rgba(var(--photo-scrim-rgb, var(--bg-rgb)), var(--cta-scrim-bot-a, .86))), url('" + mainpageMediaUrl(contacts.background_url) + "')";
+        ctaCard.style.setProperty('--cta-bg', ctaBg);
+        ctaCard.style.backgroundImage = ctaBg;
       }
     }
 
