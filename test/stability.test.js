@@ -479,16 +479,27 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
 
   const body = createElement('body');
   const documentElement = createElement('html');
+  const headerEl = createElement('header');
+  headerEl.className = 'header';
   const heroStage = createElement('div');
   heroStage.className = 'hero-stage';
   const houseCard = createElement('article');
   houseCard.className = 'house-card';
   const logoLink = createElement('a');
+  const primaryBtn = createElement('button');
+  primaryBtn.className = 'btn btn-primary';
+  const sectionLabel = createElement('div');
+  sectionLabel.className = 'section-label';
+
+  const trackedContainers = [body, headerEl, heroStage, houseCard, logoLink, primaryBtn, sectionLabel];
 
   const selectorMap = {
-    '.hero-stage, #previewArea': [heroStage],
-    '.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .cabin-hero-card': [houseCard],
-    '#main-logo-link, #cabinBrandLink, .admin-brand': [logoLink],
+    '.header, .cabin-header, .admin-header': [headerEl],
+    '.hero-stage, #previewArea, .territory-stage': [heroStage],
+    '.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .side-card, .review, .cabin-hero-card, .success-container': [houseCard],
+    '#main-logo-link, #cabinBrandLink, .admin-brand, .footer-brand': [logoLink],
+    '.btn-primary, .header-action': [primaryBtn],
+    '.section-label, .kicker': [sectionLabel],
   };
 
   const mockDocument = {
@@ -506,13 +517,11 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
     },
     querySelectorAll(sel) {
       if (selectorMap[sel]) return selectorMap[sel];
+      if (sel === '[data-holiday-subtheme]') {
+        return trackedContainers.filter((el) => el.getAttribute('data-holiday-subtheme') !== null);
+      }
       if (sel.includes('.holiday-particles-layer')) {
-        return [
-          ...body.children.filter((c) => c.className.includes('holiday-')),
-          ...heroStage.children.filter((c) => c.className.includes('holiday-')),
-          ...houseCard.children.filter((c) => c.className.includes('holiday-')),
-          ...logoLink.children.filter((c) => c.className.includes('holiday-')),
-        ];
+        return trackedContainers.flatMap((el) => el.children.filter((c) => c.className.includes('holiday-')));
       }
       return [];
     },
@@ -531,19 +540,31 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
   };
   context.window = context;
 
+  assert.equal(holidayJs.includes('<svg'), false, 'holiday-themes.js must not contain hand-coded inline <svg>');
+
   vm.runInNewContext(holidayJs, context);
   assert.deepEqual(Array.from(context.EcoHolidayThemes.SUBTHEMES), expectedSubthemes);
 
   expectedSubthemes.filter((s) => s !== 'none').forEach((subtheme) => {
+    const assets = context.EcoHolidayThemes.THEME_ASSETS[subtheme];
+    assert.ok(assets && assets.folder, `Missing THEME_ASSETS for ${subtheme}`);
+    const folderDir = path.join(__dirname, '..', 'public', 'seasonal-decor', assets.folder);
+    ['header.svg', 'block-edge.svg', 'corner-left.svg', 'corner-right.svg', 'logo-charm.svg', 'accent.svg', 'particle.svg', 'particle-alt.svg'].forEach((file) => {
+      assert.equal(fs.existsSync(path.join(folderDir, file)), true, `Missing asset ${assets.folder}/${file}`);
+    });
+
     context.EcoHolidayThemes.apply(subtheme, true);
     assert.equal(body.classList.contains(`subtheme-${subtheme}`), true, subtheme);
     assert.equal(body.classList.contains('subtheme-particles-on'), true, subtheme);
     assert.ok(body.children.some((c) => c.classList.contains('holiday-particles-layer')), subtheme);
     assert.ok(body.children.some((c) => c.classList.contains('holiday-screen-corners')), subtheme);
     assert.ok(body.children.some((c) => c.classList.contains('holiday-corner-mascot')), subtheme);
+    assert.ok(headerEl.children.some((c) => c.classList.contains('holiday-header-decor')), subtheme);
     assert.ok(heroStage.children.some((c) => c.classList.contains('holiday-banner-decor')), subtheme);
     assert.ok(houseCard.children.some((c) => c.classList.contains('holiday-card-decor')), subtheme);
     assert.ok(logoLink.children.some((c) => c.classList.contains('holiday-logo-badge')), subtheme);
+    assert.ok(primaryBtn.children.some((c) => c.classList.contains('holiday-btn-decor')), subtheme);
+    assert.ok(sectionLabel.children.some((c) => c.classList.contains('holiday-text-decor')), subtheme);
 
     context.EcoHolidayThemes.apply(subtheme, false);
     assert.equal(body.classList.contains('subtheme-particles-on'), false, subtheme);
@@ -552,7 +573,10 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
 
   context.EcoHolidayThemes.apply('none', true);
   assert.equal(body.children.length, 0);
+  assert.equal(headerEl.children.length, 0);
   assert.equal(heroStage.children.length, 0);
   assert.equal(houseCard.children.length, 0);
   assert.equal(logoLink.children.length, 0);
+  assert.equal(primaryBtn.children.length, 0);
+  assert.equal(sectionLabel.children.length, 0);
 });

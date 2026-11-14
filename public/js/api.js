@@ -470,7 +470,7 @@
     if (!document.querySelector('link[href*="/css/holiday-themes.css"]')) {
       var link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = '/css/holiday-themes.css?v=20261114-1';
+      link.href = '/css/holiday-themes.css?v=20261114-2';
       document.head.appendChild(link);
     }
     if (window.EcoHolidayThemes) {
@@ -485,7 +485,7 @@
       return;
     }
     var script = document.createElement('script');
-    script.src = '/js/holiday-themes.js?v=20261114-1';
+    script.src = '/js/holiday-themes.js?v=20261114-2';
     script.defer = true;
     if (typeof onReady === 'function') {
       script.addEventListener('load', onReady, { once: true });
