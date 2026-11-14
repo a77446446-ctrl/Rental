@@ -637,7 +637,12 @@ router.get('/availability', async (req, res) => {
  */
 router.get('/settings', async (_req, res) => {
   try {
-    const settings = await dataStore.get('settings', 'settings.json', { checkInTime: '16:00', checkOutTime: '14:00' });
+    const settings = await dataStore.get('settings', 'settings.json', {
+      checkInTime: '16:00',
+      checkOutTime: '14:00',
+      siteSubtheme: 'none',
+      siteSubthemeParticles: true,
+    });
     return res.json({ success: true, data: settings });
   } catch (err) {
     console.error('[public.routes] Ошибка загрузки settings:', err);

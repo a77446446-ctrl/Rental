@@ -1036,6 +1036,10 @@
       try { localStorage.setItem('siteTheme', state.settings.siteTheme); } catch(e) {}
     }
 
+    if (window.EcoHolidayThemes) {
+      window.EcoHolidayThemes.apply(state.settings.siteSubtheme, state.settings.siteSubthemeParticles);
+    }
+
     const statCabinsCount = document.getElementById('stat-cabins-count');
     if (statCabinsCount) {
       statCabinsCount.textContent = state.cabins.length;

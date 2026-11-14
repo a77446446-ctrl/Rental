@@ -144,11 +144,107 @@
     }
 
     .hint { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+    .subtheme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .subtheme-card {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(var(--cream-rgb), 0.04);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      text-align: left;
+    }
+    .subtheme-card:hover {
+      border-color: rgba(var(--gold-rgb, 200, 171, 111), 0.6);
+      background: rgba(var(--cream-rgb), 0.07);
+      transform: translateY(-1px);
+    }
+    .subtheme-card.selected {
+      border-color: var(--gold);
+      background: rgba(var(--moss-rgb), 0.26);
+      box-shadow: 0 0 0 1px rgba(var(--gold-rgb, 200, 171, 111), 0.35);
+    }
+    .subtheme-card input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      flex: 0 0 auto;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+    .subtheme-card-title {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+    .subtheme-card-desc {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .subtheme-particles-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(var(--cream-rgb), 0.03);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .subtheme-particles-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+    body.theme-light .subtheme-card {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+    body.theme-light .subtheme-card.selected {
+      background: #fefce8;
+      border-color: #b45309;
+    }
+    body.theme-light .subtheme-card-title,
+    body.theme-light .subtheme-particles-row {
+      color: #111827;
+    }
+    body.theme-light .subtheme-card-desc {
+      color: #4b5563;
+    }
+    body.theme-light .subtheme-particles-row {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+    .preview-area {
+      position: relative;
+      overflow: hidden;
+      min-height: 170px;
+    }
   </style>
   <link rel="stylesheet" href="/css/admin.css?v=20261113-themes5">
   <link rel="stylesheet" href="/css/admin-responsive.css?v=20261113-themes5">
   <link rel="stylesheet" href="/css/premium-theme.css?v=20261113-themes5">
   <link rel="stylesheet" href="/css/light-theme-v2.css?v=20261113-themes5">
+  <link rel="stylesheet" href="/css/holiday-themes.css?v=20261114-1">
 </head>
 <body>
   <script>try{var _t=localStorage.getItem('siteTheme');if(_t)document.body.classList.add(_t);}catch(e){}</script>
@@ -211,6 +307,75 @@
         </div>
       </div>
 
+      <!-- Праздничное и сезонное оформление (Подтемы) -->
+      <div class="settings-card">
+        <h3>Праздничное и сезонное оформление (Подтемы)</h3>
+        <span class="hint" style="display: block; margin-bottom: 8px;">Поставьте галочку на нужной подтеме — сайт, карточки домиков, баннер и виджеты украсятся тематическим декором поверх выбранной основной темы.</span>
+        <div class="subtheme-grid" id="subthemeGrid">
+          <label class="subtheme-card selected" data-subtheme="none">
+            <input type="checkbox" name="siteSubthemeCheck" value="none" checked>
+            <span>
+              <span class="subtheme-card-title">Без украшений</span>
+              <span class="subtheme-card-desc">Стандартный вид сайта без праздничного слоя</span>
+            </span>
+          </label>
+          <label class="subtheme-card" data-subtheme="new-year">
+            <input type="checkbox" name="siteSubthemeCheck" value="new-year">
+            <span>
+              <span class="subtheme-card-title">🎄 Новый год и Рождество</span>
+              <span class="subtheme-card-desc">Дед Мороз, шевелящаяся ёлочка, ветки с игрушками, снежные шапки и снег</span>
+            </span>
+          </label>
+          <label class="subtheme-card" data-subtheme="feb23">
+            <input type="checkbox" name="siteSubthemeCheck" value="feb23">
+            <span>
+              <span class="subtheme-card-title">⭐ 23 Февраля</span>
+              <span class="subtheme-card-desc">День защитника Отечества: звёзды, лавровые ветви, гвардейская лента и салют</span>
+            </span>
+          </label>
+          <label class="subtheme-card" data-subtheme="mar8">
+            <input type="checkbox" name="siteSubthemeCheck" value="mar8">
+            <span>
+              <span class="subtheme-card-title">🌷 8 Марта</span>
+              <span class="subtheme-card-desc">Веточки мимозы, тюльпаны, порхающие бабочки и весенние лепестки</span>
+            </span>
+          </label>
+          <label class="subtheme-card" data-subtheme="spring">
+            <input type="checkbox" name="siteSubthemeCheck" value="spring">
+            <span>
+              <span class="subtheme-card-title">🌱 Весна</span>
+              <span class="subtheme-card-desc">Берёзовые почки и свисающие серёжки, распускающиеся цветы и птичка</span>
+            </span>
+          </label>
+          <label class="subtheme-card" data-subtheme="may1">
+            <input type="checkbox" name="siteSubthemeCheck" value="may1">
+            <span>
+              <span class="subtheme-card-title">🌸 1 Мая (Первомай)</span>
+              <span class="subtheme-card-desc">Цветущая яблоня, праздничные майские ленты, флажки и воздушные шары</span>
+            </span>
+          </label>
+          <label class="subtheme-card" data-subtheme="sep1">
+            <input type="checkbox" name="siteSubthemeCheck" value="sep1">
+            <span>
+              <span class="subtheme-card-title">🍁 1 Сентября / Золотая осень</span>
+              <span class="subtheme-card-desc">Кленовые листья, гроздья рябины, колокольчик, осенний ёжик и листопад</span>
+            </span>
+          </label>
+          <label class="subtheme-card" data-subtheme="nov4">
+            <input type="checkbox" name="siteSubthemeCheck" value="nov4">
+            <span>
+              <span class="subtheme-card-title">🇷🇺 Ноябрьские праздники (4 ноября)</span>
+              <span class="subtheme-card-desc">День народного единства: гроздья рябины, золотой дуб и лента триколора</span>
+            </span>
+          </label>
+        </div>
+
+        <label class="subtheme-particles-row" for="subthemeParticlesToggle">
+          <input type="checkbox" id="subthemeParticlesToggle" checked>
+          <span>Атмосферные эффекты на фоне (падающий снег, лепестки, осенние листья, искры)</span>
+        </label>
+      </div>
+
       <!-- Текст вокруг кнопки -->
       <div class="settings-card">
         <h3>Текст вокруг кнопки</h3>
@@ -242,6 +407,7 @@
   </div>
 
   <script src="/js/api.js?v=20261113-themes5"></script>
+  <script src="/js/holiday-themes.js?v=20261114-1"></script>
   <script>
   (function() {
     'use strict';
@@ -249,10 +415,14 @@
     var currentColor = 'gold';
     var currentText = 'Связаться с нами';
     var currentTheme = 'theme-dark';
+    var currentSubtheme = 'none';
+    var currentSubthemeParticles = true;
 
     var colorPicker = document.getElementById('colorPicker');
     var ringTextInput = document.getElementById('chatRingText');
     var themeSelect = document.getElementById('siteThemeSelect');
+    var subthemeGrid = document.getElementById('subthemeGrid');
+    var particlesToggle = document.getElementById('subthemeParticlesToggle');
     var previewFab = document.getElementById('previewFab');
     var previewRing = document.getElementById('previewRing');
     var previewRingText = document.getElementById('previewRingText');
@@ -271,6 +441,8 @@
           currentColor = json.data.chatWidgetColor || 'gold';
           currentText = json.data.chatWidgetText !== undefined ? json.data.chatWidgetText : 'Связаться с нами';
           currentTheme = json.data.siteTheme || 'theme-dark';
+          currentSubtheme = json.data.siteSubtheme || 'none';
+          currentSubthemeParticles = json.data.siteSubthemeParticles !== false;
           applySelection();
         }
       } catch (e) {
@@ -290,6 +462,23 @@
 
       // Тема
       themeSelect.value = currentTheme;
+
+      // Подтема
+      if (subthemeGrid) {
+        subthemeGrid.querySelectorAll('.subtheme-card').forEach(function(card) {
+          var code = card.getAttribute('data-subtheme');
+          var active = code === currentSubtheme;
+          card.classList.toggle('selected', active);
+          var cb = card.querySelector('input[type="checkbox"]');
+          if (cb) cb.checked = active;
+        });
+      }
+      if (particlesToggle) {
+        particlesToggle.checked = currentSubthemeParticles;
+      }
+      if (window.EcoHolidayThemes) {
+        window.EcoHolidayThemes.apply(currentSubtheme, currentSubthemeParticles);
+      }
 
       // Превью
       updatePreview();
@@ -333,6 +522,28 @@
       try { localStorage.setItem('siteTheme', currentTheme); } catch(e) {}
     });
 
+    // Выбор подтемы галочками
+    if (subthemeGrid) {
+      subthemeGrid.addEventListener('change', function(e) {
+        var cb = e.target.closest('input[name="siteSubthemeCheck"]');
+        if (!cb) return;
+        var val = cb.value;
+        if (!cb.checked && val === currentSubtheme && val !== 'none') {
+          currentSubtheme = 'none';
+        } else {
+          currentSubtheme = val || 'none';
+        }
+        applySelection();
+      });
+    }
+
+    if (particlesToggle) {
+      particlesToggle.addEventListener('change', function() {
+        currentSubthemeParticles = Boolean(this.checked);
+        applySelection();
+      });
+    }
+
     // Сохранение
     saveBtn.addEventListener('click', async function() {
       try {
@@ -347,7 +558,9 @@
           body: JSON.stringify({
             chatWidgetColor: currentColor,
             chatWidgetText: ringTextInput.value.trim(),
-            siteTheme: currentTheme
+            siteTheme: currentTheme,
+            siteSubtheme: currentSubtheme,
+            siteSubthemeParticles: currentSubthemeParticles
           })
         });
         if (res.status === 401 || res.status === 403) {

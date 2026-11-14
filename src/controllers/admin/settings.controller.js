@@ -1,12 +1,14 @@
 const dataStore = require('../../services/dataStore.service');
 
 const STORES = {
-  settings: ['settings', 'settings.json', { checkInTime: '16:00', checkOutTime: '14:00' }],
+  settings: ['settings', 'settings.json', { checkInTime: '16:00', checkOutTime: '14:00', siteSubtheme: 'none', siteSubthemeParticles: true }],
   amenities: ['amenities', 'amenities.json', {}],
   mainpage: ['mainpage', 'mainpage.json', {}],
   tags: ['tags', 'tags.json', []],
   cabinTags: ['cabin_tags', 'cabin_tags.json', {}],
 };
+
+const VALID_SUBTHEMES = new Set(['none', 'new-year', 'feb23', 'mar8', 'spring', 'may1', 'sep1', 'nov4']);
 
 const DEFAULT_GLOBAL_BG_DIMMING = 65;
 function normalizeGlobalBgDimming(value, fallback = DEFAULT_GLOBAL_BG_DIMMING) {
@@ -39,6 +41,13 @@ exports.updateSettings = async (req, res) => {
   try {
     const current = await read(STORES.settings);
     const next = { ...current, ...req.body };
+    if (Object.prototype.hasOwnProperty.call(req.body || {}, 'siteSubtheme')) {
+      const requested = String(req.body.siteSubtheme || 'none').trim();
+      next.siteSubtheme = VALID_SUBTHEMES.has(requested) ? requested : 'none';
+    }
+    if (Object.prototype.hasOwnProperty.call(req.body || {}, 'siteSubthemeParticles')) {
+      next.siteSubthemeParticles = req.body.siteSubthemeParticles !== false && req.body.siteSubthemeParticles !== 'false';
+    }
     await write(STORES.settings, next);
     res.json({ success: true, data: next });
   } catch (err) {

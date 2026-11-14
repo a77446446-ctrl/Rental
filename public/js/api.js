@@ -466,8 +466,36 @@
     };
   };
 
-  // Автоматическая подгрузка глобальной темы сайта для всех страниц
+  function ensureHolidayThemeAssets(onReady) {
+    if (!document.querySelector('link[href*="/css/holiday-themes.css"]')) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/css/holiday-themes.css?v=20261114-1';
+      document.head.appendChild(link);
+    }
+    if (window.EcoHolidayThemes) {
+      if (typeof onReady === 'function') onReady();
+      return;
+    }
+    var existingScript = document.querySelector('script[src*="/js/holiday-themes.js"]');
+    if (existingScript) {
+      if (typeof onReady === 'function') {
+        existingScript.addEventListener('load', onReady, { once: true });
+      }
+      return;
+    }
+    var script = document.createElement('script');
+    script.src = '/js/holiday-themes.js?v=20261114-1';
+    script.defer = true;
+    if (typeof onReady === 'function') {
+      script.addEventListener('load', onReady, { once: true });
+    }
+    document.head.appendChild(script);
+  }
+
+  // Автоматическая подгрузка глобальной темы и праздничной подтемы сайта для всех страниц
   document.addEventListener('DOMContentLoaded', function() {
+    var isThemeSettingsPage = window.location && String(window.location.pathname || '').indexOf('/admin/chatwidget') !== -1;
     EcoApi.getSettings().then(function(settings) {
       if (settings && settings.siteTheme) {
         document.body.classList.remove('theme-dark', 'theme-light', 'theme-light-green', 'theme-dark-grey', 'theme-luxury-glass');
@@ -475,6 +503,13 @@
           document.body.classList.add(settings.siteTheme);
         }
         try { localStorage.setItem('siteTheme', settings.siteTheme); } catch(e) {}
+      }
+      if (!isThemeSettingsPage && settings) {
+        ensureHolidayThemeAssets(function() {
+          if (window.EcoHolidayThemes) {
+            window.EcoHolidayThemes.apply(settings.siteSubtheme, settings.siteSubthemeParticles);
+          }
+        });
       }
     }).catch(function() {});
   });

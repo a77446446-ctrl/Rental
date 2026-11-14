@@ -108,6 +108,13 @@
         try { localStorage.setItem('siteTheme', mainpage.siteTheme); } catch (e) {}
       }
 
+      if (window.EcoHolidayThemes) {
+        window.EcoHolidayThemes.apply(
+          (settings && settings.siteSubtheme) || (mainpage && mainpage.siteSubtheme) || 'none',
+          settings && settings.siteSubthemeParticles !== undefined ? settings.siteSubthemeParticles : true
+        );
+      }
+
       if (!cabins || !cabins.length) {
         throw new Error('Не удалось загрузить данные об объектах');
       }

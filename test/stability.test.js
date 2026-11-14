@@ -384,3 +384,175 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
     }
   });
 });
+
+
+test('holiday subthemes support all 7 seasonal presets, admin checkboxes and runtime DOM decoration', () => {
+  const vm = require('node:vm');
+  const root = path.join(__dirname, '..');
+  const expectedSubthemes = ['none', 'new-year', 'feb23', 'mar8', 'spring', 'may1', 'sep1', 'nov4'];
+
+  const controller = fs.readFileSync(path.join(root, 'src/controllers/admin/settings.controller.js'), 'utf8');
+  const publicRoutes = fs.readFileSync(path.join(root, 'src/routes/public.routes.js'), 'utf8');
+  const chatwidget = fs.readFileSync(path.join(root, 'public/admin/chatwidget.html'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
+  const cabinHtml = fs.readFileSync(path.join(root, 'public/cabin.html'), 'utf8');
+  const successHtml = fs.readFileSync(path.join(root, 'public/success.html'), 'utf8');
+  const apiJs = fs.readFileSync(path.join(root, 'public/js/api.js'), 'utf8');
+  const mainJs = fs.readFileSync(path.join(root, 'public/js/main.js'), 'utf8');
+  const cabinJs = fs.readFileSync(path.join(root, 'public/js/cabin.js'), 'utf8');
+  const holidayCss = fs.readFileSync(path.join(root, 'public/css/holiday-themes.css'), 'utf8');
+  const holidayJs = fs.readFileSync(path.join(root, 'public/js/holiday-themes.js'), 'utf8');
+
+  assert.match(controller, /siteSubtheme:\s*'none'/);
+  assert.match(controller, /VALID_SUBTHEMES/);
+  assert.match(publicRoutes, /siteSubtheme:\s*'none'/);
+
+  expectedSubthemes.forEach((name) => {
+    assert.match(chatwidget, new RegExp(`data-subtheme="${name}"`), name);
+    if (name !== 'none') {
+      assert.match(holidayCss, new RegExp(`body\\.subtheme-${name}`), name);
+    }
+  });
+  assert.match(chatwidget, /id="subthemeParticlesToggle"/);
+  assert.match(chatwidget, /siteSubtheme:\s*currentSubtheme/);
+  assert.match(chatwidget, /siteSubthemeParticles:\s*currentSubthemeParticles/);
+
+  [indexHtml, cabinHtml, successHtml, chatwidget].forEach((html) => {
+    assert.match(html, /holiday-themes\.css\?v=\d{8}(?:-\d+)?/);
+    assert.match(html, /holiday-themes\.js\?v=\d{8}(?:-\d+)?/);
+  });
+  assert.match(apiJs, /holiday-themes\.css/);
+  assert.match(mainJs, /EcoHolidayThemes\.apply\(state\.settings\.siteSubtheme/);
+  assert.match(cabinJs, /EcoHolidayThemes\.apply/);
+
+  function createClassList() {
+    const set = new Set();
+    return {
+      add(cls) { set.add(cls); },
+      remove(...classes) { classes.forEach((c) => set.delete(c)); },
+      contains(cls) { return set.has(cls); },
+    };
+  }
+
+  function createElement(tag) {
+    const children = [];
+    const attrs = {};
+    const classList = createClassList();
+    const el = {
+      tagName: tag.toUpperCase(),
+      children,
+      classList,
+      parentNode: null,
+      _className: '',
+      _innerHTML: '',
+      style: { setProperty() {} },
+      set className(val) {
+        this._className = String(val || '');
+        this._className.split(/\s+/).filter(Boolean).forEach((c) => classList.add(c));
+      },
+      get className() { return this._className; },
+      set innerHTML(val) { this._innerHTML = String(val || ''); },
+      get innerHTML() { return this._innerHTML; },
+      setAttribute(k, v) { attrs[k] = String(v); },
+      getAttribute(k) { return Object.prototype.hasOwnProperty.call(attrs, k) ? attrs[k] : null; },
+      removeAttribute(k) { delete attrs[k]; },
+      appendChild(child) {
+        child.parentNode = this;
+        children.push(child);
+        return child;
+      },
+      removeChild(child) {
+        const idx = children.indexOf(child);
+        if (idx !== -1) children.splice(idx, 1);
+        child.parentNode = null;
+      },
+      remove() {
+        if (this.parentNode) this.parentNode.removeChild(this);
+      },
+      querySelector(sel) {
+        const cls = sel.startsWith('.') ? sel.slice(1) : null;
+        return children.find((c) => cls && c.classList.contains(cls)) || null;
+      },
+    };
+    return el;
+  }
+
+  const body = createElement('body');
+  const documentElement = createElement('html');
+  const heroStage = createElement('div');
+  heroStage.className = 'hero-stage';
+  const houseCard = createElement('article');
+  houseCard.className = 'house-card';
+  const logoLink = createElement('a');
+
+  const selectorMap = {
+    '.hero-stage, #previewArea': [heroStage],
+    '.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .cabin-hero-card': [houseCard],
+    '#main-logo-link, #cabinBrandLink, .admin-brand': [logoLink],
+  };
+
+  const mockDocument = {
+    readyState: 'complete',
+    body,
+    documentElement,
+    createElement,
+    getElementById: () => null,
+    querySelector(sel) {
+      if (sel.startsWith('.')) {
+        const cls = sel.slice(1);
+        return body.children.find((c) => c.classList.contains(cls)) || null;
+      }
+      return null;
+    },
+    querySelectorAll(sel) {
+      if (selectorMap[sel]) return selectorMap[sel];
+      if (sel.includes('.holiday-particles-layer')) {
+        return [
+          ...body.children.filter((c) => c.className.includes('holiday-')),
+          ...heroStage.children.filter((c) => c.className.includes('holiday-')),
+          ...houseCard.children.filter((c) => c.className.includes('holiday-')),
+          ...logoLink.children.filter((c) => c.className.includes('holiday-')),
+        ];
+      }
+      return [];
+    },
+    addEventListener() {},
+  };
+
+  const storage = new Map();
+  const context = {
+    window: {},
+    document: mockDocument,
+    localStorage: {
+      getItem: (k) => (storage.has(k) ? storage.get(k) : null),
+      setItem: (k, v) => storage.set(k, String(v)),
+    },
+    requestAnimationFrame: (fn) => fn(),
+  };
+  context.window = context;
+
+  vm.runInNewContext(holidayJs, context);
+  assert.deepEqual(Array.from(context.EcoHolidayThemes.SUBTHEMES), expectedSubthemes);
+
+  expectedSubthemes.filter((s) => s !== 'none').forEach((subtheme) => {
+    context.EcoHolidayThemes.apply(subtheme, true);
+    assert.equal(body.classList.contains(`subtheme-${subtheme}`), true, subtheme);
+    assert.equal(body.classList.contains('subtheme-particles-on'), true, subtheme);
+    assert.ok(body.children.some((c) => c.classList.contains('holiday-particles-layer')), subtheme);
+    assert.ok(body.children.some((c) => c.classList.contains('holiday-screen-corners')), subtheme);
+    assert.ok(body.children.some((c) => c.classList.contains('holiday-corner-mascot')), subtheme);
+    assert.ok(heroStage.children.some((c) => c.classList.contains('holiday-banner-decor')), subtheme);
+    assert.ok(houseCard.children.some((c) => c.classList.contains('holiday-card-decor')), subtheme);
+    assert.ok(logoLink.children.some((c) => c.classList.contains('holiday-logo-badge')), subtheme);
+
+    context.EcoHolidayThemes.apply(subtheme, false);
+    assert.equal(body.classList.contains('subtheme-particles-on'), false, subtheme);
+    assert.equal(body.children.some((c) => c.classList.contains('holiday-particles-layer')), false, subtheme);
+  });
+
+  context.EcoHolidayThemes.apply('none', true);
+  assert.equal(body.children.length, 0);
+  assert.equal(heroStage.children.length, 0);
+  assert.equal(houseCard.children.length, 0);
+  assert.equal(logoLink.children.length, 0);
+});
