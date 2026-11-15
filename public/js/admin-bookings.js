@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Визуальное уведомление во вкладке
         if (newPending > 0 && document.hidden) {
-          document.title = '(' + newPending + ') Бронирования | EcoGorniy Admin';
+          document.title = '(' + newPending + ') Бронирования | Платформа для аренды';
         }
       }
     } catch (err) {
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Восстанавливаем заголовок при возвращении на вкладку
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
-      document.title = 'Бронирования | EcoGorniy Admin';
+      document.title = 'Бронирования | Платформа для аренды';
       pollBookings();
     }
   });

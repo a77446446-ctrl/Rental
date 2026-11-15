@@ -118,10 +118,15 @@ app.get('/yandex_:code.html', (req, res) => {
 });
 
 /* Динамическая карта сайта sitemap.xml для поисковых систем (Яндекс, Google) */
+app.get('/robots.txt', async (_req, res) => {
+  const rules = await fs.promises.readFile(path.join(__dirname, '..', 'public', 'robots.txt'), 'utf8');
+  res.type('text/plain').send(rules.trimEnd() + '\nSitemap: ' + new URL('/sitemap.xml', config.baseUrl).href + '\n');
+});
+
 app.get('/sitemap.xml', async (_req, res) => {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=3600');
-  const domain = (config.baseUrl && !config.baseUrl.includes('localhost')) ? config.baseUrl : 'https://eco-gorniy.ru';
+  const domain = new URL(config.baseUrl).origin;
   const today = new Date().toISOString().slice(0, 10);
 
   let cabinUrls = '';
@@ -181,8 +186,15 @@ const serveHtmlWithSeo = (fileName) => {
     try {
       const fullPath = path.join(__dirname, '..', 'public', fileName);
       let html = await fs.promises.readFile(fullPath, 'utf8');
+      const { escapeHtml } = require('./utils/html');
+      const { DEFAULT_BRAND_NAME, getSiteBrand } = require('./services/siteBrand.service');
+      const brand = await getSiteBrand();
+      const domain = new URL(config.baseUrl).origin;
+      let title = fileName === 'success.html' ? `Заявка успешно отправлена | ${brand.name}` : brand.name;
+      let description = fileName === 'index.html' ? brand.description : '';
+      let pagePath = fileName === 'index.html' ? '/' : '/' + fileName;
 
-      let metrikaId = config.yandexMetrikaId || '114026887';
+      let metrikaId = config.yandexMetrikaId || '';
       let verification = config.yandexVerification || '';
       try {
         const dataStore = require('./services/dataStore.service');
@@ -194,7 +206,7 @@ const serveHtmlWithSeo = (fileName) => {
       } catch (_e) {}
 
       html = html.replace(/%YANDEX_METRIKA_ID%/g, metrikaId);
-      html = html.replace(/%YANDEX_VERIFICATION%/g, verification);
+      html = html.replace(/%YANDEX_VERIFICATION%/g, () => escapeHtml(verification));
 
       // Уникализация заголовков и описаний для каждого домика (устранение дублей title в Яндексе)
       if (fileName === 'cabin.html' && req && req.query && (req.query.id || req.query.slug)) {
@@ -207,19 +219,28 @@ const serveHtmlWithSeo = (fileName) => {
             cabin = await pbAdmin.collection('cabins').getFirstListItem(`slug="${cabinIdOrSlug}"`);
           }
           if (cabin && cabin.name) {
-            const domain = (config.baseUrl && !config.baseUrl.includes('localhost')) ? config.baseUrl : 'https://eco-gorniy.ru';
-            const cabinTitle = `${cabin.name} — Аренда домика в лесу у озера в Подмосковье | ЭКО Горный`;
-            const cleanDesc = (cabin.description || '').replace(/"/g, '&quot;').slice(0, 150);
-            const cabinDesc = `Снять домик «${cabin.name}» (до ${cabin.capacity || 2} гостей) на базе отдыха «ЭКО Горный» в Подмосковье (д. Пашуково, Горный проезд). ${cleanDesc}`;
-
-            html = html.replace(/<title>.*?<\/title>/i, `<title>${cabinTitle}</title>`);
-            html = html.replace(/<meta name="description" content=".*?"/i, `<meta name="description" content="${cabinDesc}"`);
-            html = html.replace(/<link rel="canonical" href=".*?"/i, `<link rel="canonical" href="${domain}/cabin.html?id=${encodeURIComponent(cabin.slug || cabin.id)}"`);
-            html = html.replace(/<meta property="og:title" content=".*?"/i, `<meta property="og:title" content="${cabinTitle}"`);
-            html = html.replace(/<meta property="og:description" content=".*?"/i, `<meta property="og:description" content="${cabinDesc}"`);
+            title = `${cabin.name} | ${brand.name}`;
+            description = String(cabin.description || '').trim();
+            pagePath += '?id=' + encodeURIComponent(cabin.slug || cabin.id);
           }
         } catch (_cabErr) {}
       }
+
+      html = html.replace(/<title>.*?<\/title>/i, () => `<title>${escapeHtml(title)}</title>`);
+      html = html.replace(/(<meta (?:name|property)="(?:og:title|twitter:title)" content=")[^"]*"/gi,
+        (_, prefix) => prefix + escapeHtml(title) + '"');
+      html = html.replace(/(<meta (?:name|property)="(?:og:site_name|apple-mobile-web-app-title)" content=")[^"]*"/gi,
+        (_, prefix) => prefix + escapeHtml(brand.name) + '"');
+      if (description) {
+        html = html.replace(/(<meta (?:name|property)="(?:description|og:description|twitter:description)" content=")[^"]*"/gi,
+          (_, prefix) => prefix + escapeHtml(description.slice(0, 180)) + '"');
+      }
+      html = html.replace(/(<link rel="canonical" href="|<meta property="og:url" content=")[^"]*"/gi,
+        (_, prefix) => prefix + escapeHtml(domain + pagePath) + '"');
+      html = html.replace(/(<meta (?:property="og:image"|name="twitter:image") content=")(\/[^"]*)"/gi,
+        (_, prefix, imagePath) => prefix + escapeHtml(domain + imagePath) + '"');
+      const structuredName = JSON.stringify(brand.name || DEFAULT_BRAND_NAME).replace(/</g, '\\u003c');
+      html = html.replace(/("name":)"Платформа для аренды"(?=}<\/script>)/, (_, prefix) => prefix + structuredName);
 
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-cache, must-revalidate');
@@ -290,6 +311,7 @@ app.get('/ready', async (_req, res) => {
     await Promise.all([
       pbAdmin.collection('cabins').getList(1, 1, { fields: 'id' }),
       pbAdmin.collection('app_config').getList(1, 1, { fields: 'id' }),
+      require('./services/booking.service').assertBookingProtection(),
     ]);
     return res.status(200).json({ status: 'ready', database: true, app_config: true });
   } catch (error) {
@@ -374,8 +396,6 @@ async function startServer() {
     console.log('╠══════════════════════════════════════════════════════════════════════╣');
     console.log(`║  🌐  Сайт:          http://localhost:${currentPort.toString().padEnd(38)}║`);
     console.log(`║  🔐  Панель админа: http://localhost:${currentPort}/admin`.padEnd(71) + '║');
-    console.log(`║  👤  Логин:         ${(config.adminUsername || 'admin').padEnd(48)}║`);
-    console.log(`║  🔑  Пароль:        ${(config.adminPassword || 'admin').padEnd(48)}║`);
     if (config.adminPassword === 'admin' || !config.adminPassword) {
       console.log('║                                                                      ║');
       console.log('║  ⚠️   Пароль «admin» временный! Смените его в файле .env             ║');

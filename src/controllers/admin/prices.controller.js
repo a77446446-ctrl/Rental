@@ -1,13 +1,7 @@
 const { pbAdmin } = require('../../config/pocketbase');
-const { normalizeBookingRecord, toPocketBaseDate } = require('../../utils/bookingRecord');
+const { addOneDay, normalizeBookingRecord, toPocketBaseDate } = require('../../utils/bookingRecord');
 const { normalizePriceRecord } = require('../../utils/priceRecord');
 const externalCalendarService = require('../../services/externalCalendar.service');
-
-function addOneDay(dateStr) {
-  const date = new Date(dateStr + 'T00:00:00');
-  date.setDate(date.getDate() + 1);
-  return date.toISOString().slice(0, 10);
-}
 
 exports.getByCabin = async (req, res) => {
   try {

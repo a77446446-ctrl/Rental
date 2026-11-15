@@ -4,10 +4,43 @@ const { sendBookingNotification } = require('./telegram.service');
 const maxService = require('./max.service');
 const externalCalendarService = require('./externalCalendar.service');
 const { calculateBookingTotal } = require('./bookingPricing.service');
-const { cleanText, validateStay } = require('../utils/validation');
+const { cleanText, validateRecordId, validateStay } = require('../utils/validation');
+
+async function assertBookingProtection() {
+  let marker;
+  try {
+    marker = await pbAdmin.collection('app_config').getFirstListItem('key="booking_protection_v1"', { fields: 'value' });
+  } catch (error) {
+    if (error.status !== 404) throw error;
+  }
+  if (marker?.value !== true) {
+    throw Object.assign(new Error('Бронирование временно недоступно: требуется миграция базы данных'), { status: 503 });
+  }
+}
+
+async function assertBookingDatesAvailable({ cabin_id, check_in, check_out, id }, checkClosed = false) {
+  validateRecordId(cabin_id, 'Объект');
+  validateStay(check_in, check_out);
+  const except = id ? ` && id!="${validateRecordId(id, 'Бронь')}"` : '';
+  await externalCalendarService.assertNoExternalOverlap(cabin_id, check_in, check_out);
+  const internalOverlap = await pbAdmin.collection('bookings').getList(1, 1, {
+    filter: `cabin_id="${cabin_id}" && (status="pending" || status="confirmed") && check_in_date < "${check_out} 00:00:00.000Z" && check_out_date > "${check_in} 00:00:00.000Z"${except}`,
+    fields: 'id',
+  });
+  if (internalOverlap.totalItems > 0) throw new Error('Выбранные даты уже заняты');
+
+  if (checkClosed) {
+    const closed = await pbAdmin.collection('prices').getList(1, 1, {
+      filter: `cabin_id="${cabin_id}" && promo_description="CLOSED" && date >= "${check_in} 00:00:00.000Z" && date < "${check_out} 00:00:00.000Z"`,
+      fields: 'id',
+    });
+    if (closed.totalItems > 0) throw new Error('Выбранные даты закрыты для бронирования');
+  }
+}
 
 async function createBooking(input) {
   validateStay(input.check_in, input.check_out);
+  await assertBookingProtection();
   const data = {
     ...input,
     guest_name: cleanText(input.guest_name, { field: 'Имя', required: true, max: 255 }),
@@ -27,15 +60,8 @@ async function createBooking(input) {
     petTypes: Array.isArray(input.pet_types) ? input.pet_types : [],
   });
 
-  await externalCalendarService.assertNoExternalOverlap(data.cabin_id, data.check_in, data.check_out);
-
-  const internalOverlap = await pbAdmin.collection('bookings').getList(1, 1, {
-    filter: `cabin_id="${data.cabin_id}" && (status="pending" || status="confirmed") && check_in_date < "${data.check_out} 00:00:00.000Z" && check_out_date > "${data.check_in} 00:00:00.000Z"`,
-    fields: 'id',
-  });
-  if (internalOverlap.totalItems > 0) {
-    throw new Error('Выбранные даты уже заняты');
-  }
+  const stay = { cabin_id: data.cabin_id, check_in: data.check_in, check_out: data.check_out };
+  await assertBookingDatesAvailable(stay);
 
   // 1. Управление гостем
   let guestId;
@@ -83,6 +109,8 @@ async function createBooking(input) {
   try {
     booking = await pbAdmin.collection('bookings').create(bookingData);
   } catch (err) {
+    // PocketBase скрывает текст ошибки SQLite. Повторяем только проверку, запись не дублируем.
+    if (err.status === 400) await assertBookingDatesAvailable(stay, true);
     throw new Error(err.message || 'Не удалось создать бронирование');
   }
 
@@ -129,4 +157,4 @@ async function createBooking(input) {
   };
 }
 
-module.exports = { createBooking };
+module.exports = { assertBookingProtection, assertBookingDatesAvailable, createBooking };

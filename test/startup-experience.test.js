@@ -34,12 +34,15 @@ test('offline-состояние не раскрывает пустой инте
   const main = read('public/js/main.js');
   const css = read('public/css/main.css');
   const worker = read('public/sw.js');
+  const html = read('public/index.html');
 
   assert.match(main, /navigator\.onLine === false/);
   assert.match(main, /Извините, нет подключения к интернету/);
   assert.match(css, /body\.app-loading-active:not\(\.maintenance-mode\) > :not\(\.app-loading\):not\(script\)/);
   assert.match(worker, /pwa-icon\\\/\(\?:192\|512\)/);
-  assert.match(worker, /\/css\/main\.css\?v=20260821-1/);
+  const mainStylesheet = html.match(/href="(\/css\/main\.css\?v=[^"]+)"/)?.[1];
+  assert.ok(mainStylesheet);
+  assert.ok(worker.includes("'" + mainStylesheet + "'"));
   assert.match(worker, /\/css\/mobile-app\.css\?v=20260822-3/);
   assert.match(worker, /\/css\/mobile-layout\.css\?v=20260821-4/);
   assert.match(worker, /\/js\/main\.js\?v=20260821-6/);

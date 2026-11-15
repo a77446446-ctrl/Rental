@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Звуковое/визуальное уведомление о новых сообщениях
         if (totalUnread > 0 && document.hidden) {
-          document.title = '(' + totalUnread + ') Чаты | EcoGorniy Admin';
+          document.title = '(' + totalUnread + ') Чаты | Платформа для аренды';
         }
       }
 
@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Восстанавливаем заголовок при возвращении на вкладку
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
-      document.title = 'Чаты | EcoGorniy Admin';
+      document.title = 'Чаты | Платформа для аренды';
     }
   });
 });

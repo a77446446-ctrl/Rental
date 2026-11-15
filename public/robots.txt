@@ -1,4 +1,3 @@
-# robots.txt для eco-gorniy.ru
 # Инструкции для роботов поисковых систем (Яндекс, Google и др.)
 
 User-agent: Yandex
@@ -67,6 +66,3 @@ Disallow: /api/chat/
 Disallow: /api/bookings
 Disallow: /success.html
 Disallow: /*?*preview=*
-
-# Карта сайта
-Sitemap: https://eco-gorniy.ru/sitemap.xml

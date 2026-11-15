@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "EcoGorniy",
-  "short_name": "EcoGorniy",
-  "description": "Бронирование домиков EcoGorniy",
+  "name": "Платформа для аренды",
+  "short_name": "Платформа для аренды",
+  "description": "Онлайн-бронирование объектов аренды. Свободные даты, цены и оформление заявки.",
   "lang": "ru-RU",
   "start_url": "/?source=pwa",
   "scope": "/",

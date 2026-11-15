@@ -5,7 +5,7 @@
   'use strict';
 
   function initials(value) {
-    return String(value || 'ECO Gorniy')
+    return String(value || 'Платформа для аренды')
       .split(/[\s-]+/)
       .filter(Boolean)
       .map(function (part) { return part.charAt(0); })
@@ -20,7 +20,7 @@
     var heroLogo = document.getElementById('maintenance-hero-logo');
     if (!mark || !name) return;
 
-    var label = String(logo && logo.text || 'ECO Gorniy');
+    var label = String(logo && logo.text || 'Платформа для аренды');
     var logoUrl = logo && logo.url
       ? (window.EcoMedia ? window.EcoMedia.url(logo.url) : logo.url)
       : '/api/icon.png';

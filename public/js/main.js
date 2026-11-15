@@ -1460,7 +1460,7 @@
       return;
     }
 
-    var fallbackText = String(label || 'ECO Gorniy')
+    var fallbackText = String(label || 'Платформа для аренды')
       .split(/[\s-]+/)
       .filter(Boolean)
       .map(function (part) { return part.charAt(0); })

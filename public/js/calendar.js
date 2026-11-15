@@ -422,7 +422,13 @@
         btn.setAttribute('data-date', dateStr);
         btn.addEventListener('click', (function (ds) {
           return function () {
+            var previousCheckIn = self.checkIn;
+            var previousCheckOut = self.checkOut;
             self.handleDayClick(ds);
+            if (self.checkIn === previousCheckIn && self.checkOut === previousCheckOut) return;
+            window.EcoHolidayThemes?.playCalendarSnowball?.(
+              self.gridEl.querySelector('[data-date="' + ds + '"]')
+            );
           };
         })(dateStr));
       }

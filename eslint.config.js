@@ -30,6 +30,12 @@ module.exports = [
     },
   },
   {
+    files: ['pocketbase/migrations/*.js', 'scratch/clean_pb/pb_migrations/*.js'],
+    languageOptions: {
+      globals: { migrate: 'readonly', Collection: 'readonly', AutodateField: 'readonly' },
+    },
+  },
+  {
     files: ['**/*.mjs'],
     languageOptions: { sourceType: 'module', globals: { Response: 'readonly' } },
   },

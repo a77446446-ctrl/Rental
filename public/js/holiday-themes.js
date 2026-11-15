@@ -1,14 +1,14 @@
 /**
  * Модуль праздничных и сезонных подтем (EcoHolidayThemes)
  * Размещает готовые SVG-иллюстрации из /seasonal-decor/<theme>/ поверх выбранной цветовой темы:
- * шапка, углы экрана, логотипы, главный баннер, блоки/карточки, кнопки, подписи, частицы и правый нижний акцент.
+ * Декор закреплён на верхних границах; содержимое и управление остаются свободными.
  */
 (function () {
   'use strict';
 
   var SUBTHEMES = ['none', 'new-year', 'feb23', 'mar8', 'spring', 'may1', 'sep1', 'nov4'];
   var ASSET_BASE = '/seasonal-decor/';
-  var ASSET_VERSION = '?v=20261114-2';
+  var ASSET_VERSION = '?v=20261115-13';
 
   var META = {
     'none': {
@@ -17,7 +17,7 @@
     },
     'new-year': {
       label: 'Новый год и Рождество',
-      description: 'Дед Мороз, еловая гирлянда с игрушками, снежные шапки, сосульки, шишка и снежинки'
+      description: 'Снеговик машет у чата, еловые ветви с игрушками, снежные шапки и неподвижные сосульки'
     },
     'feb23': {
       label: '23 Февраля',
@@ -49,121 +49,92 @@
     'new-year': {
       folder: 'new-year',
       header: 'header.svg',
-      blockEdge: 'block-edge.svg',
-      blockEdgeHero: 'snow-and-icicles.svg',
-      blockEdgeAlt: 'icicles-edge.svg',
-      cornerLeft: 'corner-left.svg',
-      cornerRight: 'corner-right.svg',
+      branches: 'garland-continuous.webp',
+      heroSnow: 'snow-layer-7.webp',
+      territorySnow: 'snow-layer-8.webp',
+      cardSnow: [
+        'snow-layer-1.webp', 'snow-layer-2.webp', 'snow-layer-3.webp',
+        'snow-layer-4.webp', 'snow-layer-5.webp', 'snow-layer-6.webp'
+      ],
+      buttonSnow: 'snow-cap.svg',
       logoCharm: 'logo-charm.svg',
-      accent: 'accent.svg',
+      accent: 'snowman.webp',
       particles: ['particle.svg', 'particle-alt.svg', 'snowflake-detail.svg'],
-      cardCornerRight: 'ornament-pinecone.svg',
-      cardBottomLeft: 'ornaments-pair.svg',
-      bannerExtra: 'garland-red.svg',
-      buttonCharm: 'snowflake-detail.svg',
-      textDecor: 'garland-red.svg'
+      cardCornerRight: 'house-fir-branch.webp',
+      icicles: 'icicles-short.svg',
+      buttonCharm: 'snowflake-detail.svg'
     },
     'feb23': {
       folder: 'february-23',
       header: 'header.svg',
       blockEdge: 'block-edge.svg',
-      blockEdgeHero: 'block-edge.svg',
-      blockEdgeAlt: 'olive-ribbon.svg',
       cornerLeft: 'corner-left.svg',
       cornerRight: 'corner-right.svg',
       logoCharm: 'logo-charm.svg',
       accent: 'accent.svg',
       particles: ['particle.svg', 'particle-alt.svg'],
       cardCornerRight: 'laurel-star.svg',
-      cardBottomLeft: 'laurel-sprig.svg',
-      bannerExtra: 'laurel-star.svg',
-      buttonCharm: 'logo-charm.svg',
-      textDecor: 'olive-ribbon.svg'
+      buttonCharm: 'logo-charm.svg'
     },
     'mar8': {
       folder: 'march-8',
       header: 'header.svg',
       blockEdge: 'block-edge.svg',
-      blockEdgeHero: 'block-edge.svg',
-      blockEdgeAlt: 'header.svg',
       cornerLeft: 'corner-left.svg',
       cornerRight: 'corner-right.svg',
       logoCharm: 'logo-charm.svg',
       accent: 'accent.svg',
       particles: ['particle.svg', 'particle-alt.svg'],
       cardCornerRight: 'mimosa-sprig.svg',
-      cardBottomLeft: 'tulip-bouquet.svg',
-      bannerExtra: 'tulip-bouquet.svg',
-      buttonCharm: 'tulip-stem.svg',
-      textDecor: 'mimosa-sprig.svg'
+      buttonCharm: 'tulip-stem.svg'
     },
     'spring': {
       folder: 'spring',
       header: 'header.svg',
       blockEdge: 'block-edge.svg',
-      blockEdgeHero: 'block-edge.svg',
-      blockEdgeAlt: 'header.svg',
       cornerLeft: 'corner-left.svg',
       cornerRight: 'corner-right.svg',
       logoCharm: 'logo-charm.svg',
       accent: 'accent.svg',
       particles: ['particle.svg', 'particle-alt.svg'],
       cardCornerRight: 'birch-sprig.svg',
-      cardBottomLeft: 'snowdrop.svg',
-      bannerExtra: 'birch-sprig.svg',
-      buttonCharm: 'dewy-leaf.svg',
-      textDecor: 'birch-sprig.svg'
+      buttonCharm: 'dewy-leaf.svg'
     },
     'may1': {
       folder: 'may-1',
       header: 'header.svg',
       blockEdge: 'block-edge.svg',
-      blockEdgeHero: 'block-edge.svg',
-      blockEdgeAlt: 'fabric-flags.svg',
       cornerLeft: 'corner-left.svg',
       cornerRight: 'corner-right.svg',
       logoCharm: 'logo-charm.svg',
       accent: 'accent.svg',
       particles: ['particle.svg', 'particle-alt.svg'],
       cardCornerRight: 'fabric-flags.svg',
-      cardBottomLeft: 'apple-blossom.svg',
-      bannerExtra: 'apple-blossom.svg',
-      buttonCharm: 'ribbon-knot.svg',
-      textDecor: 'fabric-flags.svg'
+      buttonCharm: 'ribbon-knot.svg'
     },
     'sep1': {
       folder: 'september-1',
       header: 'header.svg',
       blockEdge: 'block-edge.svg',
-      blockEdgeHero: 'block-edge.svg',
-      blockEdgeAlt: 'header.svg',
       cornerLeft: 'corner-left.svg',
       cornerRight: 'corner-right.svg',
       logoCharm: 'logo-charm.svg',
       accent: 'accent.svg',
       particles: ['particle.svg', 'particle-alt.svg'],
       cardCornerRight: 'rowan-sprig.svg',
-      cardBottomLeft: 'maple-sprig.svg',
-      bannerExtra: 'maple-sprig.svg',
-      buttonCharm: 'maple-leaf.svg',
-      textDecor: 'rowan-sprig.svg'
+      buttonCharm: 'maple-leaf.svg'
     },
     'nov4': {
       folder: 'november-4',
       header: 'header.svg',
       blockEdge: 'block-edge.svg',
-      blockEdgeHero: 'block-edge.svg',
-      blockEdgeAlt: 'tricolor-ribbon.svg',
       cornerLeft: 'corner-left.svg',
       cornerRight: 'corner-right.svg',
       logoCharm: 'logo-charm.svg',
       accent: 'accent.svg',
       particles: ['particle.svg', 'particle-alt.svg'],
       cardCornerRight: 'oak-sprig.svg',
-      cardBottomLeft: 'tricolor-bow.svg',
-      bannerExtra: 'tricolor-ribbon.svg',
-      buttonCharm: 'tricolor-bow.svg',
-      textDecor: 'tricolor-ribbon.svg'
+      buttonCharm: 'tricolor-bow.svg'
     }
   };
 
@@ -248,24 +219,23 @@
     layer.setAttribute('aria-hidden', 'true');
 
     var list = assets.particles && assets.particles.length ? assets.particles : ['particle.svg'];
-    var count = 20;
+    var winter = subtheme === 'new-year';
+    var count = winter ? 30 : 12;
     for (var i = 0; i < count; i++) {
       var p = document.createElement('span');
       p.className = 'holiday-particle';
 
       var leftPct = ((i * 37 + 11) % 94) + 2;
-      var sizePx = 15 + ((i * 5) % 12);
-      var durSec = 9 + ((i * 3) % 7);
-      var delaySec = -((i * 1.7) % 10);
-      var swaySec = 2.8 + (i % 4) * 0.7;
+      var sizePx = winter ? 8 + ((i * 5) % 12) : 9 + ((i * 5) % 7);
+      var durSec = (winter ? 11 : 16) + ((i * 3) % 9);
+      var delaySec = -((i * 1.7) % (winter ? 19 : 10));
       var driftPx = (i % 2 === 0 ? 1 : -1) * (24 + (i % 5) * 14);
-      var opacityVal = 0.65 + (i % 4) * 0.09;
+      var opacityVal = (winter ? 0.48 : 0.24) + (i % 4) * 0.04;
 
       p.style.setProperty('--p-left', leftPct + '%');
       p.style.setProperty('--p-size', sizePx + 'px');
       p.style.setProperty('--p-dur', durSec.toFixed(1) + 's');
       p.style.setProperty('--p-delay', delaySec.toFixed(1) + 's');
-      p.style.setProperty('--p-sway-dur', swaySec.toFixed(1) + 's');
       p.style.setProperty('--p-drift', driftPx + 'px');
       p.style.setProperty('--p-opacity', opacityVal.toFixed(2));
 
@@ -282,16 +252,13 @@
      ======================================================================== */
   function renderScreenCorners(subtheme) {
     var assets = getAssets(subtheme);
-    if (!document.body || !assets) return;
+    if (!document.body || !assets || subtheme === 'new-year') return;
     if (document.querySelector('.holiday-screen-corners')) return;
 
     var container = document.createElement('div');
     container.className = 'holiday-screen-corners';
     container.setAttribute('aria-hidden', 'true');
 
-    container.appendChild(
-      createDecorBox('holiday-screen-top-garland', assetUrl(subtheme, assets.header))
-    );
     container.appendChild(
       createDecorBox('holiday-corner-branch holiday-corner-branch--left', assetUrl(subtheme, assets.cornerLeft))
     );
@@ -303,24 +270,30 @@
   }
 
   /* ========================================================================
-     3. Крупный акцент (Дед Мороз / праздничная композиция) в правом нижнем углу и в админ-превью
+     3. Один зимний персонаж, привязанный к кнопке чата или её предпросмотру
      ======================================================================== */
   function renderCornerMascot(subtheme) {
     var assets = getAssets(subtheme);
-    if (!document.body || !assets || !assets.accent) return;
+    if (!document.body || !assets || subtheme !== 'new-year') return;
+    var anchor = document.getElementById('chat-widget') || document.getElementById('previewFab');
+    if (!anchor || anchor.querySelector('.holiday-corner-mascot')) return;
+    var src = assetUrl(subtheme, assets.accent);
+    var mascot = createDecorBox('holiday-corner-mascot', src, 'holiday-mascot-img');
+    // Обе части используют одну картинку. Маска выделяет только поднятую руку.
+    mascot.appendChild(createDecorImg(src, 'holiday-mascot-arm'));
+    anchor.appendChild(mascot);
+  }
 
-    var accentSrc = assetUrl(subtheme, assets.accent);
+  function createWinterGarland(assets) {
+    return createDecorBox('holiday-winter-garland', assetUrl('new-year', assets.branches));
+  }
 
-    if (!document.querySelector('.holiday-corner-mascot')) {
-      var mascot = createDecorBox('holiday-corner-mascot', accentSrc, 'holiday-mascot-img');
-      document.body.appendChild(mascot);
-    }
-
-    var previewArea = document.getElementById('previewArea');
-    if (previewArea && !previewArea.querySelector('.holiday-corner-mascot-inline')) {
-      var inlineMascot = createDecorBox('holiday-corner-mascot-inline', accentSrc, 'holiday-mascot-img');
-      previewArea.appendChild(inlineMascot);
-    }
+  function createIcicles(assets, className) {
+    var row = document.createElement('span');
+    row.className = className;
+    row.setAttribute('aria-hidden', 'true');
+    row.style.setProperty('--winter-ice', 'url("' + assetUrl('new-year', assets.icicles) + '")');
+    return row;
   }
 
   /* ========================================================================
@@ -331,46 +304,23 @@
     if (!assets) return;
 
     var headerSrc = assetUrl(subtheme, assets.header);
-    var edgeSrc = assetUrl(subtheme, assets.blockEdge);
 
     document.querySelectorAll('.header, .cabin-header, .admin-header').forEach(function (header) {
-      if (header.getAttribute('data-holiday-subtheme') === subtheme) return;
+      if (header.getAttribute('data-holiday-subtheme') === subtheme && header.querySelector('.holiday-header-decor')) return;
       var old = header.querySelector('.holiday-header-decor');
       if (old) old.remove();
 
       var decor = document.createElement('div');
       decor.className = 'holiday-header-decor';
       decor.setAttribute('aria-hidden', 'true');
-      decor.appendChild(createDecorImg(headerSrc, 'holiday-header-garland'));
-      if (edgeSrc) {
-        decor.appendChild(createDecorImg(edgeSrc, 'holiday-header-edge'));
+      if (subtheme === 'new-year') {
+        decor.appendChild(createWinterGarland(assets));
+      } else {
+        decor.appendChild(createDecorImg(headerSrc, 'holiday-header-garland'));
       }
 
       header.setAttribute('data-holiday-subtheme', subtheme);
       header.appendChild(decor);
-    });
-  }
-
-  /* ========================================================================
-     5. Значок возле логотипа (#main-logo-link, #cabinBrandLink, .admin-brand, .footer-brand)
-     ======================================================================== */
-  function decorateLogos(subtheme) {
-    var assets = getAssets(subtheme);
-    if (!assets || !assets.logoCharm) return;
-
-    var charmSrc = assetUrl(subtheme, assets.logoCharm);
-    document.querySelectorAll('#main-logo-link, #cabinBrandLink, .admin-brand, .footer-brand').forEach(function (logo) {
-      if (logo.getAttribute('data-holiday-subtheme') === subtheme) return;
-      var old = logo.querySelector('.holiday-logo-badge');
-      if (old) old.remove();
-
-      var badge = document.createElement('span');
-      badge.className = 'holiday-logo-badge';
-      badge.setAttribute('aria-hidden', 'true');
-      badge.appendChild(createDecorImg(charmSrc, 'holiday-logo-badge-img'));
-
-      logo.setAttribute('data-holiday-subtheme', subtheme);
-      logo.appendChild(badge);
     });
   }
 
@@ -380,7 +330,7 @@
   function decorateBanner(container, subtheme) {
     var assets = getAssets(subtheme);
     if (!container || !assets) return;
-    if (container.getAttribute('data-holiday-subtheme') === subtheme) return;
+    if (container.getAttribute('data-holiday-subtheme') === subtheme && container.querySelector('.holiday-banner-decor')) return;
 
     var old = container.querySelector('.holiday-banner-decor');
     if (old) old.remove();
@@ -389,30 +339,13 @@
     decor.className = 'holiday-banner-decor';
     decor.setAttribute('aria-hidden', 'true');
 
-    decor.appendChild(
-      createDecorBox('holiday-banner-edge', assetUrl(subtheme, assets.blockEdgeHero || assets.blockEdge))
-    );
-    decor.appendChild(
-      createDecorBox('holiday-banner-garland', assetUrl(subtheme, assets.header))
-    );
-    decor.appendChild(
-      createDecorBox('holiday-banner-left', assetUrl(subtheme, assets.cornerLeft))
-    );
-    decor.appendChild(
-      createDecorBox('holiday-banner-right', assetUrl(subtheme, assets.cornerRight))
-    );
-
-    if (assets.bannerExtra) {
-      decor.appendChild(
-        createDecorBox('holiday-banner-extra', assetUrl(subtheme, assets.bannerExtra))
-      );
-    }
-
-    // Большой акцент (включая Деда Мороза) на главном баннере .hero-stage
-    if (assets.accent && container.classList && container.classList.contains('hero-stage')) {
-      decor.appendChild(
-        createDecorBox('holiday-banner-accent', assetUrl(subtheme, assets.accent))
-      );
+    if (subtheme === 'new-year') {
+      var territory = container.classList.contains('territory-stage');
+      var snow = territory ? assets.territorySnow : assets.heroSnow;
+      decor.appendChild(createDecorBox('holiday-banner-edge', assetUrl(subtheme, snow)));
+      decor.appendChild(createIcicles(assets, territory ? 'holiday-territory-icicles' : 'holiday-banner-icicles'));
+    } else {
+      decor.appendChild(createDecorBox('holiday-banner-garland', assetUrl(subtheme, assets.header)));
     }
 
     container.setAttribute('data-holiday-subtheme', subtheme);
@@ -422,39 +355,35 @@
   /* ========================================================================
      7. Карточки и контентные блоки
      ======================================================================== */
-  function decorateCard(card, subtheme, options) {
+  function decorateCard(card, subtheme, index) {
     var assets = getAssets(subtheme);
     if (!card || !assets) return;
-    if (card.getAttribute('data-holiday-subtheme') === subtheme) return;
 
+    // После первого прохода отражаем силуэты, чтобы соседние карточки не повторялись.
+    var profiles = assets.cardSnow;
+    var slot = profiles ? index % (profiles.length * 2) : 0;
     var old = card.querySelector('.holiday-card-decor');
+    if (old && card.getAttribute('data-holiday-subtheme') === subtheme &&
+        (!profiles || old.getAttribute('data-snow-slot') === String(slot))) return;
     if (old) old.remove();
 
-    var opts = options || {};
     var decor = document.createElement('div');
     decor.className = 'holiday-card-decor';
     decor.setAttribute('aria-hidden', 'true');
 
-    var edgeFile = opts.useHeroEdge
-      ? (assets.blockEdgeHero || assets.blockEdge)
-      : (opts.useAltEdge ? (assets.blockEdgeAlt || assets.blockEdge) : assets.blockEdge);
-
-    decor.appendChild(
-      createDecorBox('holiday-block-edge', assetUrl(subtheme, edgeFile))
-    );
-    decor.appendChild(
-      createDecorBox('holiday-card-top-left', assetUrl(subtheme, assets.cornerLeft))
-    );
-
-    var rightFile = opts.withRightCorner ? assets.cornerRight : (assets.cardCornerRight || assets.cornerRight);
-    decor.appendChild(
-      createDecorBox('holiday-card-top-right', assetUrl(subtheme, rightFile))
-    );
-
-    if (opts.withBottomAccent && assets.cardBottomLeft) {
-      decor.appendChild(
-        createDecorBox('holiday-card-bottom-left', assetUrl(subtheme, assets.cardBottomLeft))
-      );
+    var snow = profiles ? profiles[slot % profiles.length] : assets.blockEdge;
+    var edge = createDecorBox('holiday-block-edge', assetUrl(subtheme, snow));
+    if (profiles) {
+      decor.setAttribute('data-snow-slot', String(slot));
+      if (slot >= profiles.length) edge.classList.add('holiday-block-edge-mirrored');
+    }
+    decor.appendChild(edge);
+    // Подвеска допустима только над фотографией дома, вдали от текста и формы.
+    if (card.classList.contains('house-card') && assets.cardCornerRight) {
+      decor.appendChild(createDecorBox('holiday-card-top-right', assetUrl(subtheme, assets.cardCornerRight)));
+    }
+    if (subtheme === 'new-year' && card.id === 'contact-bg-card') {
+      decor.appendChild(createIcicles(assets, 'holiday-banner-icicles'));
     }
 
     card.setAttribute('data-holiday-subtheme', subtheme);
@@ -469,10 +398,10 @@
     if (!assets) return;
 
     var charmSrc = assetUrl(subtheme, assets.buttonCharm || assets.logoCharm);
-    var edgeSrc = assetUrl(subtheme, assets.blockEdge);
+    var edgeSrc = assetUrl(subtheme, assets.buttonSnow);
 
     document.querySelectorAll('.btn-primary, .header-action').forEach(function (btn) {
-      if (btn.getAttribute('data-holiday-subtheme') === subtheme) return;
+      if (btn.getAttribute('data-holiday-subtheme') === subtheme && btn.querySelector('.holiday-btn-decor')) return;
       var old = btn.querySelector('.holiday-btn-decor');
       if (old) old.remove();
 
@@ -480,41 +409,17 @@
       decor.className = 'holiday-btn-decor';
       decor.setAttribute('aria-hidden', 'true');
 
-      if (subtheme === 'new-year' && edgeSrc) {
-        decor.appendChild(createDecorImg(edgeSrc, 'holiday-btn-edge'));
-      }
-      if (charmSrc) {
+      if (subtheme === 'new-year') {
+        var bookingButton = btn.classList.contains('header-action') || btn.id === 'submitBookingBtn';
+        decor.appendChild(bookingButton
+          ? createIcicles(assets, 'holiday-btn-icicles')
+          : createDecorImg(edgeSrc, 'holiday-btn-edge'));
+      } else if (charmSrc) {
         decor.appendChild(createDecorImg(charmSrc, 'holiday-btn-charm'));
       }
 
       btn.setAttribute('data-holiday-subtheme', subtheme);
       btn.appendChild(decor);
-    });
-  }
-
-  /* ========================================================================
-     9. Декор текстовых меток / заголовков (.section-label, .kicker)
-     ======================================================================== */
-  function decorateHeadings(subtheme) {
-    var assets = getAssets(subtheme);
-    if (!assets) return;
-
-    document.querySelectorAll('.section-label, .kicker').forEach(function (label) {
-      if (label.getAttribute('data-holiday-subtheme') === subtheme) return;
-      var old = label.querySelector('.holiday-text-decor');
-      if (old) old.remove();
-
-      var isKicker = label.classList && label.classList.contains('kicker');
-      var file = isKicker ? (assets.textDecor || assets.logoCharm) : (assets.logoCharm || assets.textDecor);
-      if (!file) return;
-
-      var badge = document.createElement('span');
-      badge.className = 'holiday-text-decor' + (isKicker ? ' holiday-text-decor--wide' : '');
-      badge.setAttribute('aria-hidden', 'true');
-      badge.appendChild(createDecorImg(assetUrl(subtheme, file), 'holiday-text-decor-img'));
-
-      label.setAttribute('data-holiday-subtheme', subtheme);
-      label.appendChild(badge);
     });
   }
 
@@ -526,29 +431,16 @@
     renderScreenCorners(subtheme);
     renderCornerMascot(subtheme);
     decorateHeaders(subtheme);
-    decorateLogos(subtheme);
 
     document.querySelectorAll('.hero-stage, #previewArea, .territory-stage').forEach(function (el) {
       decorateBanner(el, subtheme);
     });
 
-    document.querySelectorAll('.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .side-card, .review, .cabin-hero-card, .success-container').forEach(function (card) {
-      var cl = card.classList;
-      var isMajorBlock = cl.contains('hero-booking') || cl.contains('calendar-card') || cl.contains('checkout-card') || cl.contains('cta-card') || cl.contains('cabin-hero-card') || cl.contains('success-container');
-      var isAltBlock = cl.contains('side-card') || cl.contains('review');
-      var withRightCorner = cl.contains('cta-card') || cl.contains('calendar-card') || cl.contains('checkout-card') || cl.contains('cabin-hero-card') || cl.contains('success-container');
-      var withBottomAccent = cl.contains('calendar-card') || cl.contains('cta-card') || cl.contains('feature-panel') || cl.contains('cabin-hero-card') || cl.contains('success-container');
-
-      decorateCard(card, subtheme, {
-        useHeroEdge: isMajorBlock,
-        useAltEdge: isAltBlock,
-        withRightCorner: withRightCorner,
-        withBottomAccent: withBottomAccent
-      });
+    document.querySelectorAll('.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .review, .cabin-hero-card, .success-container').forEach(function (card, index) {
+      decorateCard(card, subtheme, index);
     });
 
     decorateButtons(subtheme);
-    decorateHeadings(subtheme);
   }
 
   function scheduleSync() {
@@ -639,11 +531,67 @@
     } catch (e) {}
   }
 
+  function playCalendarSnowball(cell) {
+    if (!cell || currentState.subtheme !== 'new-year' ||
+      typeof cell.animate !== 'function' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var bounds = cell.getBoundingClientRect();
+    var layer = document.createElement('span');
+    layer.className = 'holiday-calendar-snowball';
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.left = (bounds.left + bounds.width / 2) + 'px';
+    layer.style.top = (bounds.top + Math.min(24, bounds.height / 2)) + 'px';
+    document.body.appendChild(layer);
+
+    var ball = document.createElement('span');
+    ball.className = 'holiday-snowball-flight';
+    layer.appendChild(ball);
+    var side = bounds.left < window.innerWidth / 2 ? 1 : -1;
+    var flight = ball.animate([
+      { transform: 'translate(' + (side * 86) + 'px, -66px) rotate(-100deg) scale(.55)', opacity: 0 },
+      { opacity: 1, offset: .2 },
+      { transform: 'translate(' + (side * 37) + 'px, -38px) rotate(-48deg) scale(.85)' },
+      { transform: 'translate(0, 0) rotate(0) scale(1)', opacity: 1 }
+    ], { duration: 250, easing: 'ease-in', fill: 'forwards' });
+
+    // Убираем эффект при прокрутке или смене размера: ячейка уже выбрана.
+    var listeners = new AbortController();
+    function cleanup() {
+      listeners.abort();
+      layer.remove();
+    }
+    window.addEventListener('scroll', cleanup, { capture: true, passive: true, signal: listeners.signal });
+    window.addEventListener('resize', cleanup, { signal: listeners.signal });
+
+    flight.onfinish = function () {
+      if (!layer.isConnected) return;
+      ball.remove();
+      for (var i = 0; i < 12; i++) {
+        var crumb = document.createElement('span');
+        crumb.className = 'holiday-snowball-crumb';
+        var size = 3 + (i * 7 % 6);
+        crumb.style.width = crumb.style.height = size + 'px';
+        layer.appendChild(crumb);
+        var angle = i * Math.PI / 6;
+        var distance = 17 + (i * 11 % 24);
+        var x = Math.cos(angle) * distance;
+        var y = Math.sin(angle) * distance;
+        crumb.animate([
+          { transform: 'translate(0, 0)', opacity: 1 },
+          { transform: 'translate(' + x * .75 + 'px,' + y * .75 + 'px)', opacity: .85, offset: .5 },
+          { transform: 'translate(' + x + 'px,' + (y + 14) + 'px) scale(.4)', opacity: 0 }
+        ], { duration: 320, easing: 'ease-out', fill: 'forwards' }).onfinish = i === 11 ? cleanup : null;
+      }
+    };
+  }
+
   window.EcoHolidayThemes = {
     SUBTHEMES: SUBTHEMES,
     META: META,
     THEME_ASSETS: THEME_ASSETS,
     apply: apply,
+    playCalendarSnowball: playCalendarSnowball,
     getState: function () {
       return { subtheme: currentState.subtheme, particles: currentState.particles };
     }

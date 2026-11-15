@@ -533,6 +533,19 @@ h2 { margin-top: 18px; font-size: clamp(46px, 6vw, 84px); line-height: .9; lette
 
 .weekdays, .dates { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 .weekdays { margin-bottom: 8px; color: var(--muted-2); text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.dates > .calendar-status {
+  grid-column: 1 / -1;
+  padding: 12px;
+  color: var(--muted);
+  text-align: center;
+  font: inherit;
+}
+.dates > .calendar-retry {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
 
 .calendar-day {
   min-height: 70px; padding: 10px; border: 1px solid rgba(var(--cream-rgb), .09); border-radius: 8px;

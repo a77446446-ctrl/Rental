@@ -1,544 +1,193 @@
-/* ==========================================================================
-   Праздничные и сезонные подтемы (независимый декоративный слой из /seasonal-decor/)
-   Работает поверх любой базовой темы: theme-dark, theme-light, theme-dark-grey
-   ========================================================================== */
+/* Праздничный декор: фиксированные украшения над границей блока.
+   Размеры ограничены независимо от исходных пропорций SVG. */
 
-:root {
-  --holiday-accent: var(--gold, #c8ab6f);
-  --holiday-glow: rgba(200, 171, 111, 0.35);
-}
-
-/* Акцентные цвета для каждой подтемы */
-body.subtheme-new-year { --holiday-accent: #7fd4ff; --holiday-glow: rgba(127, 212, 255, 0.38); }
-body.subtheme-feb23    { --holiday-accent: #e05a47; --holiday-glow: rgba(224, 90, 71, 0.35); }
-body.subtheme-mar8     { --holiday-accent: #f48fb1; --holiday-glow: rgba(244, 143, 177, 0.35); }
-body.subtheme-spring   { --holiday-accent: #81c784; --holiday-glow: rgba(129, 199, 132, 0.35); }
-body.subtheme-may1     { --holiday-accent: #ffb7c5; --holiday-glow: rgba(255, 183, 197, 0.35); }
-body.subtheme-sep1     { --holiday-accent: #e8833a; --holiday-glow: rgba(232, 131, 58, 0.38); }
-body.subtheme-nov4     { --holiday-accent: #d9534f; --holiday-glow: rgba(217, 83, 79, 0.35); }
-
-/* Обеспечиваем корректный containing block для декора внутри карточек, шапки и кнопок */
-body[class*="subtheme-"] .header,
-body[class*="subtheme-"] .cabin-header,
-body[class*="subtheme-"] .admin-header,
-body[class*="subtheme-"] .calendar-card,
-body[class*="subtheme-"] .checkout-card,
-body[class*="subtheme-"] .feature-panel,
-body[class*="subtheme-"] .side-card,
-body[class*="subtheme-"] .review,
-body[class*="subtheme-"] .cta-card,
-body[class*="subtheme-"] .cabin-hero-card,
-body[class*="subtheme-"] .success-container,
-body[class*="subtheme-"] .territory-stage,
-body[class*="subtheme-"] .preview-area,
-body[class*="subtheme-"] .btn-primary,
-body[class*="subtheme-"] .header-action {
+/* Не меняем fixed/sticky у шапки и absolute у формы быстрого подбора. */
+body :is(.calendar-card, .checkout-card, .feature-panel, .side-card, .review,
+  .cta-card, .cabin-hero-card, .success-container, .preview-area,
+  .btn-primary, .header-action)[data-holiday-subtheme] {
   position: relative;
 }
 
-body[class*="subtheme-"] .calendar-card,
-body[class*="subtheme-"] .checkout-card,
-body[class*="subtheme-"] .feature-panel,
-body[class*="subtheme-"] .side-card,
-body[class*="subtheme-"] .review,
-body[class*="subtheme-"] .cta-card,
-body[class*="subtheme-"] .cabin-hero-card,
-body[class*="subtheme-"] .success-container {
-  isolation: isolate;
+html body[class*="subtheme-"] :is(.header, .cabin-header, .admin-header, .hero-stage, .territory-stage,
+  .house-card, .hero-booking, .calendar-card, .checkout-card, .feature-panel,
+  .side-card, .review, .cta-card, .cabin-hero-card, .success-container,
+  .preview-area, .btn-primary, .header-action)[data-holiday-subtheme] {
+  overflow: visible !important;
 }
 
-/* Все декоративные слои не перехватывают клики */
-.holiday-particles-layer,
-.holiday-screen-corners,
-.holiday-header-decor,
-.holiday-banner-decor,
-.holiday-card-decor,
-.holiday-corner-mascot,
-.holiday-corner-mascot-inline,
-.holiday-logo-badge,
-.holiday-btn-decor,
-.holiday-text-decor {
+/* Место для верхней кромки, в том числе внутри горизонтальной ленты домов. */
+body[class*="subtheme-"] .house-grid { padding-top: 24px; }
+
+/* Фотографии и затемнение сохраняют скругления при вынесенном наружу декоре. */
+body :is(.hero-stage, .territory-stage, .house-card)[data-holiday-subtheme]::before,
+body :is(.hero-stage, .territory-stage, .house-card)[data-holiday-subtheme]::after,
+body .house-card[data-holiday-subtheme] .house-image {
+  border-radius: inherit;
+}
+body .house-card[data-holiday-subtheme] .house-image {
+  transform: none;
+}
+
+.holiday-particles-layer, .holiday-screen-corners, .holiday-header-decor,
+.holiday-banner-decor, .holiday-card-decor, .holiday-corner-mascot,
+.holiday-btn-decor, [class^="holiday-"] img {
   pointer-events: none !important;
   user-select: none;
 }
 
-/* ==========================================================================
-   1. Слой падающих атмосферных частиц (particle.svg / particle-alt.svg)
-   ========================================================================== */
+/* Весь неподвижный декор привязан к краю своего контейнера. */
+.holiday-header-decor, .holiday-banner-decor, .holiday-card-decor, .holiday-btn-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none !important;
+}
+.holiday-banner-edge, .holiday-block-edge, .holiday-btn-edge {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% - 3px);
+  width: 100%;
+  height: 20px;
+  display: block;
+  object-fit: fill;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .16));
+}
+.holiday-banner-edge { height: 28px; }
+.holiday-btn-edge { height: 10px; bottom: calc(100% - 2px); }
+.holiday-banner-edge img, .holiday-block-edge img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+.holiday-banner-icicles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 16px;
+}
+.holiday-banner-garland, .holiday-header-garland {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 12px);
+  transform: translateX(-50%);
+  width: min(340px, 56%);
+  height: 64px;
+  object-fit: contain;
+  object-position: bottom;
+}
+.holiday-banner-garland img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.holiday-header-garland { width: min(200px, 30%); height: 30px; bottom: calc(100% - 5px); }
+body:not(.subtheme-new-year) .holiday-block-edge {
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(180px, 60%);
+  height: 26px;
+  bottom: calc(100% - 4px);
+}
+body:not(.subtheme-new-year) .holiday-block-edge img { object-fit: contain; object-position: bottom; }
+.holiday-card-top-right {
+  position: absolute;
+  top: 3px;
+  right: 12px;
+  width: 32px;
+  height: 46px;
+}
+.holiday-card-top-right img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: top; }
+.holiday-btn-charm {
+  position: absolute;
+  right: 4px;
+  bottom: calc(100% - 3px);
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* Углы экрана видны лишь там, где есть свободные боковые поля. */
+.holiday-screen-corners { position: fixed; inset: 0 0 auto; height: 90px; z-index: 4; overflow: hidden; }
+.holiday-corner-branch { position: absolute; top: 0; width: min(110px, calc((100vw - 1220px) / 2)); }
+.holiday-corner-branch--left { left: 0; }
+.holiday-corner-branch--right { right: 0; }
+.holiday-corner-branch img { display: block; width: 100%; height: auto; }
+
+html body .chat-widget.chat-widget[data-state="closed"]:has(> .holiday-corner-mascot) { overflow: visible !important; }
+.holiday-corner-mascot {
+  position: absolute;
+  right: calc(100% + 10px);
+  bottom: 0;
+  width: 112px;
+  height: 120px;
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, .2));
+}
+.holiday-corner-mascot img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.chat-widget:not([data-state="closed"]) > .holiday-corner-mascot,
+body.chat-open .holiday-corner-mascot,
+body.mobile-menu-open .holiday-corner-mascot { display: none; }
+#previewFab { position: relative; }
+#previewFab .holiday-corner-mascot { width: 84px; height: 90px; }
+
+@media (761px <= width < 1280px) {
+  #chat-widget > .holiday-corner-mascot {
+    left: 12px;
+    right: auto;
+    bottom: 50%;
+    transform: translateY(50%);
+    width: 22px;
+    height: 29px;
+  }
+  #chat-widget[data-state="closed"]:has(> .holiday-corner-mascot) #chat-toggle .chat-glyph {
+    left: 70% !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #chat-widget > .holiday-corner-mascot {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 33px;
+    height: 37px;
+    z-index: 2;
+  }
+  #chat-widget[data-state="closed"]:has(> .holiday-corner-mascot)
+    #chat-toggle :is(.chat-glyph, svg:not(.chat-ring-label)),
+  #chat-widget[data-state="closed"]:has(> .holiday-corner-mascot) #chat-toggle::before,
+  #chat-widget[data-state="closed"]:has(> .holiday-corner-mascot) #chat-toggle::after {
+    display: none !important;
+  }
+}
+
+/* Частицы остаются по краям экрана и не затмевают текст. */
 .holiday-particles-layer {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 4;
   overflow: hidden;
   display: none;
+  mask-image: linear-gradient(to right, #000, transparent 16%, transparent 84%, #000);
 }
-
-body.subtheme-particles-on .holiday-particles-layer {
-  display: block;
-}
-
+body.subtheme-particles-on .holiday-particles-layer { display: block; }
 .holiday-particle {
   position: absolute;
-  top: -54px;
+  top: -30px;
   left: var(--p-left, 50%);
-  width: var(--p-size, 18px);
-  height: var(--p-size, 18px);
+  width: var(--p-size, 12px);
+  height: var(--p-size, 12px);
   opacity: 0;
-  will-change: transform, opacity;
-  animation: holiday-fall var(--p-dur, 11s) linear var(--p-delay, 0s) infinite;
+  animation: holiday-fall var(--p-dur, 18s) linear var(--p-delay, 0s) infinite;
+}
+.holiday-particle-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+@keyframes holiday-fall {
+  0% { opacity: 0; transform: translate3d(0, -24px, 0); }
+  10%, 88% { opacity: var(--p-opacity, .3); }
+  100% { opacity: 0; transform: translate3d(var(--p-drift, 24px), calc(100vh + 60px), 0); }
 }
 
-.holiday-particle-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.28));
-  animation: holiday-spin-sway var(--p-sway-dur, 4.2s) ease-in-out var(--p-delay, 0s) infinite alternate;
-}
-
-body.theme-light .holiday-particle-img {
-  filter: drop-shadow(0 2px 4px rgba(35, 70, 110, 0.25));
-}
-
-/* ==========================================================================
-   2. Верхние углы экрана и верхний орнамент (corner-left.svg, corner-right.svg, header.svg)
-   ========================================================================== */
-.holiday-screen-corners {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 220px;
-  z-index: 45;
-  overflow: hidden;
-}
-
-.holiday-screen-top-garland {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(62vw, 680px);
-  opacity: 0.92;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
-}
-
-.holiday-screen-top-garland img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.holiday-corner-branch {
-  position: absolute;
-  top: -4px;
-  width: clamp(140px, 16vw, 230px);
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.38));
-}
-
-.holiday-corner-branch img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.holiday-corner-branch--left {
-  left: -6px;
-  transform-origin: 12px 8px;
-  animation: holiday-sway 6.8s ease-in-out infinite;
-}
-
-.holiday-corner-branch--right {
-  right: -6px;
-  transform-origin: calc(100% - 12px) 8px;
-  animation: holiday-sway-reverse 7.4s ease-in-out infinite;
-}
-
-body.subtheme-new-year .holiday-corner-branch--right {
-  width: clamp(165px, 20vw, 285px);
-}
-
-/* ==========================================================================
-   3. Декор шапки сайта (.header, .cabin-header, .admin-header)
-   ========================================================================== */
-.holiday-header-decor {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-.holiday-header-edge {
-  position: absolute;
-  inset: 0 0 auto;
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: 22px;
-  object-fit: cover;
-  object-position: top center;
-  opacity: 0.9;
-}
-
-.holiday-header-garland {
-  position: absolute;
-  top: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: block;
-  width: min(440px, 54%);
-  height: auto;
-  max-height: 28px;
-  object-fit: contain;
-  object-position: top center;
-  opacity: 0.92;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.32));
-}
-
-/* ==========================================================================
-   4. Декор главного баннера (.hero-stage), предпросмотра (#previewArea) и территории (.territory-stage)
-   ========================================================================== */
-.holiday-banner-decor {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-.holiday-banner-edge {
-  position: absolute;
-  inset: 0 0 auto;
-  width: 100%;
-  opacity: 0.96;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.28));
-}
-
-.holiday-banner-edge img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.holiday-banner-garland {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(760px, 84%);
-  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.38));
-}
-
-.holiday-banner-garland img {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: 150px;
-  object-fit: contain;
-  object-position: top center;
-}
-
-.holiday-banner-left {
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  width: clamp(145px, 18vw, 235px);
-  transform-origin: 18px 10px;
-  animation: holiday-sway 6.2s ease-in-out infinite;
-  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
-}
-
-.holiday-banner-right {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: clamp(145px, 18vw, 235px);
-  transform-origin: calc(100% - 18px) 10px;
-  animation: holiday-sway-reverse 6.9s ease-in-out infinite;
-  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
-}
-
-.holiday-banner-left img,
-.holiday-banner-right img,
-.holiday-banner-extra img,
-.holiday-banner-accent img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.holiday-banner-extra {
-  position: absolute;
-  bottom: 14px;
-  left: 24px;
-  width: clamp(110px, 14vw, 175px);
-  opacity: 0.92;
-  transform-origin: left bottom;
-  animation: holiday-bloom 5.2s ease-in-out infinite;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.36));
-}
-
-/* Крупный акцент (Дед Мороз и др.) внутри главного баннера .hero-stage возле формы подбора */
-.holiday-banner-accent {
-  position: absolute;
-  right: 452px;
-  bottom: 0;
-  width: 160px;
-  z-index: 3;
-  transform-origin: center bottom;
-  animation: holiday-santa-peek 5.4s ease-in-out infinite;
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.48));
-}
-
-body.subtheme-new-year .holiday-banner-accent {
-  width: 152px;
-  bottom: -4px;
-}
-
-/* ==========================================================================
-   5. Декор на блоках и карточках (.house-card, .hero-booking, .calendar-card и др.)
-   ========================================================================== */
-.holiday-card-decor {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-/* Оформление верхнего края блока строго по рекомендации пакета */
-.holiday-block-edge {
-  position: absolute;
-  inset: 0 0 auto;
-  width: 100%;
-  opacity: 0.95;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.26));
-}
-
-.holiday-block-edge img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-body.theme-light .holiday-block-edge {
-  filter: drop-shadow(0 2px 5px rgba(70, 120, 175, 0.34));
-}
-
-.holiday-card-top-left {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: 106px;
-  transform-origin: 10px 8px;
-  animation: holiday-sway 5.8s ease-in-out infinite;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.34));
-}
-
-.holiday-card-top-right {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 92px;
-  transform-origin: calc(100% - 10px) 8px;
-  animation: holiday-sway-reverse 6.4s ease-in-out infinite;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.34));
-}
-
-/* В карточках домиков делаем правую подвеску (шишка, звезда, мимоза, берёза, рябина, дуб) изящной */
-.house-card .holiday-card-top-right {
-  top: 2px;
-  right: 8px;
-  width: 68px;
-}
-
-body.subtheme-new-year .house-card .holiday-card-top-right {
-  width: 48px;
-}
-
-.holiday-card-bottom-left {
-  position: absolute;
-  bottom: 6px;
-  right: 12px;
-  width: 88px;
-  opacity: 0.92;
-  transform-origin: bottom center;
-  animation: holiday-bloom 4.8s ease-in-out infinite;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
-}
-
-.holiday-card-top-left img,
-.holiday-card-top-right img,
-.holiday-card-bottom-left img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* Дополнительное свечение рамок карточек под подтему */
-body.subtheme-new-year .hero-booking,
-body.subtheme-new-year .house-card,
-body.subtheme-new-year .calendar-card,
-body.subtheme-new-year .checkout-card {
-  box-shadow: 0 22px 68px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(210, 240, 255, 0.35);
-}
-
-body.subtheme-sep1 .house-card,
-body.subtheme-sep1 .calendar-card,
-body.subtheme-sep1 .checkout-card {
-  box-shadow: 0 22px 68px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(232, 131, 58, 0.28);
-}
-
-body.subtheme-spring .house-card,
-body.subtheme-may1 .house-card,
-body.subtheme-mar8 .house-card {
-  box-shadow: 0 22px 68px rgba(0, 0, 0, 0.22), inset 0 1px 0 var(--holiday-glow);
-}
-
-/* ==========================================================================
-   6. Крупный акцент (accent.svg — Дед Мороз и др.) в правом нижнем углу экрана
-   ========================================================================== */
-.holiday-corner-mascot {
-  position: fixed;
-  right: 106px;
-  bottom: 10px;
-  z-index: 9990;
-  width: 168px;
-  height: 136px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.46));
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  animation: holiday-santa-peek 5.2s ease-in-out infinite;
-}
-
-/* Дед Мороз (382×620) — высокий вертикальный элемент, даём ему просторный размер */
-body.subtheme-new-year .holiday-corner-mascot {
-  width: 156px;
-  height: 244px;
-  right: 102px;
-  bottom: 6px;
-}
-
-.holiday-corner-mascot img,
-.holiday-corner-mascot-inline img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: bottom center;
-}
-
-body.chat-open .holiday-corner-mascot,
-body.mobile-menu-open .holiday-corner-mascot {
-  opacity: 0;
-  transform: translateY(12px) scale(0.9);
-}
-
-/* ==========================================================================
-   7. Шарм у логотипа (logo-charm.svg)
-   ========================================================================== */
-.brand,
-.cabin-brand,
-.admin-brand,
-.footer-brand {
-  position: relative;
-}
-
-.holiday-logo-badge {
-  position: absolute;
-  top: -10px;
-  left: -12px;
-  width: 30px;
-  height: 34px;
-  z-index: 6;
-  transform-origin: center top;
-  animation: holiday-pendulum 4.2s ease-in-out infinite;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
-}
-
-.holiday-logo-badge-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* ==========================================================================
-   8. Декор кнопок (.btn-primary, .header-action) и текстовых меток (.section-label, .kicker)
-   ========================================================================== */
-body[class*="subtheme-"]:not(.subtheme-none) .btn-primary,
-body[class*="subtheme-"]:not(.subtheme-none) .header-action {
-  overflow: visible;
-}
-
-.holiday-btn-decor {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  z-index: 2;
-}
-
-.holiday-btn-edge {
-  position: absolute;
-  top: -2px;
-  left: 0;
-  width: 100%;
-  height: auto;
-  max-height: 14px;
-  object-fit: cover;
-  object-position: top center;
-  border-radius: inherit;
-  opacity: 0.92;
-}
-
-.holiday-btn-charm {
-  position: absolute;
-  top: -9px;
-  right: -8px;
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  transform-origin: center bottom;
-  animation: holiday-bloom 4.2s ease-in-out infinite;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.38));
-}
-
-.section-label,
-.kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.holiday-text-decor {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  flex: 0 0 auto;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.28));
-}
-
-.holiday-text-decor--wide {
-  width: 48px;
-  height: 22px;
-}
-
-.holiday-text-decor-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* ==========================================================================
-   9. Тематические значки «Акция» в календаре бронирования (только из /seasonal-decor/)
-   ========================================================================== */
+/* Сохраняем праздничные обозначения акций в календаре. */
 body[class*="subtheme-"]:not(.subtheme-none) .calendar-day.promo::after,
 body[class*="subtheme-"]:not(.subtheme-none) .legend i.legend-promo {
   content: "" !important;
@@ -557,225 +206,235 @@ body[class*="subtheme-"]:not(.subtheme-none) .legend i.legend-promo {
 
 body.subtheme-new-year .calendar-day.promo::after,
 body.subtheme-new-year .legend i.legend-promo {
-  background-image: url("/seasonal-decor/new-year/logo-charm.svg?v=20261114-2") !important;
+  background-image: url("/seasonal-decor/new-year/logo-charm.svg?v=20261115-13") !important;
 }
 
 body.subtheme-feb23 .calendar-day.promo::after,
 body.subtheme-feb23 .legend i.legend-promo {
-  background-image: url("/seasonal-decor/february-23/logo-charm.svg?v=20261114-2") !important;
+  background-image: url("/seasonal-decor/february-23/logo-charm.svg?v=20261115-13") !important;
 }
 
 body.subtheme-mar8 .calendar-day.promo::after,
 body.subtheme-mar8 .legend i.legend-promo {
-  background-image: url("/seasonal-decor/march-8/logo-charm.svg?v=20261114-2") !important;
+  background-image: url("/seasonal-decor/march-8/logo-charm.svg?v=20261115-13") !important;
 }
 
 body.subtheme-spring .calendar-day.promo::after,
 body.subtheme-spring .legend i.legend-promo {
-  background-image: url("/seasonal-decor/spring/logo-charm.svg?v=20261114-2") !important;
+  background-image: url("/seasonal-decor/spring/logo-charm.svg?v=20261115-13") !important;
 }
 
 body.subtheme-may1 .calendar-day.promo::after,
 body.subtheme-may1 .legend i.legend-promo {
-  background-image: url("/seasonal-decor/may-1/logo-charm.svg?v=20261114-2") !important;
+  background-image: url("/seasonal-decor/may-1/logo-charm.svg?v=20261115-13") !important;
 }
 
 body.subtheme-sep1 .calendar-day.promo::after,
 body.subtheme-sep1 .legend i.legend-promo {
-  background-image: url("/seasonal-decor/september-1/logo-charm.svg?v=20261114-2") !important;
+  background-image: url("/seasonal-decor/september-1/logo-charm.svg?v=20261115-13") !important;
 }
 
 body.subtheme-nov4 .calendar-day.promo::after,
 body.subtheme-nov4 .legend i.legend-promo {
-  background-image: url("/seasonal-decor/november-4/logo-charm.svg?v=20261114-2") !important;
+  background-image: url("/seasonal-decor/november-4/logo-charm.svg?v=20261115-13") !important;
 }
 
-/* ==========================================================================
-   10. Ключевые кадры анимации
-   ========================================================================== */
-@keyframes holiday-sway {
-  0%, 100% { transform: rotate(-2.2deg); }
-  50%      { transform: rotate(2.4deg); }
+
+@media (max-width: 1439px) {
+  .holiday-screen-corners { display: none; }
 }
-
-@keyframes holiday-sway-reverse {
-  0%, 100% { transform: rotate(2.2deg); }
-  50%      { transform: rotate(-2.4deg); }
-}
-
-@keyframes holiday-pendulum {
-  0%, 100% { transform: rotate(-6deg); }
-  50%      { transform: rotate(6deg); }
-}
-
-@keyframes holiday-santa-peek {
-  0%, 100% { transform: translateY(2px) rotate(-1.2deg); }
-  50%      { transform: translateY(-4px) rotate(1.4deg); }
-}
-
-@keyframes holiday-bloom {
-  0%, 100% { transform: scale(0.96) rotate(-1.5deg); }
-  50%      { transform: scale(1.05) rotate(1.5deg); }
-}
-
-@keyframes holiday-fall {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, -24px, 0);
-  }
-  10% {
-    opacity: var(--p-opacity, 0.85);
-  }
-  88% {
-    opacity: var(--p-opacity, 0.85);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(var(--p-drift, 40px), calc(100vh + 60px), 0);
-  }
-}
-
-@keyframes holiday-spin-sway {
-  0%   { transform: translateX(-10px) rotate(-16deg); }
-  100% { transform: translateX(10px) rotate(20deg); }
-}
-
-/* ==========================================================================
-   11. Адаптация под планшеты, смартфоны и предпросмотр в админке
-   ========================================================================== */
-.preview-area .holiday-banner-left,
-.preview-area .holiday-banner-right {
-  width: 132px;
-}
-
-.preview-area .holiday-banner-garland {
-  width: min(420px, 76%);
-}
-
-.preview-area .holiday-banner-extra {
-  width: 96px;
-  bottom: 8px;
-  left: 12px;
-}
-
-.preview-area .holiday-corner-mascot-inline {
-  position: absolute;
-  right: 14px;
-  bottom: 6px;
-  width: 112px;
-  height: 138px;
-  z-index: 4;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
-}
-
-@media (max-width: 1120px) {
-  .holiday-banner-accent {
-    right: 18px;
-    width: 124px;
-  }
-}
-
-@media (max-width: 900px) {
-  .holiday-corner-branch {
-    width: 136px;
-    opacity: 0.9;
-  }
-
-  .holiday-screen-top-garland {
-    width: min(74vw, 460px);
-  }
-
-  .holiday-banner-left,
-  .holiday-banner-right {
-    width: 138px;
-  }
-
-  .holiday-card-top-left {
-    width: 82px;
-  }
-
-  .holiday-card-top-right {
-    width: 72px;
-  }
-
-  .holiday-card-bottom-left {
-    width: 68px;
-  }
-}
-
 @media (max-width: 760px) {
-  .holiday-screen-corners {
-    height: 120px;
-  }
-
-  .holiday-corner-branch {
-    width: 104px;
-    opacity: 0.84;
-  }
-
-  body.subtheme-new-year .holiday-corner-branch--right {
-    width: 128px;
-  }
-
-  .holiday-screen-top-garland {
-    width: 78vw;
-  }
-
-  .holiday-banner-accent {
-    display: none;
-  }
-
-  .holiday-corner-mascot {
-    right: 10px;
-    bottom: calc(74px + env(safe-area-inset-bottom));
-    width: 96px;
-    height: 84px;
-  }
-
-  body.subtheme-new-year .holiday-corner-mascot {
-    right: 10px;
-    bottom: calc(72px + env(safe-area-inset-bottom));
-    width: 88px;
-    height: 138px;
-  }
-
-  .holiday-logo-badge {
-    top: -7px;
-    left: -8px;
-    width: 22px;
-    height: 25px;
-  }
-
-  .holiday-btn-charm {
-    width: 19px;
-    height: 19px;
-    top: -7px;
-    right: -5px;
-  }
-
+  .holiday-banner-edge { height: 18px; }
+  .holiday-block-edge { height: 14px; }
+  .holiday-btn-edge { height: 8px; }
+  .holiday-banner-icicles { height: 9px; }
+  .holiday-banner-garland { width: min(190px, 60%); height: 36px; bottom: calc(100% - 7px); }
+  .holiday-header-garland { height: 20px; bottom: calc(100% - 3px); }
+  body:not(.subtheme-new-year) .holiday-block-edge { width: min(120px, 50%); height: 18px; }
+  .holiday-card-top-right { right: 8px; width: 24px; height: 34px; }
+  .holiday-btn-charm { width: 14px; height: 14px; }
+  .holiday-particles-layer { mask-image: linear-gradient(to right, #000, transparent 8%, transparent 92%, #000); }
+  .holiday-particle:nth-child(n + 7) { display: none; }
   body[class*="subtheme-"]:not(.subtheme-none) .calendar-day.promo::after {
-    top: 3px !important;
-    right: 3px !important;
-    width: 11px !important;
-    height: 11px !important;
+    top: 3px !important; right: 3px !important; width: 10px !important; height: 10px !important;
   }
 }
-
-/* Уважение настройки уменьшения анимаций ОС */
 @media (prefers-reduced-motion: reduce) {
-  .holiday-particle,
-  .holiday-particle-img,
-  .holiday-corner-branch,
-  .holiday-banner-left,
-  .holiday-banner-right,
-  .holiday-banner-extra,
-  .holiday-banner-accent,
-  .holiday-card-top-left,
-  .holiday-card-top-right,
-  .holiday-card-bottom-left,
-  .holiday-corner-mascot,
-  .holiday-logo-badge,
-  .holiday-btn-charm {
-    animation: none !important;
+  body.subtheme-particles-on .holiday-particles-layer { display: none; }
+}
+
+/* Тонкий слой снега опирается на всю верхнюю кромку блока. */
+[data-holiday-subtheme="new-year"] :is(.holiday-banner-edge, .holiday-block-edge, .holiday-btn-edge) {
+  inset-inline: -1px;
+  bottom: calc(100% - var(--snow-overlap, 5px));
+  width: auto;
+}
+[data-holiday-subtheme="new-year"] .holiday-block-edge { height: clamp(13px, 1.25vw, 18px); }
+[data-holiday-subtheme="new-year"] .holiday-banner-edge { height: clamp(18px, 1.9vw, 28px); }
+.holiday-block-edge-mirrored > img { transform: scaleX(-1); }
+body.theme-light .hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-edge { inset-inline: 0; }
+[data-holiday-subtheme="new-year"] > .holiday-btn-decor { --snow-overlap: 2px; }
+[data-holiday-subtheme="new-year"] .holiday-btn-edge {
+  inset-inline: 1px;
+  max-width: none;
+  width: calc(100% - 2px);
+  border-radius: 8px 9px 7px 6px / 70% 66% 45% 40%;
+}
+:is(.calendar-card, .checkout-card)[data-holiday-subtheme="new-year"] .holiday-block-edge {
+  height: clamp(15px, 1.45vw, 22px);
+}
+body.subtheme-new-year .calendar-layout { padding-block-start: 15px; }
+body.subtheme-new-year .house-grid { padding-top: 33px; }
+body.subtheme-new-year .page > .hero { margin-block-start: 21px; }
+@media (min-width: 1101px) {
+  body.subtheme-new-year:is(.theme-dark-grey, .theme-luxury-glass) .page > .hero { margin-block-start: 43px; }
+}
+
+body.subtheme-new-year :is(.header, .cabin-header, .admin-header, .territory-stage)[data-holiday-subtheme="new-year"] {
+  border-top-color: transparent !important;
+}
+body.subtheme-new-year {
+  --winter-header-garland-height: calc(min(100vw - 48px, 1180px) * 206 / 2040);
+}
+body.subtheme-new-year .header[data-holiday-subtheme="new-year"] {
+  top: calc(var(--winter-header-garland-height) - 12px) !important;
+}
+body.subtheme-new-year .top-meta { display: none; }
+body.subtheme-new-year :is(#houses, #features, #calendar, #booking, #contacts) { scroll-margin-top: 187px !important; }
+body.subtheme-new-year #territory { scroll-margin-top: 260px !important; }
+
+/* Гирлянда масштабируется в исходных пропорциях по ширине панели. */
+.holiday-winter-garland {
+  position: absolute;
+  inset: auto -1px calc(100% - 16px);
+}
+.holiday-winter-garland img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto 2040 / 206;
+}
+.territory-stage[data-holiday-subtheme="new-year"] .holiday-banner-edge {
+  --snow-overlap: 6px;
+  height: clamp(19px, 2.2vw, 32px);
+}
+.holiday-territory-icicles, .holiday-btn-icicles, [data-holiday-subtheme="new-year"] .holiday-banner-icicles {
+  background: var(--winter-ice) repeat-x center top / auto 100%;
+  filter: drop-shadow(0 2px 2px rgba(30, 52, 73, .32));
+}
+.holiday-btn-icicles {
+  position: absolute;
+  inset: calc(100% - 1px) 6px auto;
+  height: 18px;
+  pointer-events: none;
+}
+#submitBookingBtn .holiday-btn-icicles { height: 22px; }
+.holiday-territory-icicles {
+  position: absolute;
+  inset: calc(100% - 4px) 12px auto;
+  height: clamp(27px, 4.6vw, 68px);
+}
+
+[data-holiday-subtheme="new-year"] .holiday-banner-icicles {
+  inset: 3px 3px auto;
+  width: auto;
+  height: clamp(16px, 2vw, 25px);
+}
+.hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-icicles {
+  height: clamp(24px, 4.1vw, 55px);
+}
+body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .hero-content { margin-top: 28px; }
+#contact-bg-card[data-holiday-subtheme="new-year"] .holiday-banner-icicles { height: clamp(12px, 1.7vw, 24px); }
+
+body.subtheme-new-year .holiday-card-top-right {
+  top: -3px;
+  right: 1px;
+  width: clamp(73px, 10vw, 144px);
+  height: auto;
+}
+body.subtheme-new-year .holiday-card-top-right > img:first-child { height: auto; }
+
+body.subtheme-new-year .holiday-particles-layer {
+  mask-image: none;
+  z-index: 3;
+  filter: drop-shadow(0 1px 1px rgba(34, 58, 82, .36));
+}
+body.subtheme-new-year .holiday-particle:nth-child(3n) { z-index: 1; }
+
+/* Точка поворота у основания рукава. Картинка снеговика не двигается. */
+.holiday-corner-mascot::before {
+  content: "";
+  position: absolute;
+  inset: auto 1% -2%;
+  height: 10%;
+  border-radius: 52% 48% 41% 39%;
+  background: url("/seasonal-decor/new-year/snow-cap.svg?v=20261115-13") center / 100% 100% no-repeat;
+}
+.holiday-corner-mascot .holiday-mascot-img {
+  position: relative;
+  clip-path: polygon(0 0, 68% 0, 68% 44%, 70% 47%, 72% 49%, 100% 49%, 100% 100%, 0 100%);
+}
+.holiday-mascot-arm {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(67% 0, 100% 0, 100% 49.8%, 71% 49.8%, 68.5% 47%);
+  transform-origin: 70% 48%;
+  animation: holiday-wave 12s ease-in-out infinite;
+}
+@keyframes holiday-wave {
+  0%, 72%, 91%, 100% { transform: rotate(0); }
+  76%, 84% { transform: rotate(-13deg); }
+  80%, 88% { transform: rotate(10deg); }
+}
+
+@media (1280px <= width <= 1660px) {
+  #chat-widget > .holiday-corner-mascot {
+    right: -13px;
+    bottom: calc(100% + 5px);
+    width: min(78px, calc((100vw - 1216px) / 2));
+    height: auto;
+    aspect-ratio: 448 / 480;
   }
+}
+@media (900px < width <= 1100px) {
+  body.subtheme-new-year .page > .hero { margin-block-start: calc(var(--winter-header-garland-height) - 48px); }
+}
+@media (max-width: 900px) {
+  body.subtheme-new-year { --winter-header-garland-height: calc((100vw - 16px) * 206 / 2040); }
+  body.subtheme-new-year .page > .hero { margin-block-start: calc(var(--winter-header-garland-height) - 5px); }
+  body.subtheme-new-year :is(#houses, #features, #calendar, #booking, #contacts) { scroll-margin-top: 88px !important; }
+  body.subtheme-new-year #territory { scroll-margin-top: 112px !important; }
+  body.subtheme-new-year .calendar-layout { row-gap: 39px; }
+}
+@media (max-width: 760px) {
+  #submitBookingBtn .holiday-btn-icicles { height: 16px; }
+  .hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-icicles { height: 22px; }
+  body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .hero-content { margin-top: 16px; }
+  body.subtheme-new-year .holiday-particle:nth-child(-n + 16) { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .holiday-corner-mascot .holiday-mascot-img { clip-path: none; }
+  .holiday-mascot-arm { display: none !important; animation: none; }
+}
+.holiday-calendar-snowball {
+  position: fixed;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.holiday-snowball-flight,
+.holiday-snowball-crumb {
+  position: absolute;
+  translate: -50% -50%;
+  background: url('/seasonal-decor/new-year/snowball.webp') center / contain no-repeat;
+}
+
+.holiday-snowball-flight {
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 2px 2px rgb(32 45 62 / 44%));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .holiday-calendar-snowball { display: none; }
 }

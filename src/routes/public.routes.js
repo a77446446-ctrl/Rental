@@ -18,23 +18,18 @@ const { pbAdmin } = require('../config/pocketbase');
 const bookingService = require('../services/booking.service');
 const externalCalendarService = require('../services/externalCalendar.service');
 const dataStore = require('../services/dataStore.service');
-const { normalizeBookingRecord } = require('../utils/bookingRecord');
+const { getSiteBrand } = require('../services/siteBrand.service');
+const { addOneDay, normalizeBookingRecord } = require('../utils/bookingRecord');
 const { normalizePriceRecord } = require('../utils/priceRecord');
 const { validateRecordId } = require('../utils/validation');
 const { buildPocketbaseMediaUrl, toSameOriginMediaPath } = require('./media.routes');
 
 const publicRoot = path.join(__dirname, '../../public');
 
-function addOneDay(dateStr) {
-  const date = new Date(dateStr + 'T00:00:00');
-  date.setDate(date.getDate() + 1);
-  return date.toISOString().slice(0, 10);
-}
-
 async function getConfiguredLogoUrl() {
   try {
-    const data = await dataStore.get('mainpage', 'mainpage.json', {});
-    if (data.logo && data.logo.url) return toSameOriginMediaPath(data.logo.url);
+    const brand = await getSiteBrand();
+    if (brand.logoUrl) return toSameOriginMediaPath(brand.logoUrl);
   } catch (err) {}
   return '/icons/icon-192.png';
 }
@@ -92,13 +87,14 @@ function mapCabinForPublic(cabin) {
    Возвращает динамический манифест для PWA
    ───────────────────────────────────────────── */
 router.get('/manifest.json', async (req, res) => {
-  const logoUrl = await getConfiguredLogoUrl();
+  const brand = await getSiteBrand();
+  const logoUrl = brand.logoUrl ? toSameOriginMediaPath(brand.logoUrl) : '/icons/icon-512.png';
   const iconVersion = crypto.createHash('sha1').update(logoUrl).digest('hex').slice(0, 12);
   res.type('application/manifest+json').json({
     "id": "/",
-    "name": "ECO-Gorniy",
-    "short_name": "ECO-Gorniy",
-    "description": "Бронирование домиков ECO-Gorniy",
+    "name": brand.name,
+    "short_name": brand.name,
+    "description": brand.description || 'Онлайн-бронирование объектов аренды.',
     "lang": "ru-RU",
     "start_url": "/",
     "scope": "/",
@@ -569,7 +565,6 @@ router.get('/availability', async (req, res) => {
           busyDates.add(dateStr);
           externalBusyMap[dateStr] = {
             source: externalBookings[i].source_name || 'Внешний календарь',
-            summary: externalBookings[i].summary || null,
           };
           current.setDate(current.getDate() + 1);
         }
@@ -607,7 +602,7 @@ router.get('/availability', async (req, res) => {
         is_promo: isPromo,
         promo_description: promoDesc || null,
         busy_source: externalBusyMap[dateStr] ? externalBusyMap[dateStr].source : null,
-        busy_summary: externalBusyMap[dateStr] ? externalBusyMap[dateStr].summary : null,
+        busy_summary: null,
       });
 
       currentDate.setDate(currentDate.getDate() + 1);
@@ -775,7 +770,8 @@ router.post('/bookings', async (req, res) => {
   } catch (err) {
     console.error('[public.routes] Ошибка POST /bookings:', err.message);
     const message = String(err.message || '');
-    if (message.includes('занят') || message.includes('пересекаются')) {
+    if (err.status === 503) return res.status(503).json({ success: false, error: message });
+    if (/занят|пересекаются/i.test(message)) {
       return res.status(409).json({ success: false, error: message });
     }
     if (/неверн|обязатель|максимум|недоступ|закрыта|позже|длиннее/i.test(message)) {
@@ -828,7 +824,7 @@ router.get('/ical/export/:slug', async (req, res) => {
       });
     } catch (bookingsError) {
       console.error('[ical-export] Ошибка загрузки бронирований:', bookingsError.message);
-      return res.status(500).send('Ошибка сервера');
+      return res.status(503).send('Календарь временно недоступен');
     }
 
     // Загружаем закрытые даты (promo_description === 'CLOSED')
@@ -841,6 +837,7 @@ router.get('/ical/export/:slug', async (req, res) => {
       closedDates = closedDates.map(normalizePriceRecord);
     } catch (err) {
       console.error('[ical-export] Ошибка загрузки закрытых дат:', err.message);
+      return res.status(503).send('Календарь временно недоступен');
     }
 
     // Формируем iCal
@@ -861,12 +858,12 @@ router.get('/ical/export/:slug', async (req, res) => {
     let ical = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//EcoGorniy//Cabin Rental//RU',
+      'PRODID:-//Rental Platform//Calendar//RU',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
       'REFRESH-INTERVAL;VALUE=DURATION:PT30M',
       'X-PUBLISHED-TTL:PT30M',
-      `X-WR-CALNAME:${escapeIcalText(cabin.name)} — eco-gorniy.ru`,
+      `X-WR-CALNAME:${escapeIcalText(cabin.name)}`,
       'X-WR-TIMEZONE:Europe/Moscow',
     ];
 
@@ -886,7 +883,7 @@ router.get('/ical/export/:slug', async (req, res) => {
         ical.push(`DTSTART;VALUE=DATE:${formatDate(booking.check_in)}`);
         ical.push(`DTEND;VALUE=DATE:${formatDate(booking.check_out)}`);
         ical.push('SUMMARY:Занято');
-        ical.push(`DESCRIPTION:Бронирование через eco-gorniy.ru`);
+        ical.push('DESCRIPTION:Бронирование на сайте');
         ical.push(`STATUS:CONFIRMED`);
         ical.push('TRANSP:OPAQUE');
         ical.push('END:VEVENT');

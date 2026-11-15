@@ -2,7 +2,10 @@ const crypto = require('crypto');
 const dns = require('dns').promises;
 const net = require('net');
 const { pbAdmin } = require('../config/pocketbase');
-const { validateRecordId } = require('../utils/validation');
+const { addOneDay } = require('../utils/bookingRecord');
+const { parseDate, validateRecordId } = require('../utils/validation');
+
+const sourceSyncs = new Map();
 
 function normalizeSourceName(value) {
   return String(value || '').trim() || 'Внешний источник';
@@ -81,30 +84,43 @@ async function fetchCalendarText(initialUrl, redirects = 0) {
 }
 
 function parseIcsDate(value) {
-  const match = String(value || '').trim().match(/(\d{4})(\d{2})(\d{2})/);
-  if (!match) return null;
-  return `${match[1]}-${match[2]}-${match[3]}`;
-}
-
-function addDays(dateStr, days) {
-  const date = new Date(dateStr + 'T00:00:00Z');
-  date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().slice(0, 10);
+  const match = String(value || '').trim().match(/^(\d{4})(\d{2})(\d{2})(?:T\d{6}Z?)?$/);
+  if (!match) throw new Error('Неверная дата события iCal');
+  const date = `${match[1]}-${match[2]}-${match[3]}`;
+  parseDate(date, 'Дата события iCal');
+  return date;
 }
 
 function parseIcsEvents(icsText) {
-  const events = [];
+  const events = new Map();
   let current = null;
-  const lines = icsText.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '').split('\n');
+  const lines = icsText.trim().replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '').split('\n');
+  if (lines[0] !== 'BEGIN:VCALENDAR' || lines.at(-1) !== 'END:VCALENDAR') {
+    throw new Error('По ссылке получен неполный iCal-календарь');
+  }
   
-  lines.forEach((line) => {
-    if (line.startsWith('BEGIN:VEVENT')) current = {};
-    else if (line.startsWith('END:VEVENT')) {
-      if (current) events.push(current);
+  for (const line of lines) {
+    const marker = line.toUpperCase();
+    if (marker === 'BEGIN:VEVENT') {
+      if (current) throw new Error('Незавершённое событие iCal');
+      current = {};
+    } else if (marker === 'END:VEVENT') {
+      if (!current) throw new Error('Некорректное событие iCal');
+      if (current.status !== 'CANCELLED') {
+        const checkIn = parseIcsDate(current.dtstart);
+        const checkOut = current.dtend === undefined ? addOneDay(checkIn) : parseIcsDate(current.dtend);
+        if (checkOut <= checkIn) throw new Error('Выезд в iCal должен быть позже заезда');
+        const uid = current.uid || crypto.createHash('sha1').update(`${current.summary}|${checkIn}|${checkOut}`).digest('hex');
+        const previous = events.get(uid);
+        if (previous && (previous.check_in !== checkIn || previous.check_out !== checkOut)) {
+          throw new Error('В iCal найдены разные даты для одного события');
+        }
+        events.set(uid, { uid, summary: current.summary || '', check_in: checkIn, check_out: checkOut });
+      }
       current = null;
     } else if (current) {
       const idx = line.indexOf(':');
-      if (idx === -1) return;
+      if (idx === -1) continue;
       const left = line.slice(0, idx).split(';')[0].toUpperCase();
       const right = line.slice(idx + 1).replace(/\\,/g, ',').replace(/\\n/g, '\n');
       if (left === 'UID') current.uid = right;
@@ -113,15 +129,9 @@ function parseIcsEvents(icsText) {
       if (left === 'DTSTART') current.dtstart = right;
       if (left === 'DTEND') current.dtend = right;
     }
-  });
-
-  return events.filter(e => e.status !== 'CANCELLED').map(e => {
-    const checkIn = parseIcsDate(e.dtstart);
-    let checkOut = parseIcsDate(e.dtend);
-    if (checkIn && !checkOut) checkOut = addDays(checkIn, 1);
-    const uid = e.uid || crypto.createHash('sha1').update(`${e.summary}|${checkIn}|${checkOut}`).digest('hex');
-    return { uid, summary: e.summary || '', check_in: checkIn, check_out: checkOut };
-  }).filter(e => e.uid && e.check_in && e.check_out && e.check_out > e.check_in);
+  }
+  if (current) throw new Error('Незавершённое событие iCal');
+  return [...events.values()];
 }
 
 const SOURCE_FIELD_CONTRACT = {
@@ -130,7 +140,7 @@ const SOURCE_FIELD_CONTRACT = {
   url: 'url',
 };
 const BOOKING_FIELD_CONTRACT = {
-  fields: new Set(['source_id', 'external_uid', 'check_in_date', 'check_out_date']),
+  fields: new Set(['source_id', 'cabin_id', 'external_uid', 'check_in_date', 'check_out_date', 'summary']),
   checkIn: 'check_in_date',
   checkOut: 'check_out_date',
 };
@@ -268,7 +278,7 @@ async function updateSourceSyncState(sourceId, status, errorMessage = '') {
   const contract = await getSourceFieldContract();
   const nowIso = new Date().toISOString();
   const payload = {};
-  if (contract.fields.has('last_synced_at')) payload.last_synced_at = nowIso;
+  if (status === 'success' && contract.fields.has('last_synced_at')) payload.last_synced_at = nowIso;
   if (contract.fields.has('last_sync_status')) payload.last_sync_status = status;
   if (contract.fields.has('last_sync_error')) payload.last_sync_error = errorMessage || '';
   if (contract.fields.has('last_error')) payload.last_error = errorMessage || '';
@@ -280,7 +290,7 @@ async function updateSourceSyncState(sourceId, status, errorMessage = '') {
       // Fallback на базовые поля при различиях в схеме
       try {
         await pbAdmin.collection('external_calendar_sources').update(sourceId, {
-          last_synced_at: nowIso,
+          ...(status === 'success' ? { last_synced_at: nowIso } : {}),
           last_error: errorMessage || '',
         });
       } catch (fallbackErr) {
@@ -290,7 +300,16 @@ async function updateSourceSyncState(sourceId, status, errorMessage = '') {
   }
 }
 
-async function syncSource(sourceRecord) {
+function syncSource(sourceRecord) {
+  const { id } = sourceRecord;
+  if (!sourceSyncs.has(id)) {
+    const job = importSource(sourceRecord).finally(() => sourceSyncs.delete(id));
+    sourceSyncs.set(id, job);
+  }
+  return sourceSyncs.get(id);
+}
+
+async function importSource(sourceRecord) {
   const source = toSourceView(sourceRecord);
   if (!source.is_active || !pbAdmin) {
     return { source_id: source.id, imported: 0, skipped: true };
@@ -298,9 +317,6 @@ async function syncSource(sourceRecord) {
 
   try {
     const icsText = await fetchCalendarText(source.ical_url);
-    if (!/^\s*BEGIN:VCALENDAR\b/m.test(icsText)) {
-      throw new Error('По ссылке получен не iCal-календарь');
-    }
     const events = parseIcsEvents(icsText);
     const contract = await getBookingFieldContract();
     const old = await pbAdmin.collection('external_bookings').getFullList({
@@ -331,7 +347,7 @@ async function syncSource(sourceRecord) {
 
     const seenUids = new Set(events.map((event) => event.uid));
     for (const booking of old) {
-      if (!seenUids.has(booking.external_uid)) {
+      if (!seenUids.has(booking.external_uid) || oldByUid.get(booking.external_uid).id !== booking.id) {
         await pbAdmin.collection('external_bookings').delete(booking.id);
       }
     }
@@ -357,9 +373,8 @@ async function syncAllActiveSources() {
   try {
     records = await pbAdmin.collection('external_calendar_sources').getFullList({ filter: 'is_active=true' });
   } catch (err) {
-    if (isExternalCalendarSchemaMissing(err)) return { synced: 0, failed: 0, results: [] };
     console.error('[iCal Sync] Ошибка получения активных источников:', err.message);
-    return { synced: 0, failed: 0, results: [] };
+    throw markMissingSchema(err);
   }
 
   let failed = 0;
@@ -377,28 +392,22 @@ async function syncAllActiveSources() {
   return { synced: results.length, failed, totalImported, results };
 }
 async function getExternalBookingsForRange(cabinId, from, to) {
-  if (!pbAdmin) return [];
-  try {
-    const sources = (await getSources(cabinId)).filter((source) => source.is_active !== false);
-    if (!sources.length) return [];
+  if (!pbAdmin) throw new Error('Хранилище календарей временно недоступно');
+  const sources = (await getSources(cabinId)).filter((source) => source.is_active !== false);
+  if (!sources.length) return [];
 
-    const contract = await getBookingFieldContract();
-    const sourceIds = sources.map((source) => `source_id="${source.id}"`).join(' || ');
-    const records = await pbAdmin.collection('external_bookings').getFullList({
-      filter: `(${sourceIds}) && ${contract.checkIn}<"${to} 00:00:00.000Z" && ${contract.checkOut}>"${from} 00:00:00.000Z"`,
-      expand: 'source_id',
-    });
-    const sourcesById = new Map(sources.map((source) => [source.id, source]));
-    return records.map((record) => ({
-      ...record,
-      check_in: String(record[contract.checkIn] || '').slice(0, 10),
-      check_out: String(record[contract.checkOut] || '').slice(0, 10),
-      source_name: sourcesById.get(record.source_id)?.source_name || 'Внешний календарь',
-    }));
-  } catch (error) {
-    if (isExternalCalendarSchemaMissing(error)) return [];
-    throw error;
-  }
+  const contract = await getBookingFieldContract();
+  const sourceIds = sources.map((source) => `source_id="${source.id}"`).join(' || ');
+  const records = await pbAdmin.collection('external_bookings').getFullList({
+    filter: `(${sourceIds}) && ${contract.checkIn}<"${to} 00:00:00.000Z" && ${contract.checkOut}>"${from} 00:00:00.000Z"`,
+  });
+  const sourcesById = new Map(sources.map((source) => [source.id, source]));
+  return records.map((record) => ({
+    ...record,
+    check_in: String(record[contract.checkIn] || '').slice(0, 10),
+    check_out: String(record[contract.checkOut] || '').slice(0, 10),
+    source_name: sourcesById.get(record.source_id)?.source_name || 'Внешний календарь',
+  }));
 }
 
 async function assertNoExternalOverlap(cabinId, checkIn, checkOut) {

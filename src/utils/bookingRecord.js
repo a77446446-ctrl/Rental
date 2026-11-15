@@ -22,7 +22,14 @@ function toPocketBaseDate(value) {
   return date ? date + ' 00:00:00.000Z' : '';
 }
 
+function addOneDay(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00Z');
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
 module.exports = {
+  addOneDay,
   normalizeBookingRecord,
   toDateOnly,
   toPocketBaseDate,

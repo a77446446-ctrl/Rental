@@ -2,12 +2,12 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Управление объектами | EcoGorniy</title>
+  <title>Управление объектами | Платформа для аренды</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#120f0d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="EcoGorniy">
+  <meta name="apple-mobile-web-app-title" content="Платформа для аренды">
   <link rel="manifest" href="/api/manifest.json">
   <link rel="icon" href="/api/icon.png">
   <link rel="apple-touch-icon" href="/api/icon.png">
@@ -580,7 +580,7 @@
         <!-- Вкладка 3: Синхронизация (Avito / iCal) -->
         <div class="tab-pane" id="tabSync">
           <div class="form-group" style="padding: 16px; background: rgba(187, 164, 111, 0.1); border: 1px solid rgba(187, 164, 111, 0.3); border-radius: 8px;">
-            <label style="color: var(--gold);">Шаг 1. Экспорт Eco Gorniy → Avito, Островок, Суточно.ру, Циан, Яндекс и др. (iCal)</label>
+            <label style="color: var(--gold);">Шаг 1. Экспорт с сайта → Avito, Островок, Суточно.ру, Циан, Яндекс и др. (iCal)</label>
             <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте эту ссылку календаря занятости и вставьте её на любой площадке бронирования (Авито, Островок, Суточно.ру, Циан, Яндекс.Путешествия или любой сервис с поддержкой iCal) в поле импорта внешнего календаря. Занятые на вашем сайте даты будут автоматически передаваться на площадки.</div>
             <div style="display: flex; gap: 8px;">
               <input type="text" id="cabinExportLink" readonly style="flex: 1; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.3); color: #8bc48b; border: 1px solid rgba(var(--cream-rgb), 0.1); padding: 8px; border-radius: 4px;">
@@ -589,7 +589,7 @@
           </div>
 
           <div class="form-group">
-            <label>Шаг 2. Импорт Avito → Eco Gorniy (а также из Островка, Суточно.ру, Яндекс и любых iCal-календарей)</label>
+            <label>Шаг 2. Импорт Avito → сайт (а также из Островка, Суточно.ру, Яндекс и любых iCal-календарей)</label>
             <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Скопируйте ссылку на экспорт календаря (iCal / .ics) из вашего сервиса бронирования (Авито, Островок, Суточно.ру, Яндекс.Путешествия и др.) и вставьте её ниже. Занятые на внешних площадках дни автоматически закроются на сайте.</div>
             <div class="external-calendar-list" id="externalCalendarList"></div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">

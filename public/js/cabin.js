@@ -176,7 +176,7 @@
   }
 
   function getBrandName(mainpage) {
-    return (mainpage && mainpage.logo && mainpage.logo.text) ? mainpage.logo.text : 'Eco-Gorniy';
+    return String(mainpage?.logo?.text || '').trim() || 'Платформа для аренды';
   }
 
   function normalizePhone(phone) {
@@ -424,9 +424,9 @@
 
     // Contacts
     const contacts = (mainpage && mainpage.contacts) || {};
-    const phoneDisplay = contacts.phone || '+7 (991) 242-19-70';
+    const phoneDisplay = contacts.phone || '';
     const phoneHref = 'tel:' + normalizePhone(phoneDisplay);
-    const emailDisplay = contacts.email || 'ecogorniy@gmail.com';
+    const emailDisplay = contacts.email || 'Платформа для аренды@gmail.com';
     const emailHref = 'mailto:' + emailDisplay;
 
     // Booking URL (preserves original site booking calendar workflow)
@@ -670,14 +670,14 @@
               <span class="cabin-rate-suffix">/ сутки</span>
             </div>
             <div class="cabin-pricing-contacts">
-              <a href="${phoneHref}" class="cabin-contact-item">
+              ${phoneDisplay ? `<a href="${escapeHtml(phoneHref)}" class="cabin-contact-item">
                 <i data-lucide="phone"></i>
                 <span>${escapeHtml(phoneDisplay)}</span>
-              </a>
-              <a href="${emailHref}" class="cabin-contact-item">
+              </a>` : ''}
+              ${emailDisplay ? `<a href="${escapeHtml(emailHref)}" class="cabin-contact-item">
                 <i data-lucide="mail"></i>
                 <span>${escapeHtml(emailDisplay)}</span>
-              </a>
+              </a>` : ''}
             </div>
           </div>
           <div class="cabin-pricing-right">

@@ -80,6 +80,19 @@ test('iCal network guard rejects local and private addresses', () => {
   assert.equal(isPrivateAddress('2606:4700:4700::1111'), false);
 });
 
+test('импорт iCal отклоняет повреждённый снимок перед обновлением занятых дат', () => {
+  const wrap = (content) => ['BEGIN:VCALENDAR', ...content, 'END:VCALENDAR'].join('\n');
+  const event = (checkIn, checkOut) => [
+    'BEGIN:VEVENT', 'UID:stay', 'DTSTART;VALUE=DATE:' + checkIn,
+    'DTEND;VALUE=DATE:' + checkOut, 'END:VEVENT',
+  ];
+  assert.throws(() => parseIcsEvents('BEGIN:VCALENDAR\n' + event('20270210', '20270212').join('\n')), /неполный/);
+  assert.throws(() => parseIcsEvents(wrap(event('20270230', '20270301'))), /несуществующая дата/);
+  assert.throws(() => parseIcsEvents(wrap([...event('20270210', '20270212'), ...event('20270213', '20270214')])), /разные даты/);
+  assert.equal(parseIcsEvents(wrap([...event('20270210', '20270212'), ...event('20270210', '20270212')])).length, 1);
+  assert.deepEqual(parseIcsEvents(wrap([])), []);
+});
+
 test('iCal admin API exposes source sync and explicit schema errors', () => {
   assert.equal(typeof syncSourceById, 'function');
   assert.equal(typeof isExternalCalendarSchemaMissing, 'function');
@@ -96,8 +109,8 @@ test('iCal export accepts stable cabin IDs and the admin explains both sync dire
   assert.match(publicRoutes, /TRANSP:OPAQUE/);
   assert.match(publicRoutes, /LAST-MODIFIED/);
   assert.match(cabinsController, /saved\.external_calendars = externalCalendars/);
-  assert.match(cabinsPage, /Шаг 1\. Экспорт Eco Gorniy → Avito/);
-  assert.match(cabinsPage, /Шаг 2\. Импорт Avito → Eco Gorniy/);
+  assert.match(cabinsPage, /Шаг 1\. Экспорт с сайта → Avito/);
+  assert.match(cabinsPage, /Шаг 2\. Импорт Avito → сайт/);
 });
 
 test('действия с бронированием не включают предупреждение о несохранённых настройках', () => {
@@ -332,9 +345,10 @@ test('Yandex verification and search indexing files are present', () => {
   const sitemap = fs.readFileSync(path.join(publicDir, 'sitemap.xml'), 'utf8');
   const index = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
   assert.match(verification, /Verification: 16b72d70203cd3ca/);
-  assert.match(robots, /Sitemap: https:\/\/eco-gorniy\.ru\/sitemap\.xml/);
+  assert.match(robots, /Disallow: \/admin\//);
+  assert.match(fs.readFileSync(path.join(publicDir, '../src/server.js'), 'utf8'), /new URL\('\/sitemap\.xml', config\.baseUrl\)/);
   assert.match(sitemap, /<loc>https:\/\/eco-gorniy\.ru\/<\/loc>/);
-  assert.match(index, /rel="canonical" href="https:\/\/eco-gorniy\.ru\/"/);
+  assert.match(index, /rel="canonical" href="\/"/);
 });
 
 test('every admin page uses the unified responsive stylesheet', () => {
@@ -386,7 +400,7 @@ test('ordinary refresh receives the current frontend release without Ctrl+F5', (
 });
 
 
-test('holiday subthemes support all 7 seasonal presets, admin checkboxes and runtime DOM decoration', () => {
+test('семь подтем переключаются без дублей и сохраняют свободные логотипы и заголовки', () => {
   const vm = require('node:vm');
   const root = path.join(__dirname, '..');
   const expectedSubthemes = ['none', 'new-year', 'feb23', 'mar8', 'spring', 'may1', 'sep1', 'nov4'];
@@ -483,22 +497,41 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
   headerEl.className = 'header';
   const heroStage = createElement('div');
   heroStage.className = 'hero-stage';
+  const territoryStage = createElement('div');
+  territoryStage.className = 'territory-stage';
   const houseCard = createElement('article');
   houseCard.className = 'house-card';
+  const secondHouseCard = createElement('article');
+  secondHouseCard.className = 'house-card';
+  const contactCard = createElement('div');
+  contactCard.className = 'cta-card';
+  contactCard.id = 'contact-bg-card';
+  const calendarCard = createElement('div');
+  calendarCard.className = 'calendar-card';
+  const checkoutCard = createElement('div');
+  checkoutCard.className = 'checkout-card';
   const logoLink = createElement('a');
   const primaryBtn = createElement('button');
   primaryBtn.className = 'btn btn-primary';
+  const headerBooking = createElement('a');
+  headerBooking.className = 'header-action';
+  const submitBooking = createElement('button');
+  submitBooking.className = 'btn btn-primary';
+  submitBooking.id = 'submitBookingBtn';
   const sectionLabel = createElement('div');
   sectionLabel.className = 'section-label';
+  const chatWidget = createElement('div');
+  const previewFab = createElement('div');
+  let hasChat = true;
 
-  const trackedContainers = [body, headerEl, heroStage, houseCard, logoLink, primaryBtn, sectionLabel];
+  const trackedContainers = [body, headerEl, heroStage, territoryStage, houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard, logoLink, primaryBtn, headerBooking, submitBooking, sectionLabel, chatWidget, previewFab];
 
   const selectorMap = {
     '.header, .cabin-header, .admin-header': [headerEl],
-    '.hero-stage, #previewArea, .territory-stage': [heroStage],
-    '.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .side-card, .review, .cabin-hero-card, .success-container': [houseCard],
+    '.hero-stage, #previewArea, .territory-stage': [heroStage, territoryStage],
+    '.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .review, .cabin-hero-card, .success-container': [houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard],
     '#main-logo-link, #cabinBrandLink, .admin-brand, .footer-brand': [logoLink],
-    '.btn-primary, .header-action': [primaryBtn],
+    '.btn-primary, .header-action': [primaryBtn, headerBooking, submitBooking],
     '.section-label, .kicker': [sectionLabel],
   };
 
@@ -507,7 +540,7 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
     body,
     documentElement,
     createElement,
-    getElementById: () => null,
+    getElementById: (id) => id === 'chat-widget' && hasChat ? chatWidget : (id === 'previewFab' ? previewFab : null),
     querySelector(sel) {
       if (sel.startsWith('.')) {
         const cls = sel.slice(1);
@@ -549,22 +582,61 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
     const assets = context.EcoHolidayThemes.THEME_ASSETS[subtheme];
     assert.ok(assets && assets.folder, `Missing THEME_ASSETS for ${subtheme}`);
     const folderDir = path.join(__dirname, '..', 'public', 'seasonal-decor', assets.folder);
-    ['header.svg', 'block-edge.svg', 'corner-left.svg', 'corner-right.svg', 'logo-charm.svg', 'accent.svg', 'particle.svg', 'particle-alt.svg'].forEach((file) => {
-      assert.equal(fs.existsSync(path.join(folderDir, file)), true, `Missing asset ${assets.folder}/${file}`);
+    Object.entries(assets).filter(([key]) => key !== 'folder').forEach(([, files]) => {
+      [].concat(files).forEach((file) => {
+        assert.equal(fs.existsSync(path.join(folderDir, file)), true, `Отсутствует ресурс ${assets.folder}/${file}`);
+      });
     });
 
     context.EcoHolidayThemes.apply(subtheme, true);
     assert.equal(body.classList.contains(`subtheme-${subtheme}`), true, subtheme);
     assert.equal(body.classList.contains('subtheme-particles-on'), true, subtheme);
     assert.ok(body.children.some((c) => c.classList.contains('holiday-particles-layer')), subtheme);
-    assert.ok(body.children.some((c) => c.classList.contains('holiday-screen-corners')), subtheme);
-    assert.ok(body.children.some((c) => c.classList.contains('holiday-corner-mascot')), subtheme);
+    assert.equal(body.children.some((c) => c.classList.contains('holiday-screen-corners')), subtheme !== 'new-year', subtheme);
+    assert.equal(body.children.some((c) => c.classList.contains('holiday-corner-mascot')), false, subtheme);
+    assert.equal(chatWidget.children.length, subtheme === 'new-year' ? 1 : 0, subtheme);
+    assert.equal(previewFab.children.length, 0, 'Персонаж не дублируется в предпросмотре при наличии чата');
     assert.ok(headerEl.children.some((c) => c.classList.contains('holiday-header-decor')), subtheme);
     assert.ok(heroStage.children.some((c) => c.classList.contains('holiday-banner-decor')), subtheme);
     assert.ok(houseCard.children.some((c) => c.classList.contains('holiday-card-decor')), subtheme);
-    assert.ok(logoLink.children.some((c) => c.classList.contains('holiday-logo-badge')), subtheme);
+    assert.equal(logoLink.children.length, 0, subtheme);
     assert.ok(primaryBtn.children.some((c) => c.classList.contains('holiday-btn-decor')), subtheme);
-    assert.ok(sectionLabel.children.some((c) => c.classList.contains('holiday-text-decor')), subtheme);
+    assert.equal(sectionLabel.children.length, 0, subtheme);
+    assert.equal(heroStage.children[0].children.some((c) => c.classList.contains('holiday-banner-accent')), false);
+    const winter = subtheme === 'new-year';
+    const hasDecor = (container, cls) => container.children[0].children.some((c) => c.classList.contains(cls));
+    assert.equal(hasDecor(primaryBtn, 'holiday-btn-edge'), winter);
+    for (const bookingButton of [headerBooking, submitBooking]) {
+      assert.equal(hasDecor(bookingButton, 'holiday-btn-icicles'), winter);
+      assert.equal(hasDecor(bookingButton, 'holiday-btn-charm'), !winter);
+      assert.equal(hasDecor(bookingButton, 'holiday-btn-edge'), false);
+    }
+    assert.equal(hasDecor(headerEl, 'holiday-winter-garland'), winter);
+    assert.equal(hasDecor(territoryStage, 'holiday-winter-garland'), false);
+    assert.equal(hasDecor(territoryStage, 'holiday-banner-icicles'), false);
+    assert.equal(hasDecor(territoryStage, 'holiday-territory-icicles'), winter);
+    assert.equal(hasDecor(territoryStage, 'holiday-banner-edge'), winter);
+    assert.equal(hasDecor(contactCard, 'holiday-banner-icicles'), winter);
+    assert.equal(hasDecor(heroStage, 'holiday-banner-icicles'), winter);
+    assert.equal(hasDecor(heroStage, 'holiday-winter-garland'), false);
+    assert.equal(hasDecor(calendarCard, 'holiday-winter-sprig'), false);
+    assert.equal(hasDecor(checkoutCard, 'holiday-winter-sprig'), false);
+    assert.equal(hasDecor(calendarCard, 'holiday-block-edge'), true);
+    assert.equal(hasDecor(checkoutCard, 'holiday-block-edge'), true);
+    if (winter) {
+      const snowSource = (block) => block.children[0].children[0].children[0].src;
+      assert.match(snowSource(territoryStage), /snow-layer-\d+\.webp/);
+      const winterBlocks = [heroStage, territoryStage, houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard];
+      assert.equal(new Set(winterBlocks.map(snowSource)).size, winterBlocks.length);
+      assert.ok(hasDecor(chatWidget, 'holiday-mascot-arm'));
+      const corner = houseCard.children[0].children.find((c) => c.classList.contains('holiday-card-top-right'));
+      assert.match(corner.children[0].src, /house-fir-branch\.webp/);
+      assert.equal(corner.children.length, 1);
+    }
+
+    const counts = trackedContainers.map((el) => el.children.length);
+    context.EcoHolidayThemes.apply(subtheme, true);
+    assert.deepEqual(trackedContainers.map((el) => el.children.length), counts, 'Повторное применение не создаёт дубли');
 
     context.EcoHolidayThemes.apply(subtheme, false);
     assert.equal(body.classList.contains('subtheme-particles-on'), false, subtheme);
@@ -575,8 +647,18 @@ test('holiday subthemes support all 7 seasonal presets, admin checkboxes and run
   assert.equal(body.children.length, 0);
   assert.equal(headerEl.children.length, 0);
   assert.equal(heroStage.children.length, 0);
+  assert.equal(territoryStage.children.length, 0);
   assert.equal(houseCard.children.length, 0);
+  assert.equal(contactCard.children.length, 0);
   assert.equal(logoLink.children.length, 0);
   assert.equal(primaryBtn.children.length, 0);
   assert.equal(sectionLabel.children.length, 0);
+  assert.equal(chatWidget.children.length, 0);
+
+  hasChat = false;
+  context.EcoHolidayThemes.apply('new-year', false);
+  assert.equal(previewFab.children.length, 1, 'В админке снеговик привязан к предпросмотру кнопки');
+  assert.match(previewFab.children[0].children[0].src, /snowman\.webp/);
+  context.EcoHolidayThemes.apply('неизвестная-подтема', false);
+  assert.equal(previewFab.children.length, 0, 'Неизвестная подтема отключает декор');
 });

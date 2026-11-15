@@ -39,6 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
   let externalDatesData = []; // Даты, занятые внешними iCal-календарями
 
   let cabinsList = [];
+  let pricesRequest = 0;
+
+  function showCalendarStatus(message) {
+    const status = document.createElement('div');
+    status.setAttribute('role', 'status');
+    status.style.gridColumn = '1 / -1';
+    status.textContent = message;
+    calendarDays.replaceChildren(status);
+  }
 
   // Загрузка списка объектов
   async function loadCabins() {
@@ -55,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       cabinSelector.innerHTML = '<option value="">-- Выберите объект --</option>' + 
-        data.data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        data.data.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
 
       if (data.data.length > 0) {
         cabinSelector.value = data.data[0].id;
@@ -66,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) {
       console.error(e);
+      cabinSelector.innerHTML = '<option value="">Не удалось загрузить объекты</option>';
       window.showToast('Ошибка загрузки объектов', 'error');
     }
   }
@@ -73,16 +83,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Загрузка кастомных цен для выбранного объекта
   async function loadPrices(cabinId) {
     if (!cabinId) return;
+    const request = ++pricesRequest;
+    showCalendarStatus('Загрузка цен…');
     try {
       const res = await fetch(`/api/admin/prices/${cabinId}?t=${Date.now()}`);
       const data = await res.json();
       if (!data.success) throw new Error(data.error);
+      if (request !== pricesRequest) return;
       
       customPricesData = data.data || [];
       externalDatesData = data.external_dates || [];
       renderCalendar(); // Перерисовываем календарь, чтобы отобразить цены
     } catch (e) {
+      if (request !== pricesRequest) return;
       console.error(e);
+      showCalendarStatus('Не удалось загрузить цены. Выберите объект повторно.');
       window.showToast('Ошибка загрузки цен', 'error');
     }
   }
@@ -90,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Смена объекта
   cabinSelector.addEventListener('change', (e) => {
     const cabinId = e.target.value;
+    pricesRequest++;
+    customPricesData = [];
+    externalDatesData = [];
     if (cabinId) {
       pricesLayout.style.display = 'grid';
       selectedDates.clear();
