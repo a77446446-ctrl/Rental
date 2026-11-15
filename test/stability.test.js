@@ -511,7 +511,9 @@ test('семь подтем переключаются без дублей и с
   const previewFab = createElement('div');
   let hasChat = true;
 
-  const trackedContainers = [body, headerEl, heroStage, territoryStage, houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard, logoLink, primaryBtn, headerBooking, submitBooking, sectionLabel, chatWidget, previewFab];
+  const detailsButton = createElement('a');
+  detailsButton.className = 'btn btn-ghost';
+  const trackedContainers = [body, headerEl, heroStage, territoryStage, houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard, logoLink, primaryBtn, headerBooking, submitBooking, detailsButton, sectionLabel, chatWidget, previewFab];
 
   const selectorMap = {
     '.header, .cabin-header, .admin-header': [headerEl],
@@ -519,6 +521,7 @@ test('семь подтем переключаются без дублей и с
     '.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .review, .cabin-hero-card, .success-container': [houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard],
     '#main-logo-link, #cabinBrandLink, .admin-brand, .footer-brand': [logoLink],
     '.btn-primary, .header-action': [primaryBtn, headerBooking, submitBooking],
+    '.btn-primary, .header-action, .btn-ghost': [primaryBtn, headerBooking, submitBooking, detailsButton],
     '.section-label, .kicker': [sectionLabel],
   };
 
@@ -593,10 +596,12 @@ test('семь подтем переключаются без дублей и с
     const winter = subtheme === 'new-year';
     const hasDecor = (container, cls) => container.children[0].children.some((c) => c.classList.contains(cls));
     assert.equal(hasDecor(primaryBtn, 'holiday-btn-edge'), winter);
+    assert.equal(detailsButton.children.length, winter ? 1 : 0);
+    if (winter) assert.equal(hasDecor(detailsButton, 'holiday-btn-edge'), true);
     for (const bookingButton of [headerBooking, submitBooking]) {
       assert.equal(hasDecor(bookingButton, 'holiday-btn-icicles'), winter);
       assert.equal(hasDecor(bookingButton, 'holiday-btn-charm'), !winter);
-      assert.equal(hasDecor(bookingButton, 'holiday-btn-edge'), false);
+      assert.equal(hasDecor(bookingButton, 'holiday-btn-edge'), winter);
     }
     assert.equal(hasDecor(headerEl, 'holiday-winter-garland'), winter);
     assert.equal(hasDecor(territoryStage, 'holiday-winter-garland'), false);

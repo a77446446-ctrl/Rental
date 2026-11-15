@@ -391,7 +391,7 @@
   }
 
   /* ========================================================================
-     8. Декор кнопок (.btn-primary, .header-action)
+     8. Декор кнопок
      ======================================================================== */
   function decorateButtons(subtheme) {
     var assets = getAssets(subtheme);
@@ -400,7 +400,9 @@
     var charmSrc = assetUrl(subtheme, assets.buttonCharm || assets.logoCharm);
     var edgeSrc = assetUrl(subtheme, assets.buttonSnow);
 
-    document.querySelectorAll('.btn-primary, .header-action').forEach(function (btn) {
+    var buttonSelector = '.btn-primary, .header-action';
+    if (subtheme === 'new-year') buttonSelector += ', .btn-ghost';
+    document.querySelectorAll(buttonSelector).forEach(function (btn) {
       if (btn.getAttribute('data-holiday-subtheme') === subtheme && btn.querySelector('.holiday-btn-decor')) return;
       var old = btn.querySelector('.holiday-btn-decor');
       if (old) old.remove();
@@ -411,9 +413,8 @@
 
       if (subtheme === 'new-year') {
         var bookingButton = btn.classList.contains('header-action') || btn.id === 'submitBookingBtn';
-        decor.appendChild(bookingButton
-          ? createIcicles(assets, 'holiday-btn-icicles')
-          : createDecorImg(edgeSrc, 'holiday-btn-edge'));
+        decor.appendChild(createDecorImg(edgeSrc, 'holiday-btn-edge'));
+        if (bookingButton) decor.appendChild(createIcicles(assets, 'holiday-btn-icicles'));
       } else if (charmSrc) {
         decor.appendChild(createDecorImg(charmSrc, 'holiday-btn-charm'));
       }

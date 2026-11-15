@@ -4,14 +4,14 @@
 /* Не меняем fixed/sticky у шапки и absolute у формы быстрого подбора. */
 body :is(.calendar-card, .checkout-card, .feature-panel, .side-card, .review,
   .cta-card, .cabin-hero-card, .success-container, .preview-area,
-  .btn-primary, .header-action)[data-holiday-subtheme] {
+  .btn-primary, .btn-ghost, .header-action)[data-holiday-subtheme] {
   position: relative;
 }
 
 html body[class*="subtheme-"] :is(.header, .cabin-header, .admin-header, .hero-stage, .territory-stage,
   .house-card, .hero-booking, .calendar-card, .checkout-card, .feature-panel,
   .side-card, .review, .cta-card, .cabin-hero-card, .success-container,
-  .preview-area, .btn-primary, .header-action)[data-holiday-subtheme] {
+  .preview-area, .btn-primary, .btn-ghost, .header-action)[data-holiday-subtheme] {
   overflow: visible !important;
 }
 
@@ -270,7 +270,7 @@ body.subtheme-nov4 .legend i.legend-promo {
 }
 
 /* Тонкий слой снега опирается на всю верхнюю кромку блока. */
-[data-holiday-subtheme="new-year"] :is(.holiday-banner-edge, .holiday-block-edge, .holiday-btn-edge) {
+[data-holiday-subtheme="new-year"] :is(.holiday-banner-edge, .holiday-block-edge) {
   inset-inline: -1px;
   bottom: calc(100% - var(--snow-overlap, 5px));
   width: auto;
@@ -278,13 +278,18 @@ body.subtheme-nov4 .legend i.legend-promo {
 [data-holiday-subtheme="new-year"] .holiday-block-edge { height: clamp(13px, 1.25vw, 18px); }
 [data-holiday-subtheme="new-year"] .holiday-banner-edge { height: clamp(18px, 1.9vw, 28px); }
 .holiday-block-edge-mirrored > img { transform: scaleX(-1); }
-body.theme-light .hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-edge { inset-inline: 0; }
 [data-holiday-subtheme="new-year"] > .holiday-btn-decor { --snow-overlap: 2px; }
 [data-holiday-subtheme="new-year"] .holiday-btn-edge {
-  inset-inline: 1px;
+  inset-inline: 0;
+  bottom: calc(100% - var(--snow-overlap));
   max-width: none;
-  width: calc(100% - 2px);
+  width: 100%;
   border-radius: 8px 9px 7px 6px / 70% 66% 45% 40%;
+}
+body.theme-light [data-holiday-subtheme="new-year"] :is(.holiday-banner-edge, .holiday-block-edge) {
+  inset-inline: clamp(5px, 1vw, 10px);
+  border-radius: 12px / 46%;
+  overflow: hidden;
 }
 :is(.calendar-card, .checkout-card)[data-holiday-subtheme="new-year"] .holiday-block-edge {
   height: clamp(15px, 1.45vw, 22px);
@@ -432,7 +437,19 @@ body.subtheme-new-year .holiday-particle:nth-child(3n) { z-index: 1; }
 @media (max-width: 760px) {
   #submitBookingBtn .holiday-btn-icicles { height: 16px; }
   .hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-icicles { height: 22px; }
-  body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .hero-content { margin-top: 16px; }
+  body.theme-light .hero-stage[data-holiday-subtheme="new-year"] { --light-hero-card-offset: 16px; }
+  body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .hero-content {
+    margin-top: var(--light-hero-card-offset);
+  }
+  body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .holiday-banner-decor {
+    top: var(--light-hero-card-offset);
+    --snow-overlap: 4px;
+  }
+  body.theme-light .hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-icicles {
+    inset-inline: 12px;
+    top: 2px;
+    height: 16px;
+  }
   body.subtheme-new-year .holiday-particle:nth-child(-n + 18) {
     display: block;
     animation-name: holiday-mobile-snowfall;
