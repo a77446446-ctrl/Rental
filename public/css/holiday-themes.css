@@ -187,6 +187,12 @@ body.subtheme-particles-on .holiday-particles-layer { display: block; }
   100% { opacity: 0; transform: translate3d(var(--p-drift, 24px), calc(100vh + 60px), 0); }
 }
 
+@keyframes holiday-mobile-snowfall {
+  from { transform: translate(0, -12px); opacity: 0; }
+  8%, 91% { opacity: var(--p-opacity, .65); }
+  to { transform: translate(var(--p-drift, 24px), calc(100vh + 50px)); opacity: 0; }
+}
+
 /* Сохраняем праздничные обозначения акций в календаре. */
 body[class*="subtheme-"]:not(.subtheme-none) .calendar-day.promo::after,
 body[class*="subtheme-"]:not(.subtheme-none) .legend i.legend-promo {
@@ -427,7 +433,14 @@ body.subtheme-new-year .holiday-particle:nth-child(3n) { z-index: 1; }
   #submitBookingBtn .holiday-btn-icicles { height: 16px; }
   .hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-icicles { height: 22px; }
   body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .hero-content { margin-top: 16px; }
-  body.subtheme-new-year .holiday-particle:nth-child(-n + 18) { display: block; }
+  body.subtheme-new-year .holiday-particle:nth-child(-n + 18) {
+    display: block;
+    animation-name: holiday-mobile-snowfall;
+  }
+  body.subtheme-new-year .holiday-particles-layer { z-index: 64; }
+  body.subtheme-new-year .holiday-particle-img {
+    filter: drop-shadow(0 1px 1px rgb(26 50 75 / 72%));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .holiday-corner-mascot .holiday-mascot-img { clip-path: none; }

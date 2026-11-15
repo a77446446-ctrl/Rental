@@ -328,12 +328,18 @@ html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-glyph
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.12); }
 }
+@keyframes eco-mobile-chat-ring-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 @media (max-width: 760px) {
   html body .chat-widget.chat-widget[data-state="closed"] {
     --chat-ring-offset: -31px;
   }
   html body .chat-widget.chat-widget[data-state="closed"] #chat-toggle .chat-ring-label {
-    animation-play-state: running;
+    animation: eco-mobile-chat-ring-orbit 18s linear infinite running !important;
+    backface-visibility: visible;
+    will-change: auto;
   }
 }
 @media (prefers-reduced-motion: reduce) {
