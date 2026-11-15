@@ -351,18 +351,22 @@ body.subtheme-new-year .holiday-card-top-right {
   right: 1px;
   width: clamp(80px, 11vw, 158px);
   height: auto;
+  border-start-end-radius: inherit;
 }
 body.subtheme-new-year .holiday-card-top-right::before {
   content: "";
   position: absolute;
-  inset: 4px 0 -16% -18%;
-  border-start-end-radius: 12px;
-  background: radial-gradient(ellipse at 90% 10%, rgb(12 19 17 / 44%), transparent 73%);
+  inset: 3px 0 -17% -23%;
+  border-start-end-radius: inherit;
+  background:
+    radial-gradient(ellipse at 87% 24%, rgb(247 250 255 / 94%) 8%, rgb(231 240 248 / 70%) 38%, transparent 70%),
+    radial-gradient(ellipse at 54% 36%, rgb(246 250 253 / 83%) 8%, rgb(237 244 250 / 48%) 37%, transparent 68%),
+    radial-gradient(ellipse at 75% 57%, rgb(222 234 244 / 62%) 5%, transparent 59%);
 }
 body.subtheme-new-year .holiday-card-top-right > img:first-child {
   position: relative;
   height: auto;
-  filter: drop-shadow(0 1px 2px rgb(12 19 17 / 40%));
+  filter: drop-shadow(0 1px 2px rgb(22 40 50 / 48%));
 }
 
 body.subtheme-new-year .holiday-particles-layer {
