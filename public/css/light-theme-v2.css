@@ -2055,7 +2055,7 @@ html body.theme-light #chat-toggle.color-yellow,
 html body.theme-light .chat-widget[data-state="closed"] #chat-toggle,
 html body.theme-light .chat-widget.chat-widget[data-state="closed"] #chat-toggle,
 html body.theme-light .chat-widget:has(.chat-body[style*="none"]) .chat-header button {
-  background: linear-gradient(145deg, #2b2b2e 0%, #1d1d1f 100%) !important;
+  background: var(--chat-fab-gradient, linear-gradient(145deg, #2b2b2e 0%, #1d1d1f 100%)) !important;
   border: 2px solid rgba(255, 255, 255, 0.96) !important;
   outline: none !important;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22) !important;

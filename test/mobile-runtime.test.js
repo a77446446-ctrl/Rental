@@ -83,9 +83,9 @@ test('после завершения диапазона мобильный ка
   const main = read('public/js/main.js');
   const layout = read('public/css/mobile-layout.css');
 
-  assert.ok(main.includes('function scrollToCheckoutAfterDateSelection(checkIn, checkOut)'));
+  assert.ok(main.includes('function scrollToCheckoutAfterDateSelection(checkIn, checkOut, animationMs)'));
   assert.ok(main.includes("checkoutCard.scrollIntoView({ behavior: 'smooth', block: 'start' })"));
-  assert.ok(main.includes('scrollToCheckoutAfterDateSelection(checkIn, checkOut)'));
+  assert.ok(main.includes('if (animationMs) window.setTimeout(scrollToCheckout, animationMs)'));
   assert.ok(main.includes("classList.toggle('has-dates', state.selectedDates.length > 0)"));
   assert.ok(layout.includes('#checkoutDatesInfo.has-dates'));
   assert.ok(layout.includes('scroll-margin-top: 76px'));

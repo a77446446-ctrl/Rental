@@ -43,9 +43,9 @@ test('offline-состояние не раскрывает пустой инте
   const mainStylesheet = html.match(/href="(\/css\/main\.css\?v=[^"]+)"/)?.[1];
   assert.ok(mainStylesheet);
   assert.ok(worker.includes("'" + mainStylesheet + "'"));
-  assert.match(worker, /\/css\/mobile-app\.css\?v=20260822-3/);
+  assert.ok(worker.includes(html.match(/href="(\/css\/mobile-app\.css\?v=[^"]+)"/)[1]));
   assert.match(worker, /\/css\/mobile-layout\.css\?v=20260821-4/);
-  assert.match(worker, /\/js\/main\.js\?v=20260821-6/);
+  assert.ok(worker.includes(html.match(/src="(\/js\/main\.js\?v=[^"]+)"/)[1]));
 });
 
 test('закрытие чата сразу возвращает компактную кнопку без pop-анимации', () => {

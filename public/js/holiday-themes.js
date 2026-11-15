@@ -230,7 +230,7 @@
       var durSec = (winter ? 11 : 16) + ((i * 3) % 9);
       var delaySec = -((i * 1.7) % (winter ? 19 : 10));
       var driftPx = (i % 2 === 0 ? 1 : -1) * (24 + (i % 5) * 14);
-      var opacityVal = (winter ? 0.48 : 0.24) + (i % 4) * 0.04;
+      var opacityVal = (winter ? 0.62 : 0.24) + (i % 4) * 0.04;
 
       p.style.setProperty('--p-left', leftPct + '%');
       p.style.setProperty('--p-size', sizePx + 'px');
@@ -537,11 +537,16 @@
       window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     var bounds = cell.getBoundingClientRect();
+    var flightMs = 250;
+    var burstMs = 320;
     var layer = document.createElement('span');
     layer.className = 'holiday-calendar-snowball';
     layer.setAttribute('aria-hidden', 'true');
-    layer.style.left = (bounds.left + bounds.width / 2) + 'px';
-    layer.style.top = (bounds.top + Math.min(24, bounds.height / 2)) + 'px';
+    function moveToCell(rect) {
+      layer.style.left = (rect.left + rect.width / 2) + 'px';
+      layer.style.top = (rect.top + Math.min(24, rect.height / 2)) + 'px';
+    }
+    moveToCell(bounds);
     document.body.appendChild(layer);
 
     var ball = document.createElement('span');
@@ -553,16 +558,19 @@
       { opacity: 1, offset: .2 },
       { transform: 'translate(' + (side * 37) + 'px, -38px) rotate(-48deg) scale(.85)' },
       { transform: 'translate(0, 0) rotate(0) scale(1)', opacity: 1 }
-    ], { duration: 250, easing: 'ease-in', fill: 'forwards' });
+    ], { duration: flightMs, easing: 'ease-in', fill: 'forwards' });
 
-    // Убираем эффект при прокрутке или смене размера: ячейка уже выбрана.
     var listeners = new AbortController();
     function cleanup() {
       listeners.abort();
       layer.remove();
     }
-    window.addEventListener('scroll', cleanup, { capture: true, passive: true, signal: listeners.signal });
-    window.addEventListener('resize', cleanup, { signal: listeners.signal });
+    function followCell() {
+      if (cell.isConnected) moveToCell(cell.getBoundingClientRect());
+      else cleanup();
+    }
+    window.addEventListener('scroll', followCell, { capture: true, passive: true, signal: listeners.signal });
+    window.addEventListener('resize', followCell, { signal: listeners.signal });
 
     flight.onfinish = function () {
       if (!layer.isConnected) return;
@@ -581,9 +589,10 @@
           { transform: 'translate(0, 0)', opacity: 1 },
           { transform: 'translate(' + x * .75 + 'px,' + y * .75 + 'px)', opacity: .85, offset: .5 },
           { transform: 'translate(' + x + 'px,' + (y + 14) + 'px) scale(.4)', opacity: 0 }
-        ], { duration: 320, easing: 'ease-out', fill: 'forwards' }).onfinish = i === 11 ? cleanup : null;
+        ], { duration: burstMs, easing: 'ease-out', fill: 'forwards' }).onfinish = i === 11 ? cleanup : null;
       }
     };
+    return flightMs + burstMs;
   }
 
   window.EcoHolidayThemes = {

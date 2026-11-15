@@ -4,12 +4,12 @@ const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
 
-function loadCalendar() {
+function loadCalendar(browser = {}) {
   const source = fs.readFileSync(path.join(__dirname, '../public/js/calendar.js'), 'utf8');
   const context = {
     console,
     Date,
-    window: {},
+    window: browser,
     EcoApi: {
       toDateString(date) {
         return [
@@ -24,8 +24,8 @@ function loadCalendar() {
   return context.window.EcoCalendar;
 }
 
-function createCalendar(availabilityMap) {
-  const EcoCalendar = loadCalendar();
+function createCalendar(availabilityMap, browser) {
+  const EcoCalendar = loadCalendar(browser);
   const calendar = Object.create(EcoCalendar.prototype);
   calendar.availabilityMap = availabilityMap;
   calendar.checkIn = null;
@@ -63,4 +63,29 @@ test('a busy date cannot start a stay or jump over a busy night', () => {
 
   assert.equal(calendar.checkIn, '2030-07-23');
   assert.equal(calendar.checkOut, null);
+});
+
+test('выбранная дата получает снежок после перерисовки и перед прокруткой', () => {
+  const date = '2030-07-23';
+  const cell = {};
+  const calls = [];
+  const calendar = createCalendar({ [date]: { available: true, price: 8000 } }, {
+    EcoHolidayThemes: {
+      playCalendarSnowball(target) {
+        assert.equal(target, cell);
+        calls.push('снежок');
+        return 570;
+      },
+    },
+  });
+  calendar.render = () => {
+    calls.push('отрисовка');
+    calendar.gridEl = { querySelector: () => cell };
+  };
+  calendar.notifySelectionChange = (animationMs) => calls.push(animationMs);
+
+  calendar.handleDayClick(date, true);
+
+  assert.equal(calendar.checkIn, date);
+  assert.deepEqual(calls, ['отрисовка', 'снежок', 570]);
 });

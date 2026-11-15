@@ -1,21 +1,22 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v64';
+const CACHE_VERSION = 'eco-gorniy-pwa-v65';
 const STATIC_CACHE = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
   '/icons/icon-192.png',
   '/css/main.css?v=20261115-calendar',
-  '/css/mobile-app.css?v=20260822-3',
+  '/css/mobile-app.css?v=20261115-winter-mobile',
+  '/css/light-theme-v2.css?v=20261115-winter-mobile',
   '/css/mobile-layout.css?v=20260821-4',
-  '/css/holiday-themes.css?v=20261115-mobile-chat',
+  '/css/holiday-themes.css?v=20261115-winter-mobile',
   '/js/api.js?v=20260821-1',
-  '/js/holiday-themes.js?v=20261115-snowball',
+  '/js/holiday-themes.js?v=20261115-winter-mobile',
   '/js/pwa.js?v=20260811-2',
   '/js/chat.js?v=20260822-2',
-  '/js/calendar.js?v=20261115-snowball',
+  '/js/calendar.js?v=20261115-winter-mobile',
   '/js/mobile-shell.js?v=20260821-1',
   '/js/admin-entry.js?v=20260813-1',
-  '/js/main.js?v=20260821-6',
+  '/js/main.js?v=20261115-winter-mobile',
   '/js/lucide.min.js?v=20260811-2',
   '/icons/icon-512.png',
   '/icons/maskable-512.png'

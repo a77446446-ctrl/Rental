@@ -193,7 +193,7 @@
     return true;
   };
 
-  EcoCalendar.prototype.handleDayClick = function (dateStr) {
+  EcoCalendar.prototype.handleDayClick = function (dateStr, animateSelection) {
     if (this.availabilityLoading || this.availabilityError) return;
 
     if (!this.cabinId && typeof document !== 'undefined') {
@@ -229,6 +229,8 @@
       return;
     }
 
+    var previousCheckIn = this.checkIn;
+    var previousCheckOut = this.checkOut;
     if (!this.checkIn || (this.checkIn && this.checkOut)) {
       /* Начинаем новый выбор */
       this.checkIn = dateStr;
@@ -255,13 +257,19 @@
     }
 
     this.render();
-    this.notifySelectionChange();
+    var animationMs = 0;
+    if (animateSelection && (this.checkIn !== previousCheckIn || this.checkOut !== previousCheckOut)) {
+      animationMs = window.EcoHolidayThemes?.playCalendarSnowball?.(
+        this.gridEl.querySelector('[data-date="' + dateStr + '"]')
+      ) || 0;
+    }
+    this.notifySelectionChange(animationMs);
   };
 
   /**
    * Собирает выделенные даты и вызывает колбэк.
    */
-  EcoCalendar.prototype.notifySelectionChange = function () {
+  EcoCalendar.prototype.notifySelectionChange = function (animationMs = 0) {
     var selectedDates = [];
 
     if (this.checkIn && this.checkOut) {
@@ -280,7 +288,7 @@
       }
     }
 
-    this.onSelectionChange(this.checkIn, this.checkOut, selectedDates);
+    this.onSelectionChange(this.checkIn, this.checkOut, selectedDates, animationMs);
   };
 
   /**
@@ -422,13 +430,7 @@
         btn.setAttribute('data-date', dateStr);
         btn.addEventListener('click', (function (ds) {
           return function () {
-            var previousCheckIn = self.checkIn;
-            var previousCheckOut = self.checkOut;
-            self.handleDayClick(ds);
-            if (self.checkIn === previousCheckIn && self.checkOut === previousCheckOut) return;
-            window.EcoHolidayThemes?.playCalendarSnowball?.(
-              self.gridEl.querySelector('[data-date="' + ds + '"]')
-            );
+            self.handleDayClick(ds, true);
           };
         })(dateStr));
       }

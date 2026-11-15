@@ -149,8 +149,8 @@ body.mobile-menu-open .holiday-corner-mascot { display: none; }
     right: auto;
     bottom: auto;
     transform: translate(-50%, -50%);
-    width: 33px;
-    height: 37px;
+    width: 30.4px;
+    height: 34px;
     z-index: 2;
   }
   #chat-widget[data-state="closed"]:has(> .holiday-corner-mascot)
@@ -349,15 +349,28 @@ body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .hero-content {
 body.subtheme-new-year .holiday-card-top-right {
   top: -3px;
   right: 1px;
-  width: clamp(73px, 10vw, 144px);
+  width: clamp(80px, 11vw, 158px);
   height: auto;
 }
-body.subtheme-new-year .holiday-card-top-right > img:first-child { height: auto; }
+body.subtheme-new-year .holiday-card-top-right::before {
+  content: "";
+  position: absolute;
+  inset: 4px 0 -16% -18%;
+  border-start-end-radius: 12px;
+  background: radial-gradient(ellipse at 90% 10%, rgb(12 19 17 / 44%), transparent 73%);
+}
+body.subtheme-new-year .holiday-card-top-right > img:first-child {
+  position: relative;
+  height: auto;
+  filter: drop-shadow(0 1px 2px rgb(12 19 17 / 40%));
+}
 
 body.subtheme-new-year .holiday-particles-layer {
   mask-image: none;
-  z-index: 3;
-  filter: drop-shadow(0 1px 1px rgba(34, 58, 82, .36));
+  z-index: 25;
+}
+body.subtheme-new-year .holiday-particle-img {
+  filter: drop-shadow(0 1px 1px rgba(34, 58, 82, .55));
 }
 body.subtheme-new-year .holiday-particle:nth-child(3n) { z-index: 1; }
 
@@ -410,7 +423,7 @@ body.subtheme-new-year .holiday-particle:nth-child(3n) { z-index: 1; }
   #submitBookingBtn .holiday-btn-icicles { height: 16px; }
   .hero-stage[data-holiday-subtheme="new-year"] .holiday-banner-icicles { height: 22px; }
   body.theme-light .hero-stage[data-holiday-subtheme="new-year"] > .hero-content { margin-top: 16px; }
-  body.subtheme-new-year .holiday-particle:nth-child(-n + 16) { display: block; }
+  body.subtheme-new-year .holiday-particle:nth-child(-n + 18) { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
   .holiday-corner-mascot .holiday-mascot-img { clip-path: none; }

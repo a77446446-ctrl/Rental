@@ -361,7 +361,7 @@
   var calendar = null;
   var lastMobileCheckoutRange = '';
 
-  function scrollToCheckoutAfterDateSelection(checkIn, checkOut) {
+  function scrollToCheckoutAfterDateSelection(checkIn, checkOut, animationMs) {
     if (window.innerWidth > 760 || !checkIn || !checkOut) {
       if (!checkOut) lastMobileCheckoutRange = '';
       return;
@@ -373,9 +373,12 @@
 
     var checkoutCard = document.querySelector('.checkout-card');
     if (!checkoutCard) return;
-    window.requestAnimationFrame(function() {
+    function scrollToCheckout() {
+      if (calendar.checkIn !== checkIn || calendar.checkOut !== checkOut) return;
       checkoutCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    }
+    if (animationMs) window.setTimeout(scrollToCheckout, animationMs);
+    else window.requestAnimationFrame(scrollToCheckout);
   }
 
   /**
@@ -1064,13 +1067,13 @@
         subtitleEl: els.calSubtitle,
         prevBtn: els.calPrev,
         nextBtn: els.calNext,
-        onSelectionChange: function (checkIn, checkOut, selectedDates) {
+        onSelectionChange: function (checkIn, checkOut, selectedDates, animationMs) {
           state.selectedDates = selectedDates || [];
           updateCheckoutSummary();
           
           
           
-          scrollToCheckoutAfterDateSelection(checkIn, checkOut);
+          scrollToCheckoutAfterDateSelection(checkIn, checkOut, animationMs);
         }
       });
     }
