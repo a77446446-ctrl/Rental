@@ -401,7 +401,7 @@
     var edgeSrc = assetUrl(subtheme, assets.buttonSnow);
 
     var buttonSelector = '.btn-primary, .header-action';
-    if (subtheme === 'new-year') buttonSelector += ', .btn-ghost';
+    if (subtheme === 'new-year') buttonSelector += ', .house-details-btn';
     document.querySelectorAll(buttonSelector).forEach(function (btn) {
       if (btn.getAttribute('data-holiday-subtheme') === subtheme && btn.querySelector('.holiday-btn-decor')) return;
       var old = btn.querySelector('.holiday-btn-decor');
@@ -413,8 +413,9 @@
 
       if (subtheme === 'new-year') {
         var bookingButton = btn.classList.contains('header-action') || btn.id === 'submitBookingBtn';
-        decor.appendChild(createDecorImg(edgeSrc, 'holiday-btn-edge'));
-        if (bookingButton) decor.appendChild(createIcicles(assets, 'holiday-btn-icicles'));
+        decor.appendChild(bookingButton
+          ? createIcicles(assets, 'holiday-btn-icicles')
+          : createDecorImg(edgeSrc, 'holiday-btn-edge'));
       } else if (charmSrc) {
         decor.appendChild(createDecorImg(charmSrc, 'holiday-btn-charm'));
       }

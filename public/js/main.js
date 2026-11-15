@@ -678,7 +678,7 @@
           </div>
           <div style="display: flex; gap: 8px;">
             <button type="button" class="btn btn-primary select-cabin-btn" data-id="${cabin.id}" style="flex: 1;">Выбрать</button>
-            <a href="/cabin.html?id=${cabin.id}" class="btn btn-ghost" style="flex: 1; min-height: 48px; border: 1px solid var(--line); border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none;">Подробно</a>
+            <a href="/cabin.html?id=${cabin.id}" class="btn btn-ghost house-details-btn" style="flex: 1; min-height: 48px; border: 1px solid var(--line); border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none;">Подробно</a>
           </div>
         </div>
       `;
@@ -834,7 +834,7 @@
               </div>
               <div style="display: flex; gap: 8px;">
                 <button type="button" class="btn btn-primary select-cabin-btn" data-id="${cabin.id}" style="flex: 1;">Выбрать</button>
-                <a href="/cabin.html?id=${cabin.id}" class="btn btn-ghost" style="flex: 1; min-height: 48px; border: 1px solid var(--line); border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none;">Подробно</a>
+                <a href="/cabin.html?id=${cabin.id}" class="btn btn-ghost house-details-btn" style="flex: 1; min-height: 48px; border: 1px solid var(--line); border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none;">Подробно</a>
               </div>
             </div>
           `;

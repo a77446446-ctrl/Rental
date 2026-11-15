@@ -512,7 +512,7 @@ test('семь подтем переключаются без дублей и с
   let hasChat = true;
 
   const detailsButton = createElement('a');
-  detailsButton.className = 'btn btn-ghost';
+  detailsButton.className = 'btn btn-ghost house-details-btn';
   const trackedContainers = [body, headerEl, heroStage, territoryStage, houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard, logoLink, primaryBtn, headerBooking, submitBooking, detailsButton, sectionLabel, chatWidget, previewFab];
 
   const selectorMap = {
@@ -521,7 +521,7 @@ test('семь подтем переключаются без дублей и с
     '.house-card, .hero-booking, .calendar-card, .checkout-card, .cta-card, .feature-panel, .review, .cabin-hero-card, .success-container': [houseCard, secondHouseCard, contactCard, calendarCard, checkoutCard],
     '#main-logo-link, #cabinBrandLink, .admin-brand, .footer-brand': [logoLink],
     '.btn-primary, .header-action': [primaryBtn, headerBooking, submitBooking],
-    '.btn-primary, .header-action, .btn-ghost': [primaryBtn, headerBooking, submitBooking, detailsButton],
+    '.btn-primary, .header-action, .house-details-btn': [primaryBtn, headerBooking, submitBooking, detailsButton],
     '.section-label, .kicker': [sectionLabel],
   };
 
@@ -601,7 +601,7 @@ test('семь подтем переключаются без дублей и с
     for (const bookingButton of [headerBooking, submitBooking]) {
       assert.equal(hasDecor(bookingButton, 'holiday-btn-icicles'), winter);
       assert.equal(hasDecor(bookingButton, 'holiday-btn-charm'), !winter);
-      assert.equal(hasDecor(bookingButton, 'holiday-btn-edge'), winter);
+      assert.equal(hasDecor(bookingButton, 'holiday-btn-edge'), false);
     }
     assert.equal(hasDecor(headerEl, 'holiday-winter-garland'), winter);
     assert.equal(hasDecor(territoryStage, 'holiday-winter-garland'), false);
