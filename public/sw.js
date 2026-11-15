@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'eco-gorniy-pwa-v70';
+const CACHE_VERSION = 'eco-gorniy-pwa-v71';
 const STATIC_CACHE = [
   '/',
   '/index.html',
@@ -8,7 +8,7 @@ const STATIC_CACHE = [
   '/css/mobile-app.css?v=20261115-motion',
   '/css/light-theme-v2.css?v=20261115-winter-mobile',
   '/css/mobile-layout.css?v=20260821-4',
-  '/css/holiday-themes.css?v=20261115-snow-trim',
+  '/css/holiday-themes.css?v=20261115-winter-menu',
   '/js/api.js?v=20260821-1',
   '/js/holiday-themes.js?v=20261115-snow-trim',
   '/js/pwa.js?v=20260811-2',

@@ -112,6 +112,23 @@ body:not(.subtheme-new-year) .holiday-block-edge img { object-fit: contain; obje
 .holiday-corner-branch--right { right: 0; }
 .holiday-corner-branch img { display: block; width: 100%; height: auto; }
 
+@media (max-width: 1100px) {
+  body.subtheme-new-year .mobile-drawer-nav > a::after {
+    content: "";
+    flex: 0 0 21px;
+    height: 21px;
+    margin-inline-start: auto;
+    background: url("/seasonal-decor/new-year/snowflake-detail.svg") center / contain no-repeat;
+    filter: drop-shadow(0 1px 1px rgb(25 47 66 / 42%));
+    pointer-events: none;
+  }
+
+  body.subtheme-new-year .mobile-drawer-nav > a:nth-child(even)::after {
+    height: 27px;
+    background-image: url("/seasonal-decor/new-year/logo-charm.svg");
+  }
+}
+
 html body .chat-widget.chat-widget[data-state="closed"]:has(> .holiday-corner-mascot) { overflow: visible !important; }
 .holiday-corner-mascot {
   position: absolute;
