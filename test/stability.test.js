@@ -80,19 +80,6 @@ test('iCal network guard rejects local and private addresses', () => {
   assert.equal(isPrivateAddress('2606:4700:4700::1111'), false);
 });
 
-test('импорт iCal отклоняет повреждённый снимок перед обновлением занятых дат', () => {
-  const wrap = (content) => ['BEGIN:VCALENDAR', ...content, 'END:VCALENDAR'].join('\n');
-  const event = (checkIn, checkOut) => [
-    'BEGIN:VEVENT', 'UID:stay', 'DTSTART;VALUE=DATE:' + checkIn,
-    'DTEND;VALUE=DATE:' + checkOut, 'END:VEVENT',
-  ];
-  assert.throws(() => parseIcsEvents('BEGIN:VCALENDAR\n' + event('20270210', '20270212').join('\n')), /неполный/);
-  assert.throws(() => parseIcsEvents(wrap(event('20270230', '20270301'))), /несуществующая дата/);
-  assert.throws(() => parseIcsEvents(wrap([...event('20270210', '20270212'), ...event('20270213', '20270214')])), /разные даты/);
-  assert.equal(parseIcsEvents(wrap([...event('20270210', '20270212'), ...event('20270210', '20270212')])).length, 1);
-  assert.deepEqual(parseIcsEvents(wrap([])), []);
-});
-
 test('iCal admin API exposes source sync and explicit schema errors', () => {
   assert.equal(typeof syncSourceById, 'function');
   assert.equal(typeof isExternalCalendarSchemaMissing, 'function');

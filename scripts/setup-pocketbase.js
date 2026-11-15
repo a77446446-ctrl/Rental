@@ -85,8 +85,6 @@ async function ensureCollection(name, schemaFields, options = {}) {
   }
 }
 
-const createdField = { name: 'created', type: 'autodate', onCreate: true, onUpdate: false };
-
 async function run() {
   console.log('================================================================');
   console.log('🚀 Инициализация базы данных PocketBase');
@@ -110,7 +108,6 @@ async function run() {
 
   // 1. Коллекция cabins
   await ensureCollection('cabins', [
-    createdField,
     { name: 'name', type: 'text', required: true },
     { name: 'slug', type: 'text', unique: true },
     { name: 'description', type: 'text' },
@@ -147,8 +144,6 @@ async function run() {
 
   // 4. Коллекция bookings
   await ensureCollection('bookings', [
-    createdField,
-    { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
     { name: 'cabin_id', type: 'text', required: true },
     { name: 'guest_id', type: 'text' },
     { name: 'check_in_date', type: 'date', required: true },
@@ -171,7 +166,6 @@ async function run() {
 
   // 6. Коллекция chat_logs
   await ensureCollection('chat_logs', [
-    createdField,
     { name: 'guest_id', type: 'text' },
     { name: 'sender_type', type: 'text' }, // guest, admin
     { name: 'message', type: 'text' },

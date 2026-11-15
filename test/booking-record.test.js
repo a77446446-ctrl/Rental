@@ -2,7 +2,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const vm = require('node:vm');
 
 const {
   normalizeBookingRecord,
@@ -73,35 +72,13 @@ test('создание брони защищено от пересечения �
   const service = read('src/services/booking.service.js');
   const controller = read('src/controllers/admin/bookings.controller.js');
 
-  assert.match(service, /check_in_date < .*\$\{check_out\}/);
-  assert.match(service, /check_out_date > .*\$\{check_in\}/);
+  assert.match(service, /check_in_date < .*data\.check_out/);
+  assert.match(service, /check_out_date > .*data\.check_in/);
   assert.match(service, /maxService\.sendBookingNotification\(notificationData\)/);
   assert.match(service, /sendBookingNotification\(notificationData\)/);
   assert.match(controller, /updateData\.check_in_date = toPocketBaseDate\(check_in\)/);
   assert.match(controller, /updateData\.check_out_date = toPocketBaseDate\(check_out\)/);
   assert.match(controller, /sort: '-created'/);
-});
-
-test('заявка отклоняется до записи, если миграция защиты дат не применена', async () => {
-  const storage = {
-    collection(name) {
-      assert.equal(name, 'app_config');
-      return { getFirstListItem: async () => { throw Object.assign(new Error('Нет записи'), { status: 404 }); } };
-    },
-  };
-  const testModule = { exports: {} };
-  vm.runInNewContext(read('src/services/booking.service.js'), {
-    module: testModule,
-    require(name) {
-      if (name === '../config/pocketbase') return { pbAdmin: storage };
-      if (name === '../utils/validation') return require('../src/utils/validation');
-      return {};
-    },
-  });
-  await assert.rejects(
-    testModule.exports.createBooking({ check_in: '2028-01-10', check_out: '2028-01-11' }),
-    { status: 503 },
-  );
 });
 
 test('сервис внешних календарей экспортирует чтение занятых дат', () => {

@@ -26,7 +26,6 @@ services:
     volumes:
       # Постоянное хранилище базы данных и загруженных файлов
       - ./pb_data:/pb_data
-      - ./pocketbase/migrations:/eco_migrations:ro
     ports:
       # Внутренний/внешний порт PocketBase
       - "8090:8090"

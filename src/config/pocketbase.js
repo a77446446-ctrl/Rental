@@ -13,6 +13,7 @@ if (typeof pb.autoCancellation === 'function') pb.autoCancellation(false);
 
 let authPromise = null;
 
+// Auto-authenticate as admin for backend operations
 async function initPocketBase() {
   if (!config.pocketbaseAdminEmail || !config.pocketbaseAdminPassword) {
     console.warn('[PocketBase] ВНИМАНИЕ: Не заданы POCKETBASE_ADMIN_EMAIL или POCKETBASE_ADMIN_PASSWORD');
@@ -46,35 +47,22 @@ async function ensureAdminAuth() {
   return authPromise;
 }
 
+// Автоматический перехватчик: перед отправкой любого запроса гарантируем наличие валидного токена суперпользователя
 pb.beforeSend = async (url, options) => {
-  if (url.endsWith('/auth-with-password')) return { url, options };
-
-  const token = await ensureAdminAuth() ? pb.authStore.token : '';
-  if (!token) {
-    delete options.headers.Authorization;
-    return { url, options };
+  // Не перехватываем сам запрос авторизации, чтобы избежать зацикливания
+  if (!url.includes('/auth-with-password')) {
+    if (!pb.authStore || !pb.authStore.isValid) {
+      await ensureAdminAuth();
+    }
+    if (pb.authStore && pb.authStore.token && options && options.headers) {
+      options.headers['Authorization'] = pb.authStore.token;
+    }
   }
-  options.headers.Authorization = token;
-
-  const send = options.fetch || fetch;
-  options.fetch = async (requestUrl, requestOptions) => {
-    const response = await send(requestUrl, requestOptions);
-    if (response.status !== 403) return response;
-
-    const error = await response.clone().json().catch(() => null);
-    // PocketBase отклоняет такой запрос до чтения или записи данных.
-    if (error?.message !== 'Only superusers can perform this action.') return response;
-
-    if (pb.authStore.token === token) pb.authStore.clear();
-    if (!await ensureAdminAuth()) return response;
-
-    return send(requestUrl, {
-      ...requestOptions,
-      headers: { ...requestOptions.headers, Authorization: pb.authStore.token },
-    });
-  };
-
   return { url, options };
 };
 
+// Пробуем авторизоваться при старте модуля (если PocketBase уже запущен)
+initPocketBase().catch(() => {});
+
+// Export as pbAdmin to replace supabaseAdmin in legacy code
 module.exports = { pbAdmin: pb, pb, initPocketBase, ensureAdminAuth };

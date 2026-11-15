@@ -13,33 +13,14 @@
 ## 2. Развертывание (Coolify / VPS)
 
 ### Бэкенд
-1. Используйте Node.js 20.9 или новее.
+1. Используйте Node.js v18+.
 2. Настройте все переменные окружения из `.env.example`.
 3. Команда запуска: `npm start`.
 
 ### База данных (PocketBase)
 1. PocketBase можно запустить как отдельный сервис на VPS.
 2. Проверьте, что переменные `POCKETBASE_URL`, `POCKETBASE_ADMIN_EMAIL` и `POCKETBASE_ADMIN_PASSWORD` в бэкенде указывают на ваш инстанс PocketBase.
-3. На новой базе сначала создайте коллекции командой `npm run setup:db`. Для существующей базы используйте её текущую схему и данные.
-4. До запуска новой версии примените миграции из `pocketbase/migrations`. В них находится защита от пересечения броней при записи и поля для сортировки в админке.
-
-Для Docker Compose после резервного копирования базы:
-
-```sh
-docker compose stop app
-docker compose up -d pocketbase
-docker compose exec pocketbase /pocketbase migrate up --dir=/pb_data --migrationsDir=/eco_migrations --automigrate=false
-docker compose restart pocketbase
-docker compose up -d --build app
-```
-
-Для отдельного PocketBase используйте его исполняемый файл и фактический каталог данных:
-
-```sh
-./pocketbase migrate up --dir=/path/to/pb_data --migrationsDir=/path/to/repository/pocketbase/migrations --automigrate=false
-```
-
-После миграции перезапустите PocketBase и приложение. Проверьте `/ready`, список объектов, бронирования, календарь цен и iCal-экспорт. По каждому действующему внешнему источнику запустите синхронизацию и сравните занятые даты с площадкой. Внешний iCal обновляется с задержкой, зависящей от расписания опроса обеих сторон.
+3. Убедитесь, что все коллекции (cabins, bookings, amenities, extra_services, site_settings) созданы и настроены правильно (см. скрипты инициализации или настройте через UI PocketBase).
 
 ### Telegram Relay
 Для стабильной работы Telegram-ботов с вебхуками рекомендуется использовать Cloudflare Worker, код которого находится в `cloudflare-worker/`. 

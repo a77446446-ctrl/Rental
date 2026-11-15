@@ -311,7 +311,6 @@ app.get('/ready', async (_req, res) => {
     await Promise.all([
       pbAdmin.collection('cabins').getList(1, 1, { fields: 'id' }),
       pbAdmin.collection('app_config').getList(1, 1, { fields: 'id' }),
-      require('./services/booking.service').assertBookingProtection(),
     ]);
     return res.status(200).json({ status: 'ready', database: true, app_config: true });
   } catch (error) {
